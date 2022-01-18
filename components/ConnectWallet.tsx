@@ -19,12 +19,7 @@ const ConnectWallet: FC = () => {
         </DropdownMenu.Trigger>
         <DropdownMenu.Content className="absolute z-10 left-0 mt-3 overflow-hidden bg-white dark:bg-neutral-900 divide-y divide-neutral-300 dark:divide-neutral-700 rounded-md shadow-lg ring-1 ring-neutral-300 dark:ring-neutral-700 focus:outline-none">
           <DropdownMenu.Item className="group flex justify-between items-center w-full px-4 py-3 transition">
-            <Link href="/profile">
-              <a>Profile</a>
-            </Link>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item className="group flex justify-between items-center w-full px-4 py-3 transition">
-            <Link href="/tokens">
+            <Link href={`/address/${accountData.address}`}>
               <a>My Tokens</a>
             </Link>
           </DropdownMenu.Item>

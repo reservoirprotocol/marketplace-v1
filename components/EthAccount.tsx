@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import blockies from 'ethereum-blockies'
 
 /**
@@ -8,7 +8,8 @@ import blockies from 'ethereum-blockies'
  * @returns A shrinked version of the Ethereum address
  * with the middle characters removed.
  */
-export function shrinkAddress(address: string) {
+export function shrinkAddress(address: string | undefined) {
+  if (!address) return '-'
   return `${address.slice(0, 4)}…${address.slice(-4)}`
 }
 
@@ -28,7 +29,7 @@ function shrinkEns(ensName: string) {
 }
 
 type Props = {
-  address: string
+  address: string | undefined
   ens?: {
     avatar: string | null | undefined
     name: string | null | undefined
@@ -36,15 +37,23 @@ type Props = {
 }
 
 const EthAccount: FC<Props> = ({ address, ens }) => {
+  const isBrowser = typeof window !== 'undefined'
+  const [dataUrl, setDataUrl] = useState('')
+
+  useEffect(() => {
+    if (dataUrl === '' && isBrowser) {
+      setDataUrl(
+        blockies
+          .create({
+            seed: address,
+          })
+          .toDataURL()
+      )
+    }
+  }, [isBrowser])
+
   const blockie = (
-    <img
-      className="rounded-full w-[32px] h-[32px]"
-      src={blockies
-        .create({
-          seed: address,
-        })
-        .toDataURL()}
-    />
+    <img className="rounded-full w-[32px] h-[32px]" src={dataUrl} />
   )
 
   return (

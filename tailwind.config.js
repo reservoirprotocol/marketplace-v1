@@ -16,6 +16,11 @@ module.exports = {
         styles: ['fill', 'outline', 'ghost'],
         animate: true,
       },
+      inputs: {
+        colors: ['blue', 'red', 'green', 'neutral'],
+        themes: ['light'],
+        styles: ['outline'],
+      },
     }),
   ],
 }
