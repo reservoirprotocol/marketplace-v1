@@ -1,15 +1,16 @@
-import { FC, useState } from 'react'
+import { ClassAttributes, FC, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { formatBN } from 'lib/numbers'
 import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
+import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
@@ -24,16 +25,59 @@ type Props = {
     | undefined
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
 }
-
 const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
-  const [expiration, setExpiration] = useState('oneDay')
-  const [isCollectionWide, setIsCollectionWide] = useState(false)
-  const [postOnOpenSea, setPostOnOpenSea] = useState(false)
-  const [offerPrice, setOfferPrice] = useState('0')
+  const [expiration, setExpiration] = useState<string>('oneDay')
+  const [isCollectionWide, setIsCollectionWide] = useState<boolean>(false)
+  const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [calculations, setCalculations] = useState<
+    ReturnType<typeof calculateOffer>
+  >({
+    fee: constants.Zero,
+    total: constants.Zero,
+    missingEth: constants.Zero,
+    missingWeth: constants.Zero,
+    error: null,
+    warning: null,
+  })
+  const [offerPrice, setOfferPrice] = useState<string>('0')
+  const [weth, setWeth] = useState<{
+    weth: Weth
+    balance: BigNumber
+  } | null>(null)
   const [{ data: signer }] = useSigner()
-  const [{ data: ethBalance }] = useBalance()
+  const [{ data: ethBalance }, getBalance] = useBalance()
   const provider = useProvider()
   const token = tokens?.tokens?.[0]
+  const bps = collection?.collection?.royalties?.bps ?? 0
+  const royaltyPercentage = `${bps / 100}%`
+  const closeButton = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    async function loadWeth() {
+      if (signer) {
+        await getBalance({ addressOrName: await signer?.getAddress() })
+        const weth = await getWeth(chainId, provider, signer)
+        if (weth) {
+          setWeth(weth)
+        }
+      }
+    }
+    loadWeth()
+  }, [signer])
+
+  useEffect(() => {
+    const userInput = ethers.utils.parseEther(offerPrice)
+    if (weth?.balance && ethBalance?.value) {
+      const calculations = calculateOffer(
+        userInput,
+        ethBalance.value,
+        weth.balance,
+        bps
+      )
+      setCalculations(calculations)
+    }
+  }, [offerPrice])
 
   return (
     <Dialog.Root>
@@ -49,11 +93,11 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
           <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[330px] bg-white shadow-md rounded-md">
             <div className="flex justify-between items-center mb-5">
-              <Dialog.Title className="uppercase opacity-75 font-medium">
-                List Token for Sale
+              <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
+                Offer to purchase
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button className="btn-neutral-ghost p-1.5">
+                <button ref={closeButton} className="btn-neutral-ghost p-1.5">
                   <HiX className="h-5 w-5 " />
                 </button>
               </Dialog.Close>
@@ -77,7 +121,7 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                 <div className="text-sm">{token?.token?.collection?.name}</div>
               </div>
             </div>
-            <div className="space-y-4 mb-8">
+            <div className="space-y-5 mb-8">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="price"
@@ -86,14 +130,59 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                   Price (wETH)
                 </label>
                 <input
-                  placeholder="Choose a price"
+                  placeholder="Insert offer price"
                   id="price"
                   type="number"
                   min={0}
                   step={0.01}
                   value={offerPrice}
-                  onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-blue-outline w-[140px]"
+                  onChange={(e) =>
+                    // Do not set offer price to empty strings
+                    e.target.value !== '' && setOfferPrice(e.target.value)
+                  }
+                  className="input-blue-outline w-[100px]"
+                />
+              </div>
+              {calculations.error && (
+                <div className="px-2 py-1 bg-red-100 text-red-900 rounded-md">
+                  {calculations.error}
+                </div>
+              )}
+              {calculations.warning && (
+                <div className="px-2 py-1 bg-yellow-100 text-yellow-900 rounded-md">
+                  {calculations.warning}
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="postOpenSea"
+                  className="uppercase opacity-75 font-medium"
+                >
+                  Post order on OpenSea
+                </label>
+                <input
+                  type="checkbox"
+                  name="postOpenSea"
+                  id="postOpenSea"
+                  className="transform scale-125"
+                  checked={postOnOpenSea}
+                  onChange={(e) => setPostOnOpenSea(e.target.checked)}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="postOpenSea"
+                  className="uppercase opacity-75 font-medium"
+                >
+                  Collection wide offer
+                </label>
+                <input
+                  type="checkbox"
+                  name="isCollectionWide"
+                  id="isCollectionWide"
+                  className="transform scale-125"
+                  checked={isCollectionWide}
+                  onChange={(e) => setIsCollectionWide(e.target.checked)}
                 />
               </div>
               <div>
@@ -108,9 +197,11 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
               </div>
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">Fees</div>
-                <div className="text-right">
-                  <div>Royalty 5%</div>
-                  <div>Marketplace 0%</div>
+                <div className="grid gap-1.5 grid-cols-[4fr_1fr] justify-end text-right">
+                  <div>Royalty ({royaltyPercentage})</div>
+                  <span>{formatBN(calculations.fee, 5)}</span>
+                  <div>Marketplace (0%)</div>
+                  <span>{formatBN(0, 5)}</span>
                 </div>
               </div>
               <div className="flex justify-between">
@@ -128,6 +219,11 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                 </button>
               </Dialog.Close>
               <button
+                disabled={
+                  +offerPrice <= 0 ||
+                  !calculations.missingEth.isZero() ||
+                  waitingTx
+                }
                 onClick={async () => {
                   const expirationValue = expirationPresets
                     .find(({ preset }) => preset === expiration)
@@ -144,45 +240,29 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                     !fee ||
                     !ethBalance
                   ) {
-                    console.debug(
-                      { apiBase },
-                      { openSeaApiKey },
-                      { signer },
-                      { maker },
-                      { expirationValue },
-                      { fee },
-                      { ethBalance }
-                    )
+                    console.debug({
+                      apiBase,
+                      openSeaApiKey,
+                      signer,
+                      maker,
+                      expirationValue,
+                      fee,
+                      ethBalance,
+                    })
                     return
                   }
 
                   const feeRecipient =
                     collection?.collection?.royalties?.recipient || maker
 
-                  const weth = await getWeth(chainId, provider, signer)
-
-                  if (!weth) {
-                    console.debug({ weth })
-                    return
+                  let query: Parameters<typeof makeOffer>[6] = {
+                    maker,
+                    side: 'buy',
+                    price: calculations.total.toString(),
+                    fee,
+                    feeRecipient,
+                    expirationTime: expirationValue,
                   }
-                  const userInput = BigNumber.from(offerPrice)
-
-                  const calculation = calculateOffer(
-                    userInput,
-                    ethBalance.value,
-                    weth.balance,
-                    +fee
-                  )
-
-                  let query: paths['/orders/build']['get']['parameters']['query'] =
-                    {
-                      maker,
-                      side: 'buy',
-                      price: calculation.total.toString(),
-                      fee,
-                      feeRecipient,
-                      expirationTime: expirationValue,
-                    }
 
                   if (isCollectionWide) {
                     query.collection = token?.token?.collection?.id
@@ -191,20 +271,33 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                     query.tokenId = token?.token?.tokenId
                   }
 
-                  await makeOffer(
-                    chainId,
-                    provider,
-                    ethers.constants.Zero,
-                    apiBase,
-                    openSeaApiKey,
-                    signer,
-                    query,
-                    postOnOpenSea
-                  )
+                  console.debug({ query })
+                  // Set loading state for UI
+                  setWaitingTx(true)
+
+                  // Wait for transactions to complete
+                  try {
+                    await makeOffer(
+                      chainId,
+                      provider,
+                      calculations.total,
+                      apiBase,
+                      openSeaApiKey,
+                      signer,
+                      query,
+                      postOnOpenSea,
+                      calculations.missingWeth
+                    )
+                    // Close modal
+                    // closeButton.current?.click()
+                    setWaitingTx(false)
+                  } catch (error) {
+                    setWaitingTx(false)
+                  }
                 }}
                 className="btn-blue-fill w-full justify-center"
               >
-                Make Offer
+                {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>
             </div>
           </Dialog.Content>

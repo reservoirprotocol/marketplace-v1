@@ -273,7 +273,8 @@ async function makeOffer(
   apiKey: string,
   signer: Signer,
   query: paths['/orders/build']['get']['parameters']['query'],
-  postOnOpenSea: boolean
+  postOnOpenSea: boolean,
+  missingWeth: BigNumber
 ) {
   try {
     // Get a wETH instance
@@ -287,18 +288,26 @@ async function makeOffer(
         input,
         signer
       )
-      if (isAllowanceOk) {
-        const buyOrder = await postBuyOrder(chainId, apiBase, signer, query)
 
-        if (buyOrder && postOnOpenSea && query?.contract && query?.tokenId) {
-          await postBuyOrderToOpenSea(
-            chainId,
-            apiKey,
-            buyOrder,
-            signer,
-            query?.tokenId,
-            query?.contract
-          )
+      if (isAllowanceOk) {
+        const isBalanceOk = await checkUserBalance(
+          signer,
+          missingWeth,
+          weth.weth
+        )
+        if (isBalanceOk) {
+          const buyOrder = await postBuyOrder(chainId, apiBase, signer, query)
+
+          if (buyOrder && postOnOpenSea && query?.contract && query?.tokenId) {
+            await postBuyOrderToOpenSea(
+              chainId,
+              apiKey,
+              buyOrder,
+              signer,
+              query?.tokenId,
+              query?.contract
+            )
+          }
         }
       }
     }

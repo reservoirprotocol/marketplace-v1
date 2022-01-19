@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
@@ -30,22 +30,28 @@ const ListModal: FC<Props> = ({
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('0')
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const token = tokens?.tokens?.[0]
+  const bps = collection?.collection?.royalties?.bps ?? 0
+  const royaltyPercentage = `${bps / 100}%`
+  const closeButton = useRef<HTMLButtonElement>(null)
 
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="btn-blue-fill w-full justify-center">List</button>
+        <button className="btn-blue-fill w-full justify-center">
+          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sell'}
+        </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
           <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[350px] bg-white shadow-md rounded-md">
             <div className="flex justify-between items-center mb-5">
-              <Dialog.Title className="uppercase opacity-75 font-medium">
+              <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
                 List Token for Sale
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button className="btn-neutral-ghost p-1.5">
+                <button ref={closeButton} className="btn-neutral-ghost p-1.5">
                   <HiX className="h-5 w-5 " />
                 </button>
               </Dialog.Close>
@@ -75,7 +81,7 @@ const ListModal: FC<Props> = ({
                   htmlFor="price"
                   className="uppercase opacity-75 font-medium"
                 >
-                  Price
+                  Price (ETH)
                 </label>
                 <input
                   placeholder="Choose a price"
@@ -98,11 +104,14 @@ const ListModal: FC<Props> = ({
                   expiration={expiration}
                 />
               </div>
+
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">Fees</div>
-                <div className="text-right">
-                  <div>Royalty 5%</div>
-                  <div>Marketplace 0%</div>
+                <div className="grid gap-1.5 grid-cols-[4fr_1fr] justify-end text-right">
+                  <div>Royalty ({royaltyPercentage})</div>
+                  <span>{formatBN(0, 5)}</span>
+                  <div>Marketplace (0%)</div>
+                  <span>{formatBN(0, 5)}</span>
                 </div>
               </div>
               <div className="flex justify-between">
@@ -118,20 +127,22 @@ const ListModal: FC<Props> = ({
                 </button>
               </Dialog.Close>
               <button
+                disabled={waitingTx}
                 onClick={async () => {
-                  if (!maker) {
-                    console.error('The maker is undefined')
-                    return
-                  }
-
+                  const contract = token?.token?.contract
                   const fee = collection?.collection?.royalties?.bps?.toString()
-                  if (!fee) {
-                    console.error('The bps is undefined')
+
+                  if (!contract || !maker || !fee) {
+                    console.debug({
+                      contract,
+                      maker,
+                      fee,
+                    })
                     return
                   }
 
-                  await listTokenForSell(apiBase, chainId, signer, {
-                    contract: token?.token?.contract,
+                  const query: Parameters<typeof listTokenForSell>['3'] = {
+                    contract,
                     maker,
                     side: 'sell',
                     price: ethers.utils.parseEther(listingPrice).toString(),
@@ -139,11 +150,22 @@ const ListModal: FC<Props> = ({
                     feeRecipient:
                       collection?.collection?.royalties?.recipient || maker,
                     tokenId: token?.token?.tokenId,
-                  })
+                  }
+
+                  setWaitingTx(true)
+                  try {
+                    await listTokenForSell(apiBase, chainId, signer, query)
+                    // Close modal
+                    // closeButton.current?.click()
+                    setWaitingTx(false)
+                  } catch (error) {
+                    console.error(error)
+                    setWaitingTx(false)
+                  }
                 }}
                 className="btn-blue-fill w-full justify-center"
               >
-                List
+                {waitingTx ? 'Waiting...' : 'List'}
               </button>
             </div>
           </Dialog.Content>

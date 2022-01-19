@@ -19,6 +19,7 @@ import ListModal from 'components/ListModal'
 import OfferModal from 'components/OfferModal'
 import { acceptOffer } from 'lib/acceptOffer'
 import { instantBuy } from 'lib/buyToken'
+import cancelOrder from 'lib/cancelOrder'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -55,6 +56,9 @@ const Index: NextPage<Props> = ({ fallback }) => {
   const collection = fallback.collection
   const isOwner =
     token?.token?.owner?.toLowerCase() === accountData?.address.toLowerCase()
+  const isTopBidder =
+    token?.market?.topBuy?.maker?.toLowerCase() ===
+    accountData?.address.toLowerCase()
 
   return (
     <Layout>
@@ -92,7 +96,9 @@ const Index: NextPage<Props> = ({ fallback }) => {
                   />
                 ) : (
                   <button
-                    disabled={!signer}
+                    disabled={
+                      !signer || token?.market?.floorSell?.value === null
+                    }
                     onClick={async () =>
                       await instantBuy(
                         apiBase,
@@ -139,8 +145,22 @@ const Index: NextPage<Props> = ({ fallback }) => {
                 )}
               </Price>
             </div>
-            {signer && !isOwner && (
-              <button className="col-span-2 mx-auto btn-red-ghost mt-8">
+            {signer && isTopBidder && (
+              <button
+                onClick={async () => {
+                  const tokenId = token?.token?.tokenId
+                  if (tokenId) {
+                    const query: Parameters<typeof cancelOrder>[3] = {
+                      contract: token?.token?.contract,
+                      tokenId,
+                      side: 'sell',
+                    }
+
+                    await cancelOrder(apiBase, +chainId, signer, query)
+                  }
+                }}
+                className="col-span-2 mx-auto btn-red-ghost mt-8"
+              >
                 Cancel your offer
               </button>
             )}

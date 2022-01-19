@@ -1,10 +1,12 @@
 import { BigNumber, constants } from 'ethers'
+import { formatBN } from './numbers'
 
 /**
  *
  * @param userInput The user's ETH input value
  * @param signerEth The signer's ETH balance
  * @param signerWeth The signer's wETH balance
+ * @param bps The royalty amount
  */
 export default function calculateOffer(
   userInput: BigNumber,
@@ -16,20 +18,33 @@ export default function calculateOffer(
   let total = userInput.add(fee)
 
   if (signerWeth.add(signerEth).lt(total)) {
-    // If the user has insufficient balance
+    // The signer has insufficient balance
+    const missingEth = total.sub(signerWeth.add(signerEth))
+    const missingWeth = total.sub(signerWeth)
     return {
       fee,
       total,
-      missingEth: total.sub(signerWeth.add(signerEth)),
-      missingWeth: total.sub(signerWeth),
+      missingEth,
+      missingWeth,
+      error: `You have insufficient funds to place this bid.
+      Increase your balance by ${formatBN(missingEth, 5)} or ${formatBN(
+        missingWeth,
+        5,
+        true
+      )} wETH.`,
+      warning: null,
     }
   } else if (signerWeth.lt(total)) {
-    // If the user doesn't have enough wETH
+    // The signer doesn't have enough wETH
+    const missingWeth = total.sub(signerWeth)
     return {
       fee,
       total,
       missingEth: constants.Zero,
-      missingWeth: total.sub(signerWeth),
+      missingWeth,
+      error: null,
+      warning: `${formatBN(missingWeth, 6)} will be wrapped
+      to place your bid.`,
     }
   } else {
     return {
@@ -37,6 +52,8 @@ export default function calculateOffer(
       total,
       missingEth: constants.Zero,
       missingWeth: constants.Zero,
+      error: null,
+      warning: null,
     }
   }
 }
