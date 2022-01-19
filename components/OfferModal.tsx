@@ -11,6 +11,7 @@ import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
+import { MutatorCallback } from 'swr'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
@@ -24,8 +25,15 @@ type Props = {
     | paths['/tokens/details']['get']['responses']['200']['schema']
     | undefined
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+  mutate: MutatorCallback
 }
-const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
+const OfferModal: FC<Props> = ({
+  maker,
+  tokens,
+  collection,
+  chainId,
+  mutate,
+}) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [isCollectionWide, setIsCollectionWide] = useState<boolean>(false)
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
@@ -290,6 +298,7 @@ const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
                     )
                     // Close modal
                     // closeButton.current?.click()
+                    await mutate()
                     setWaitingTx(false)
                   } catch (error) {
                     setWaitingTx(false)

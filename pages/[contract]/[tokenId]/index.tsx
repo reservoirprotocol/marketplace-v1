@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/router'
 import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { formatBN } from 'lib/numbers'
 import { useAccount, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
@@ -30,6 +30,7 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 const Index: NextPage<Props> = ({ fallback }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const router = useRouter()
 
   let url = new URL('/tokens/details', apiBase)
@@ -41,11 +42,20 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
   setParams(url, query)
 
-  const { data, error } = useSWR<
+  const { data, error, mutate, isValidating } = useSWR<
     paths['/tokens/details']['get']['responses']['200']['schema']
   >(url.href, fetcher, {
     fallbackData: fallback.token,
   })
+
+  // useEffect(() => {
+  //   // After mutate is executed, isValidating will turn
+  //   // true and waitingTx was already true
+  //   // Once is no longer validating set waiting to false
+  //   if (waitingTx && !isValidating) {
+  //     setWaitingTx(false)
+  //   }
+  // }, [isValidating])
 
   if (error || !apiBase || !chainId) {
     console.debug({ apiBase }, { chainId })
@@ -93,24 +103,44 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     maker={accountData?.address}
                     collection={collection}
                     tokens={data}
+                    mutate={mutate}
                   />
                 ) : (
                   <button
                     disabled={
-                      !signer || token?.market?.floorSell?.value === null
+                      !signer ||
+                      token?.market?.floorSell?.value === null ||
+                      waitingTx
                     }
-                    onClick={async () =>
-                      await instantBuy(
-                        apiBase,
-                        +chainId,
-                        signer,
-                        token?.token?.tokenId?.toString(),
-                        token?.token?.contract?.toString()
-                      )
-                    }
+                    onClick={async () => {
+                      const tokenId = token?.token?.tokenId
+
+                      if (!tokenId) {
+                        console.debug({ tokenId })
+                        return
+                      }
+
+                      const query: paths['/orders/fill']['get']['parameters']['query'] =
+                        {
+                          contract: token?.token?.contract,
+                          tokenId,
+                          side: 'sell',
+                        }
+
+                      try {
+                        setWaitingTx(true)
+                        await instantBuy(apiBase, +chainId, signer, query)
+                        await mutate()
+                        setWaitingTx(false)
+                      } catch (error) {
+                        setWaitingTx(false)
+                        console.error(error)
+                        return
+                      }
+                    }}
                     className="btn-blue-fill w-full justify-center"
                   >
-                    Buy Now
+                    {waitingTx ? 'Waiting...' : 'Buy Now'}
                   </button>
                 )}
               </Price>
@@ -120,18 +150,35 @@ const Index: NextPage<Props> = ({ fallback }) => {
               >
                 {isOwner ? (
                   <button
-                    onClick={async () =>
-                      await acceptOffer(
-                        apiBase,
-                        +chainId,
-                        signer,
-                        token?.token?.tokenId?.toString(),
-                        token?.token?.contract?.toString()
-                      )
-                    }
+                    disabled={waitingTx || !token?.market?.topBuy?.value}
+                    onClick={async () => {
+                      const tokenId = token?.token?.tokenId
+                      const contract = token?.token?.contract
+
+                      if (!tokenId || !contract) {
+                        console.debug({ tokenId, contract })
+                        return
+                      }
+
+                      const query: Parameters<typeof acceptOffer>[3] = {
+                        tokenId,
+                        contract,
+                        side: 'buy',
+                      }
+
+                      try {
+                        setWaitingTx(true)
+                        await acceptOffer(apiBase, +chainId, signer, query)
+                        await mutate()
+                        setWaitingTx(false)
+                      } catch (error) {
+                        setWaitingTx(false)
+                        console.error(error)
+                      }
+                    }}
                     className="btn-green-fill w-full justify-center"
                   >
-                    Accept Offer
+                    {waitingTx ? 'Waiting...' : 'Accept Offer'}
                   </button>
                 ) : (
                   <OfferModal
@@ -141,27 +188,37 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     maker={accountData?.address}
                     collection={collection}
                     tokens={data}
+                    mutate={mutate}
                   />
                 )}
               </Price>
             </div>
             {signer && isTopBidder && (
               <button
+                disabled={waitingTx}
                 onClick={async () => {
                   const tokenId = token?.token?.tokenId
                   if (tokenId) {
                     const query: Parameters<typeof cancelOrder>[3] = {
                       contract: token?.token?.contract,
                       tokenId,
-                      side: 'sell',
+                      side: 'buy',
                     }
 
-                    await cancelOrder(apiBase, +chainId, signer, query)
+                    try {
+                      setWaitingTx(true)
+                      await cancelOrder(apiBase, +chainId, signer, query)
+                      await mutate()
+                      setWaitingTx(false)
+                    } catch (error) {
+                      setWaitingTx(false)
+                      console.error(error)
+                    }
                   }
                 }}
                 className="col-span-2 mx-auto btn-red-ghost mt-8"
               >
-                Cancel your offer
+                {waitingTx ? 'Waiting...' : 'Cancel your offer'}
               </button>
             )}
           </div>

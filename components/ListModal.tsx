@@ -8,6 +8,7 @@ import { ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { formatBN } from 'lib/numbers'
+import { MutatorCallback } from 'swr/dist/types'
 
 type Props = {
   apiBase: string
@@ -18,6 +19,7 @@ type Props = {
     | paths['/tokens/details']['get']['responses']['200']['schema']
     | undefined
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+  mutate: MutatorCallback
 }
 
 const ListModal: FC<Props> = ({
@@ -27,6 +29,7 @@ const ListModal: FC<Props> = ({
   chainId,
   apiBase,
   signer,
+  mutate,
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('0')
@@ -157,6 +160,7 @@ const ListModal: FC<Props> = ({
                     await listTokenForSell(apiBase, chainId, signer, query)
                     // Close modal
                     // closeButton.current?.click()
+                    await mutate()
                     setWaitingTx(false)
                   } catch (error) {
                     console.error(error)

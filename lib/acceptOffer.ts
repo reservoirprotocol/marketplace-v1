@@ -104,20 +104,13 @@ async function getMatchingOrders(
   apiBase: string,
   chainId: number,
   signer: Signer,
-  tokenId: string,
-  contract: string
+  query: paths['/orders/fill']['get']['parameters']['query']
 ) {
   try {
     // Get the best offer for the token
     let url = new URL('/orders/fill', apiBase)
 
-    let queries: paths['/orders/fill']['get']['parameters']['query'] = {
-      contract,
-      tokenId,
-      side: 'buy',
-    }
-
-    setParams(url, queries)
+    setParams(url, query)
 
     // Get the best BUY order data
     let res = await fetch(url.href)
@@ -204,38 +197,23 @@ async function acceptOffer(
   apiBase: string,
   chainId: number,
   signer: Signer | undefined,
-  tokenId: string | undefined,
-  contract: string | undefined
+  query: paths['/orders/fill']['get']['parameters']['query']
 ) {
-  if (!signer) {
-    console.error('The signer is undefined.')
-    return
-  }
-  if (!tokenId) {
-    console.error('The token ID is undefined.')
-    return
-  }
-  if (!contract) {
-    console.error('The contract address is undefined.')
-    return
+  if (!signer || !query.contract) {
+    console.debug({ signer, query })
+    throw 'some data is undefined'
   }
 
   try {
     const proxyApproved = await isProxyApproved(
       chainId,
       signer,
-      tokenId,
-      contract
+      query.tokenId,
+      query.contract
     )
 
     if (proxyApproved) {
-      const orders = await getMatchingOrders(
-        apiBase,
-        chainId,
-        signer,
-        tokenId,
-        contract
-      )
+      const orders = await getMatchingOrders(apiBase, chainId, signer, query)
       if (orders) {
         const { buyOrder, sellOrder } = orders
         // Instantiate WyvernV2 Exchange contract object
@@ -264,16 +242,8 @@ async function listTokenForSell(
   signer: Signer | undefined,
   query: paths['/orders/build']['get']['parameters']['query']
 ) {
-  if (!signer) {
-    console.error('The signer is undefined.')
-    return
-  }
-  if (!query.tokenId) {
-    console.error('The token ID is undefined.')
-    return
-  }
-  if (!query.contract) {
-    console.error('The contract address is undefined.')
+  if (!signer || !query.tokenId || !query.contract) {
+    console.debug({ signer, query })
     return
   }
 
