@@ -10,8 +10,8 @@ import { NextRouter, useRouter } from 'next/router'
 import { FC, useEffect } from 'react'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-const COLLECTION_ID = process.env.NEXT_PUBLIC_COLLECTION_ID
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
 
 type InfiniteKeyLoader = (
   router: NextRouter,
@@ -23,11 +23,11 @@ const getKey: InfiniteKeyLoader = (
   index: number,
   previousPageData: Props['fallback']['tokens']
 ) => {
-  if (!API_BASE) {
+  if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
   }
-  if (!COLLECTION_ID) {
+  if (!collectionId) {
     console.debug(
       'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
     )
@@ -37,12 +37,12 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let url = new URL(`/users/${router.query?.address}/tokens`, API_BASE)
+  let url = new URL(`/users/${router.query?.address}/tokens`, apiBase)
 
   let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection: COLLECTION_ID,
+    collection: collectionId,
   }
 
   setParams(url, query)
@@ -101,20 +101,20 @@ export const getStaticProps: GetStaticProps<{
   }
 }> = async ({ params }) => {
   try {
-    if (!API_BASE) {
+    if (!apiBase) {
       throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
     }
-    if (!COLLECTION_ID) {
+    if (!collectionId) {
       throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
     }
     if (!params?.address) {
       throw 'The user address is undefined'
     }
 
-    let url = new URL(`/users/${params.address}/tokens`, API_BASE)
+    let url = new URL(`/users/${params.address}/tokens`, apiBase)
 
     let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
-      collection: COLLECTION_ID,
+      collection: collectionId,
     }
 
     setParams(url, query)

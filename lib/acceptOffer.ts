@@ -101,15 +101,15 @@ async function checkProxyApproval(
 }
 
 async function getMatchingOrders(
-  API_BASE: string,
-  CHAIN_ID: number,
+  apiBase: string,
+  chainId: number,
   signer: Signer,
   tokenId: string,
   contract: string
 ) {
   try {
     // Get the best offer for the token
-    let url = new URL('/orders/fill', API_BASE)
+    let url = new URL('/orders/fill', apiBase)
 
     let queries: paths['/orders/fill']['get']['parameters']['query'] = {
       contract,
@@ -130,7 +130,7 @@ async function getMatchingOrders(
     }
 
     // Use SDK to create order object
-    let buyOrder = new WyvernV2.Order(CHAIN_ID, order?.params)
+    let buyOrder = new WyvernV2.Order(chainId, order?.params)
 
     // Instatiate an matching SELL Order
     let sellOrder = buyOrder.buildMatching(
@@ -146,6 +146,7 @@ async function getMatchingOrders(
 }
 
 async function isProxyApproved(
+  chainId: number,
   signer: Signer,
   tokenId: string,
   contract: string
@@ -161,7 +162,7 @@ async function isProxyApproved(
   )
 
   const proxyRegistryContract = new Contract(
-    process.env.NEXT_PUBLIC_CHAIN_ID === '4'
+    chainId === 4
       ? '0xf57b2c51ded3a29e6891aba85459d600256cf317'
       : '0xa5409ec958c83c3f309868babaca7c86dcb077c1',
     new Interface([
@@ -192,16 +193,16 @@ async function isProxyApproved(
 
 /**
  *
- * @param API_BASE The Reservoir API base url
- * @param CHAIN_ID The Ethereum chain ID (eg: 1 - Ethereum Mainnet, 4 - Rinkeby Testnet)
+ * @param apiBase The Reservoir API base url
+ * @param chainId The Ethereum chain ID (eg: 1 - Ethereum Mainnet, 4 - Rinkeby Testnet)
  * @param signer An Ethereum signer object
  * @param contract The contract address for the collection
  * @param tokenId The token ID
  * @returns `true` if the transaction was succesful, `fasle` otherwise
  */
 async function acceptOffer(
-  API_BASE: string,
-  CHAIN_ID: number,
+  apiBase: string,
+  chainId: number,
   signer: Signer | undefined,
   tokenId: string | undefined,
   contract: string | undefined
@@ -220,12 +221,17 @@ async function acceptOffer(
   }
 
   try {
-    const proxyApproved = await isProxyApproved(signer, tokenId, contract)
+    const proxyApproved = await isProxyApproved(
+      chainId,
+      signer,
+      tokenId,
+      contract
+    )
 
     if (proxyApproved) {
       const orders = await getMatchingOrders(
-        API_BASE,
-        CHAIN_ID,
+        apiBase,
+        chainId,
         signer,
         tokenId,
         contract
@@ -233,7 +239,7 @@ async function acceptOffer(
       if (orders) {
         const { buyOrder, sellOrder } = orders
         // Instantiate WyvernV2 Exchange contract object
-        const exchange = new WyvernV2.Exchange(CHAIN_ID)
+        const exchange = new WyvernV2.Exchange(chainId)
 
         // Execute token sell
         let { wait } = await exchange.match(signer, buyOrder, sellOrder)
@@ -253,8 +259,8 @@ async function acceptOffer(
 }
 
 async function listTokenForSell(
-  API_BASE: string,
-  CHAIN_ID: number,
+  apiBase: string,
+  chainId: number,
   signer: Signer | undefined,
   query: paths['/orders/build']['get']['parameters']['query']
 ) {
@@ -273,6 +279,7 @@ async function listTokenForSell(
 
   try {
     const proxyApproved = await isProxyApproved(
+      chainId,
       signer,
       query.tokenId,
       query.contract
@@ -280,18 +287,7 @@ async function listTokenForSell(
 
     if (proxyApproved) {
       // Build a selling order
-      let url = new URL(`${process.env.NEXT_PUBLIC_API_BASE}/orders/build`)
-
-      //   let queries: paths['/orders/build']['get']['parameters']['query'] = {
-      //     contract,
-      //     maker: await signer.getAddress(),
-      //     side: 'sell',
-      //     price: ethers.utils.parseEther(`${listingPrice}`).toString(),
-      //     fee: `${collection.royalties?.bps}`,
-      //     feeRecipient:
-      //       collection.royalties?.recipient || (await signer.getAddress()),
-      //     tokenId,
-      //   }
+      let url = new URL('/orders/build', apiBase)
 
       setParams(url, query)
 
@@ -305,13 +301,13 @@ async function listTokenForSell(
       }
 
       // Use SDK to create order object
-      const sellOrder = new WyvernV2.Order(CHAIN_ID, order.params)
+      const sellOrder = new WyvernV2.Order(chainId, order.params)
 
       // Sign selling order
       await sellOrder.sign(signer)
 
       // Post order to the database
-      let url2 = new URL('/orders', API_BASE)
+      let url2 = new URL('/orders', apiBase)
 
       await fetch(url2.href, {
         method: 'POST',

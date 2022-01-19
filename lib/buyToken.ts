@@ -5,16 +5,16 @@ import setParams from './params'
 
 /**
  *
- * @param API_BASE The Reservoir API base url
- * @param CHAIN_ID The Ethereum chain ID (eg: 1 - Ethereum Mainnet, 4 - Rinkeby Testnet)
+ * @param apiBase The Reservoir API base url
+ * @param chainId The Ethereum chain ID (eg: 1 - Ethereum Mainnet, 4 - Rinkeby Testnet)
  * @param signer An Ethereum signer object
  * @param contract The contract address for the collection
  * @param tokenId The token ID
  * @returns `true` if the transaction was succesful, `fasle` otherwise
  */
 async function instantBuy(
-  API_BASE: string,
-  CHAIN_ID: number,
+  apiBase: string,
+  chainId: number,
   signer: Signer | undefined,
   contract: string | undefined,
   tokenId: string | undefined
@@ -34,7 +34,7 @@ async function instantBuy(
     }
 
     // Fetch the best sell order for this token
-    let url = new URL('/orders/fill', API_BASE)
+    let url = new URL('/orders/fill', apiBase)
 
     let queries: paths['/orders/fill']['get']['parameters']['query'] = {
       contract,
@@ -54,14 +54,14 @@ async function instantBuy(
     }
 
     // Build matching orders
-    let sellOrder = new WyvernV2.Order(CHAIN_ID, order.params)
+    let sellOrder = new WyvernV2.Order(chainId, order.params)
 
     const buyOrder = sellOrder.buildMatching(
       await signer.getAddress(),
       order.buildMatchingArgs
     )
 
-    let exch = new WyvernV2.Exchange(CHAIN_ID)
+    let exch = new WyvernV2.Exchange(chainId)
 
     let { wait } = await exch.match(signer, buyOrder, sellOrder)
 

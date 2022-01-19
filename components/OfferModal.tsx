@@ -3,12 +3,20 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
+import { optimizeImage } from 'lib/optmizeImage'
+import { formatBN } from 'lib/numbers'
+import { getWeth, makeOffer } from 'lib/makeOffer'
+import { useBalance, useProvider, useSigner } from 'wagmi'
+import calculateOffer from 'lib/calculateOffer'
+
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = {
-  API_BASE: string
-  CHAIN_ID: number
+  apiBase: string
+  chainId: number
   signer: ethers.Signer | undefined
   maker: string | undefined
   tokens:
@@ -17,15 +25,15 @@ type Props = {
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
 }
 
-const OfferModal: FC<Props> = ({
-  maker,
-  tokens,
-  collection,
-  CHAIN_ID,
-  API_BASE,
-  signer,
-}) => {
+const OfferModal: FC<Props> = ({ maker, tokens, collection, chainId }) => {
   const [expiration, setExpiration] = useState('oneDay')
+  const [isCollectionWide, setIsCollectionWide] = useState(false)
+  const [postOnOpenSea, setPostOnOpenSea] = useState(false)
+  const [offerPrice, setOfferPrice] = useState('0')
+  const [{ data: signer }] = useSigner()
+  const [{ data: ethBalance }] = useBalance()
+  const provider = useProvider()
+  const token = tokens?.tokens?.[0]
 
   return (
     <Dialog.Root>
@@ -52,13 +60,21 @@ const OfferModal: FC<Props> = ({
             </div>
             <div className="flex gap-4 items-center mb-8">
               <img
-                src="https://via.placeholder.com/50"
+                src={optimizeImage(token?.token?.image, {
+                  sm: 50,
+                  md: 50,
+                  lg: 50,
+                  xl: 50,
+                  '2xl': 50,
+                })}
                 alt=""
                 className="w-[50px]"
               />
               <div className="overflow-auto">
-                <div className="text-lg font-medium mb-1">#123 Apple</div>
-                <div className="text-sm">Loot</div>
+                <div className="text-lg font-medium mb-1">
+                  {token?.token?.name}
+                </div>
+                <div className="text-sm">{token?.token?.collection?.name}</div>
               </div>
             </div>
             <div className="space-y-4 mb-8">
@@ -72,8 +88,12 @@ const OfferModal: FC<Props> = ({
                 <input
                   placeholder="Choose a price"
                   id="price"
-                  type="text"
-                  className="input-blue-outline w-[120px]"
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={offerPrice}
+                  onChange={(e) => setOfferPrice(e.target.value)}
+                  className="input-blue-outline w-[140px]"
                 />
               </div>
               <div>
@@ -97,7 +117,7 @@ const OfferModal: FC<Props> = ({
                 <div className="uppercase opacity-75 font-medium">
                   Total Cost
                 </div>
-                <div className="font-mono">0.4</div>
+                <div className="font-mono">{formatBN(+offerPrice, 2)}</div>
               </div>
             </div>
 
@@ -107,7 +127,83 @@ const OfferModal: FC<Props> = ({
                   Cancel
                 </button>
               </Dialog.Close>
-              <button className="btn-blue-fill w-full justify-center">
+              <button
+                onClick={async () => {
+                  const expirationValue = expirationPresets
+                    .find(({ preset }) => preset === expiration)
+                    ?.value()
+
+                  const fee = collection.collection?.royalties?.bps?.toString()
+
+                  if (
+                    !apiBase ||
+                    !openSeaApiKey ||
+                    !signer ||
+                    !maker ||
+                    !expirationValue ||
+                    !fee ||
+                    !ethBalance
+                  ) {
+                    console.debug(
+                      { apiBase },
+                      { openSeaApiKey },
+                      { signer },
+                      { maker },
+                      { expirationValue },
+                      { fee },
+                      { ethBalance }
+                    )
+                    return
+                  }
+
+                  const feeRecipient =
+                    collection?.collection?.royalties?.recipient || maker
+
+                  const weth = await getWeth(chainId, provider, signer)
+
+                  if (!weth) {
+                    console.debug({ weth })
+                    return
+                  }
+                  const userInput = BigNumber.from(offerPrice)
+
+                  const calculation = calculateOffer(
+                    userInput,
+                    ethBalance.value,
+                    weth.balance,
+                    +fee
+                  )
+
+                  let query: paths['/orders/build']['get']['parameters']['query'] =
+                    {
+                      maker,
+                      side: 'buy',
+                      price: calculation.total.toString(),
+                      fee,
+                      feeRecipient,
+                      expirationTime: expirationValue,
+                    }
+
+                  if (isCollectionWide) {
+                    query.collection = token?.token?.collection?.id
+                  } else {
+                    query.contract = token?.token?.contract
+                    query.tokenId = token?.token?.tokenId
+                  }
+
+                  await makeOffer(
+                    chainId,
+                    provider,
+                    ethers.constants.Zero,
+                    apiBase,
+                    openSeaApiKey,
+                    signer,
+                    query,
+                    postOnOpenSea
+                  )
+                }}
+                className="btn-blue-fill w-full justify-center"
+              >
                 Make Offer
               </button>
             </div>

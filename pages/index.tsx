@@ -9,18 +9,18 @@ import { useEffect } from 'react'
 import useIsVisible from 'lib/useIsVisible'
 import Hero from 'components/Hero'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-const COLLECTION_ID = process.env.NEXT_PUBLIC_COLLECTION_ID
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
 
 const getKey: SWRInfiniteKeyLoader = (
   index: number,
   previousPageData: Props['fallback']['tokens']
 ) => {
-  if (!API_BASE) {
+  if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
   }
-  if (!COLLECTION_ID) {
+  if (!collectionId) {
     console.debug(
       'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
     )
@@ -30,12 +30,12 @@ const getKey: SWRInfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let url = new URL('/tokens', API_BASE)
+  let url = new URL('/tokens', apiBase)
 
   let query: paths['/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection: COLLECTION_ID,
+    collection: collectionId,
   }
 
   setParams(url, query)
@@ -88,24 +88,24 @@ export const getStaticProps: GetStaticProps<{
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
 }> = async () => {
   try {
-    if (!API_BASE) {
+    if (!apiBase) {
       throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
     }
-    if (!COLLECTION_ID) {
+    if (!collectionId) {
       throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
     }
 
     // -------------- COLLECTION --------------
-    let url1 = new URL(`/collections/${COLLECTION_ID}`, API_BASE)
+    let url1 = new URL(`/collections/${collectionId}`, apiBase)
 
     const res1 = await fetch(url1.href)
     const collection: Props['collection'] = await res1.json()
 
     // -------------- TOKENS --------------
-    let url2 = new URL('/tokens', API_BASE)
+    let url2 = new URL('/tokens', apiBase)
 
     let query2: paths['/tokens']['get']['parameters']['query'] = {
-      collection: COLLECTION_ID,
+      collection: collectionId,
     }
 
     setParams(url2, query2)

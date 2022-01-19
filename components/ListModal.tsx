@@ -10,8 +10,8 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { formatBN } from 'lib/numbers'
 
 type Props = {
-  API_BASE: string
-  CHAIN_ID: number
+  apiBase: string
+  chainId: number
   signer: ethers.Signer | undefined
   maker: string | undefined
   tokens:
@@ -24,8 +24,8 @@ const ListModal: FC<Props> = ({
   maker,
   tokens,
   collection,
-  CHAIN_ID,
-  API_BASE,
+  chainId,
+  apiBase,
   signer,
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
@@ -63,8 +63,10 @@ const ListModal: FC<Props> = ({
                 className="w-[50px]"
               />
               <div className="overflow-auto">
-                <div className="text-lg font-medium mb-1">#123 Apple</div>
-                <div className="text-sm">Loot</div>
+                <div className="text-lg font-medium mb-1">
+                  {token?.token?.name}
+                </div>
+                <div className="text-sm">{token?.token?.collection?.name}</div>
               </div>
             </div>
             <div className="space-y-4 mb-8">
@@ -128,7 +130,7 @@ const ListModal: FC<Props> = ({
                     return
                   }
 
-                  await listTokenForSell(API_BASE, CHAIN_ID, signer, {
+                  await listTokenForSell(apiBase, chainId, signer, {
                     contract: token?.token?.contract,
                     maker,
                     side: 'sell',

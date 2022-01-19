@@ -20,9 +20,9 @@ import OfferModal from 'components/OfferModal'
 import { acceptOffer } from 'lib/acceptOffer'
 import { instantBuy } from 'lib/buyToken'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const COLLECTION_ID = process.env.NEXT_PUBLIC_COLLECTION_ID
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -31,7 +31,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
   const [{ data: signer }] = useSigner()
   const router = useRouter()
 
-  let url = new URL('/tokens/details', API_BASE)
+  let url = new URL('/tokens/details', apiBase)
 
   let query: paths['/tokens/details']['get']['parameters']['query'] = {
     contract: router.query?.contract?.toString(),
@@ -46,8 +46,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
     fallbackData: fallback.token,
   })
 
-  if (error || !API_BASE || !CHAIN_ID) {
-    console.debug({ API_BASE }, { CHAIN_ID })
+  if (error || !apiBase || !chainId) {
+    console.debug({ apiBase }, { chainId })
     return <div>There was an error</div>
   }
 
@@ -83,8 +83,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
               >
                 {isOwner ? (
                   <ListModal
-                    API_BASE={API_BASE}
-                    CHAIN_ID={+CHAIN_ID}
+                    apiBase={apiBase}
+                    chainId={+chainId}
                     signer={signer}
                     maker={accountData?.address}
                     collection={collection}
@@ -95,8 +95,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     disabled={!signer}
                     onClick={async () =>
                       await instantBuy(
-                        API_BASE,
-                        +CHAIN_ID,
+                        apiBase,
+                        +chainId,
                         signer,
                         token?.token?.tokenId?.toString(),
                         token?.token?.contract?.toString()
@@ -116,8 +116,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
                   <button
                     onClick={async () =>
                       await acceptOffer(
-                        API_BASE,
-                        +CHAIN_ID,
+                        apiBase,
+                        +chainId,
                         signer,
                         token?.token?.tokenId?.toString(),
                         token?.token?.contract?.toString()
@@ -129,8 +129,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
                   </button>
                 ) : (
                   <OfferModal
-                    API_BASE={API_BASE}
-                    CHAIN_ID={+CHAIN_ID}
+                    apiBase={apiBase}
+                    chainId={+chainId}
                     signer={signer}
                     maker={accountData?.address}
                     collection={collection}
@@ -179,21 +179,21 @@ export const getStaticProps: GetStaticProps<{
   }
 }> = async ({ params }) => {
   try {
-    if (!API_BASE) {
+    if (!apiBase) {
       throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
     }
-    if (!COLLECTION_ID) {
+    if (!collectionId) {
       throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
     }
 
     // -------------- COLLECTION --------------
-    let url1 = new URL(`/collections/${COLLECTION_ID}`, API_BASE)
+    let url1 = new URL(`/collections/${collectionId}`, apiBase)
 
     const res1 = await fetch(url1.href)
     const collection: Props['fallback']['collection'] = await res1.json()
 
     // -------------- TOKENS --------------
-    let url = new URL('/tokens', API_BASE)
+    let url = new URL('/tokens', apiBase)
 
     let query: paths['/tokens/details']['get']['parameters']['query'] = {
       contract: params?.contract?.toString(),
