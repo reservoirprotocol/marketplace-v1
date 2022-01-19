@@ -24,6 +24,7 @@ import cancelOrder from 'lib/cancelOrder'
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
+const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -42,20 +43,11 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
   setParams(url, query)
 
-  const { data, error, mutate, isValidating } = useSWR<
+  const { data, error, mutate } = useSWR<
     paths['/tokens/details']['get']['responses']['200']['schema']
   >(url.href, fetcher, {
     fallbackData: fallback.token,
   })
-
-  // useEffect(() => {
-  //   // After mutate is executed, isValidating will turn
-  //   // true and waitingTx was already true
-  //   // Once is no longer validating set waiting to false
-  //   if (waitingTx && !isValidating) {
-  //     setWaitingTx(false)
-  //   }
-  // }, [isValidating])
 
   if (error || !apiBase || !chainId) {
     console.debug({ apiBase }, { chainId })
@@ -71,7 +63,10 @@ const Index: NextPage<Props> = ({ fallback }) => {
     accountData?.address.toLowerCase()
 
   return (
-    <Layout>
+    <Layout
+      title={collection.collection?.collection?.name ?? 'HOME'}
+      image={collectionImage ?? ''}
+    >
       <div className="grid gap-10 grid-cols-2 mt-8 justify-items-center">
         <img
           className="w-[500px]"

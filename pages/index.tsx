@@ -11,6 +11,7 @@ import Hero from 'components/Hero'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
+const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
 
 const getKey: SWRInfiniteKeyLoader = (
   index: number,
@@ -68,7 +69,10 @@ const Home: NextPage<Props> = ({ collection, fallback }) => {
   }, [isVisible])
 
   return (
-    <Layout>
+    <Layout
+      title={collection.collection?.collection?.name ?? 'HOME'}
+      image={collectionImage ?? ''}
+    >
       <Hero collection={collection} />
       <TokensGrid
         tokenCount={tokenCount}

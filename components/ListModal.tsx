@@ -132,14 +132,19 @@ const ListModal: FC<Props> = ({
               <button
                 disabled={waitingTx}
                 onClick={async () => {
+                  const expirationValue = expirationPresets
+                    .find(({ preset }) => preset === expiration)
+                    ?.value()
+
                   const contract = token?.token?.contract
                   const fee = collection?.collection?.royalties?.bps?.toString()
 
-                  if (!contract || !maker || !fee) {
+                  if (!contract || !maker || !fee || !expirationValue) {
                     console.debug({
                       contract,
                       maker,
                       fee,
+                      expirationValue,
                     })
                     return
                   }
@@ -153,6 +158,7 @@ const ListModal: FC<Props> = ({
                     feeRecipient:
                       collection?.collection?.royalties?.recipient || maker,
                     tokenId: token?.token?.tokenId,
+                    expirationTime: expirationValue,
                   }
 
                   setWaitingTx(true)

@@ -1,10 +1,12 @@
-import { FC } from 'react'
+import { ComponentProps, FC } from 'react'
 import Navbar from './Navbar'
 
-const Layout: FC = ({ children }) => {
+type Props = ComponentProps<typeof Navbar>
+
+const Layout: FC<Props> = ({ children, title, image }) => {
   return (
     <main className="container mx-auto pt-4 px-2">
-      <Navbar />
+      <Navbar title={title} image={image} />
       {children}
     </main>
   )
