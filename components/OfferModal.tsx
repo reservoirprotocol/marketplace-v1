@@ -6,12 +6,12 @@ import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
-import { formatBN } from 'lib/numbers'
 import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { MutatorCallback } from 'swr'
+import FormatEth from './FormatEth'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
@@ -49,7 +49,7 @@ const OfferModal: FC<Props> = ({
     error: null,
     warning: null,
   })
-  const [offerPrice, setOfferPrice] = useState<string>('0')
+  const [offerPrice, setOfferPrice] = useState<string>('')
   const [weth, setWeth] = useState<{
     weth: Weth
     balance: BigNumber
@@ -103,7 +103,7 @@ const OfferModal: FC<Props> = ({
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
-          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[370px] bg-white shadow-md rounded-md">
+          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[360px] bg-white shadow-md rounded-md">
             <div className="flex justify-between items-center mb-5">
               <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
                 Offer to purchase
@@ -157,7 +157,7 @@ const OfferModal: FC<Props> = ({
                   htmlFor="postOpenSea"
                   className="uppercase opacity-75 font-medium"
                 >
-                  Post order on OpenSea
+                  Also post to Open Sea
                 </label>
                 <input
                   type="checkbox"
@@ -168,10 +168,7 @@ const OfferModal: FC<Props> = ({
                   onChange={(e) => setPostOnOpenSea(e.target.checked)}
                 />
               </div>
-              <div>
-                <div className="uppercase opacity-75 font-medium mb-2">
-                  Expiration
-                </div>
+              <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
                   setExpiration={setExpiration}
@@ -180,7 +177,7 @@ const OfferModal: FC<Props> = ({
               </div>
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">Fees</div>
-                <div className="grid gap-1.5 justify-end text-right">
+                <div className="text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
@@ -189,8 +186,12 @@ const OfferModal: FC<Props> = ({
                 <div className="uppercase opacity-75 font-medium">
                   Total Cost
                 </div>
-                <div className="font-mono">
-                  {formatBN(calculations.total, 2)}
+                <div className="text-2xl font-bold">
+                  <FormatEth
+                    amount={calculations.total}
+                    maximumFractionDigits={3}
+                    logoWidth={10}
+                  />
                 </div>
               </div>
               {calculations.error && (

@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import * as ToggleGroup from '@radix-ui/react-toggle-group'
 
 type Props = {
   presets: {
@@ -17,23 +16,28 @@ const ExpirationSelector: FC<Props> = ({
   setExpiration,
 }) => {
   return (
-    <ToggleGroup.Root
-      type="single"
-      value={expiration}
-      onValueChange={(value) => value && setExpiration(value)}
-      className="overflow-hidden p-1 flex justify-between"
-    >
-      {presets.map(({ preset, display }) => (
-        <ToggleGroup.Item
-          key={preset}
-          value={preset}
-          className="btn-blue-ghost whitespace-nowrap px-3
-          radix-state-on:bg-blue-900 radix-state-on:text-white radix-state-on:hover:bg-blue-800 radix-state-on:hover:text-white"
-        >
-          {display}
-        </ToggleGroup.Item>
-      ))}
-    </ToggleGroup.Root>
+    <>
+      <label
+        htmlFor="expirationSelector"
+        className="uppercase opacity-75 font-medium mb-2"
+      >
+        Expiration
+      </label>
+
+      <select
+        name="expiration"
+        id="expirationSelector"
+        defaultValue={expiration}
+        onChange={(e) => setExpiration(e.target.value)}
+        className="input-blue-outline"
+      >
+        {presets.map(({ preset, display }) => (
+          <option key={preset} value={preset}>
+            {display}
+          </option>
+        ))}
+      </select>
+    </>
   )
 }
 

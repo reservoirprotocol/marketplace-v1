@@ -19,17 +19,16 @@ function formatNumber(amount: number | null | undefined) {
  *  Convert ETH values to human readable formats
  * @param amount An ETH amount
  * @param maximumFractionDigits Number of decimal digits
- * @param disableSign Disable the ETH sign `Ξ` (Greek letter Xi)
  * @returns returns the ETH value as a `string` or `-` if the amount is `null` or `undefined`
  */
 function formatBN(
   amount: BigNumberish | null | undefined,
-  maximumFractionDigits: number,
-  disableSign?: boolean
+  maximumFractionDigits: number
 ) {
   if (!amount) return '-'
 
   let value = ''
+
   if (typeof amount === 'number') {
     value = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
@@ -42,11 +41,7 @@ function formatBN(
     }).format(+utils.formatEther(amount))
   }
 
-  if (disableSign) {
-    return value
-  }
-
-  return `Ξ${value}`
+  return value
 }
 
 export { formatDollar, formatBN, formatNumber }

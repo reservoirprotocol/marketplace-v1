@@ -1,6 +1,7 @@
 import { paths } from 'interfaces/apiTypes'
-import { formatNumber, formatBN } from 'lib/numbers'
+import { formatNumber } from 'lib/numbers'
 import { FC } from 'react'
+import FormatEth from './FormatEth'
 
 type Props = {
   collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
@@ -24,10 +25,16 @@ const Hero: FC<Props> = ({ collection }) => {
         <h1 className="text-xl font-bold">{name}</h1>
       </header>
       <div className="grid gap-3 grid-cols-4 place-items-center max-w-screen-sm mx-auto shadow-md rounded-md p-4 bg-white">
-        <Stat name="24HR Vol" value={formatBN(stats.vol24, 2)} />
-        <Stat name="count" value={formatNumber(stats.count)} />
-        <Stat name="top offer" value={formatBN(stats.topOffer, 2)} />
-        <Stat name="floor" value={formatBN(stats.floor, 2)} />
+        <Stat name="24HR Vol">
+          <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
+        </Stat>
+        <Stat name="count">{formatNumber(stats.count)}</Stat>
+        <Stat name="top offer">
+          <FormatEth amount={stats.topOffer} maximumFractionDigits={2} />
+        </Stat>
+        <Stat name="floor">
+          <FormatEth amount={stats.floor} maximumFractionDigits={2} />
+        </Stat>
       </div>
     </div>
   )
@@ -35,9 +42,9 @@ const Hero: FC<Props> = ({ collection }) => {
 
 export default Hero
 
-const Stat: FC<{ name: string; value: string }> = ({ name, value }) => (
+const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div>
     <div className="uppercase font-medium opacity-75">{name}</div>
-    <div className="text-lg font-semibold">{value}</div>
+    <div className="text-lg font-semibold">{children}</div>
   </div>
 )

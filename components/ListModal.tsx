@@ -1,15 +1,15 @@
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { listTokenForSell } from 'lib/acceptOffer'
-import { ethers } from 'ethers'
+import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
-import { formatBN } from 'lib/numbers'
 import { MutatorCallback } from 'swr/dist/types'
 import { useNetwork } from 'wagmi'
+import FormatEth from './FormatEth'
 
 type Props = {
   apiBase: string
@@ -33,7 +33,8 @@ const ListModal: FC<Props> = ({
   mutate,
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
-  const [listingPrice, setListingPrice] = useState('0')
+  const [listingPrice, setListingPrice] = useState('')
+  const [youGet, setYouGet] = useState(constants.Zero)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
   const token = tokens?.tokens?.[0]
@@ -41,6 +42,16 @@ const ListModal: FC<Props> = ({
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
   const isInTheWrongNetwork = network.chain?.id !== +chainId
+
+  useEffect(() => {
+    const userInput = ethers.utils.parseEther(
+      listingPrice === '' ? '0' : listingPrice
+    )
+
+    let fee = userInput.mul(BigNumber.from(bps)).div(BigNumber.from('10000'))
+    let total = userInput.sub(fee)
+    setYouGet(total)
+  }, [listingPrice])
 
   return (
     <Dialog.Root>
@@ -84,7 +95,7 @@ const ListModal: FC<Props> = ({
                 <div className="text-sm">{token?.token?.collection?.name}</div>
               </div>
             </div>
-            <div className="space-y-4 mb-8">
+            <div className="space-y-5 mb-8">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="price"
@@ -103,29 +114,29 @@ const ListModal: FC<Props> = ({
                   className="input-blue-outline w-[140px]"
                 />
               </div>
-              <div>
-                <div className="uppercase opacity-75 font-medium mb-2">
-                  Expiration
-                </div>
+              <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
                   setExpiration={setExpiration}
                   expiration={expiration}
                 />
               </div>
-
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">Fees</div>
-                <div className="grid gap-1.5 grid-cols-[4fr_1fr] justify-end text-right">
-                  <div>Royalty ({royaltyPercentage})</div>
-                  <span>{formatBN(0, 5)}</span>
-                  <div>Marketplace (0%)</div>
-                  <span>{formatBN(0, 5)}</span>
+                <div className="text-right">
+                  <div>Royalty {royaltyPercentage}</div>
+                  <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">You get</div>
-                <div className="font-mono">{formatBN(+listingPrice, 2)}</div>
+                <div className="font-bold text-2xl">
+                  <FormatEth
+                    amount={youGet}
+                    maximumFractionDigits={2}
+                    logoWidth={10}
+                  />
+                </div>
               </div>
             </div>
 

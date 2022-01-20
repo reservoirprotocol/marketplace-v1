@@ -1,11 +1,11 @@
 import { paths } from 'interfaces/apiTypes'
-import { formatBN } from 'lib/numbers'
 import { FC } from 'react'
 import LoadingCard from './LoadingCard'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import useIsVisible from 'lib/useIsVisible'
+import FormatEth from './FormatEth'
 
 type Props = {
   tokens: SWRInfiniteResponse<
@@ -51,17 +51,29 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                 />
                 <p className="text-lg mb-3 px-6 pt-4 lg:pt-3">{token?.name}</p>
                 <div className="px-6 pb-4 lg:pb-3 flex items-center justify-between">
-                  <div className="grid">
-                    <span className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
+                  <div>
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
                       Offer
-                    </span>
-                    <span>{formatBN(token?.topBuyValue, 2)}</span>
+                    </div>
+                    <div>
+                      <FormatEth
+                        amount={token?.topBuyValue}
+                        maximumFractionDigits={2}
+                        logoWidth={7}
+                      />
+                    </div>
                   </div>
-                  <div className="grid text-right">
-                    <span className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
+                  <div className="text-right">
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
                       Price
-                    </span>
-                    <span>{formatBN(token?.floorSellValue, 2)}</span>
+                    </div>
+                    <div>
+                      <FormatEth
+                        amount={token?.floorSellValue}
+                        maximumFractionDigits={2}
+                        logoWidth={7}
+                      />
+                    </div>
                   </div>
                 </div>
               </a>

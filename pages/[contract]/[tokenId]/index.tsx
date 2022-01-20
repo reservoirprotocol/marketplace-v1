@@ -12,14 +12,14 @@ import {
 import { useRouter } from 'next/router'
 import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
-import { FC, useEffect, useState } from 'react'
-import { formatBN } from 'lib/numbers'
+import { FC, ReactNode, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import OfferModal from 'components/OfferModal'
 import { acceptOffer } from 'lib/acceptOffer'
 import { instantBuy } from 'lib/buyToken'
 import cancelOrder from 'lib/cancelOrder'
+import FormatEth from 'components/FormatEth'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -90,7 +90,13 @@ const Index: NextPage<Props> = ({ fallback }) => {
             <div className="grid gap-8 grid-cols-2">
               <Price
                 title="list price"
-                price={formatBN(token?.market?.floorSell?.value, 2)}
+                price={
+                  <FormatEth
+                    amount={token?.market?.floorSell?.value}
+                    maximumFractionDigits={2}
+                    logoWidth={12}
+                  />
+                }
               >
                 {isOwner ? (
                   <ListModal
@@ -144,7 +150,13 @@ const Index: NextPage<Props> = ({ fallback }) => {
               </Price>
               <Price
                 title="top offer"
-                price={formatBN(token?.market?.topBuy?.value, 2)}
+                price={
+                  <FormatEth
+                    amount={token?.market?.topBuy?.value}
+                    maximumFractionDigits={2}
+                    logoWidth={12}
+                  />
+                }
               >
                 {isOwner ? (
                   <button
@@ -232,14 +244,14 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
 export default Index
 
-const Price: FC<{ title: string; price: string }> = ({
+const Price: FC<{ title: string; price: ReactNode }> = ({
   title,
   price,
   children,
 }) => (
-  <div className="grid space-y-5">
+  <div className="grid space-y-5 justify-items-center">
     <div className="uppercase font-medium opacity-75 text-center">{title}</div>
-    <div className="text-3xl font-bold text-center">{price}</div>
+    <div className="text-3xl font-bold">{price}</div>
     {children}
   </div>
 )
