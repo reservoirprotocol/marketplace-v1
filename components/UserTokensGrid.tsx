@@ -23,6 +23,12 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
   const isEmpty = mappedTokens.length === 0
   const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
 
+  if (isEmpty) {
+    return (
+      <div className="grid justify-center text-xl font-semibold">No tokens</div>
+    )
+  }
+
   return (
     <div className="mb-8 gap-10 mx-auto max-w-[2400px] grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {size === 1 && isValidating
@@ -74,7 +80,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
               </a>
             </Link>
           ))}
-      {didReactEnd &&
+      {!didReactEnd &&
         Array(20)
           .fill(null)
           .map((_, index) => {

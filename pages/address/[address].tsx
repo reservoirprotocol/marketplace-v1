@@ -68,7 +68,7 @@ const Address: FC<Props> = ({ fallback }) => {
     }
   )
 
-  const collectionName = tokens?.data?.[0].tokens?.[0].token?.collection?.name
+  const collectionName = tokens?.data?.[0]?.tokens?.[0]?.token?.collection?.name
 
   // Fetch more data when component is visible
   useEffect(() => {
