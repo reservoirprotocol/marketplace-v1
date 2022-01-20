@@ -195,6 +195,7 @@ async function postBuyOrderToOpenSea(
     // Instatiate a Wyvern order
     const buyOrder = new WyvernV2.Order(chainId, {
       ...params,
+      takerRelayerFee: params.takerRelayerFee + 250,
       // The fee recipient on the maker's order should never be the zero address.
       // Even if the fee is 0, the fee recipient should be set to the maker's address.
       feeRecipient: '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073',
