@@ -8,7 +8,7 @@ import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { formatBN } from 'lib/numbers'
 import { getWeth, makeOffer } from 'lib/makeOffer'
-import { useBalance, useProvider, useSigner } from 'wagmi'
+import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { MutatorCallback } from 'swr'
@@ -38,6 +38,7 @@ const OfferModal: FC<Props> = ({
   const [isCollectionWide, setIsCollectionWide] = useState<boolean>(false)
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: network }] = useNetwork()
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
   >({
@@ -60,6 +61,7 @@ const OfferModal: FC<Props> = ({
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
+  const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   useEffect(() => {
     async function loadWeth() {
@@ -75,7 +77,9 @@ const OfferModal: FC<Props> = ({
   }, [signer])
 
   useEffect(() => {
-    const userInput = ethers.utils.parseEther(offerPrice)
+    const userInput = ethers.utils.parseEther(
+      offerPrice === '' ? '0' : offerPrice
+    )
     if (weth?.balance && ethBalance?.value) {
       const calculations = calculateOffer(
         userInput,
@@ -91,7 +95,7 @@ const OfferModal: FC<Props> = ({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          disabled={!signer}
+          disabled={!signer || isInTheWrongNetwork}
           className="btn-blue-fill w-full justify-center"
         >
           Make Offer
@@ -99,7 +103,7 @@ const OfferModal: FC<Props> = ({
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
-          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[330px] bg-white shadow-md rounded-md">
+          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[370px] bg-white shadow-md rounded-md">
             <div className="flex justify-between items-center mb-5">
               <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
                 Offer to purchase
@@ -138,29 +142,16 @@ const OfferModal: FC<Props> = ({
                   Price (wETH)
                 </label>
                 <input
-                  placeholder="Insert offer price"
+                  placeholder="Insert price"
                   id="price"
                   type="number"
                   min={0}
                   step={0.01}
                   value={offerPrice}
-                  onChange={(e) =>
-                    // Do not set offer price to empty strings
-                    e.target.value !== '' && setOfferPrice(e.target.value)
-                  }
-                  className="input-blue-outline w-[100px]"
+                  onChange={(e) => setOfferPrice(e.target.value)}
+                  className="input-blue-outline w-[120px]"
                 />
               </div>
-              {calculations.error && (
-                <div className="px-2 py-1 bg-red-100 text-red-900 rounded-md">
-                  {calculations.error}
-                </div>
-              )}
-              {calculations.warning && (
-                <div className="px-2 py-1 bg-yellow-100 text-yellow-900 rounded-md">
-                  {calculations.warning}
-                </div>
-              )}
               <div className="flex items-center gap-3">
                 <label
                   htmlFor="postOpenSea"
@@ -177,22 +168,6 @@ const OfferModal: FC<Props> = ({
                   onChange={(e) => setPostOnOpenSea(e.target.checked)}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label
-                  htmlFor="postOpenSea"
-                  className="uppercase opacity-75 font-medium"
-                >
-                  Collection wide offer
-                </label>
-                <input
-                  type="checkbox"
-                  name="isCollectionWide"
-                  id="isCollectionWide"
-                  className="transform scale-125"
-                  checked={isCollectionWide}
-                  onChange={(e) => setIsCollectionWide(e.target.checked)}
-                />
-              </div>
               <div>
                 <div className="uppercase opacity-75 font-medium mb-2">
                   Expiration
@@ -205,21 +180,30 @@ const OfferModal: FC<Props> = ({
               </div>
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">Fees</div>
-                <div className="grid gap-1.5 grid-cols-[4fr_1fr] justify-end text-right">
-                  <div>Royalty ({royaltyPercentage})</div>
-                  <span>{formatBN(calculations.fee, 5)}</span>
-                  <div>Marketplace (0%)</div>
-                  <span>{formatBN(0, 5)}</span>
+                <div className="grid gap-1.5 justify-end text-right">
+                  <div>Royalty {royaltyPercentage}</div>
+                  <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
                 <div className="uppercase opacity-75 font-medium">
                   Total Cost
                 </div>
-                <div className="font-mono">{formatBN(+offerPrice, 2)}</div>
+                <div className="font-mono">
+                  {formatBN(calculations.total, 2)}
+                </div>
               </div>
+              {calculations.error && (
+                <div className="px-2 py-1 bg-red-100 text-red-900 rounded-md">
+                  {calculations.error}
+                </div>
+              )}
+              {calculations.warning && (
+                <div className="px-2 py-1 bg-yellow-100 text-yellow-900 rounded-md">
+                  {calculations.warning}
+                </div>
+              )}
             </div>
-
             <div className="flex items-center gap-4">
               <Dialog.Close asChild>
                 <button className="btn-neutral-fill w-full justify-center">

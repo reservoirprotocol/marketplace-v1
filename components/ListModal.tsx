@@ -9,6 +9,7 @@ import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { formatBN } from 'lib/numbers'
 import { MutatorCallback } from 'swr/dist/types'
+import { useNetwork } from 'wagmi'
 
 type Props = {
   apiBase: string
@@ -34,15 +35,20 @@ const ListModal: FC<Props> = ({
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('0')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: network }] = useNetwork()
   const token = tokens?.tokens?.[0]
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
+  const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="btn-blue-fill w-full justify-center">
+        <button
+          disabled={isInTheWrongNetwork}
+          className="btn-blue-fill w-full justify-center"
+        >
           {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sell'}
         </button>
       </Dialog.Trigger>
@@ -130,7 +136,7 @@ const ListModal: FC<Props> = ({
                 </button>
               </Dialog.Close>
               <button
-                disabled={waitingTx}
+                disabled={waitingTx || isInTheWrongNetwork}
                 onClick={async () => {
                   const expirationValue = expirationPresets
                     .find(({ preset }) => preset === expiration)

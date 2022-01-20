@@ -14,7 +14,7 @@ import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
 import { FC, useEffect, useState } from 'react'
 import { formatBN } from 'lib/numbers'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import OfferModal from 'components/OfferModal'
 import { acceptOffer } from 'lib/acceptOffer'
@@ -32,6 +32,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: network }] = useNetwork()
   const router = useRouter()
 
   let url = new URL('/tokens/details', apiBase)
@@ -61,6 +62,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
   const isTopBidder =
     token?.market?.topBuy?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
+  const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   return (
     <Layout
@@ -105,7 +107,8 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     disabled={
                       !signer ||
                       token?.market?.floorSell?.value === null ||
-                      waitingTx
+                      waitingTx ||
+                      isInTheWrongNetwork
                     }
                     onClick={async () => {
                       const tokenId = token?.token?.tokenId
@@ -145,7 +148,11 @@ const Index: NextPage<Props> = ({ fallback }) => {
               >
                 {isOwner ? (
                   <button
-                    disabled={waitingTx || !token?.market?.topBuy?.value}
+                    disabled={
+                      waitingTx ||
+                      !token?.market?.topBuy?.value ||
+                      isInTheWrongNetwork
+                    }
                     onClick={async () => {
                       const tokenId = token?.token?.tokenId
                       const contract = token?.token?.contract
@@ -190,7 +197,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
             </div>
             {signer && isTopBidder && (
               <button
-                disabled={waitingTx}
+                disabled={waitingTx || isInTheWrongNetwork}
                 onClick={async () => {
                   const tokenId = token?.token?.tokenId
                   if (tokenId) {
