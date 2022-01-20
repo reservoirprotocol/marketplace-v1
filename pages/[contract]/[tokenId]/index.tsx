@@ -25,6 +25,7 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
 const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
+const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -44,13 +45,15 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
   setParams(url, query)
 
-  const { data, error, mutate } = useSWR<
-    paths['/tokens/details']['get']['responses']['200']['schema']
-  >(url.href, fetcher, {
-    fallbackData: fallback.token,
-  })
+  const { data, error, mutate } = useSWR<Props['fallback']['token']>(
+    url.href,
+    fetcher,
+    {
+      fallbackData: fallback.token,
+    }
+  )
 
-  if (error || !apiBase || !chainId) {
+  if (error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
     return <div>There was an error</div>
   }
@@ -72,13 +75,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
       <div className="grid gap-10 grid-cols-2 mt-8 justify-items-center">
         <img
           className="w-[500px]"
-          src={optimizeImage(token?.token?.image, {
-            sm: 500,
-            md: 500,
-            lg: 500,
-            xl: 500,
-            '2xl': 500,
-          })}
+          src={optimizeImage(token?.token?.image, 500)}
         />
         <div>
           <div className="text-lg mb-4">{token?.token?.collection?.name}</div>
@@ -118,15 +115,16 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     }
                     onClick={async () => {
                       const tokenId = token?.token?.tokenId
+                      const contract = token?.token?.contract
 
-                      if (!tokenId) {
+                      if (!tokenId || !contract) {
                         console.debug({ tokenId })
                         return
                       }
 
                       const query: paths['/orders/fill']['get']['parameters']['query'] =
                         {
-                          contract: token?.token?.contract,
+                          contract,
                           tokenId,
                           side: 'sell',
                         }
@@ -196,12 +194,33 @@ const Index: NextPage<Props> = ({ fallback }) => {
                   </button>
                 ) : (
                   <OfferModal
-                    apiBase={apiBase}
-                    chainId={+chainId}
                     signer={signer}
-                    maker={accountData?.address}
-                    collection={collection}
-                    tokens={data}
+                    data={{
+                      // SINGLE TOKEN OFFER
+                      collection: {
+                        id: undefined,
+                        image: undefined,
+                        name: collection?.collection?.collection?.name,
+                        tokenCount: undefined,
+                      },
+                      token: {
+                        contract: token?.token?.contract,
+                        id: token?.token?.tokenId,
+                        image: token?.token?.image,
+                        name: token?.token?.name,
+                        topBuyValue: token?.market?.topBuy?.value,
+                        floorSellValue: token?.market?.floorSell?.value,
+                      },
+                    }}
+                    royalties={{
+                      bps: collection.collection?.royalties?.bps,
+                      recipient: collection.collection?.royalties?.recipient,
+                    }}
+                    env={{
+                      apiBase,
+                      chainId: +chainId,
+                      openSeaApiKey,
+                    }}
                     mutate={mutate}
                   />
                 )}
@@ -212,9 +231,10 @@ const Index: NextPage<Props> = ({ fallback }) => {
                 disabled={waitingTx || isInTheWrongNetwork}
                 onClick={async () => {
                   const tokenId = token?.token?.tokenId
-                  if (tokenId) {
+                  const contract = token?.token?.contract
+                  if (tokenId && contract) {
                     const query: Parameters<typeof cancelOrder>[3] = {
-                      contract: token?.token?.contract,
+                      contract,
                       tokenId,
                       side: 'buy',
                     }

@@ -8,10 +8,14 @@ import TokensGrid from 'components/TokensGrid'
 import { useEffect } from 'react'
 import useIsVisible from 'lib/useIsVisible'
 import Hero from 'components/Hero'
+import useSWR from 'swr'
+import { useSigner } from 'wagmi'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
 const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
+const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 const getKey: SWRInfiniteKeyLoader = (
   index: number,
@@ -46,20 +50,31 @@ const getKey: SWRInfiniteKeyLoader = (
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Home: NextPage<Props> = ({ collection, fallback }) => {
+const Home: NextPage<Props> = ({ fallback }) => {
   const { containerRef, isVisible } = useIsVisible()
+  const [{ data: signer }] = useSigner()
 
-  const tokenCount = collection?.collection?.set?.tokenCount || 0
+  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
+    (index, previousPageData) => getKey(index, previousPageData),
+    fetcher,
+    {
+      // solution only in beta
+      // https://github.com/vercel/swr/pull/1538
+      revalidateFirstPage: false,
+      // revalidateOnMount: false,
+      fallbackData: [fallback.tokens],
+    }
+  )
 
-  const tokens = useSWRInfinite<
-    paths['/tokens']['get']['responses']['200']['schema']
-  >((index, previousPageData) => getKey(index, previousPageData), fetcher, {
-    // solution only in beta
-    // https://github.com/vercel/swr/pull/1538
-    revalidateFirstPage: false,
-    // revalidateOnMount: false,
-    fallbackData: [fallback.tokens],
-  })
+  let url = new URL(`/collections/${collectionId}`, apiBase)
+
+  const collection = useSWR<Props['fallback']['collection']>(
+    url.href,
+    fetcher,
+    {
+      fallbackData: fallback.collection,
+    }
+  )
 
   // Fetch more data when component is visible
   useEffect(() => {
@@ -68,14 +83,68 @@ const Home: NextPage<Props> = ({ collection, fallback }) => {
     }
   }, [isVisible])
 
+  if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
+    console.debug({ apiBase }, { chainId })
+    return <div>There was an error</div>
+  }
+
+  const stats = {
+    vol24: 10,
+    count: collection?.data?.collection?.set?.tokenCount,
+    topOffer: collection?.data?.collection?.set?.market?.topBuy?.value,
+    floor: collection?.data?.collection?.set?.market?.floorSell?.value,
+  }
+
+  const header = {
+    image: collection?.data?.collection?.collection?.image,
+    name: collection?.data?.collection?.collection?.name,
+  }
+
+  const royalties = {
+    bps: collection.data?.collection?.royalties?.bps,
+    recipient: collection.data?.collection?.royalties?.recipient,
+  }
+
+  const env = {
+    apiBase,
+    chainId: +chainId,
+    openSeaApiKey,
+  }
+
+  const data = {
+    // COLLECTION WIDE OFFER
+    collection: {
+      id: collection?.data?.collection?.collection?.id,
+      image: collection?.data?.collection?.collection?.image,
+      name: collection?.data?.collection?.collection?.name,
+      tokenCount: fallback.collection?.collection?.set?.tokenCount ?? 0,
+    },
+    token: {
+      contract: undefined,
+      id: undefined,
+      image: undefined,
+      name: undefined,
+      topBuyValue: undefined,
+      floorSellValue: undefined,
+    },
+  }
+
   return (
     <Layout
-      title={collection.collection?.collection?.name ?? 'HOME'}
+      title={collection.data?.collection?.collection?.name ?? 'HOME'}
       image={collectionImage ?? ''}
     >
-      <Hero collection={collection} />
+      <Hero
+        stats={stats}
+        header={header}
+        signer={signer}
+        data={data}
+        royalties={royalties}
+        env={env}
+        mutate={collection.mutate}
+      />
       <TokensGrid
-        tokenCount={tokenCount}
+        tokenCount={data.collection.tokenCount}
         tokens={tokens}
         viewRef={containerRef}
       />
@@ -88,8 +157,8 @@ export default Home
 export const getStaticProps: GetStaticProps<{
   fallback: {
     tokens: paths['/tokens']['get']['responses']['200']['schema']
+    collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
   }
-  collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
 }> = async () => {
   try {
     if (!apiBase) {
@@ -103,7 +172,7 @@ export const getStaticProps: GetStaticProps<{
     let url1 = new URL(`/collections/${collectionId}`, apiBase)
 
     const res1 = await fetch(url1.href)
-    const collection: Props['collection'] = await res1.json()
+    const collection: Props['fallback']['collection'] = await res1.json()
 
     // -------------- TOKENS --------------
     let url2 = new URL('/tokens', apiBase)
@@ -119,9 +188,9 @@ export const getStaticProps: GetStaticProps<{
 
     return {
       props: {
-        collection,
         fallback: {
           tokens,
+          collection,
         },
       },
     }

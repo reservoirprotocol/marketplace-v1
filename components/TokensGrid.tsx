@@ -37,13 +37,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
             >
               <a className="grid rounded-b-md group transition hover:shadow-lg bg-white dark:bg-black hover:-translate-y-0.5">
                 <img
-                  src={optimizeImage(token?.image, {
-                    sm: 250,
-                    md: 250,
-                    lg: 250,
-                    xl: 250,
-                    '2xl': 250,
-                  })}
+                  src={optimizeImage(token?.image, 250)}
                   alt={`${token?.collection?.name}`}
                   className="w-full"
                   width="250"

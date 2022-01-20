@@ -7,29 +7,31 @@
  */
 export function optimizeImage(
   imageHref: string | undefined,
-  obj: { sm: number; md: number; lg: number; xl: number; '2xl': number }
+  // innerWidth: any,
+  // obj: { sm: number; md: number; lg: number; xl: number; '2xl': number }
+  width: number
 ) {
   if (!imageHref) return ''
 
-  const w =
-    window?.innerWidth < 639
-      ? obj.sm
-      : window?.innerWidth < 767
-      ? obj.md
-      : window?.innerWidth < 1023
-      ? obj.lg
-      : window?.innerWidth < 1279
-      ? obj.xl
-      : obj['2xl']
+  // const w =
+  //   innerWidth < 639
+  //     ? obj.sm
+  //     : innerWidth < 767
+  //     ? obj.md
+  //     : innerWidth < 1023
+  //     ? obj.lg
+  //     : innerWidth < 1279
+  //     ? obj.xl
+  //     : obj['2xl']
 
   let url = new URL(imageHref)
   // Optimize google images
   if (url.host === 'lh3.googleusercontent.com') {
     if (imageHref.includes('=s') || imageHref.includes('=w')) {
       let newImage = imageHref.split('=')
-      return `${newImage[0]}=w${w}`
+      return `${newImage[0]}=w${width}`
     }
-    return `${imageHref}=w${w}`
+    return `${imageHref}=w${width}`
   }
   return imageHref
 }

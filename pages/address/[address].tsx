@@ -58,9 +58,7 @@ const Address: FC<Props> = ({ fallback }) => {
 
   const { containerRef, isVisible } = useIsVisible()
 
-  const tokens = useSWRInfinite<
-    paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-  >(
+  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
     (index, previousPageData) => getKey(router, index, previousPageData),
     fetcher,
     {

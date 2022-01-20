@@ -1,37 +1,64 @@
-import { paths } from 'interfaces/apiTypes'
 import { formatNumber } from 'lib/numbers'
-import { FC } from 'react'
+import { ComponentProps, FC } from 'react'
+import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
+import OfferModal from './OfferModal'
 
-type Props = {
-  collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+type Props = Omit<ComponentProps<typeof OfferModal>, 'trigger'> & {
+  stats: {
+    vol24: number | undefined
+    count: number | undefined
+    topOffer: number | undefined
+    floor: number | undefined
+  }
+  header: {
+    image: string | undefined
+    name: string | undefined
+  }
 }
 
-const Hero: FC<Props> = ({ collection }) => {
-  const stats = {
-    vol24: 10,
-    count: collection?.collection?.set?.tokenCount,
-    topOffer: collection?.collection?.set?.market?.topBuy?.value,
-    floor: collection?.collection?.set?.market?.floorSell?.value,
-  }
-
-  const image = collection?.collection?.collection?.image
-  const name = collection?.collection?.collection?.name
+const Hero: FC<Props> = ({
+  data,
+  env,
+  mutate,
+  signer,
+  stats,
+  header,
+  royalties,
+}) => {
+  const [{ data: network }] = useNetwork()
+  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
 
   return (
     <div className="space-y-5 mt-7 mb-10">
       <header className="flex gap-5 items-center justify-center">
-        <img className="h-[50px] w-[50px]" src={image} />
-        <h1 className="text-xl font-bold">{name}</h1>
+        <img className="h-[50px] w-[50px]" src={header.image} />
+        <h1 className="text-xl font-bold">{header.name}</h1>
       </header>
       <div className="grid gap-3 grid-cols-4 place-items-center max-w-screen-sm mx-auto shadow-md rounded-md p-4 bg-white">
         <Stat name="24HR Vol">
           <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
         </Stat>
         <Stat name="count">{formatNumber(stats.count)}</Stat>
-        <Stat name="top offer">
-          <FormatEth amount={stats.topOffer} maximumFractionDigits={2} />
-        </Stat>
+        <OfferModal
+          trigger={
+            <button disabled={!signer || isInTheWrongNetwork}>
+              <Stat name="top offer">
+                <div className="w-min ml-4">
+                  <FormatEth
+                    amount={stats.topOffer}
+                    maximumFractionDigits={2}
+                  />
+                </div>
+              </Stat>
+            </button>
+          }
+          royalties={royalties}
+          signer={signer}
+          data={data}
+          env={env}
+          mutate={mutate}
+        />
         <Stat name="floor">
           <FormatEth amount={stats.floor} maximumFractionDigits={2} />
         </Stat>

@@ -184,13 +184,11 @@ async function postBuyOrderToOpenSea(
   chainId: number,
   apiKey: string,
   buyOrder: WyvernV2.Order,
-  signer: Signer,
   tokenId: string,
   contract: string
 ) {
   try {
-    await buyOrder.sign(signer)
-
+    console.debug(buyOrder)
     const order = {
       exchange: buyOrder.params.exchange,
       maker: buyOrder.params.maker,
@@ -215,7 +213,8 @@ async function postBuyOrderToOpenSea(
       basePrice: buyOrder.params.basePrice,
       extra: buyOrder.params.extra,
       listingTime: buyOrder.params.listingTime,
-      expirationTime: buyOrder.params.expirationTime,
+      // Adjust time format for OpenSea
+      expirationTime: +buyOrder.params.expirationTime.toString().slice(0, -3),
       salt: buyOrder.params.salt,
       metadata: {
         asset: {
@@ -303,7 +302,6 @@ async function makeOffer(
               chainId,
               apiKey,
               buyOrder,
-              signer,
               query?.tokenId,
               query?.contract
             )

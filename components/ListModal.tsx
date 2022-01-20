@@ -78,13 +78,7 @@ const ListModal: FC<Props> = ({
             </div>
             <div className="flex gap-4 items-center mb-8">
               <img
-                src={optimizeImage(token?.token?.image, {
-                  sm: 50,
-                  md: 50,
-                  lg: 50,
-                  xl: 50,
-                  '2xl': 50,
-                })}
+                src={optimizeImage(token?.token?.image, 50)}
                 alt={token?.token?.name}
                 className="w-[50px]"
               />

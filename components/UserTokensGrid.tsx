@@ -36,13 +36,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
             >
               <a className="grid rounded-b-md group transition hover:shadow-lg bg-white dark:bg-black hover:-translate-y-0.5">
                 <img
-                  src={optimizeImage(token?.token?.image, {
-                    sm: 250,
-                    md: 250,
-                    lg: 250,
-                    xl: 250,
-                    '2xl': 250,
-                  })}
+                  src={optimizeImage(token?.token?.image, 250)}
                   alt={`${token?.token?.collection?.name}`}
                   className="w-full"
                   width="250"
@@ -58,7 +52,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
                     </div>
                     <div>
                       <FormatEth
-                        amount={token?.ownership?.topBuyValue}
+                        amount={token?.token?.topBuy?.value}
                         maximumFractionDigits={2}
                         logoWidth={7}
                       />
