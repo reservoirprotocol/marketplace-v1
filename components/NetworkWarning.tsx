@@ -1,12 +1,13 @@
 import React from 'react'
-import { useNetwork } from 'wagmi'
+import { useNetwork, useSigner } from 'wagmi'
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 
 function NetworkWarning() {
   const [{ data }] = useNetwork()
+  const [{ data: signer }] = useSigner()
 
-  if (chainId && data.chain?.id !== +chainId) {
+  if (chainId && signer && data.chain?.id !== +chainId) {
     return (
       <div className="w-screen h-[40px] text-black bg-yellow-200 flex items-center justify-center">
         <span>

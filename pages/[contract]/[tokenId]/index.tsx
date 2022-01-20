@@ -62,7 +62,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
   const isTopBidder =
     token?.market?.topBuy?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
-  const isInTheWrongNetwork = network.chain?.id !== +chainId
+  const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
   return (
     <Layout
