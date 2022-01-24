@@ -16,54 +16,41 @@ async function instantBuy(
   apiBase: string,
   chainId: number,
   signer: Signer | undefined,
-  contract: string | undefined,
-  tokenId: string | undefined
+  query: paths['/orders/fill']['get']['parameters']['query']
 ) {
   try {
     if (!signer) {
       console.error('Cannot accept offer because the signer is undefined.')
       return
     }
-    if (!tokenId) {
-      console.error('Cannot accept offer because the token ID is undefined.')
-      return
-    }
-    if (!contract) {
-      console.error('Cannot accept offer because the contract is undefined.')
-      return
-    }
 
     // Fetch the best sell order for this token
     let url = new URL('/orders/fill', apiBase)
 
-    let queries: paths['/orders/fill']['get']['parameters']['query'] = {
-      contract,
-      tokenId,
-      side: 'sell',
-    }
+    setParams(url, query)
 
-    setParams(url, queries)
+    const res = await fetch(url.href)
 
-    let res = await fetch(url.href)
-
-    let { order } =
+    const { order } =
       (await res.json()) as paths['/orders/fill']['get']['responses']['200']['schema']
 
     if (!order?.params) {
       throw 'API ERROR: Could not retrieve order params'
     }
 
-    // Build matching orders
-    let sellOrder = new WyvernV2.Order(chainId, order.params)
+    // Use SDK to create order object
+    const sellOrder = new WyvernV2.Order(chainId, order.params)
 
+    // Create a matching buy order
     const buyOrder = sellOrder.buildMatching(
       await signer.getAddress(),
       order.buildMatchingArgs
     )
 
-    let exch = new WyvernV2.Exchange(chainId)
+    const exch = new WyvernV2.Exchange(chainId)
 
-    let { wait } = await exch.match(signer, buyOrder, sellOrder)
+    // Execute order match
+    const { wait } = await exch.match(signer, buyOrder, sellOrder)
 
     // Wait for the transaction to be mined
     await wait()

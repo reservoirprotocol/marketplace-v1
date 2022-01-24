@@ -12,6 +12,7 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
+const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
 
 type InfiniteKeyLoader = (
   router: NextRouter,
@@ -57,9 +58,7 @@ const Address: FC<Props> = ({ fallback }) => {
 
   const { containerRef, isVisible } = useIsVisible()
 
-  const tokens = useSWRInfinite<
-    paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-  >(
+  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
     (index, previousPageData) => getKey(router, index, previousPageData),
     fetcher,
     {
@@ -69,6 +68,8 @@ const Address: FC<Props> = ({ fallback }) => {
     }
   )
 
+  const collectionName = tokens?.data?.[0]?.tokens?.[0]?.token?.collection?.name
+
   // Fetch more data when component is visible
   useEffect(() => {
     if (isVisible) {
@@ -77,7 +78,7 @@ const Address: FC<Props> = ({ fallback }) => {
   }, [isVisible])
 
   return (
-    <Layout>
+    <Layout title={collectionName ?? 'HOME'} image={collectionImage ?? ''}>
       <div className="flex justify-center items-center mt-4 mb-10">
         <EthAccount address={router.query?.address?.toString()} />
       </div>

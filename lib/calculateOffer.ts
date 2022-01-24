@@ -27,10 +27,9 @@ export default function calculateOffer(
       missingEth,
       missingWeth,
       error: `You have insufficient funds to place this bid.
-      Increase your balance by ${formatBN(missingEth, 5)} or ${formatBN(
+      Increase your balance by ${formatBN(missingEth, 5)} ETH or ${formatBN(
         missingWeth,
-        5,
-        true
+        5
       )} wETH.`,
       warning: null,
     }

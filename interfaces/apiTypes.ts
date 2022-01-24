@@ -4,792 +4,1026 @@
  */
 
 export interface paths {
-  "/attributes": {
-    get: operations["getAttributes"];
-  };
-  "/collections": {
-    get: operations["getCollections"];
-  };
-  "/market": {
-    get: operations["getMarket"];
-  };
-  "/orders": {
-    get: operations["getOrders"];
-    post: operations["postOrders"];
-  };
-  "/owners": {
-    get: operations["getOwners"];
-  };
-  "/stats": {
-    get: operations["getStats"];
-  };
-  "/tokens": {
-    get: operations["getTokens"];
-  };
-  "/transfers": {
-    get: operations["getTransfers"];
-  };
-  "/collections/{collection}": {
-    get: operations["getCollectionsCollection"];
-  };
-  "/orders/build": {
-    get: operations["getOrdersBuild"];
-  };
-  "/orders/fill": {
-    get: operations["getOrdersFill"];
-  };
-  "/tokens/details": {
-    get: operations["getTokensDetails"];
-  };
-  "/tokens/floor": {
-    get: operations["getTokensFloor"];
-  };
-  "/collections/{collection}/attributes": {
-    get: operations["getCollectionsCollectionAttributes"];
-  };
-  "/users/{user}/collections": {
-    get: operations["getUsersUserCollections"];
-  };
-  "/users/{user}/positions": {
-    get: operations["getUsersUserPositions"];
-  };
-  "/users/{user}/tokens": {
-    get: operations["getUsersUserTokens"];
-  };
-  "/attributes/refresh": {
-    post: operations["postAttributesRefresh"];
-  };
-  "/admin/fix/cache": {
-    post: operations["postAdminFixCache"];
-  };
-  "/admin/index/metadata": {
-    post: operations["postAdminIndexMetadata"];
-  };
-  "/admin/sync/events": {
-    post: operations["postAdminSyncEvents"];
-  };
+  '/attributes': {
+    get: operations['getAttributes']
+  }
+  '/collections': {
+    get: operations['getCollections']
+  }
+  '/market': {
+    get: operations['getMarket']
+  }
+  '/orders': {
+    get: operations['getOrders']
+    post: operations['postOrders']
+  }
+  '/owners': {
+    get: operations['getOwners']
+  }
+  '/sales': {
+    get: operations['getSales']
+  }
+  '/stats': {
+    get: operations['getStats']
+  }
+  '/tokens': {
+    get: operations['getTokens']
+  }
+  '/transfers': {
+    get: operations['getTransfers']
+  }
+  '/collections/{collection}': {
+    get: operations['getCollectionsCollection']
+  }
+  '/liquidity/collections': {
+    get: operations['getLiquidityCollections']
+  }
+  '/liquidity/users': {
+    get: operations['getLiquidityUsers']
+  }
+  '/orders/build': {
+    get: operations['getOrdersBuild']
+  }
+  '/orders/fill': {
+    get: operations['getOrdersFill']
+  }
+  '/tokens/details': {
+    get: operations['getTokensDetails']
+  }
+  '/tokens/floor': {
+    get: operations['getTokensFloor']
+  }
+  '/collections/{collection}/top-buys': {
+    get: operations['getCollectionsCollectionTopbuys']
+  }
+  '/collections/{collection}/attributes': {
+    get: operations['getCollectionsCollectionAttributes']
+  }
+  '/users/{user}/tokens': {
+    get: operations['getUsersUserTokens']
+  }
+  '/users/{user}/positions': {
+    get: operations['getUsersUserPositions']
+  }
+  '/users/{user}/collections': {
+    get: operations['getUsersUserCollections']
+  }
+  '/admin/contracts': {
+    post: operations['postAdminContracts']
+  }
+  '/attributes/refresh': {
+    post: operations['postAttributesRefresh']
+  }
+  '/admin/fix/cache': {
+    post: operations['postAdminFixCache']
+  }
+  '/admin/index/metadata': {
+    post: operations['postAdminIndexMetadata']
+  }
+  '/admin/sync/events': {
+    post: operations['postAdminSyncEvents']
+  }
+  '/admin/sync/orders': {
+    post: operations['postAdminSyncOrders']
+  }
 }
 
 export interface definitions {
   Model1: {
-    value?: string;
-    count?: number;
-  };
-  values: definitions["Model1"][];
+    value?: string
+    count?: number
+  }
+  values: definitions['Model1'][]
   Model2: {
-    key?: string;
-    kind?: string;
-    values?: definitions["values"];
-  };
-  attributes: definitions["Model2"][];
+    key?: string
+    kind?: string
+    values?: definitions['values']
+  }
+  attributes: definitions['Model2'][]
   getAttributesResponse: {
-    attributes?: definitions["attributes"];
-  };
+    attributes?: definitions['attributes']
+  }
   collection: {
-    id?: string;
-    name?: string;
-    description?: string;
-    image?: string;
-  };
+    id?: string
+    name?: string
+    description?: string
+    image?: string
+  }
   royalties: {
-    recipient?: string;
-    bps?: number;
-  };
-  sampleImages: string[];
+    recipient?: string
+    bps?: number
+  }
+  sampleImages: string[]
   token: {
-    contract?: string;
-    tokenId?: string;
-    name?: string;
-    image?: string;
-  };
+    contract?: string
+    tokenId?: string
+    name?: string
+    image?: string
+  }
   floorSell: {
-    hash?: string;
-    value?: number;
-    maker?: string;
-    validFrom?: number;
-    validUntil?: number;
-    token?: definitions["token"];
-  };
+    hash?: string
+    value?: number
+    maker?: string
+    validFrom?: number
+    validUntil?: number
+    token?: definitions['token']
+  }
   topBuy: {
-    hash?: string;
-    value?: number;
-    maker?: string;
-    validFrom?: number;
-    validUntil?: number;
-  };
+    hash?: string
+    value?: number
+    maker?: string
+    validFrom?: number
+    validUntil?: number
+  }
   market: {
-    floorSell?: definitions["floorSell"];
-    topBuy?: definitions["topBuy"];
-  };
+    floorSell?: definitions['floorSell']
+    topBuy?: definitions['topBuy']
+  }
   set: {
-    tokenCount?: number;
-    onSaleCount?: number;
-    sampleImages?: definitions["sampleImages"];
-    market?: definitions["market"];
-  };
+    tokenCount?: number
+    onSaleCount?: number
+    sampleImages?: definitions['sampleImages']
+    market?: definitions['market']
+  }
   Model3: {
-    collection?: definitions["collection"];
-    royalties?: definitions["royalties"];
-    set?: definitions["set"];
-  };
-  collections: definitions["Model3"][];
+    collection?: definitions['collection']
+    royalties?: definitions['royalties']
+    set?: definitions['set']
+  }
+  collections: definitions['Model3'][]
   getCollectionsResponse: {
-    collections?: definitions["collections"];
-  };
+    collections?: definitions['collections']
+  }
   Model4: {
-    value: number;
-    quantity: number;
-  };
-  buys: definitions["Model4"][];
+    value: number
+    quantity: number
+  }
+  buys: definitions['Model4'][]
   Model5: {
-    buys?: definitions["buys"];
-    sells?: definitions["buys"];
-  };
+    buys?: definitions['buys']
+    sells?: definitions['buys']
+  }
   Model6: {
-    market?: definitions["Model5"];
-  };
-  data: { [key: string]: unknown };
-  tokenSetLabel: {
-    data?: definitions["data"];
-    kind?: string;
-  };
+    market?: definitions['Model5']
+  }
+  data: { [key: string]: unknown }
+  schema: {
+    data?: definitions['data']
+    kind?: string
+  }
+  metadata: {
+    collectionName?: string
+    tokenName?: string
+  }
   sourceInfo: {
-    id?: string;
-    bps?: number;
-  };
-  royaltyInfo: definitions["royalties"][];
+    id?: string
+    bps?: number
+  }
+  royaltyInfo: definitions['royalties'][]
   Model7: {
-    hash?: string;
-    status?: string;
-    tokenSetId?: string;
-    tokenSetLabel?: definitions["tokenSetLabel"];
-    kind?: string;
-    side?: string;
-    maker?: string;
-    price?: number;
-    value?: number;
-    validFrom?: number;
-    validUntil?: number;
-    sourceInfo?: definitions["sourceInfo"];
-    royaltyInfo?: definitions["royaltyInfo"];
-    rawData?: definitions["data"];
-  };
-  orders: definitions["Model7"][];
+    hash?: string
+    status?: string
+    tokenSetId?: string
+    schema?: definitions['schema']
+    metadata?: definitions['metadata']
+    kind?: string
+    side?: string
+    maker?: string
+    price?: number
+    value?: number
+    validFrom?: number
+    validUntil?: number
+    sourceInfo?: definitions['sourceInfo']
+    royaltyInfo?: definitions['royaltyInfo']
+    rawData?: definitions['data']
+  }
+  orders: definitions['Model7'][]
   getOrdersResponse: {
-    orders?: definitions["orders"];
-  };
+    orders?: definitions['orders']
+  }
   ownership: {
-    tokenCount?: number;
-    onSaleCount?: number;
-    floorSellValue?: number;
-    topBuyValue?: number;
-    totalBuyValue?: number;
-    lastAcquiredAt?: number;
-  };
+    tokenCount?: number
+    onSaleCount?: number
+    floorSellValue?: number
+    topBuyValue?: number
+    totalBuyValue?: number
+    lastAcquiredAt?: number
+  }
   Model8: {
-    address?: string;
-    ownership?: definitions["ownership"];
-  };
-  owners: definitions["Model8"][];
+    address?: string
+    ownership?: definitions['ownership']
+  }
+  owners: definitions['Model8'][]
   getOwnersResponse: {
-    owners?: definitions["owners"];
-  };
-  getStatsResponse: {
-    stats?: definitions["set"];
-  };
+    owners?: definitions['owners']
+  }
   Model9: {
-    id?: string;
-    name?: string;
-  };
+    id?: string
+    name?: string
+  }
   Model10: {
-    contract?: string;
-    name?: string;
-    image?: string;
-    tokenId?: string;
-    collection?: definitions["Model9"];
-    topBuyValue?: number;
-    floorSellValue?: number;
-  };
-  tokens: definitions["Model10"][];
-  getTokensResponse: {
-    tokens?: definitions["tokens"];
-  };
+    contract?: string
+    name?: string
+    image?: string
+    tokenId?: string
+    collection?: definitions['Model9']
+  }
   Model11: {
-    contract?: string;
-    kind?: string;
-    name?: string;
-    image?: string;
-    tokenId?: string;
-    collection?: definitions["Model9"];
-  };
+    token?: definitions['Model10']
+    from?: string
+    to?: string
+    amount?: number
+    txHash?: string
+    block?: number
+    timestamp?: number
+    price?: number
+    tokenSetId?: string
+  }
+  sales: definitions['Model11'][]
+  getSalesResponse: {
+    sales?: definitions['sales']
+  }
+  getStatsResponse: {
+    stats?: definitions['set']
+  }
   Model12: {
-    token?: definitions["Model11"];
-    from?: string;
-    to?: string;
-    amount?: number;
-    txHash?: string;
-    block?: number;
-    timestamp?: number;
-    price?: number;
-  };
-  transfers: definitions["Model12"][];
-  getTransfersResponse: {
-    transfers?: definitions["transfers"];
-  };
-  lastBuy: {
-    value?: number;
-    timestamp?: number;
-  };
+    contract?: string
+    name?: string
+    image?: string
+    tokenId?: string
+    collection?: definitions['Model9']
+    topBuyValue?: number
+    floorSellValue?: number
+  }
+  tokens: definitions['Model12'][]
+  getTokensResponse: {
+    tokens?: definitions['tokens']
+  }
   Model13: {
-    id?: string;
-    name?: string;
-    description?: string;
-    image?: string;
-    lastBuy?: definitions["lastBuy"];
-    lastSell?: definitions["lastBuy"];
-  };
+    token?: definitions['Model10']
+    from?: string
+    to?: string
+    amount?: number
+    txHash?: string
+    block?: number
+    timestamp?: number
+    price?: number
+  }
+  transfers: definitions['Model13'][]
+  getTransfersResponse: {
+    transfers?: definitions['transfers']
+  }
+  lastBuy: {
+    value?: number
+    timestamp?: number
+  }
   Model14: {
-    collection?: definitions["Model13"];
-    royalties?: definitions["royalties"];
-    set?: definitions["set"];
-  };
-  getCollectionResponse: {
-    collection?: definitions["Model14"];
-  };
-  params: {
-    exchange: string;
-    maker: string;
-    taker: string;
-    makerRelayerFee: number;
-    takerRelayerFee: number;
-    feeRecipient: string;
-    side: 0 | 1;
-    saleKind: 0 | 1;
-    target: string;
-    howToCall: 0 | 1;
-    calldata: string;
-    replacementPattern: string;
-    staticTarget: string;
-    staticExtradata: string;
-    paymentToken: string;
-    basePrice: string;
-    extra: string;
-    listingTime: number;
-    expirationTime: number;
-    salt: string;
-    v: number;
-    r: string;
-    s: string;
-  };
-  order: {
-    params?: definitions["params"];
-  };
-  getOrdersBuildResponse: {
-    order?: definitions["order"];
-  };
+    id?: string
+    name?: string
+    description?: string
+    image?: string
+    lastBuy?: definitions['lastBuy']
+    lastSell?: definitions['lastBuy']
+  }
   Model15: {
-    params?: definitions["params"];
-    buildMatchingArgs?: definitions["sampleImages"];
-  };
-  getOrdersFillResponse: {
-    order?: definitions["Model15"];
-  };
+    collection?: definitions['Model14']
+    royalties?: definitions['royalties']
+    set?: definitions['set']
+  }
+  getCollectionResponse: {
+    collection?: definitions['Model15']
+  }
   Model16: {
-    key?: string;
-    value?: string;
-  };
-  Model17: definitions["Model16"][];
+    id: string
+    name: string
+    image: string
+  }
+  Model17: {
+    collection: definitions['Model16']
+    tokenCount: number
+    liquidity: number
+    uniqueTopBuyers: number
+    topLiquidityProvider?: string
+  }
+  liquidity: definitions['Model17'][]
+  getCollectionsLiquidityResponse: {
+    liquidity?: definitions['liquidity']
+  }
   Model18: {
-    contract?: string;
-    kind?: string;
-    name?: string;
-    description?: string;
-    image?: string;
-    tokenId?: string;
-    collection?: definitions["Model9"];
-    lastBuy?: definitions["lastBuy"];
-    lastSell?: definitions["lastBuy"];
-    owner?: string;
-    attributes?: definitions["Model17"];
-  };
-  Model19: {
-    token?: definitions["Model18"];
-    market?: definitions["market"];
-  };
-  Model20: definitions["Model19"][];
+    user: string
+    tokenCount: number
+    liquidity: number
+    wethBalance: number
+  }
+  Model19: definitions['Model18'][]
+  getUsersLiquidityResponse: {
+    liquidity?: definitions['Model19']
+  }
+  params: {
+    exchange: string
+    maker: string
+    taker: string
+    makerRelayerFee: number
+    takerRelayerFee: number
+    feeRecipient: string
+    side: 0 | 1
+    saleKind: 0 | 1
+    target: string
+    howToCall: 0 | 1
+    calldata: string
+    replacementPattern: string
+    staticTarget: string
+    staticExtradata: string
+    paymentToken: string
+    basePrice: string
+    extra: string
+    listingTime: number
+    expirationTime: number
+    salt: string
+    v: number
+    r: string
+    s: string
+  }
+  order: {
+    params?: definitions['params']
+  }
+  getOrdersBuildResponse: {
+    order?: definitions['order']
+  }
+  Model20: {
+    params?: definitions['params']
+    buildMatchingArgs?: definitions['sampleImages']
+  }
+  getOrdersFillResponse: {
+    order?: definitions['Model20']
+  }
+  Model21: {
+    key?: string
+    value?: string
+  }
+  Model22: definitions['Model21'][]
+  Model23: {
+    contract?: string
+    kind?: string
+    name?: string
+    description?: string
+    image?: string
+    tokenId?: string
+    collection?: definitions['Model9']
+    lastBuy?: definitions['lastBuy']
+    lastSell?: definitions['lastBuy']
+    owner?: string
+    attributes?: definitions['Model22']
+  }
+  Model24: {
+    token?: definitions['Model23']
+    market?: definitions['market']
+  }
+  Model25: definitions['Model24'][]
   getTokensDetailsResponse: {
-    tokens?: definitions["Model20"];
-  };
+    tokens?: definitions['Model25']
+  }
   getTokensFloorResponse: {
     tokens?: {
-      string?: number;
-    };
-  };
-  Model21: {
-    key?: string;
-    value?: string;
-    set?: definitions["set"];
-  };
-  Model22: definitions["Model21"][];
-  getCollectionAttributesResponse: {
-    attributes?: definitions["Model22"];
-  };
-  Model23: {
-    collection?: definitions["Model9"];
-    ownership?: definitions["ownership"];
-  };
-  Model24: definitions["Model23"][];
-  getUserCollectionsResponse: {
-    collections?: definitions["Model24"];
-  };
-  Model25: {
-    id?: string;
-    schema?: string;
-    image?: string;
-    floorSellValue?: number;
-    topBuyValue?: number;
-  };
-  primaryOrder: {
-    value?: number;
-    expiry?: number;
-    status?: string;
-  };
+      string?: number
+    }
+  }
   Model26: {
-    set?: definitions["Model25"];
-    primaryOrder?: definitions["primaryOrder"];
-    totalValid?: number;
-  };
-  positions: definitions["Model26"][];
-  getUserPositionsResponse: {
-    positions?: definitions["positions"];
-  };
+    value?: number
+    quantity?: number
+  }
+  topBuys: definitions['Model26'][]
+  getCollectionTopBuysResponse: {
+    topBuys?: definitions['topBuys']
+  }
   Model27: {
-    token?: definitions["Model11"];
-    ownership?: definitions["ownership"];
-  };
-  Model28: definitions["Model27"][];
-  getUserTokensResponse: {
-    tokens?: definitions["Model28"];
-  };
+    value?: number
+    block?: number
+  }
+  lastSells: definitions['Model27'][]
+  floorSellValues: number[]
+  Model28: {
+    hash?: string
+    value?: number
+    maker?: string
+    validFrom?: number
+  }
   Model29: {
-    kind: "wyvern-v2";
-    data?: definitions["data"];
-  };
-  Model30: definitions["Model29"][];
+    key?: string
+    value?: string
+    tokenCount?: number
+    onSaleCount?: number
+    sampleImages?: definitions['sampleImages']
+    lastSells?: definitions['lastSells']
+    floorSellValues?: definitions['floorSellValues']
+    topBuy?: definitions['Model28']
+  }
+  Model30: definitions['Model29'][]
+  getCollectionAttributesResponse: {
+    attributes?: definitions['Model30']
+  }
   Model31: {
-    orders?: definitions["Model30"];
-  };
-  contracts: string[];
+    hash?: string
+    value?: number
+    schema?: string
+  }
   Model32: {
-    kind?: "tokens-floor-sell" | "tokens-top-buy";
-    contracts?: definitions["contracts"];
-  };
+    contract?: string
+    name?: string
+    image?: string
+    tokenId?: string
+    collection?: definitions['Model9']
+    topBuy?: definitions['Model31']
+  }
   Model33: {
-    collection: string;
-  };
-  Model34: string[];
-  Model35: {
-    contractKind: "orderbook" | "erc20" | "erc721" | "erc1155" | "wyvern-v2";
-    contracts: definitions["Model34"];
-    fromBlock: number;
-    toBlock: number;
-    blocksPerBatch?: number;
-  };
+    tokenCount?: number
+    onSaleCount?: number
+    floorSellValue?: number
+    lastAcquiredAt?: number
+  }
+  Model34: {
+    token?: definitions['Model32']
+    ownership?: definitions['Model33']
+  }
+  Model35: definitions['Model34'][]
+  getUserTokensResponse: {
+    tokens?: definitions['Model35']
+  }
+  Model36: {
+    id?: string
+    schema?: string
+    metadata?: string
+    sampleImages?: definitions['sampleImages']
+    image?: string
+    floorSellValue?: number
+    topBuyValue?: number
+  }
+  primaryOrder: {
+    value?: number
+    expiry?: number
+    status?: string
+  }
+  Model37: {
+    set?: definitions['Model36']
+    primaryOrder?: definitions['primaryOrder']
+    totalValid?: number
+  }
+  positions: definitions['Model37'][]
+  getUserPositionsResponse: {
+    positions?: definitions['positions']
+  }
+  Model38: {
+    id?: string
+    name?: string
+    image?: string
+    floorSellValue?: number
+    topBuyValue?: number
+  }
+  Model39: {
+    tokenCount?: number
+    onSaleCount?: number
+    liquidCount?: number
+    lastAcquiredAt?: number
+  }
+  Model40: {
+    collection?: definitions['Model38']
+    ownership?: definitions['Model39']
+  }
+  Model41: definitions['Model40'][]
+  getUserCollectionsResponse: {
+    collections?: definitions['Model41']
+  }
+  attribute: {
+    collection: string
+    key: string
+    value: string
+  }
+  Model42: {
+    kind: 'wyvern-v2'
+    data?: definitions['data']
+    attribute?: definitions['attribute']
+  }
+  Model43: definitions['Model42'][]
+  Model44: {
+    orders?: definitions['Model43']
+  }
+  contracts: string[]
+  Model45: {
+    contracts?: definitions['contracts']
+  }
+  Model46: {
+    kind?: 'tokens-floor-sell' | 'tokens-top-buy' | 'token-sets-top-buy'
+    contracts?: definitions['contracts']
+  }
+  Model47: {
+    collection: string
+  }
+  Model48: string[]
+  Model49: {
+    contractKind: 'erc20' | 'erc721' | 'erc1155' | 'wyvern-v2'
+    contracts: definitions['Model48']
+    fromBlock: number
+    toBlock: number
+    blocksPerBatch?: number
+  }
+  Model50: {
+    fromBlock: number
+    toBlock: number
+    blocksPerBatch?: number
+  }
 }
 
 export interface operations {
   getAttributes: {
     parameters: {
       query: {
-        collection: string;
-      };
-    };
+        collection: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getAttributesResponse"];
-      };
-    };
-  };
+        schema: definitions['getAttributesResponse']
+      }
+    }
+  }
   getCollections: {
     parameters: {
       query: {
-        community?: string;
-        collection?: string;
-        name?: string;
-        sortBy?: "id" | "floorCap";
-        sortDirection?: "asc" | "desc";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        community?: string
+        collection?: string
+        name?: string
+        sortBy?: 'id' | 'floorCap'
+        sortDirection?: 'asc' | 'desc'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionsResponse"];
-      };
-    };
-  };
+        schema: definitions['getCollectionsResponse']
+      }
+    }
+  }
   getMarket: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        attributes?: string;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["Model6"];
-      };
-    };
-  };
+        schema: definitions['Model6']
+      }
+    }
+  }
   getOrders: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        maker?: string;
-        hash?: string;
-        includeInvalid?: boolean;
-        side?: "sell" | "buy";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributeKey?: string
+        attributeValue?: string
+        maker?: string
+        hash?: string
+        includeInvalid?: boolean
+        side?: 'sell' | 'buy'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getOrdersResponse"];
-      };
-    };
-  };
+        schema: definitions['getOrdersResponse']
+      }
+    }
+  }
   postOrders: {
     parameters: {
       body: {
-        body?: definitions["Model31"];
-      };
-    };
+        body?: definitions['Model44']
+      }
+    }
     responses: {
       /** Successful */
       default: {
-        schema: string;
-      };
-    };
-  };
+        schema: string
+      }
+    }
+  }
   getOwners: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        owner?: string;
-        attributes?: string;
-        offset?: number;
-        limit?: number;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        owner?: string
+        attributes?: string
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getOwnersResponse"];
-      };
-    };
-  };
+        schema: definitions['getOwnersResponse']
+      }
+    }
+  }
+  getSales: {
+    parameters: {
+      query: {
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+        user?: string
+        direction?: 'from' | 'to'
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getSalesResponse']
+      }
+    }
+  }
   getStats: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        attributes?: string;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getStatsResponse"];
-      };
-    };
-  };
+        schema: definitions['getStatsResponse']
+      }
+    }
+  }
   getTokens: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        attributes?: string;
-        tokenSetId?: string;
-        onSale?: boolean;
-        sortBy?: "tokenId" | "floorSellValue" | "topBuyValue";
-        sortByAttribute?: string;
-        sortDirection?: "asc" | "desc";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+        tokenSetId?: string
+        onSale?: boolean
+        sortBy?: 'tokenId' | 'floorSellValue' | 'topBuyValue'
+        sortByAttribute?: string
+        sortDirection?: 'asc' | 'desc'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getTokensResponse"];
-      };
-    };
-  };
+        schema: definitions['getTokensResponse']
+      }
+    }
+  }
   getTransfers: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        attributes?: string;
-        user?: string;
-        direction?: "from" | "to";
-        type?: "sale" | "transfer";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+        user?: string
+        direction?: 'from' | 'to'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getTransfersResponse"];
-      };
-    };
-  };
+        schema: definitions['getTransfersResponse']
+      }
+    }
+  }
   getCollectionsCollection: {
     parameters: {
       path: {
-        collection: string;
-      };
-    };
+        collection: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionResponse"];
-      };
-    };
-  };
+        schema: definitions['getCollectionResponse']
+      }
+    }
+  }
+  getLiquidityCollections: {
+    parameters: {
+      query: {
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getCollectionsLiquidityResponse']
+      }
+    }
+  }
+  getLiquidityUsers: {
+    parameters: {
+      query: {
+        collection?: string
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getUsersLiquidityResponse']
+      }
+    }
+  }
   getOrdersBuild: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        maker: string;
-        side: "sell" | "buy";
-        price: string;
-        fee: string;
-        feeRecipient: string;
-        listingTime?: string;
-        expirationTime?: string;
-        salt?: string;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributeKey?: string
+        attributeValue?: string
+        maker: string
+        side: 'sell' | 'buy'
+        price: string
+        fee: string
+        feeRecipient: string
+        listingTime?: string
+        expirationTime?: string
+        salt?: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getOrdersBuildResponse"];
-      };
-    };
-  };
+        schema: definitions['getOrdersBuildResponse']
+      }
+    }
+  }
   getOrdersFill: {
     parameters: {
       query: {
-        tokenId: string;
-        contract?: string;
-        collection?: string;
-        side?: "sell" | "buy";
-      };
-    };
+        tokenId: string
+        contract: string
+        side?: 'sell' | 'buy'
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getOrdersFillResponse"];
-      };
-    };
-  };
+        schema: definitions['getOrdersFillResponse']
+      }
+    }
+  }
   getTokensDetails: {
     parameters: {
       query: {
-        contract?: string;
-        tokenId?: string;
-        collection?: string;
-        attributes?: string;
-        tokenSetId?: string;
-        onSale?: boolean;
-        sortBy?: "tokenId" | "floorSellValue" | "topBuyValue";
-        sortByAttribute?: string;
-        sortDirection?: "asc" | "desc";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributes?: string
+        tokenSetId?: string
+        onSale?: boolean
+        sortBy?: 'tokenId' | 'floorSellValue' | 'topBuyValue'
+        sortByAttribute?: string
+        sortDirection?: 'asc' | 'desc'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getTokensDetailsResponse"];
-      };
-    };
-  };
+        schema: definitions['getTokensDetailsResponse']
+      }
+    }
+  }
   getTokensFloor: {
     parameters: {
       query: {
-        collection: string;
-      };
-    };
+        collection: string
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getTokensFloorResponse"];
-      };
-    };
-  };
+        schema: definitions['getTokensFloorResponse']
+      }
+    }
+  }
+  getCollectionsCollectionTopbuys: {
+    parameters: {
+      path: {
+        collection: string
+      }
+      query: {
+        attributes?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getCollectionTopBuysResponse']
+      }
+    }
+  }
   getCollectionsCollectionAttributes: {
     parameters: {
       path: {
-        collection: string;
-      };
+        collection: string
+      }
       query: {
-        attribute?: string;
-        onSaleCount?: number;
-        sortBy?: "value" | "floorSellValue" | "floorCap";
-        sortDirection?: "asc" | "desc";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        attribute?: string
+        sortBy?: 'value' | 'floorSellValue' | 'floorCap' | 'topBuyValue'
+        sortDirection?: 'asc' | 'desc'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getCollectionAttributesResponse"];
-      };
-    };
-  };
-  getUsersUserCollections: {
-    parameters: {
-      path: {
-        user: string;
-      };
-      query: {
-        community?: string;
-        collection?: string;
-        offset?: number;
-        limit?: number;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getUserCollectionsResponse"];
-      };
-    };
-  };
-  getUsersUserPositions: {
-    parameters: {
-      path: {
-        user: string;
-      };
-      query: {
-        side: "buy" | "sell";
-        status: "valid" | "invalid";
-        offset?: number;
-        limit?: number;
-      };
-    };
-    responses: {
-      /** Successful */
-      200: {
-        schema: definitions["getUserPositionsResponse"];
-      };
-    };
-  };
+        schema: definitions['getCollectionAttributesResponse']
+      }
+    }
+  }
   getUsersUserTokens: {
     parameters: {
       path: {
-        user: string;
-      };
+        user: string
+      }
       query: {
-        community?: string;
-        collection?: string;
-        hasOffer?: boolean;
-        sortBy?: "acquiredAt" | "topBuyListingTime";
-        sortDirection?: "asc" | "desc";
-        offset?: number;
-        limit?: number;
-      };
-    };
+        community?: string
+        collection?: string
+        hasOffer?: boolean
+        sortBy?: 'acquiredAt' | 'topBuyValue'
+        sortDirection?: 'asc' | 'desc'
+        offset?: number
+        limit?: number
+      }
+    }
     responses: {
       /** Successful */
       200: {
-        schema: definitions["getUserTokensResponse"];
-      };
-    };
-  };
+        schema: definitions['getUserTokensResponse']
+      }
+    }
+  }
+  getUsersUserPositions: {
+    parameters: {
+      path: {
+        user: string
+      }
+      query: {
+        side: 'buy' | 'sell'
+        status: 'valid' | 'invalid'
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getUserPositionsResponse']
+      }
+    }
+  }
+  getUsersUserCollections: {
+    parameters: {
+      path: {
+        user: string
+      }
+      query: {
+        community?: string
+        collection?: string
+        offset?: number
+        limit?: number
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getUserCollectionsResponse']
+      }
+    }
+  }
+  postAdminContracts: {
+    parameters: {
+      header: {
+        'x-admin-api-key': string
+      }
+      body: {
+        body?: definitions['Model45']
+      }
+    }
+    responses: {
+      /** Successful */
+      default: {
+        schema: string
+      }
+    }
+  }
   postAttributesRefresh: {
     parameters: {
       query: {
-        contract: string;
-        tokenId: string;
-      };
-    };
+        contract: string
+        tokenId: string
+      }
+    }
     responses: {
       /** Successful */
       default: {
-        schema: string;
-      };
-    };
-  };
+        schema: string
+      }
+    }
+  }
   postAdminFixCache: {
     parameters: {
       header: {
-        "x-admin-api-key": string;
-      };
+        'x-admin-api-key': string
+      }
       body: {
-        body?: definitions["Model32"];
-      };
-    };
+        body?: definitions['Model46']
+      }
+    }
     responses: {
       /** Successful */
       default: {
-        schema: string;
-      };
-    };
-  };
+        schema: string
+      }
+    }
+  }
   postAdminIndexMetadata: {
     parameters: {
       header: {
-        "x-admin-api-key": string;
-      };
+        'x-admin-api-key': string
+      }
       body: {
-        body?: definitions["Model33"];
-      };
-    };
+        body?: definitions['Model47']
+      }
+    }
     responses: {
       /** Successful */
       default: {
-        schema: string;
-      };
-    };
-  };
+        schema: string
+      }
+    }
+  }
   postAdminSyncEvents: {
     parameters: {
       header: {
-        "x-admin-api-key": string;
-      };
+        'x-admin-api-key': string
+      }
       body: {
-        body?: definitions["Model35"];
-      };
-    };
+        body?: definitions['Model49']
+      }
+    }
     responses: {
       /** Successful */
       default: {
-        schema: string;
-      };
-    };
-  };
+        schema: string
+      }
+    }
+  }
+  postAdminSyncOrders: {
+    parameters: {
+      header: {
+        'x-admin-api-key': string
+      }
+      body: {
+        body?: definitions['Model50']
+      }
+    }
+    responses: {
+      /** Successful */
+      default: {
+        schema: string
+      }
+    }
+  }
 }
 
 export interface external {}

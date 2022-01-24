@@ -2,6 +2,7 @@ import { Provider } from '@ethersproject/abstract-provider'
 import { WyvernV2 } from '@reservoir0x/sdk'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { BigNumber, ContractTransaction, Signer } from 'ethers'
+import { randomBytes } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
 import setParams from './params'
 
@@ -183,12 +184,29 @@ async function postBuyOrder(
 async function postBuyOrderToOpenSea(
   chainId: number,
   apiKey: string,
-  buyOrder: WyvernV2.Order,
-  signer: Signer,
+  params: WyvernV2.Types.OrderParams,
   tokenId: string,
-  contract: string
+  contract: string,
+  signer: Signer
 ) {
   try {
+    console.debug({ params })
+
+    // Instatiate a Wyvern order
+    const buyOrder = new WyvernV2.Order(chainId, {
+      ...params,
+      takerRelayerFee: params.takerRelayerFee + 250,
+      // The fee recipient on the maker's order should never be the zero address.
+      // Even if the fee is 0, the fee recipient should be set to the maker's address.
+      feeRecipient: '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073',
+      // Set listing time 2 minutes in the past to make sure on-chain validation passes
+      listingTime: Math.floor(Date.now() / 1000) - 120,
+      // Adjust date format for OpenSea
+      expirationTime: +params.expirationTime.toString().slice(0, -3),
+      salt: BigNumber.from(randomBytes(32)).toString(),
+    })
+
+    // Sign the order before posting to Reservoir
     await buyOrder.sign(signer)
 
     const order = {
@@ -302,10 +320,10 @@ async function makeOffer(
             await postBuyOrderToOpenSea(
               chainId,
               apiKey,
-              buyOrder,
-              signer,
+              buyOrder.params,
               query?.tokenId,
-              query?.contract
+              query?.contract,
+              signer
             )
           }
         }
