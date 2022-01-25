@@ -3286,7 +3286,7 @@ node-fetch@2.6.1:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
-node-fetch@^2.6.1, node-fetch@^2.6.7:
+node-fetch@^2.6.1:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
@@ -4283,10 +4283,10 @@ wagmi-private@0.1.3:
     "@ethersproject/providers" "^5.5.1"
     eventemitter3 "^4.0.7"
 
-wagmi@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.1.6.tgz#7562e99d7e5a01d7b403418dc71ed534cd98a6dd"
-  integrity sha512-wCRIdycmFSwCQqUEpTXttNTlRxZqTFhST1DKGNMU1Cbs/sj7HUb+uyaeUnk+Gg60QHDSaUAoSgvbYgf+liVp3A==
+wagmi@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.2.1.tgz#783e5e9f80714267ee9cc6e42ab66edd92bb1887"
+  integrity sha512-D6TMQbCmS2mFi3djHfSZICRPgEmOBW1q7t0qwqsvzMd8IeMETQmDLTSDIKfUGKjCSspw0mjSfoN6Wv+ONUA4EA==
   dependencies:
     "@ethersproject/providers" "^5.5.1"
     "@walletconnect/ethereum-provider" "^1.6.6"

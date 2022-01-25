@@ -74,6 +74,9 @@ export interface paths {
   '/attributes/refresh': {
     post: operations['postAttributesRefresh']
   }
+  '/admin/disable/orders': {
+    post: operations['postAdminDisableOrders']
+  }
   '/admin/fix/cache': {
     post: operations['postAdminFixCache']
   }
@@ -85,6 +88,9 @@ export interface paths {
   }
   '/admin/sync/orders': {
     post: operations['postAdminSyncOrders']
+  }
+  '/admin/index/metadata/fast': {
+    post: operations['postAdminIndexMetadataFast']
   }
 }
 
@@ -108,12 +114,17 @@ export interface definitions {
     name?: string
     description?: string
     image?: string
+    tokenSetId?: string
   }
   royalties: {
     recipient?: string
     bps?: number
   }
   sampleImages: string[]
+  lastBuy: {
+    value?: number
+    block?: number
+  }
   token: {
     contract?: string
     tokenId?: string
@@ -143,6 +154,7 @@ export interface definitions {
     tokenCount?: number
     onSaleCount?: number
     sampleImages?: definitions['sampleImages']
+    lastBuy?: definitions['lastBuy']
     market?: definitions['market']
   }
   Model3: {
@@ -155,8 +167,8 @@ export interface definitions {
     collections?: definitions['collections']
   }
   Model4: {
-    value: number
-    quantity: number
+    value?: number
+    quantity?: number
   }
   buys: definitions['Model4'][]
   Model5: {
@@ -238,6 +250,7 @@ export interface definitions {
     timestamp?: number
     price?: number
     tokenSetId?: string
+    schema?: string
   }
   sales: definitions['Model11'][]
   getSalesResponse: {
@@ -273,51 +286,54 @@ export interface definitions {
   getTransfersResponse: {
     transfers?: definitions['transfers']
   }
-  lastBuy: {
+  Model14: {
     value?: number
     timestamp?: number
   }
-  Model14: {
+  Model15: {
     id?: string
     name?: string
     description?: string
     image?: string
-    lastBuy?: definitions['lastBuy']
-    lastSell?: definitions['lastBuy']
+    tokenSetId?: string
+    lastBuy?: definitions['Model14']
+    lastSell?: definitions['Model14']
   }
-  Model15: {
-    collection?: definitions['Model14']
+  Model16: {
+    collection?: definitions['Model15']
     royalties?: definitions['royalties']
     set?: definitions['set']
   }
   getCollectionResponse: {
-    collection?: definitions['Model15']
-  }
-  Model16: {
-    id: string
-    name: string
-    image: string
+    collection?: definitions['Model16']
   }
   Model17: {
-    collection: definitions['Model16']
-    tokenCount: number
-    liquidity: number
-    uniqueTopBuyers: number
+    id?: string
+    name?: string
+    image?: string
+  }
+  Model18: {
+    collection: definitions['Model17']
+    tokenCount?: number
+    liquidity?: number
+    uniqueTopBuyers?: number
     topLiquidityProvider?: string
   }
-  liquidity: definitions['Model17'][]
+  liquidity: definitions['Model18'][]
   getCollectionsLiquidityResponse: {
     liquidity?: definitions['liquidity']
   }
-  Model18: {
-    user: string
-    tokenCount: number
-    liquidity: number
-    wethBalance: number
+  Model19: {
+    user?: string
+    rank?: number
+    tokenCount?: number
+    liquidity?: number
+    maxTopBuyValue?: number
+    wethBalance?: number
   }
-  Model19: definitions['Model18'][]
+  Model20: definitions['Model19'][]
   getUsersLiquidityResponse: {
-    liquidity?: definitions['Model19']
+    liquidity?: definitions['Model20']
   }
   params: {
     exchange: string
@@ -350,19 +366,19 @@ export interface definitions {
   getOrdersBuildResponse: {
     order?: definitions['order']
   }
-  Model20: {
+  Model21: {
     params?: definitions['params']
     buildMatchingArgs?: definitions['sampleImages']
   }
   getOrdersFillResponse: {
-    order?: definitions['Model20']
+    order?: definitions['Model21']
   }
-  Model21: {
+  Model22: {
     key?: string
     value?: string
   }
-  Model22: definitions['Model21'][]
-  Model23: {
+  Model23: definitions['Model22'][]
+  Model24: {
     contract?: string
     kind?: string
     name?: string
@@ -370,86 +386,78 @@ export interface definitions {
     image?: string
     tokenId?: string
     collection?: definitions['Model9']
-    lastBuy?: definitions['lastBuy']
-    lastSell?: definitions['lastBuy']
+    lastBuy?: definitions['Model14']
+    lastSell?: definitions['Model14']
     owner?: string
-    attributes?: definitions['Model22']
+    attributes?: definitions['Model23']
   }
-  Model24: {
-    token?: definitions['Model23']
+  Model25: {
+    token?: definitions['Model24']
     market?: definitions['market']
   }
-  Model25: definitions['Model24'][]
+  Model26: definitions['Model25'][]
   getTokensDetailsResponse: {
-    tokens?: definitions['Model25']
+    tokens?: definitions['Model26']
   }
   getTokensFloorResponse: {
     tokens?: {
       string?: number
     }
   }
-  Model26: {
-    value?: number
-    quantity?: number
-  }
-  topBuys: definitions['Model26'][]
   getCollectionTopBuysResponse: {
-    topBuys?: definitions['topBuys']
+    topBuys?: definitions['buys']
   }
-  Model27: {
-    value?: number
-    block?: number
-  }
-  lastSells: definitions['Model27'][]
+  lastSells: definitions['lastBuy'][]
   floorSellValues: number[]
-  Model28: {
+  Model27: {
     hash?: string
     value?: number
     maker?: string
     validFrom?: number
   }
-  Model29: {
+  Model28: {
     key?: string
     value?: string
     tokenCount?: number
     onSaleCount?: number
     sampleImages?: definitions['sampleImages']
     lastSells?: definitions['lastSells']
+    lastBuys?: definitions['lastSells']
     floorSellValues?: definitions['floorSellValues']
-    topBuy?: definitions['Model28']
+    topBuy?: definitions['Model27']
   }
-  Model30: definitions['Model29'][]
+  Model29: definitions['Model28'][]
   getCollectionAttributesResponse: {
-    attributes?: definitions['Model30']
+    attributes?: definitions['Model29']
   }
-  Model31: {
+  Model30: {
     hash?: string
     value?: number
     schema?: string
   }
-  Model32: {
+  Model31: {
     contract?: string
     name?: string
     image?: string
     tokenId?: string
     collection?: definitions['Model9']
-    topBuy?: definitions['Model31']
+    topBuy?: definitions['Model30']
   }
-  Model33: {
+  Model32: {
     tokenCount?: number
     onSaleCount?: number
     floorSellValue?: number
     lastAcquiredAt?: number
   }
-  Model34: {
-    token?: definitions['Model32']
-    ownership?: definitions['Model33']
+  Model33: {
+    token?: definitions['Model31']
+    ownership?: definitions['Model32']
   }
-  Model35: definitions['Model34'][]
+  Model34: definitions['Model33'][]
   getUserTokensResponse: {
-    tokens?: definitions['Model35']
+    tokens?: definitions['Model34']
   }
-  Model36: {
+  Model35: {
     id?: string
     schema?: string
     metadata?: string
@@ -463,53 +471,57 @@ export interface definitions {
     expiry?: number
     status?: string
   }
-  Model37: {
-    set?: definitions['Model36']
+  Model36: {
+    set?: definitions['Model35']
     primaryOrder?: definitions['primaryOrder']
     totalValid?: number
   }
-  positions: definitions['Model37'][]
+  positions: definitions['Model36'][]
   getUserPositionsResponse: {
     positions?: definitions['positions']
   }
-  Model38: {
+  Model37: {
     id?: string
     name?: string
     image?: string
     floorSellValue?: number
     topBuyValue?: number
   }
-  Model39: {
+  Model38: {
     tokenCount?: number
     onSaleCount?: number
     liquidCount?: number
     lastAcquiredAt?: number
   }
-  Model40: {
-    collection?: definitions['Model38']
-    ownership?: definitions['Model39']
+  Model39: {
+    collection?: definitions['Model37']
+    ownership?: definitions['Model38']
   }
-  Model41: definitions['Model40'][]
+  Model40: definitions['Model39'][]
   getUserCollectionsResponse: {
-    collections?: definitions['Model41']
+    collections?: definitions['Model40']
   }
   attribute: {
     collection: string
     key: string
     value: string
   }
-  Model42: {
+  Model41: {
     kind: 'wyvern-v2'
     data?: definitions['data']
     attribute?: definitions['attribute']
   }
-  Model43: definitions['Model42'][]
-  Model44: {
-    orders?: definitions['Model43']
+  Model42: definitions['Model41'][]
+  Model43: {
+    orders?: definitions['Model42']
   }
   contracts: string[]
-  Model45: {
+  Model44: {
     contracts?: definitions['contracts']
+  }
+  hashes: string[]
+  Model45: {
+    hashes?: definitions['hashes']
   }
   Model46: {
     kind?: 'tokens-floor-sell' | 'tokens-top-buy' | 'token-sets-top-buy'
@@ -521,7 +533,7 @@ export interface definitions {
   Model48: string[]
   Model49: {
     contractKind: 'erc20' | 'erc721' | 'erc1155' | 'wyvern-v2'
-    contracts: definitions['Model48']
+    contracts?: definitions['Model48']
     fromBlock: number
     toBlock: number
     blocksPerBatch?: number
@@ -608,7 +620,7 @@ export interface operations {
   postOrders: {
     parameters: {
       body: {
-        body?: definitions['Model44']
+        body?: definitions['Model43']
       }
     }
     responses: {
@@ -646,6 +658,7 @@ export interface operations {
         attributes?: string
         user?: string
         direction?: 'from' | 'to'
+        side?: 'buy' | 'sell'
         offset?: number
         limit?: number
       }
@@ -747,6 +760,7 @@ export interface operations {
     parameters: {
       query: {
         collection?: string
+        user?: string
         offset?: number
         limit?: number
       }
@@ -936,7 +950,7 @@ export interface operations {
         'x-admin-api-key': string
       }
       body: {
-        body?: definitions['Model45']
+        body?: definitions['Model44']
       }
     }
     responses: {
@@ -951,6 +965,22 @@ export interface operations {
       query: {
         contract: string
         tokenId: string
+      }
+    }
+    responses: {
+      /** Successful */
+      default: {
+        schema: string
+      }
+    }
+  }
+  postAdminDisableOrders: {
+    parameters: {
+      header: {
+        'x-admin-api-key': string
+      }
+      body: {
+        body?: definitions['Model45']
       }
     }
     responses: {
@@ -1015,6 +1045,22 @@ export interface operations {
       }
       body: {
         body?: definitions['Model50']
+      }
+    }
+    responses: {
+      /** Successful */
+      default: {
+        schema: string
+      }
+    }
+  }
+  postAdminIndexMetadataFast: {
+    parameters: {
+      header: {
+        'x-admin-api-key': string
+      }
+      body: {
+        body?: definitions['Model47']
       }
     }
     responses: {
