@@ -12,7 +12,7 @@ module.exports = {
     require('@ramosdiego/ui')({
       buttons: {
         colors: ['blue', 'red', 'green', 'neutral'],
-        themes: ['light'],
+        themes: ['light', 'dark'],
         styles: ['fill', 'outline', 'ghost'],
         animate: true,
       },

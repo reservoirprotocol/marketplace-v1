@@ -37,6 +37,7 @@ const ListModal: FC<Props> = ({
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('')
   const [youGet, setYouGet] = useState(constants.Zero)
+  const [success, setSuccess] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
   const token = tokens?.tokens?.[0]
@@ -56,7 +57,7 @@ const ListModal: FC<Props> = ({
   }, [listingPrice])
 
   return (
-    <Dialog.Root>
+    <Dialog.Root onOpenChange={() => setSuccess(false)}>
       <Dialog.Trigger asChild>
         <button
           disabled={isInTheWrongNetwork}
@@ -135,62 +136,71 @@ const ListModal: FC<Props> = ({
                 </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-4">
+            {success ? (
               <Dialog.Close asChild>
-                <button className="btn-neutral-fill w-full justify-center">
-                  Cancel
+                <button className="btn-green-fill w-full justify-center">
+                  Success, Close this menu
                 </button>
               </Dialog.Close>
-              <button
-                disabled={waitingTx || isInTheWrongNetwork}
-                onClick={async () => {
-                  const expirationValue = expirationPresets
-                    .find(({ preset }) => preset === expiration)
-                    ?.value()
+            ) : (
+              <div className="flex items-center gap-4">
+                <Dialog.Close asChild>
+                  <button className="btn-neutral-fill w-full justify-center">
+                    Cancel
+                  </button>
+                </Dialog.Close>
+                <button
+                  disabled={waitingTx || isInTheWrongNetwork}
+                  onClick={async () => {
+                    const expirationValue = expirationPresets
+                      .find(({ preset }) => preset === expiration)
+                      ?.value()
 
-                  const contract = token?.token?.contract
-                  const fee = collection?.collection?.royalties?.bps?.toString()
+                    const contract = token?.token?.contract
+                    const fee =
+                      collection?.collection?.royalties?.bps?.toString()
 
-                  if (!contract || !maker || !fee || !expirationValue) {
-                    console.debug({
+                    if (!contract || !maker || !fee || !expirationValue) {
+                      console.debug({
+                        contract,
+                        maker,
+                        fee,
+                        expirationValue,
+                      })
+                      return
+                    }
+
+                    const query: Parameters<typeof listTokenForSell>['3'] = {
                       contract,
                       maker,
+                      side: 'sell',
+                      price: ethers.utils.parseEther(listingPrice).toString(),
                       fee,
-                      expirationValue,
-                    })
-                    return
-                  }
+                      feeRecipient:
+                        collection?.collection?.royalties?.recipient || maker,
+                      tokenId: token?.token?.tokenId,
+                      expirationTime: expirationValue,
+                    }
 
-                  const query: Parameters<typeof listTokenForSell>['3'] = {
-                    contract,
-                    maker,
-                    side: 'sell',
-                    price: ethers.utils.parseEther(listingPrice).toString(),
-                    fee,
-                    feeRecipient:
-                      collection?.collection?.royalties?.recipient || maker,
-                    tokenId: token?.token?.tokenId,
-                    expirationTime: expirationValue,
-                  }
-
-                  setWaitingTx(true)
-                  try {
-                    await listTokenForSell(apiBase, chainId, signer, query)
-                    // Close modal
-                    // closeButton.current?.click()
-                    await mutate()
-                    setWaitingTx(false)
-                  } catch (error) {
-                    console.error(error)
-                    setWaitingTx(false)
-                  }
-                }}
-                className="btn-blue-fill w-full justify-center"
-              >
-                {waitingTx ? 'Waiting...' : 'List'}
-              </button>
-            </div>
+                    setWaitingTx(true)
+                    try {
+                      await listTokenForSell(apiBase, chainId, signer, query)
+                      // Close modal
+                      // closeButton.current?.click()
+                      await mutate()
+                      setSuccess(true)
+                      setWaitingTx(false)
+                    } catch (error) {
+                      console.error(error)
+                      setWaitingTx(false)
+                    }
+                  }}
+                  className="btn-blue-fill w-full justify-center"
+                >
+                  {waitingTx ? 'Waiting...' : 'List'}
+                </button>
+              </div>
+            )}
           </Dialog.Content>
         </Dialog.Overlay>
       </Dialog.Portal>
