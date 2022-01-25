@@ -201,8 +201,6 @@ async function postBuyOrderToOpenSea(
       feeRecipient: '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073',
       // Set listing time 2 minutes in the past to make sure on-chain validation passes
       listingTime: Math.floor(Date.now() / 1000) - 120,
-      // Adjust date format for OpenSea
-      expirationTime: +params.expirationTime.toString().slice(0, -3),
       salt: BigNumber.from(randomBytes(32)).toString(),
     })
 

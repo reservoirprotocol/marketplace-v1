@@ -213,17 +213,20 @@ export default ListModal
 const expirationPresets = [
   {
     preset: 'oneHour',
-    value: () => DateTime.now().plus({ hours: 1 }).toMillis().toString(),
+    value: () =>
+      DateTime.now().plus({ hours: 1 }).toMillis().toString().slice(0, -3),
     display: '1 Hour',
   },
   {
     preset: 'oneWeek',
-    value: () => DateTime.now().plus({ weeks: 1 }).toMillis().toString(),
+    value: () =>
+      DateTime.now().plus({ weeks: 1 }).toMillis().toString().slice(0, -3),
     display: '1 Week',
   },
   {
     preset: 'oneMonth',
-    value: () => DateTime.now().plus({ months: 1 }).toMillis().toString(),
+    value: () =>
+      DateTime.now().plus({ months: 1 }).toMillis().toString().slice(0, -3),
     display: '1 Month',
   },
   {
