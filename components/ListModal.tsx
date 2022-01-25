@@ -63,7 +63,7 @@ const ListModal: FC<Props> = ({
           disabled={isInTheWrongNetwork}
           className="btn-blue-fill w-full justify-center"
         >
-          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sell'}
+          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sale'}
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

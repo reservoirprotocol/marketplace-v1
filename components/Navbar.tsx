@@ -24,7 +24,18 @@ const Navbar: FC<Props> = ({ title, image }) => {
           )}
         </a>
       </Link>
-      <ConnectWallet />
+      <div className="flex items-center gap-6">
+        <Link href="https://github.com/reservoirprotocol/sample-marketplace">
+          <a
+            className="font-medium hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Fork me on GitHub
+          </a>
+        </Link>
+        <ConnectWallet />
+      </div>
     </nav>
   )
 }
