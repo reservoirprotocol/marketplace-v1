@@ -19,7 +19,9 @@ type Props = {
   tokens:
     | paths['/tokens/details']['get']['responses']['200']['schema']
     | undefined
-  collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+  collection:
+    | paths['/collections/{collection}']['get']['responses']['200']['schema']
+    | undefined
   mutate: MutatorCallback
 }
 
@@ -65,9 +67,9 @@ const ListModal: FC<Props> = ({
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
-          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[350px] bg-white shadow-md rounded-md">
-            <div className="flex justify-between items-center mb-5">
-              <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
+          <Dialog.Content className="fixed top-1/2 left-1/2 w-[350px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
+            <div className="mb-5 flex items-center justify-between">
+              <Dialog.Title className="text-lg font-medium uppercase opacity-75">
                 List Token for Sale
               </Dialog.Title>
               <Dialog.Close asChild>
@@ -76,24 +78,24 @@ const ListModal: FC<Props> = ({
                 </button>
               </Dialog.Close>
             </div>
-            <div className="flex gap-4 items-center mb-8">
+            <div className="mb-8 flex items-center gap-4">
               <img
                 src={optimizeImage(token?.token?.image, 50)}
                 alt={token?.token?.name}
                 className="w-[50px]"
               />
               <div className="overflow-auto">
-                <div className="text-lg font-medium mb-1">
+                <div className="mb-1 text-lg font-medium">
                   {token?.token?.name}
                 </div>
                 <div className="text-sm">{token?.token?.collection?.name}</div>
               </div>
             </div>
-            <div className="space-y-5 mb-8">
+            <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="price"
-                  className="uppercase opacity-75 font-medium"
+                  className="font-medium uppercase opacity-75"
                 >
                   Price (ETH)
                 </label>
@@ -116,15 +118,15 @@ const ListModal: FC<Props> = ({
                 />
               </div>
               <div className="flex justify-between">
-                <div className="uppercase opacity-75 font-medium">Fees</div>
+                <div className="font-medium uppercase opacity-75">Fees</div>
                 <div className="text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="uppercase opacity-75 font-medium">You get</div>
-                <div className="font-bold text-2xl">
+                <div className="font-medium uppercase opacity-75">You get</div>
+                <div className="text-2xl font-bold">
                   <FormatEth
                     amount={youGet}
                     maximumFractionDigits={2}

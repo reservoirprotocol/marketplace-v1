@@ -53,7 +53,7 @@ const EthAccount: FC<Props> = ({ address, ens }) => {
   }, [isBrowser])
 
   const blockie = (
-    <img className="rounded-full w-[32px] h-[32px]" src={dataUrl} />
+    <img className="h-[32px] w-[32px] rounded-full" src={dataUrl} />
   )
 
   return (
@@ -61,7 +61,7 @@ const EthAccount: FC<Props> = ({ address, ens }) => {
       <>
         {ens?.avatar ? (
           <img
-            className="rounded-full w-[32px] h-[32px]"
+            className="h-[32px] w-[32px] rounded-full"
             src={ens.avatar}
             alt="ENS Avatar"
           />

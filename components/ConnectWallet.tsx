@@ -14,17 +14,17 @@ const ConnectWallet: FC = () => {
   if (accountData) {
     return (
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="flex gap-2 items-center">
+        <DropdownMenu.Trigger className="flex items-center gap-2">
           <EthAccount address={accountData.address} ens={accountData.ens} />
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content className="absolute z-10 left-0 mt-3 overflow-hidden bg-white dark:bg-neutral-900 divide-y divide-neutral-300 dark:divide-neutral-700 rounded-md shadow-lg ring-1 ring-neutral-300 dark:ring-neutral-700 focus:outline-none">
-          <DropdownMenu.Item className="group flex justify-between items-center w-full px-4 py-3 transition">
+        <DropdownMenu.Content className="absolute left-0 z-10 mt-3 divide-y divide-neutral-300 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-neutral-300 focus:outline-none dark:divide-neutral-700 dark:bg-neutral-900 dark:ring-neutral-700">
+          <DropdownMenu.Item className="group flex w-full items-center justify-between px-4 py-3 transition">
             <Link href={`/address/${accountData.address}`}>
               <a>My Tokens</a>
             </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item className="group flex justify-between items-center w-full px-4 py-3 transition">
+          <DropdownMenu.Item className="group flex w-full items-center justify-between px-4 py-3 transition">
             <button key={wallet.id} onClick={() => disconnect()}>
               Disconnect
             </button>

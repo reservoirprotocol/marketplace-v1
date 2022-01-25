@@ -30,12 +30,12 @@ const Hero: FC<Props> = ({
   const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
 
   return (
-    <div className="space-y-5 mt-7 mb-10">
-      <header className="flex gap-5 items-center justify-center">
+    <div className="mt-7 mb-10 space-y-5">
+      <header className="flex items-center justify-center gap-5">
         <img className="h-[50px] w-[50px]" src={header.image} />
         <h1 className="text-xl font-bold">{header.name}</h1>
       </header>
-      <div className="grid gap-3 grid-cols-4 place-items-center max-w-screen-sm mx-auto shadow-md rounded-md p-4 bg-white">
+      <div className="mx-auto grid max-w-screen-sm grid-cols-4 place-items-center gap-3 rounded-md bg-white p-4 shadow-md">
         <Stat name="24HR Vol">
           <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
         </Stat>
@@ -44,7 +44,7 @@ const Hero: FC<Props> = ({
           trigger={
             <button disabled={!signer || isInTheWrongNetwork}>
               <Stat name="top offer">
-                <div className="w-min ml-4">
+                <div className="ml-4 w-min">
                   <FormatEth
                     amount={stats.topOffer}
                     maximumFractionDigits={2}
@@ -71,7 +71,7 @@ export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div>
-    <div className="uppercase font-medium opacity-75">{name}</div>
+    <div className="font-medium uppercase opacity-75">{name}</div>
     <div className="text-lg font-semibold">{children}</div>
   </div>
 )

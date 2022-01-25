@@ -134,9 +134,9 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
-          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 w-[360px] bg-white shadow-md rounded-md">
-            <div className="flex justify-between items-center mb-5">
-              <Dialog.Title className="uppercase opacity-75 font-medium text-lg">
+          <Dialog.Content className="fixed top-1/2 left-1/2 w-[360px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
+            <div className="mb-5 flex items-center justify-between">
+              <Dialog.Title className="text-lg font-medium uppercase opacity-75">
                 {isCollectionWide
                   ? 'Make a collection offer'
                   : 'Make a token offer'}
@@ -147,7 +147,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 </button>
               </Dialog.Close>
             </div>
-            <div className="flex gap-4 items-center mb-3">
+            <div className="mb-3 flex items-center gap-4">
               <img
                 src={optimizeImage(
                   data.token.image ?? data.collection.image,
@@ -160,10 +160,10 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 <div className="text-sm">
                   {isCollectionWide ? 'Collection' : data.collection.name}
                 </div>
-                <div className="text-lg font-medium my-1.5">
+                <div className="my-1.5 text-lg font-medium">
                   {data.token.name ?? data.collection.name}
                 </div>
-                <div className="text-sm mb-1.5">
+                <div className="mb-1.5 text-sm">
                   {isCollectionWide
                     ? `${data.collection.tokenCount} Eligible Tokens`
                     : '1 Eligible Token'}
@@ -171,9 +171,9 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
               </div>
             </div>
             {!isCollectionWide && (
-              <div className="flex flex-wrap mb-5 items-stretch gap-1.5 text-sm">
+              <div className="mb-5 flex flex-wrap items-stretch gap-1.5 text-sm">
                 {data.token.topBuyValue && (
-                  <div className="flex gap-2 items-center px-2 py-0.5 rounded-md bg-blue-100 text-blue-900">
+                  <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
                     <span className="whitespace-nowrap">Current Top Offer</span>
                     <div className="font-semibold">
                       <FormatEth
@@ -185,7 +185,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                   </div>
                 )}
                 {data.token.floorSellValue && (
-                  <div className="flex gap-2 items-center px-2 py-0.5 rounded-md bg-blue-100 text-blue-900">
+                  <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
                     <span className="whitespace-nowrap">List Price</span>
                     <div className="font-semibold">
                       <FormatEth
@@ -198,11 +198,11 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 )}
               </div>
             )}
-            <div className="space-y-5 mb-8">
+            <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="price"
-                  className="uppercase opacity-75 font-medium"
+                  className="font-medium uppercase opacity-75"
                 >
                   Price (wETH)
                 </label>
@@ -221,7 +221,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 <div className="flex items-center gap-3">
                   <label
                     htmlFor="postOpenSea"
-                    className="uppercase opacity-75 font-medium"
+                    className="font-medium uppercase opacity-75"
                   >
                     Also post to Open Sea
                   </label>
@@ -229,7 +229,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                     type="checkbox"
                     name="postOpenSea"
                     id="postOpenSea"
-                    className="transform scale-125"
+                    className="scale-125 transform"
                     checked={postOnOpenSea}
                     onChange={(e) => setPostOnOpenSea(e.target.checked)}
                   />
@@ -244,14 +244,14 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 />
               </div>
               <div className="flex justify-between">
-                <div className="uppercase opacity-75 font-medium">Fees</div>
+                <div className="font-medium uppercase opacity-75">Fees</div>
                 <div className="text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="uppercase opacity-75 font-medium">
+                <div className="font-medium uppercase opacity-75">
                   Total Cost
                 </div>
                 <div className="text-2xl font-bold">
@@ -263,12 +263,12 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 </div>
               </div>
               {calculations.error && (
-                <div className="px-2 py-1 bg-red-100 text-red-900 rounded-md">
+                <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
                   {calculations.error}
                 </div>
               )}
               {calculations.warning && (
-                <div className="px-2 py-1 bg-yellow-100 text-yellow-900 rounded-md">
+                <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
                   {calculations.warning}
                 </div>
               )}

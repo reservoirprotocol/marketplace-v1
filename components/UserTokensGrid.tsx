@@ -4,15 +4,15 @@ import LoadingCard from './LoadingCard'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import useIsVisible from 'lib/useIsVisible'
 import FormatEth from './FormatEth'
+import { useInView } from 'react-intersection-observer'
 
 type Props = {
   tokens: SWRInfiniteResponse<
     paths['/users/{user}/tokens']['get']['responses']['200']['schema'],
     any
   >
-  viewRef: ReturnType<typeof useIsVisible>['containerRef']
+  viewRef: ReturnType<typeof useInView>['ref']
 }
 
 const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
@@ -30,7 +30,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
   }
 
   return (
-    <div className="mb-8 gap-10 mx-auto max-w-[2400px] grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <div className="mx-auto mb-8 grid max-w-[2400px] gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {size === 1 && isValidating
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
@@ -40,7 +40,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
               key={`${token?.token?.name}${idx}`}
               href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
             >
-              <a className="grid rounded-b-md group transition hover:shadow-lg bg-white dark:bg-black hover:-translate-y-0.5">
+              <a className="group grid rounded-b-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
                 <img
                   src={optimizeImage(token?.token?.image, 250)}
                   alt={`${token?.token?.collection?.name}`}
@@ -48,12 +48,12 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
                   width="250"
                   height="250"
                 />
-                <p className="text-lg mb-3 px-6 pt-4 lg:pt-3">
+                <p className="mb-3 px-6 pt-4 text-lg lg:pt-3">
                   {token?.token?.name}
                 </p>
-                <div className="px-6 pb-4 lg:pb-3 flex items-center justify-between">
+                <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
-                    <div className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
+                    <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
                       Offer
                     </div>
                     <div>
@@ -65,7 +65,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-neutral-500 dark:text-neutral-400 uppercase">
+                    <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
                       Price
                     </div>
                     <div>
