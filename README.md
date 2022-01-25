@@ -8,7 +8,7 @@ You first have the option to see a live example using the collection ids as subd
 
 `https://{collectionId}.reservoir.market`
 
-For example, you can see the _Bored Ape Yatch Club_ collection at https://boredapeyatchclub.reservoir.market, or the _Loot_ collection at https://loot.reservoir.market.
+For example, you can see the _Bored Ape Yatch Club_ collection at https://boredapeyachtclub.reservoir.market, or the _Ringers by Dmitri Cherniak_ collection at https://ringers-by-dmitri-cherniak.reservoir.market/.
 
 ## Get started
 
