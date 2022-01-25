@@ -3,12 +3,7 @@ import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
 import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
+import { GetServerSideProps, InferGetStaticPropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
@@ -23,13 +18,12 @@ import FormatEth from 'components/FormatEth'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
-const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
-const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const nodeEnv = process.env.NODE_ENV
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>
+type Props = InferGetStaticPropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ fallback }) => {
+const Index: NextPage<Props> = ({ wildcard }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -45,21 +39,22 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
   setParams(url, query)
 
-  const { data, error, mutate } = useSWR<Props['fallback']['token']>(
-    url.href,
-    fetcher,
-    {
-      fallbackData: fallback.token,
-    }
-  )
+  const details = useSWR<
+    paths['/tokens/details']['get']['responses']['200']['schema']
+  >(url.href, fetcher)
 
-  if (error || !apiBase || !chainId || !openSeaApiKey) {
+  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
+
+  const collection = useSWR<
+    paths['/collections/{collection}']['get']['responses']['200']['schema']
+  >(collectionUrl.href, fetcher)
+
+  if (details.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
     return <div>There was an error</div>
   }
 
-  const token = data?.tokens?.[0]
-  const collection = fallback.collection
+  const token = details.data?.tokens?.[0]
   const isOwner =
     token?.token?.owner?.toLowerCase() === accountData?.address.toLowerCase()
   const isTopBidder =
@@ -69,22 +64,22 @@ const Index: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout
-      title={collection.collection?.collection?.name ?? 'HOME'}
-      image={collectionImage ?? ''}
+      title={collection.data?.collection?.collection?.name}
+      image={collection.data?.collection?.collection?.image}
     >
-      <div className="grid gap-10 grid-cols-2 mt-8 justify-items-center">
+      <div className="mt-8 grid grid-cols-2 justify-items-center gap-10">
         <img
           className="w-[500px]"
           src={optimizeImage(token?.token?.image, 500)}
         />
         <div>
-          <div className="text-lg mb-4">{token?.token?.collection?.name}</div>
-          <div className="text-xl font-bold mb-3">{token?.token?.name}</div>
+          <div className="mb-4 text-lg">{token?.token?.collection?.name}</div>
+          <div className="mb-3 text-xl font-bold">{token?.token?.name}</div>
           <div className="mb-10">
             {token?.token?.owner && <EthAccount address={token.token.owner} />}
           </div>
-          <div className="bg-white rounded-md shadow-md p-5">
-            <div className="grid gap-8 grid-cols-2">
+          <div className="rounded-md bg-white p-5 shadow-md">
+            <div className="grid grid-cols-2 gap-8">
               <Price
                 title="list price"
                 price={
@@ -101,9 +96,9 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     chainId={+chainId}
                     signer={signer}
                     maker={accountData?.address}
-                    collection={collection}
-                    tokens={data}
-                    mutate={mutate}
+                    collection={collection.data}
+                    tokens={details.data}
+                    mutate={details.mutate}
                   />
                 ) : (
                   <button
@@ -132,7 +127,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
                       try {
                         setWaitingTx(true)
                         await instantBuy(apiBase, +chainId, signer, query)
-                        await mutate()
+                        await details.mutate()
                         setWaitingTx(false)
                       } catch (error) {
                         setWaitingTx(false)
@@ -181,7 +176,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
                       try {
                         setWaitingTx(true)
                         await acceptOffer(apiBase, +chainId, signer, query)
-                        await mutate()
+                        await details.mutate()
                         setWaitingTx(false)
                       } catch (error) {
                         setWaitingTx(false)
@@ -200,7 +195,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
                       collection: {
                         id: undefined,
                         image: undefined,
-                        name: collection?.collection?.collection?.name,
+                        name: collection.data?.collection?.collection?.name,
                         tokenCount: undefined,
                       },
                       token: {
@@ -213,15 +208,16 @@ const Index: NextPage<Props> = ({ fallback }) => {
                       },
                     }}
                     royalties={{
-                      bps: collection.collection?.royalties?.bps,
-                      recipient: collection.collection?.royalties?.recipient,
+                      bps: collection.data?.collection?.royalties?.bps,
+                      recipient:
+                        collection.data?.collection?.royalties?.recipient,
                     }}
                     env={{
                       apiBase,
                       chainId: +chainId,
                       openSeaApiKey,
                     }}
-                    mutate={mutate}
+                    mutate={details.mutate}
                   />
                 )}
               </Price>
@@ -242,7 +238,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     try {
                       setWaitingTx(true)
                       await cancelOrder(apiBase, +chainId, signer, query)
-                      await mutate()
+                      await details.mutate()
                       setWaitingTx(false)
                     } catch (error) {
                       setWaitingTx(false)
@@ -250,7 +246,7 @@ const Index: NextPage<Props> = ({ fallback }) => {
                     }
                   }
                 }}
-                className="col-span-2 mx-auto btn-red-ghost mt-8"
+                className="btn-red-ghost col-span-2 mx-auto mt-8"
               >
                 {waitingTx ? 'Waiting...' : 'Cancel your offer'}
               </button>
@@ -269,65 +265,41 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
   price,
   children,
 }) => (
-  <div className="grid space-y-5 justify-items-center">
-    <div className="uppercase font-medium opacity-75 text-center">{title}</div>
+  <div className="grid justify-items-center space-y-5">
+    <div className="text-center font-medium uppercase opacity-75">{title}</div>
     <div className="text-3xl font-bold">{price}</div>
     {children}
   </div>
 )
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps<{
-  fallback: {
-    token: paths['/tokens/details']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
-  }
-}> = async ({ params }) => {
-  try {
-    if (!apiBase) {
-      throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
-    }
-    if (!collectionId) {
-      throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
-    }
-
-    // -------------- COLLECTION --------------
-    let url1 = new URL(`/collections/${collectionId}`, apiBase)
-
-    const res1 = await fetch(url1.href)
-    const collection: Props['fallback']['collection'] = await res1.json()
-
-    // -------------- TOKENS --------------
-    let url = new URL('/tokens', apiBase)
-
-    let query: paths['/tokens/details']['get']['parameters']['query'] = {
-      contract: params?.contract?.toString(),
-      tokenId: params?.tokenId?.toString(),
-    }
-
-    setParams(url, query)
-
-    const res = await fetch(url.href)
-    const token: Props['fallback']['token'] = await res.json()
-
-    return {
-      props: {
-        fallback: {
-          token,
-          collection,
-        },
-      },
-    }
-  } catch (error) {
-    console.error(error)
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const hostParts = req.headers.host?.split('.').reverse()
+  // Make sure that the host contains at least one subdomain
+  // ['subdomain', 'domain', 'TLD']
+  // Reverse the host parts to make sure that the third element always
+  // corresponds to the first subdomain
+  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  if (!hostParts) {
     return {
       notFound: true,
     }
   }
+
+  if (nodeEnv === 'production' && hostParts?.length < 3) {
+    return {
+      notFound: true,
+    }
+  }
+
+  if (nodeEnv === 'development' && hostParts?.length < 2) {
+    return {
+      notFound: true,
+    }
+  }
+
+  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
+  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+
+  return { props: { wildcard } }
 }

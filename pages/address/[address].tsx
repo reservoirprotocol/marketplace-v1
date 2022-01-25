@@ -4,46 +4,40 @@ import UserTokensGrid from 'components/UserTokensGrid'
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
-import useIsVisible from 'lib/useIsVisible'
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
-import { NextRouter, useRouter } from 'next/router'
-import { FC, useEffect } from 'react'
+import { GetServerSideProps, InferGetStaticPropsType, NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
+import { useInView } from 'react-intersection-observer'
+import useSWR from 'swr'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
-const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
-const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
+const nodeEnv = process.env.NODE_ENV
 
 type InfiniteKeyLoader = (
-  router: NextRouter,
+  url: URL,
+  wildcard: string,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
-  router: NextRouter,
+  url: URL,
+  wildcard: string,
   index: number,
-  previousPageData: Props['fallback']['tokens']
+  previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
 ) => {
   if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
-    return null
-  }
-  if (!collectionId) {
-    console.debug(
-      'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
-    )
     return null
   }
 
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let url = new URL(`/users/${router.query?.address}/tokens`, apiBase)
-
   let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection: collectionId,
+    collection: wildcard,
   }
 
   setParams(url, query)
@@ -51,89 +45,82 @@ const getKey: InfiniteKeyLoader = (
   return url.href
 }
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>
+type Props = InferGetStaticPropsType<typeof getServerSideProps>
 
-const Address: FC<Props> = ({ fallback }) => {
+const Address: NextPage<Props> = ({ wildcard }) => {
   const router = useRouter()
 
-  const { containerRef, isVisible } = useIsVisible()
+  const { ref, inView } = useInView()
 
-  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
-    (index, previousPageData) => getKey(router, index, previousPageData),
+  const url = new URL(`/users/${router.query?.address}/tokens`, apiBase)
+
+  const tokens = useSWRInfinite<
+    paths['/users/{user}/tokens']['get']['responses']['200']['schema']
+  >(
+    (index, previousPageData) => getKey(url, wildcard, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
       // revalidateOnMount: false,
-      fallbackData: [fallback.tokens],
     }
   )
 
-  const collectionName = tokens?.data?.[0]?.tokens?.[0]?.token?.collection?.name
+  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
+
+  const collection = useSWR<
+    paths['/collections/{collection}']['get']['responses']['200']['schema']
+  >(collectionUrl.href, fetcher)
 
   // Fetch more data when component is visible
   useEffect(() => {
-    if (isVisible) {
+    if (inView) {
       tokens.setSize(tokens.size + 1)
     }
-  }, [isVisible])
+  }, [inView])
 
   return (
-    <Layout title={collectionName ?? 'HOME'} image={collectionImage ?? ''}>
-      <div className="flex justify-center items-center mt-4 mb-10">
+    <Layout
+      title={collection.data?.collection?.collection?.name}
+      image={collection.data?.collection?.collection?.image}
+    >
+      <div className="mt-4 mb-10 flex items-center justify-center">
         <EthAccount address={router.query?.address?.toString()} />
       </div>
-      <UserTokensGrid tokens={tokens} viewRef={containerRef} />
+      <UserTokensGrid tokens={tokens} viewRef={ref} />
     </Layout>
   )
 }
 
 export default Address
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps<{
-  fallback: {
-    tokens: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-  }
-}> = async ({ params }) => {
-  try {
-    if (!apiBase) {
-      throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
-    }
-    if (!collectionId) {
-      throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
-    }
-    if (!params?.address) {
-      throw 'The user address is undefined'
-    }
-
-    let url = new URL(`/users/${params.address}/tokens`, apiBase)
-
-    let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
-      collection: collectionId,
-    }
-
-    setParams(url, query)
-
-    const res = await fetch(url.href)
-    const tokens: Props['fallback']['tokens'] = await res.json()
-
-    return {
-      props: {
-        fallback: {
-          tokens,
-        },
-      },
-    }
-  } catch (error) {
-    console.error(error)
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const hostParts = req.headers.host?.split('.').reverse()
+  // Make sure that the host contains at least one subdomain
+  // ['subdomain', 'domain', 'TLD']
+  // Reverse the host parts to make sure that the third element always
+  // corresponds to the first subdomain
+  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  if (!hostParts) {
     return {
       notFound: true,
     }
   }
+
+  if (nodeEnv === 'production' && hostParts?.length < 3) {
+    return {
+      notFound: true,
+    }
+  }
+
+  if (nodeEnv === 'development' && hostParts?.length < 2) {
+    return {
+      notFound: true,
+    }
+  }
+
+  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
+  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+
+  return { props: { wildcard } }
 }

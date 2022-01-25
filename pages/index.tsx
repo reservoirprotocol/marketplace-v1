@@ -2,45 +2,50 @@ import Layout from 'components/Layout'
 import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
-import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
+import type {
+  GetServerSideProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next'
 import fetcher from 'lib/fetcher'
 import TokensGrid from 'components/TokensGrid'
 import { useEffect } from 'react'
-import useIsVisible from 'lib/useIsVisible'
+import { useInView } from 'react-intersection-observer'
 import Hero from 'components/Hero'
 import useSWR from 'swr'
 import { useSigner } from 'wagmi'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
-const collectionId = process.env.NEXT_PUBLIC_COLLECTION_ID
-const collectionImage = process.env.NEXT_PUBLIC_COLLECTION_IMAGE
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const nodeEnv = process.env.NODE_ENV
 
-const getKey: SWRInfiniteKeyLoader = (
+type InfiniteKeyLoader = (
+  url: URL,
+  wildcard: string,
+  ...base: Parameters<SWRInfiniteKeyLoader>
+) => ReturnType<SWRInfiniteKeyLoader>
+
+const getKey: InfiniteKeyLoader = (
+  url: URL,
+  wildcard: string,
   index: number,
-  previousPageData: Props['fallback']['tokens']
+  previousPageData: paths['/tokens']['get']['responses']['200']['schema']
 ) => {
   if (!apiBase) {
-    console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
-    return null
-  }
-  if (!collectionId) {
-    console.debug(
-      'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
-    )
+    console.debug('There are missing environment variables', {
+      apiBase,
+    })
     return null
   }
 
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let url = new URL('/tokens', apiBase)
-
   let query: paths['/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection: collectionId,
+    collection: wildcard,
   }
 
   setParams(url, query)
@@ -48,40 +53,40 @@ const getKey: SWRInfiniteKeyLoader = (
   return url.href
 }
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>
+type Props = InferGetStaticPropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ fallback }) => {
-  const { containerRef, isVisible } = useIsVisible()
+const Home: NextPage<Props> = ({ wildcard }) => {
+  const { ref, inView } = useInView()
   const [{ data: signer }] = useSigner()
 
-  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
-    (index, previousPageData) => getKey(index, previousPageData),
+  const tokensUrl = new URL('/tokens', apiBase)
+
+  const tokens = useSWRInfinite<
+    paths['/tokens']['get']['responses']['200']['schema']
+  >(
+    (index, previousPageData) =>
+      getKey(tokensUrl, wildcard, index, previousPageData),
     fetcher,
     {
       // solution only in beta
       // https://github.com/vercel/swr/pull/1538
       revalidateFirstPage: false,
       // revalidateOnMount: false,
-      fallbackData: [fallback.tokens],
     }
   )
 
-  let url = new URL(`/collections/${collectionId}`, apiBase)
+  let url = new URL(`/collections/${wildcard}`, apiBase)
 
-  const collection = useSWR<Props['fallback']['collection']>(
-    url.href,
-    fetcher,
-    {
-      fallbackData: fallback.collection,
-    }
-  )
+  const collection = useSWR<
+    paths['/collections/{collection}']['get']['responses']['200']['schema']
+  >(url.href, fetcher)
 
   // Fetch more data when component is visible
   useEffect(() => {
-    if (isVisible) {
+    if (inView) {
       tokens.setSize(tokens.size + 1)
     }
-  }, [isVisible])
+  }, [inView])
 
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
@@ -117,7 +122,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       id: collection?.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
-      tokenCount: fallback.collection?.collection?.set?.tokenCount ?? 0,
+      tokenCount: collection?.data?.collection?.set?.tokenCount ?? 0,
     },
     token: {
       contract: undefined,
@@ -131,8 +136,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout
-      title={collection.data?.collection?.collection?.name ?? 'HOME'}
-      image={collectionImage ?? ''}
+      title={collection.data?.collection?.collection?.name}
+      image={collection.data?.collection?.collection?.image}
     >
       <Hero
         stats={stats}
@@ -146,7 +151,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       <TokensGrid
         tokenCount={data.collection.tokenCount}
         tokens={tokens}
-        viewRef={containerRef}
+        viewRef={ref}
       />
     </Layout>
   )
@@ -154,50 +159,34 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
 export default Home
 
-export const getStaticProps: GetStaticProps<{
-  fallback: {
-    tokens: paths['/tokens']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
-  }
-}> = async () => {
-  try {
-    if (!apiBase) {
-      throw 'Environment variable NEXT_PUBLIC_API_BASE is undefined.'
-    }
-    if (!collectionId) {
-      throw 'Environment variable NEXT_PUBLIC_COLLECTION_ID is undefined.'
-    }
-
-    // -------------- COLLECTION --------------
-    let url1 = new URL(`/collections/${collectionId}`, apiBase)
-
-    const res1 = await fetch(url1.href)
-    const collection: Props['fallback']['collection'] = await res1.json()
-
-    // -------------- TOKENS --------------
-    let url2 = new URL('/tokens', apiBase)
-
-    let query2: paths['/tokens']['get']['parameters']['query'] = {
-      collection: collectionId,
-    }
-
-    setParams(url2, query2)
-
-    const res2 = await fetch(url2.href)
-    const tokens: Props['fallback']['tokens'] = await res2.json()
-
-    return {
-      props: {
-        fallback: {
-          tokens,
-          collection,
-        },
-      },
-    }
-  } catch (error) {
-    console.error(error)
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const hostParts = req.headers.host?.split('.').reverse()
+  // Make sure that the host contains at least one subdomain
+  // ['subdomain', 'domain', 'TLD']
+  // Reverse the host parts to make sure that the third element always
+  // corresponds to the first subdomain
+  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  if (!hostParts) {
     return {
       notFound: true,
     }
   }
+
+  if (nodeEnv === 'production' && hostParts?.length < 3) {
+    return {
+      notFound: true,
+    }
+  }
+
+  if (nodeEnv === 'development' && hostParts?.length < 2) {
+    return {
+      notFound: true,
+    }
+  }
+
+  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
+  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
+  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+
+  return { props: { wildcard } }
 }

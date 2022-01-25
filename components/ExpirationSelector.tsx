@@ -19,7 +19,7 @@ const ExpirationSelector: FC<Props> = ({
     <>
       <label
         htmlFor="expirationSelector"
-        className="uppercase opacity-75 font-medium mb-2"
+        className="mb-2 font-medium uppercase opacity-75"
       >
         Expiration
       </label>
