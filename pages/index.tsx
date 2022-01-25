@@ -13,7 +13,8 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import Hero from 'components/Hero'
 import useSWR from 'swr'
-import { useSigner } from 'wagmi'
+import { useNetwork, useSigner } from 'wagmi'
+import OfferModal from 'components/OfferModal'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -58,6 +59,7 @@ type Props = InferGetStaticPropsType<typeof getServerSideProps>
 const Home: NextPage<Props> = ({ wildcard }) => {
   const { ref, inView } = useInView()
   const [{ data: signer }] = useSigner()
+  const [{ data: network }] = useNetwork()
 
   const tokensUrl = new URL('/tokens', apiBase)
 
@@ -116,6 +118,8 @@ const Home: NextPage<Props> = ({ wildcard }) => {
     openSeaApiKey,
   }
 
+  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
+
   const data = {
     // COLLECTION WIDE OFFER
     collection: {
@@ -139,15 +143,24 @@ const Home: NextPage<Props> = ({ wildcard }) => {
       title={collection.data?.collection?.collection?.name}
       image={collection.data?.collection?.collection?.image}
     >
-      <Hero
-        stats={stats}
-        header={header}
-        signer={signer}
-        data={data}
-        royalties={royalties}
-        env={env}
-        mutate={collection.mutate}
-      />
+      <Hero stats={stats} header={header} />
+      <div className="mt-3 mb-10 flex justify-center">
+        <OfferModal
+          trigger={
+            <button
+              className="btn-neutral-fill-dark px-11 py-4"
+              disabled={!signer || isInTheWrongNetwork}
+            >
+              Make a collection bid
+            </button>
+          }
+          royalties={royalties}
+          signer={signer}
+          data={data}
+          env={env}
+          mutate={collection.mutate}
+        />
+      </div>
       <TokensGrid
         tokenCount={data.collection.tokenCount}
         tokens={tokens}
