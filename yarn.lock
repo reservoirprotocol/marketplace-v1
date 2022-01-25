@@ -968,10 +968,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@ramosdiego/ui@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@ramosdiego/ui/-/ui-0.0.3.tgz#6bd133409e48486edda50a6ea6109cf9a62d387a"
-  integrity sha512-l+yz9qMksQdamhZClc9CP9nVTfCCpgFDX8edn99Wog+ccPrMt/w/wK0pwYH7NxYXPHLTJHbIc9/8XY0iELG23A==
+"@ramosdiego/ui@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@ramosdiego/ui/-/ui-0.0.4.tgz#e5c4eb50330d3e220e524ce509fc198d5f531819"
+  integrity sha512-3s64A9cpIXFyGUH8FNbNI5Hm0pkHqbn5JlkovLSacyRlWRXSqN/A0wLTYnpCTWBLCpXmg04K5Or0OvikO2areg==
 
 "@reservoir0x/sdk@^0.0.18":
   version "0.0.18"
