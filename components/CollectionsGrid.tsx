@@ -67,7 +67,7 @@ const CollectionsGrid: FC<Props> = ({ collections, viewRef }) => {
                     </div>
                     <div>
                       <FormatEth
-                        amount={collection?.set?.market?.topBuy?.value}
+                        amount={collection?.set?.market?.floorSell?.value}
                         maximumFractionDigits={2}
                         logoWidth={7}
                       />

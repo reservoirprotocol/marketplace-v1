@@ -17,6 +17,7 @@ import { useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
 import CommunityGrid from 'components/CommunityGrid'
 import CollectionsGrid from 'components/CollectionsGrid'
+import SearchCollection from 'components/SearchCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -263,13 +264,8 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
               Welcome to our sample marketplace!
             </h1>
           </header>
-          <div className="mb-12 flex justify-center gap-3">
-            <input
-              className="input-blue-outline w-[250px] py-2"
-              type="text"
-              placeholder="Search for an NFT collection"
-            />
-            <button className="btn-neutral-fill-dark px-10">Search</button>
+          <div className="mb-12 grid justify-center">
+            <SearchCollection apiBase={apiBase} />
           </div>
           <CollectionsGrid collections={collections} viewRef={refCollection} />
         </>
