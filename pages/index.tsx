@@ -4,7 +4,7 @@ import setParams from 'lib/params'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import type {
   GetServerSideProps,
-  InferGetStaticPropsType,
+  InferGetServerSidePropsType,
   NextPage,
 } from 'next'
 import fetcher from 'lib/fetcher'
@@ -15,6 +15,8 @@ import Hero from 'components/Hero'
 import useSWR from 'swr'
 import { useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
+import CommunityGrid from 'components/CommunityGrid'
+import CollectionsGrid from 'components/CollectionsGrid'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -54,10 +56,71 @@ const getKey: InfiniteKeyLoader = (
   return url.href
 }
 
-type Props = InferGetStaticPropsType<typeof getServerSideProps>
+const getKeyCommunity: InfiniteKeyLoader = (
+  url: URL,
+  wildcard: string,
+  index: number,
+  previousPageData: paths['/collections']['get']['responses']['200']['schema']
+) => {
+  if (!apiBase) {
+    console.debug('There are missing environment variables', {
+      apiBase,
+    })
+    return null
+  }
 
-const Home: NextPage<Props> = ({ wildcard }) => {
+  // Reached the end
+  if (previousPageData && previousPageData?.collections?.length === 0)
+    return null
+
+  let query: paths['/collections']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: index * 20,
+    community: wildcard,
+  }
+
+  setParams(url, query)
+
+  return url.href
+}
+
+const getKeyCollections: (
+  url: URL,
+  ...base: Parameters<SWRInfiniteKeyLoader>
+) => ReturnType<SWRInfiniteKeyLoader> = (
+  url: URL,
+  index: number,
+  previousPageData: paths['/collections']['get']['responses']['200']['schema']
+) => {
+  if (!apiBase) {
+    console.debug('There are missing environment variables', {
+      apiBase,
+    })
+    return null
+  }
+
+  // Reached the end
+  if (previousPageData && previousPageData?.collections?.length === 0)
+    return null
+
+  let query: paths['/collections']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: index * 20,
+    sortBy: 'floorCap',
+    sortDirection: 'desc',
+  }
+
+  setParams(url, query)
+
+  return url.href
+}
+
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+
+const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   const { ref, inView } = useInView()
+  const { ref: refCommunity, inView: inViewCommunity } = useInView()
+  const { ref: refCollection, inView: inViewCollection } = useInView()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
 
@@ -77,18 +140,64 @@ const Home: NextPage<Props> = ({ wildcard }) => {
     }
   )
 
-  let url = new URL(`/collections/${wildcard}`, apiBase)
-
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
-
   // Fetch more data when component is visible
   useEffect(() => {
     if (inView) {
       tokens.setSize(tokens.size + 1)
     }
   }, [inView])
+
+  const communityUrl = new URL('/collections', apiBase)
+
+  const communities = useSWRInfinite<
+    paths['/collections']['get']['responses']['200']['schema']
+  >(
+    (index, previousPageData) =>
+      getKeyCommunity(communityUrl, wildcard, index, previousPageData),
+    fetcher,
+    {
+      // solution only in beta
+      // https://github.com/vercel/swr/pull/1538
+      revalidateFirstPage: false,
+      // revalidateOnMount: false,
+    }
+  )
+
+  // Fetch more data when component is visible
+  useEffect(() => {
+    if (inViewCommunity) {
+      communities.setSize(communities.size + 1)
+    }
+  }, [inViewCommunity])
+
+  const collectionsUrl = new URL('/collections', apiBase)
+
+  const collections = useSWRInfinite<
+    paths['/collections']['get']['responses']['200']['schema']
+  >(
+    (index, previousPageData) =>
+      getKeyCollections(collectionsUrl, index, previousPageData),
+    fetcher,
+    {
+      // solution only in beta
+      // https://github.com/vercel/swr/pull/1538
+      revalidateFirstPage: false,
+      // revalidateOnMount: false,
+    }
+  )
+
+  // Fetch more data when component is visible
+  useEffect(() => {
+    if (inViewCollection) {
+      collections.setSize(collections.size + 1)
+    }
+  }, [inViewCollection])
+
+  let url = new URL(`/collections/${wildcard}`, apiBase)
+
+  const collection = useSWR<
+    paths['/collections/{collection}']['get']['responses']['200']['schema']
+  >(url.href, fetcher)
 
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
@@ -138,41 +247,83 @@ const Home: NextPage<Props> = ({ wildcard }) => {
     },
   }
 
+  const layoutData = {
+    title: isHome
+      ? 'Sample Marketplace'
+      : collection.data?.collection?.collection?.name,
+    image: isHome ? undefined : collection.data?.collection?.collection?.image,
+  }
+
   return (
-    <Layout
-      title={collection.data?.collection?.collection?.name}
-      image={collection.data?.collection?.collection?.image}
-    >
-      <Hero stats={stats} header={header} />
-      <div className="mt-3 mb-10 flex justify-center">
-        <OfferModal
-          trigger={
-            <button
-              className="btn-neutral-fill-dark px-11 py-4"
-              disabled={!signer || isInTheWrongNetwork}
-            >
-              Make a collection bid
-            </button>
-          }
-          royalties={royalties}
-          signer={signer}
-          data={data}
-          env={env}
-          mutate={collection.mutate}
-        />
-      </div>
-      <TokensGrid
-        tokenCount={data.collection.tokenCount}
-        tokens={tokens}
-        viewRef={ref}
-      />
+    <Layout title={layoutData?.title} image={layoutData?.image}>
+      {isHome ? (
+        <>
+          <header className="mb-10 flex items-center justify-center gap-5">
+            <h1 className="mt-12 text-3xl font-bold uppercase">
+              Welcome to our sample marketplace!
+            </h1>
+          </header>
+          <div className="mb-12 flex justify-center gap-3">
+            <input
+              className="input-blue-outline w-[250px] py-2"
+              type="text"
+              placeholder="Search for an NFT collection"
+            />
+            <button className="btn-neutral-fill-dark px-10">Search</button>
+          </div>
+          <CollectionsGrid collections={collections} viewRef={refCollection} />
+        </>
+      ) : isCommunity ? (
+        <>
+          <header className="mb-10 flex items-center justify-center gap-5">
+            <img
+              className="h-[50px] w-[50px]"
+              src={communities.data?.[0]?.collections?.[0]?.collection?.image}
+            />
+            <h1 className="text-xl font-bold uppercase">
+              {wildcard} Community
+            </h1>
+          </header>
+          <CommunityGrid communities={communities} viewRef={refCommunity} />
+        </>
+      ) : (
+        <>
+          <Hero stats={stats} header={header} />
+          <div className="mt-3 mb-10 flex justify-center">
+            <OfferModal
+              trigger={
+                <button
+                  className="btn-neutral-fill-dark px-11 py-4"
+                  disabled={!signer || isInTheWrongNetwork}
+                >
+                  Make a collection bid
+                </button>
+              }
+              royalties={royalties}
+              signer={signer}
+              data={data}
+              env={env}
+              mutate={collection.mutate}
+            />
+          </div>
+          <TokensGrid
+            tokenCount={data.collection.tokenCount}
+            tokens={tokens}
+            viewRef={ref}
+          />
+        </>
+      )}
     </Layout>
   )
 }
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps<{
+  wildcard: string
+  isCommunity: boolean
+  isHome: boolean
+}> = async ({ req }) => {
   const hostParts = req.headers.host?.split('.').reverse()
   // Make sure that the host contains at least one subdomain
   // ['subdomain', 'domain', 'TLD']
@@ -180,6 +331,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // corresponds to the first subdomain
   // ['TLD', 'domain', 'subdomain1', 'subdomain2']
   if (!hostParts) {
+    return {
+      notFound: true,
+    }
+  }
+
+  if (!apiBase) {
+    console.debug('There are missing environment variables', {
+      apiBase,
+    })
     return {
       notFound: true,
     }
@@ -201,5 +361,31 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
   const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
 
-  return { props: { wildcard } }
+  // Check the wildcard corresponds to a community
+  const url = new URL('/collections', apiBase)
+
+  const query: paths['/collections']['get']['parameters']['query'] = {
+    community: wildcard,
+  }
+
+  setParams(url, query)
+
+  let isCommunity: boolean = false
+
+  try {
+    const res = await fetch(url.href)
+    const collections =
+      (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
+    if (collections.collections) {
+      isCommunity = collections.collections.length > 0
+    }
+  } catch (error) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const isHome: boolean = wildcard === 'www'
+
+  return { props: { wildcard, isCommunity, isHome } }
 }
