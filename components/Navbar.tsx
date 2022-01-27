@@ -5,28 +5,29 @@ import Link from 'next/link'
 type Props = {
   title: string | undefined
   image: string | undefined
-  collection?: string
 }
 
-const Navbar: FC<Props> = ({ title, image, collection }) => {
+const Navbar: FC<Props> = ({ title, image }) => {
   return (
     <nav className="flex items-center justify-between">
-      <Link href={collection ? `/collections/${collection}` : '/'}>
+      <Link href="/">
         <a className="flex items-center justify-between gap-3">
           {image && <img src={image} alt={title} className="w-[30px]" />}
           {title && <span className="font-semibold">{title}</span>}
         </a>
       </Link>
       <div className="flex items-center gap-6">
-        <Link href="https://github.com/reservoirprotocol/sample-marketplace">
-          <a
-            className="font-medium hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Fork me on GitHub
-          </a>
-        </Link>
+        <div className="grid">
+          <span className="text-sm opacity-75">powered by</span>
+          <div className="flex items-center gap-1.5">
+            <img
+              src="/reservoir.svg"
+              alt="Reservoir Logo"
+              className="h-5 w-5"
+            />
+            <span className="font-['Obvia'] text-lg">reservoir</span>
+          </div>
+        </div>
         <ConnectWallet />
       </div>
     </nav>

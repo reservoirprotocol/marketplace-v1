@@ -250,7 +250,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const layoutData = {
     title: isHome
-      ? 'Sample Marketplace'
+      ? 'Your Logo Here'
       : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
@@ -260,8 +260,8 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
       {isHome ? (
         <>
           <header className="mb-10 flex items-center justify-center gap-5">
-            <h1 className="mt-12 text-3xl font-bold uppercase">
-              Welcome to our sample marketplace!
+            <h1 className="mt-12 text-3xl font-bold">
+              Discover, buy and sell NFTs
             </h1>
           </header>
           <div className="mb-12 grid justify-center">
@@ -341,21 +341,10 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  if (nodeEnv === 'production' && hostParts?.length < 3) {
-    return {
-      notFound: true,
-    }
-  }
-
-  if (nodeEnv === 'development' && hostParts?.length < 2) {
-    return {
-      notFound: true,
-    }
-  }
-
   // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+  const wildcard =
+    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
 
   // Check the wildcard corresponds to a community
   const url = new URL('/collections', apiBase)

@@ -7,3 +7,10 @@
     font-size: 14px;
   }
 }
+
+@font-face {
+  font-family: 'Obvia';
+  src: url('/fonts/obvia_medium-webfont.woff2') format('woff2'),
+    url('/fonts/obvia_bold-webfont.woff2') format('woff2');
+  font-weight: 400 500 700;
+}

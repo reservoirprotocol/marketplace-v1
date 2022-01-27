@@ -12,17 +12,18 @@ import { useInView } from 'react-intersection-observer'
 import useSWR from 'swr'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
-const nodeEnv = process.env.NODE_ENV
 
 type InfiniteKeyLoader = (
   url: URL,
   wildcard: string,
+  isHome: boolean,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
   url: URL,
   wildcard: string,
+  isHome: boolean,
   index: number,
   previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
 ) => {
@@ -37,7 +38,10 @@ const getKey: InfiniteKeyLoader = (
   let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection: wildcard,
+  }
+
+  if (!isHome) {
+    query.collection = wildcard
   }
 
   setParams(url, query)
@@ -47,7 +51,7 @@ const getKey: InfiniteKeyLoader = (
 
 type Props = InferGetStaticPropsType<typeof getServerSideProps>
 
-const Address: NextPage<Props> = ({ wildcard }) => {
+const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   const router = useRouter()
 
   const { ref, inView } = useInView()
@@ -57,19 +61,14 @@ const Address: NextPage<Props> = ({ wildcard }) => {
   const tokens = useSWRInfinite<
     paths['/users/{user}/tokens']['get']['responses']['200']['schema']
   >(
-    (index, previousPageData) => getKey(url, wildcard, index, previousPageData),
+    (index, previousPageData) =>
+      getKey(url, wildcard, isHome, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
       // revalidateOnMount: false,
     }
   )
-
-  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
-
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(collectionUrl.href, fetcher)
 
   // Fetch more data when component is visible
   useEffect(() => {
@@ -78,11 +77,21 @@ const Address: NextPage<Props> = ({ wildcard }) => {
     }
   }, [inView])
 
+  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
+
+  const collection = useSWR<
+    paths['/collections/{collection}']['get']['responses']['200']['schema']
+  >(collectionUrl.href, fetcher)
+
+  const layoutData = {
+    title: isHome
+      ? 'Your Logo Here'
+      : collection.data?.collection?.collection?.name,
+    image: isHome ? undefined : collection.data?.collection?.collection?.image,
+  }
+
   return (
-    <Layout
-      title={collection.data?.collection?.collection?.name}
-      image={collection.data?.collection?.collection?.image}
-    >
+    <Layout title={layoutData.title} image={layoutData.image}>
       <div className="mt-4 mb-10 flex items-center justify-center">
         <EthAccount address={router.query?.address?.toString()} />
       </div>
@@ -106,21 +115,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     }
   }
 
-  if (nodeEnv === 'production' && hostParts?.length < 3) {
-    return {
-      notFound: true,
-    }
-  }
-
-  if (nodeEnv === 'development' && hostParts?.length < 2) {
-    return {
-      notFound: true,
-    }
-  }
-
   // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+  const wildcard =
+    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
 
-  return { props: { wildcard } }
+  const isHome: boolean = wildcard === 'www'
+
+  return { props: { wildcard, isHome } }
 }

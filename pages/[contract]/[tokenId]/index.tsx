@@ -19,7 +19,6 @@ import FormatEth from 'components/FormatEth'
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-const nodeEnv = process.env.NODE_ENV
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
@@ -67,14 +66,9 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
       ? token?.token?.collection?.name
       : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
-    collection: token?.token?.collection?.id,
   }
   return (
-    <Layout
-      collection={layoutData.collection}
-      title={layoutData.title}
-      image={layoutData.image}
-    >
+    <Layout title={layoutData.title} image={layoutData.image}>
       <div className="mt-8 grid grid-cols-2 justify-items-center gap-10">
         <img
           className="w-[500px]"
@@ -308,21 +302,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     }
   }
 
-  if (nodeEnv === 'production' && hostParts?.length < 3) {
-    return {
-      notFound: true,
-    }
-  }
-
-  if (nodeEnv === 'development' && hostParts?.length < 2) {
-    return {
-      notFound: true,
-    }
-  }
-
   // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
+  const wildcard =
+    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
 
   const isHome: boolean = wildcard === 'www'
 
