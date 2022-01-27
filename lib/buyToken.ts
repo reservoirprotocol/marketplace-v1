@@ -14,16 +14,11 @@ import setParams from './params'
  */
 async function instantBuy(
   apiBase: string,
-  chainId: number,
-  signer: Signer | undefined,
+  chainId: ChainId,
+  signer: Signer,
   query: paths['/orders/fill']['get']['parameters']['query']
 ) {
   try {
-    if (!signer) {
-      console.error('Cannot accept offer because the signer is undefined.')
-      return
-    }
-
     // Fetch the best sell order for this token
     let url = new URL('/orders/fill', apiBase)
 
@@ -35,15 +30,17 @@ async function instantBuy(
       (await res.json()) as paths['/orders/fill']['get']['responses']['200']['schema']
 
     if (!order?.params) {
-      throw 'API ERROR: Could not retrieve order params'
+      throw new ReferenceError('Could not retrieve order params')
     }
 
     // Use SDK to create order object
     const sellOrder = new WyvernV2.Order(chainId, order.params)
 
+    const signerAddress = await signer.getAddress()
+
     // Create a matching buy order
     const buyOrder = sellOrder.buildMatching(
-      await signer.getAddress(),
+      signerAddress,
       order.buildMatchingArgs
     )
 
@@ -57,9 +54,10 @@ async function instantBuy(
 
     return true
   } catch (err) {
-    console.error('Could not buy token', err)
-    return false
+    console.error(err)
   }
+
+  return false
 }
 
 export { instantBuy }

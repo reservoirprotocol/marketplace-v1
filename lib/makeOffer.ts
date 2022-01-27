@@ -14,16 +14,18 @@ import setParams from './params'
  * @param signer An Ethereum signer object
  * @returns A wETH contract instance and the signers wETH balance
  */
-async function getWeth(chainId: number, provider: Provider, signer: Signer) {
+async function getWeth(chainId: ChainId, provider: Provider, signer: Signer) {
   const weth = new Weth(provider, chainId)
   const signerAddress = await signer.getAddress()
+
   try {
     const balance = BigNumber.from(await weth.getBalance(signerAddress))
     return { weth, balance }
-  } catch (error) {
-    console.error("Could not get the signer's wETH balance", error)
-    return null
+  } catch (err) {
+    console.error(err)
   }
+
+  return null
 }
 
 /**
@@ -40,17 +42,17 @@ async function getWeth(chainId: number, provider: Provider, signer: Signer) {
  * otherwise
  */
 async function hasWethAllowance(
-  chainId: number,
+  chainId: ChainId,
   weth: Weth,
   input: BigNumber,
   signer: Signer
 ) {
-  const tokenTransferProxy =
-    chainId === 4
-      ? '0x82d102457854c985221249f86659c9d6cf12aa72'
-      : '0xe5c783ee536cf5e63e792988335c4255169be4e1'
-
   try {
+    const tokenTransferProxy =
+      chainId === 4
+        ? '0x82d102457854c985221249f86659c9d6cf12aa72'
+        : '0xe5c783ee536cf5e63e792988335c4255169be4e1'
+
     const signerAddress = await signer.getAddress()
     // Get the allowance the signer gave to the Wyvern Token Transfer Proxy
     const allowance = await weth.getAllowance(signerAddress, tokenTransferProxy)
@@ -70,10 +72,11 @@ async function hasWethAllowance(
 
     // The exchange has enough allowance
     return true
-  } catch (error) {
-    console.error('Could not approve wETH', error)
-    return false
+  } catch (err) {
+    console.error(err)
   }
+
+  return false
 }
 
 /**
@@ -106,9 +109,10 @@ export async function checkUserBalance(
 
     return true
   } catch (err) {
-    console.error('Could not deposit wETH')
-    return false
+    console.error(err)
   }
+
+  return false
 }
 
 /**
@@ -123,7 +127,7 @@ export async function checkUserBalance(
  * Returns `null` otherwise
  */
 async function postBuyOrder(
-  chainId: number,
+  chainId: ChainId,
   apiBase: string,
   signer: Signer,
   query: paths['/orders/build']['get']['parameters']['query']
@@ -140,7 +144,7 @@ async function postBuyOrder(
       (await res.json()) as paths['/orders/build']['get']['responses']['200']['schema']
 
     if (!order?.params) {
-      throw 'There was an error fetching the order from the API'
+      throw new ReferenceError('Could not retrieve order params')
     }
 
     // Instatiate a Wyvern order
@@ -164,9 +168,10 @@ async function postBuyOrder(
 
     return buyOrder
   } catch (err) {
-    console.error('Could not place the bid')
-    return null
+    console.error(err)
   }
+
+  return null
 }
 
 /**
@@ -182,7 +187,7 @@ async function postBuyOrder(
  * there was a failure posting the order
  */
 async function postBuyOrderToOpenSea(
-  chainId: number,
+  chainId: ChainId,
   apiKey: string,
   params: WyvernV2.Types.OrderParams,
   tokenId: string,
@@ -190,8 +195,6 @@ async function postBuyOrderToOpenSea(
   signer: Signer
 ) {
   try {
-    console.debug({ params })
-
     // Instatiate a Wyvern order
     const buyOrder = new WyvernV2.Order(chainId, {
       ...params,
@@ -265,9 +268,10 @@ async function postBuyOrderToOpenSea(
 
     return json
   } catch (err) {
-    console.error('Could not post buy order to OpenSea')
-    return null
+    console.error(err)
   }
+
+  return null
 }
 
 /**
@@ -282,13 +286,16 @@ async function postBuyOrderToOpenSea(
  * @param postOnOpenSea
  */
 async function makeOffer(
-  chainId: number,
+  chainId: ChainId,
   provider: Provider,
   input: BigNumber,
   apiBase: string,
   apiKey: string,
   signer: Signer,
-  query: paths['/orders/build']['get']['parameters']['query'],
+  query: Overwrite<
+    paths['/orders/build']['get']['parameters']['query'],
+    { tokenId: string; contract: string }
+  >,
   postOnOpenSea: boolean,
   missingWeth: BigNumber
 ) {
@@ -296,39 +303,38 @@ async function makeOffer(
     // Get a wETH instance
     const weth = await getWeth(chainId, provider, signer)
 
-    if (weth?.weth) {
-      // Check the signer's allowance
-      const isAllowanceOk = await hasWethAllowance(
+    if (!weth?.weth) throw new ReferenceError('wETH contract is undefined.')
+
+    // Check the signer's allowance
+    const isAllowanceOk = await hasWethAllowance(
+      chainId,
+      weth.weth,
+      input,
+      signer
+    )
+
+    if (!isAllowanceOk) throw new Error('Allowance is not ok')
+
+    const isBalanceOk = await checkUserBalance(signer, missingWeth, weth.weth)
+
+    if (!isBalanceOk) throw new Error('Balance is not ok')
+
+    const buyOrder = await postBuyOrder(chainId, apiBase, signer, query)
+
+    if (!buyOrder) throw new ReferenceError('Buy order is undefined')
+
+    if (postOnOpenSea) {
+      await postBuyOrderToOpenSea(
         chainId,
-        weth.weth,
-        input,
+        apiKey,
+        buyOrder.params,
+        query.tokenId,
+        query.contract,
         signer
       )
-
-      if (isAllowanceOk) {
-        const isBalanceOk = await checkUserBalance(
-          signer,
-          missingWeth,
-          weth.weth
-        )
-        if (isBalanceOk) {
-          const buyOrder = await postBuyOrder(chainId, apiBase, signer, query)
-
-          if (buyOrder && postOnOpenSea && query?.contract && query?.tokenId) {
-            await postBuyOrderToOpenSea(
-              chainId,
-              apiKey,
-              buyOrder.params,
-              query?.tokenId,
-              query?.contract,
-              signer
-            )
-          }
-        }
-      }
     }
-  } catch (error) {
-    console.error('Could not make offer', error)
+  } catch (err) {
+    console.error(err)
   }
 }
 

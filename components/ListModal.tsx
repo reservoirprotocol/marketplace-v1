@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
-import { listTokenForSell } from 'lib/acceptOffer'
+import { listTokenForSale } from 'lib/acceptOffer'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -152,25 +152,36 @@ const ListModal: FC<Props> = ({
                 <button
                   disabled={waitingTx || isInTheWrongNetwork}
                   onClick={async () => {
+                    // Get the expiration time as a UNIX timestamp
                     const expirationValue = expirationPresets
                       .find(({ preset }) => preset === expiration)
                       ?.value()
 
                     const contract = token?.token?.contract
+                    const tokenId = token?.token?.tokenId
                     const fee =
                       collection?.collection?.royalties?.bps?.toString()
 
-                    if (!contract || !maker || !fee || !expirationValue) {
-                      console.debug({
+                    if (
+                      !contract ||
+                      !maker ||
+                      !fee ||
+                      !expirationValue ||
+                      !signer ||
+                      !tokenId
+                    ) {
+                      console.error('Some data is undefined.', {
                         contract,
                         maker,
                         fee,
                         expirationValue,
+                        signer,
+                        tokenId,
                       })
                       return
                     }
 
-                    const query: Parameters<typeof listTokenForSell>['3'] = {
+                    const query: Parameters<typeof listTokenForSale>['3'] = {
                       contract,
                       maker,
                       side: 'sell',
@@ -178,13 +189,18 @@ const ListModal: FC<Props> = ({
                       fee,
                       feeRecipient:
                         collection?.collection?.royalties?.recipient || maker,
-                      tokenId: token?.token?.tokenId,
+                      tokenId,
                       expirationTime: expirationValue,
                     }
 
                     setWaitingTx(true)
                     try {
-                      await listTokenForSell(apiBase, chainId, signer, query)
+                      await listTokenForSale(
+                        apiBase,
+                        chainId as 1 | 4,
+                        signer,
+                        query
+                      )
                       // Close modal
                       // closeButton.current?.click()
                       await mutate()

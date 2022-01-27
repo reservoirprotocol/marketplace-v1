@@ -5,7 +5,7 @@ import setParams from './params'
 
 export default async function cancelOrder(
   apiBase: string,
-  chainId: number,
+  chainId: ChainId,
   signer: Signer,
   query: paths['/orders/fill']['get']['parameters']['query']
 ) {
@@ -39,8 +39,9 @@ export default async function cancelOrder(
     await wait()
 
     return true
-  } catch (error) {
-    console.log(error)
-    return false
+  } catch (err) {
+    console.log(err)
   }
+
+  return false
 }

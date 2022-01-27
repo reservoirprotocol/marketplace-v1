@@ -112,8 +112,8 @@ const Index: NextPage<Props> = ({ wildcard }) => {
                       const tokenId = token?.token?.tokenId
                       const contract = token?.token?.contract
 
-                      if (!tokenId || !contract) {
-                        console.debug({ tokenId })
+                      if (!signer || !tokenId || !contract) {
+                        console.debug({ tokenId, signer, contract })
                         return
                       }
 
@@ -126,7 +126,12 @@ const Index: NextPage<Props> = ({ wildcard }) => {
 
                       try {
                         setWaitingTx(true)
-                        await instantBuy(apiBase, +chainId, signer, query)
+                        await instantBuy(
+                          apiBase,
+                          +chainId as 1 | 4,
+                          signer,
+                          query
+                        )
                         await details.mutate()
                         setWaitingTx(false)
                       } catch (error) {
@@ -162,8 +167,8 @@ const Index: NextPage<Props> = ({ wildcard }) => {
                       const tokenId = token?.token?.tokenId
                       const contract = token?.token?.contract
 
-                      if (!tokenId || !contract) {
-                        console.debug({ tokenId, contract })
+                      if (!tokenId || !contract || !signer) {
+                        console.debug({ tokenId, contract, signer })
                         return
                       }
 
@@ -175,7 +180,12 @@ const Index: NextPage<Props> = ({ wildcard }) => {
 
                       try {
                         setWaitingTx(true)
-                        await acceptOffer(apiBase, +chainId, signer, query)
+                        await acceptOffer(
+                          apiBase,
+                          +chainId as 1 | 4,
+                          signer,
+                          query
+                        )
                         await details.mutate()
                         setWaitingTx(false)
                       } catch (error) {
@@ -237,7 +247,12 @@ const Index: NextPage<Props> = ({ wildcard }) => {
 
                     try {
                       setWaitingTx(true)
-                      await cancelOrder(apiBase, +chainId, signer, query)
+                      await cancelOrder(
+                        apiBase,
+                        +chainId as 1 | 4,
+                        signer,
+                        query
+                      )
                       await details.mutate()
                       setWaitingTx(false)
                     } catch (error) {

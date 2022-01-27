@@ -25,8 +25,7 @@ async function registerUserProxy(
     const signerAddress = await signer.getAddress()
 
     if (owner.toLowerCase() !== signerAddress.toLowerCase()) {
-      console.error('Signer is not the token owner')
-      return null
+      throw new Error('The signer is not the token owner.')
     }
 
     // Retrieve user proxy
@@ -53,10 +52,10 @@ async function registerUserProxy(
       // The user already registered a proxy
       return userProxy
     }
-  } catch (error) {
-    console.error('Could not check/register user proxy')
-    return null
+  } catch (err) {
+    console.error(err)
   }
+  return null
 }
 
 // Check proxy aprroval
@@ -80,10 +79,7 @@ async function checkProxyApproval(
       isApproved = approvedAddress.toLowerCase() === signerAddress.toLowerCase()
     }
 
-    if (isApproved) {
-      // Set success
-      return true
-    } else {
+    if (!isApproved) {
       // Set the approval on the user proxy
       const { wait } = (await collectionContract
         .connect(signer)
@@ -91,55 +87,58 @@ async function checkProxyApproval(
 
       // Wait for the transaction to get mined
       await wait()
-
-      return true
     }
-  } catch (error) {
-    console.error('Could not check/set approval')
-    return false
+
+    // Everything has executed successfully
+    return true
+  } catch (err) {
+    console.error(err)
   }
+  return false
 }
 
 async function getMatchingOrders(
   apiBase: string,
-  chainId: number,
+  chainId: ChainId,
   signer: Signer,
   query: paths['/orders/fill']['get']['parameters']['query']
 ) {
   try {
     // Get the best offer for the token
-    let url = new URL('/orders/fill', apiBase)
+    const url = new URL('/orders/fill', apiBase)
 
     setParams(url, query)
 
     // Get the best BUY order data
-    let res = await fetch(url.href)
+    const res = await fetch(url.href)
 
-    let { order } =
+    const { order } =
       (await res.json()) as paths['/orders/fill']['get']['responses']['200']['schema']
 
     if (!order?.params) {
-      throw 'API ERROR: Could not retrieve order params'
+      throw new ReferenceError('Could not retrieve order params from the API')
     }
 
     // Use SDK to create order object
-    let buyOrder = new WyvernV2.Order(chainId, order?.params)
+    const buyOrder = new WyvernV2.Order(chainId, order?.params)
+
+    const signerAddress = await signer.getAddress()
 
     // Instatiate an matching SELL Order
-    let sellOrder = buyOrder.buildMatching(
-      await signer.getAddress(),
+    const sellOrder = buyOrder.buildMatching(
+      signerAddress,
       order.buildMatchingArgs
     )
 
     return { buyOrder, sellOrder }
-  } catch (error) {
-    console.error('Could not fill order', error)
-    return null
+  } catch (err) {
+    console.error(err)
   }
+  return null
 }
 
 async function isProxyApproved(
-  chainId: number,
+  chainId: ChainId,
   signer: Signer,
   tokenId: string,
   contract: string
@@ -177,11 +176,12 @@ async function isProxyApproved(
       userProxy,
       tokenId
     )
+
     return proxyApproved
-  } catch (error) {
-    console.error('Could not fill order', error)
-    return false
+  } catch (err) {
+    console.error(err)
   }
+  return false
 }
 
 /**
@@ -195,15 +195,10 @@ async function isProxyApproved(
  */
 async function acceptOffer(
   apiBase: string,
-  chainId: number,
-  signer: Signer | undefined,
+  chainId: ChainId,
+  signer: Signer,
   query: paths['/orders/fill']['get']['parameters']['query']
 ) {
-  if (!signer || !query.contract) {
-    console.debug({ signer, query })
-    throw 'some data is undefined'
-  }
-
   try {
     const proxyApproved = await isProxyApproved(
       chainId,
@@ -212,41 +207,50 @@ async function acceptOffer(
       query.contract
     )
 
-    if (proxyApproved) {
-      const orders = await getMatchingOrders(apiBase, chainId, signer, query)
-      if (orders) {
-        const { buyOrder, sellOrder } = orders
-        // Instantiate WyvernV2 Exchange contract object
-        const exchange = new WyvernV2.Exchange(chainId)
+    if (!proxyApproved) return false
 
-        // Execute token sell
-        let { wait } = await exchange.match(signer, buyOrder, sellOrder)
+    const orders = await getMatchingOrders(apiBase, chainId, signer, query)
 
-        // Wait for transaction to be mined
-        await wait()
+    if (!orders) return false
 
-        return true
-      }
-      return false
-    }
-    return false
-  } catch (error) {
-    console.error('Could not fill order', error)
-    return false
+    const { buyOrder, sellOrder } = orders
+    // Instantiate WyvernV2 Exchange contract object
+    const exchange = new WyvernV2.Exchange(chainId)
+
+    // Execute token sell
+    let { wait } = await exchange.match(signer, buyOrder, sellOrder)
+
+    // Wait for transaction to be mined
+    await wait()
+
+    return true
+  } catch (err) {
+    console.error(err)
   }
+  return false
 }
 
-async function listTokenForSell(
+/**
+ * List a token for sell.
+ * 1. Verify that the user has approved the Wyvern Proxy contract
+ * 2. Build an order using the Reservoir API and the Reservoir SDK
+ * 3. POST the order the Reservoir API
+ * @param apiBase The Reservoir base API
+ * @param chainId The Ethereum network id
+ * @param signer The signer object created upon wallet connection
+ * @param query The API query with the order parameters
+ * @returns `true` if the order was successfully submitted, `false`
+ * otherwise
+ */
+async function listTokenForSale(
   apiBase: string,
-  chainId: number,
-  signer: Signer | undefined,
-  query: paths['/orders/build']['get']['parameters']['query']
+  chainId: ChainId,
+  signer: Signer,
+  query: Overwrite<
+    paths['/orders/build']['get']['parameters']['query'],
+    { tokenId: string; contract: string }
+  >
 ) {
-  if (!signer || !query.tokenId || !query.contract) {
-    console.debug({ signer, query })
-    return
-  }
-
   try {
     const proxyApproved = await isProxyApproved(
       chainId,
@@ -255,53 +259,52 @@ async function listTokenForSell(
       query.contract
     )
 
-    if (proxyApproved) {
-      // Build a selling order
-      let url = new URL('/orders/build', apiBase)
+    if (!proxyApproved) return false
 
-      setParams(url, query)
+    // Build a selling order
+    let url = new URL('/orders/build', apiBase)
 
-      let res = await fetch(url.href)
+    setParams(url, query)
 
-      let { order } =
-        (await res.json()) as paths['/orders/build']['get']['responses']['200']['schema']
+    let res = await fetch(url.href)
 
-      if (!order?.params) {
-        throw 'API ERROR: Could not retrieve order params'
-      }
+    let { order } =
+      (await res.json()) as paths['/orders/build']['get']['responses']['200']['schema']
 
-      // Use SDK to create order object
-      const sellOrder = new WyvernV2.Order(chainId, order.params)
-
-      // Sign selling order
-      await sellOrder.sign(signer)
-
-      // Post order to the database
-      let url2 = new URL('/orders', apiBase)
-
-      await fetch(url2.href, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          orders: [
-            {
-              kind: 'wyvern-v2',
-              data: sellOrder.params,
-            },
-          ],
-        }),
-      })
-
-      return true
+    if (!order?.params) {
+      throw new ReferenceError('Could not retrieve order params.')
     }
 
-    return false
+    // Use SDK to create order object
+    const sellOrder = new WyvernV2.Order(chainId, order.params)
+
+    // Sign selling order
+    await sellOrder.sign(signer)
+
+    // Post order to the database
+    let url2 = new URL('/orders', apiBase)
+
+    await fetch(url2.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orders: [
+          {
+            kind: 'wyvern-v2',
+            data: sellOrder.params,
+          },
+        ],
+      }),
+    })
+
+    return true
   } catch (error) {
     console.error(error)
-    return false
   }
+
+  return false
 }
 
 export {
@@ -309,5 +312,5 @@ export {
   checkProxyApproval,
   getMatchingOrders,
   acceptOffer,
-  listTokenForSell,
+  listTokenForSale,
 }
