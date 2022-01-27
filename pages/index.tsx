@@ -18,58 +18,24 @@ import OfferModal from 'components/OfferModal'
 import CommunityGrid from 'components/CommunityGrid'
 import CollectionsGrid from 'components/CollectionsGrid'
 import SearchCollection from 'components/SearchCollections'
+import Sidebar from 'components/Sidebar'
+import { useRouter } from 'next/router'
+import { getTokensKey } from 'lib/swrInfiniteKeys'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-const nodeEnv = process.env.NODE_ENV
 
-type InfiniteKeyLoader = (
+const getKeyCommunity: (
   url: URL,
   wildcard: string,
   ...base: Parameters<SWRInfiniteKeyLoader>
-) => ReturnType<SWRInfiniteKeyLoader>
-
-const getKey: InfiniteKeyLoader = (
-  url: URL,
-  wildcard: string,
-  index: number,
-  previousPageData: paths['/tokens']['get']['responses']['200']['schema']
-) => {
-  if (!apiBase) {
-    console.debug('There are missing environment variables', {
-      apiBase,
-    })
-    return null
-  }
-
-  // Reached the end
-  if (previousPageData && previousPageData?.tokens?.length === 0) return null
-
-  let query: paths['/tokens']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: index * 20,
-    collection: wildcard,
-  }
-
-  setParams(url, query)
-
-  return url.href
-}
-
-const getKeyCommunity: InfiniteKeyLoader = (
+) => ReturnType<SWRInfiniteKeyLoader> = (
   url: URL,
   wildcard: string,
   index: number,
   previousPageData: paths['/collections']['get']['responses']['200']['schema']
 ) => {
-  if (!apiBase) {
-    console.debug('There are missing environment variables', {
-      apiBase,
-    })
-    return null
-  }
-
   // Reached the end
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
@@ -93,13 +59,6 @@ const getKeyCollections: (
   index: number,
   previousPageData: paths['/collections']['get']['responses']['200']['schema']
 ) => {
-  if (!apiBase) {
-    console.debug('There are missing environment variables', {
-      apiBase,
-    })
-    return null
-  }
-
   // Reached the end
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
@@ -124,6 +83,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   const { ref: refCollection, inView: inViewCollection } = useInView()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
+  const router = useRouter()
 
   const tokensUrl = new URL('/tokens', apiBase)
 
@@ -131,7 +91,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     paths['/tokens']['get']['responses']['200']['schema']
   >(
     (index, previousPageData) =>
-      getKey(tokensUrl, wildcard, index, previousPageData),
+      getTokensKey(tokensUrl, wildcard, router, index, previousPageData),
     fetcher,
     {
       // solution only in beta
@@ -194,11 +154,23 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     }
   }, [inViewCollection])
 
-  let url = new URL(`/collections/${wildcard}`, apiBase)
+  const url = new URL(`/collections/${wildcard}`, apiBase)
 
   const collection = useSWR<
     paths['/collections/{collection}']['get']['responses']['200']['schema']
   >(url.href, fetcher)
+
+  const attributesUrl = new URL('/attributes', apiBase)
+
+  const query: paths['/attributes']['get']['parameters']['query'] = {
+    collection: wildcard,
+  }
+
+  setParams(attributesUrl, query)
+
+  const attributes = useSWR<
+    paths['/attributes']['get']['responses']['200']['schema']
+  >(attributesUrl.href, fetcher)
 
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
@@ -302,11 +274,14 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
               mutate={collection.mutate}
             />
           </div>
-          <TokensGrid
-            tokenCount={data.collection.tokenCount}
-            tokens={tokens}
-            viewRef={ref}
-          />
+          <div className="flex gap-5">
+            <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+            <TokensGrid
+              tokenCount={data.collection.tokenCount}
+              tokens={tokens}
+              viewRef={ref}
+            />
+          </div>
         </>
       )}
     </Layout>

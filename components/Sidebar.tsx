@@ -5,17 +5,21 @@ import { toggleOffItem, toggleOnAttributeKey } from 'lib/router'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import AttributeSelector from './filter/AttributeSelector'
+import { SWRResponse } from 'swr'
+import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 
 type Props = {
-  attributes: paths['/attributes']['get']['responses']['200']['schema']
-  setTokensSize: any
+  attributes: SWRResponse<
+    paths['/attributes']['get']['responses']['200']['schema']
+  >
+  setTokensSize: SWRInfiniteResponse['setSize']
 }
 
-const Sidebar: FC<Props> = ({ setTokensSize, attributes }) => {
+const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   const router = useRouter()
 
   return (
-    <Accordion.Root type="multiple" className="my-3 space-y-2.5">
+    <Accordion.Root type="multiple" className="my-3 w-[250px] space-y-2.5">
       <div className="overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800">
         <button
           onClick={() => {
@@ -33,7 +37,7 @@ const Sidebar: FC<Props> = ({ setTokensSize, attributes }) => {
           Explore All
         </button>
       </div>
-      {attributes?.attributes?.map((attribute) => (
+      {attributes.data?.attributes?.map((attribute) => (
         <Accordion.Item
           value={`item-${attribute.key}`}
           key={attribute.key}

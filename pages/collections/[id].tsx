@@ -17,42 +17,12 @@ import useSWR from 'swr'
 import { useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
 import { useRouter } from 'next/router'
+import Sidebar from 'components/Sidebar'
+import { getTokensKey } from 'lib/swrInfiniteKeys'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-
-const getKey: (
-  url: URL,
-  collection: string | undefined,
-  ...base: Parameters<SWRInfiniteKeyLoader>
-) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL,
-  collection: string | undefined,
-  index: number,
-  previousPageData: paths['/tokens']['get']['responses']['200']['schema']
-) => {
-  if (!apiBase || !collection) {
-    console.debug('Data is missing.', {
-      apiBase,
-      collection,
-    })
-    return null
-  }
-
-  // Reached the end
-  if (previousPageData && previousPageData?.tokens?.length === 0) return null
-
-  let query: paths['/tokens']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: index * 20,
-    collection,
-  }
-
-  setParams(url, query)
-
-  return url.href
-}
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -66,7 +36,13 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   const tokens = useSWRInfinite<Props['fallback']['tokens']>(
     (index, previousPageData) =>
-      getKey(tokensUrl, router.query?.id?.toString(), index, previousPageData),
+      getTokensKey(
+        tokensUrl,
+        router.query?.id?.toString(),
+        router,
+        index,
+        previousPageData
+      ),
     fetcher,
     {
       // solution only in beta
@@ -93,6 +69,18 @@ const Home: NextPage<Props> = ({ fallback }) => {
       fallbackData: fallback.collection,
     }
   )
+
+  const attributesUrl = new URL('/attributes', apiBase)
+
+  const query: paths['/attributes']['get']['parameters']['query'] = {
+    collection: router.query?.id?.toString() || '',
+  }
+
+  setParams(attributesUrl, query)
+
+  const attributes = useSWR<
+    paths['/attributes']['get']['responses']['200']['schema']
+  >(attributesUrl.href, fetcher)
 
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase }, { chainId })
@@ -171,11 +159,14 @@ const Home: NextPage<Props> = ({ fallback }) => {
           mutate={collection.mutate}
         />
       </div>
-      <TokensGrid
-        tokenCount={data.collection.tokenCount}
-        tokens={tokens}
-        viewRef={ref}
-      />
+      <div className="flex gap-5">
+        <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+        <TokensGrid
+          tokenCount={data.collection.tokenCount}
+          tokens={tokens}
+          viewRef={ref}
+        />
+      </div>
     </Layout>
   )
 }

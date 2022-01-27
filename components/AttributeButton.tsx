@@ -2,12 +2,13 @@ import { toggleOffAttribute, toggleOnAttribute, updateAttribute } from 'lib/url'
 import { useRouter } from 'next/router'
 import { toggleOffItem } from 'lib/router'
 import { FC } from 'react'
+import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 
 type Props = {
   children: React.ReactNode
   attribute: string
   value: string
-  setTokensSize: any
+  setTokensSize: SWRInfiniteResponse['setSize']
 }
 
 const AttributeButton: FC<Props> = ({
