@@ -35,7 +35,7 @@ const CommunityGrid: FC<Props> = ({ communities, viewRef }) => {
         : mappedCommunities?.map((community, idx) => (
             <Link
               key={`${community?.collection?.name}${idx}`}
-              href={`https://${community?.collection?.id}.reservoir.market`}
+              href={`/collections/${community?.collection?.id}`}
             >
               <a className="group grid rounded-b-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
                 <img

@@ -3,7 +3,7 @@ import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
 import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
-import { GetServerSideProps, InferGetStaticPropsType, NextPage } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
@@ -21,9 +21,9 @@ const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const nodeEnv = process.env.NODE_ENV
 
-type Props = InferGetStaticPropsType<typeof getServerSideProps>
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ wildcard }) => {
+const Index: NextPage<Props> = ({ wildcard, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -62,10 +62,18 @@ const Index: NextPage<Props> = ({ wildcard }) => {
     accountData?.address.toLowerCase()
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
+  const layoutData = {
+    title: isHome
+      ? token?.token?.collection?.name
+      : collection.data?.collection?.collection?.name,
+    image: isHome ? undefined : collection.data?.collection?.collection?.image,
+    collection: token?.token?.collection?.id,
+  }
   return (
     <Layout
-      title={collection.data?.collection?.collection?.name}
-      image={collection.data?.collection?.collection?.image}
+      collection={layoutData.collection}
+      title={layoutData.title}
+      image={layoutData.image}
     >
       <div className="mt-8 grid grid-cols-2 justify-items-center gap-10">
         <img
@@ -316,5 +324,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
   const wildcard = nodeEnv === 'development' ? hostParts[1] : hostParts[2]
 
-  return { props: { wildcard } }
+  const isHome: boolean = wildcard === 'www'
+
+  return { props: { wildcard, isHome } }
 }

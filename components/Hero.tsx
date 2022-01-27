@@ -25,9 +25,7 @@ const Hero: FC<Props> = ({ stats, header }) => {
       <div className="mx-auto grid max-w-screen-sm grid-cols-3 place-items-center gap-3 rounded-md bg-white p-4 shadow-md">
         <Stat name="count">{formatNumber(stats.count)}</Stat>
         <Stat name="top offer">
-          <div className="ml-4 w-min">
-            <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
-          </div>
+          <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
         </Stat>
         <Stat name="floor">
           <FormatEth amount={stats.floor} maximumFractionDigits={4} />

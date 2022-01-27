@@ -5,12 +5,13 @@ import Link from 'next/link'
 type Props = {
   title: string | undefined
   image: string | undefined
+  collection?: string
 }
 
-const Navbar: FC<Props> = ({ title, image }) => {
+const Navbar: FC<Props> = ({ title, image, collection }) => {
   return (
     <nav className="flex items-center justify-between">
-      <Link href="/">
+      <Link href={collection ? `/collections/${collection}` : '/'}>
         <a className="flex items-center justify-between gap-3">
           {image && <img src={image} alt={title} className="w-[30px]" />}
           {title && <span className="font-semibold">{title}</span>}
