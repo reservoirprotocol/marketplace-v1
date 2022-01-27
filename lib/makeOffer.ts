@@ -292,10 +292,7 @@ async function makeOffer(
   apiBase: string,
   apiKey: string,
   signer: Signer,
-  query: Overwrite<
-    paths['/orders/build']['get']['parameters']['query'],
-    { tokenId: string; contract: string }
-  >,
+  query: paths['/orders/build']['get']['parameters']['query'],
   postOnOpenSea: boolean,
   missingWeth: BigNumber
 ) {
@@ -322,6 +319,8 @@ async function makeOffer(
     const buyOrder = await postBuyOrder(chainId, apiBase, signer, query)
 
     if (!buyOrder) throw new ReferenceError('Buy order is undefined')
+    if (!query.tokenId) throw new ReferenceError('query.tokenId is undefined')
+    if (!query.contract) throw new ReferenceError('query.contract is undefined')
 
     if (postOnOpenSea) {
       await postBuyOrderToOpenSea(

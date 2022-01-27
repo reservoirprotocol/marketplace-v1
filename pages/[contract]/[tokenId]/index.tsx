@@ -85,7 +85,7 @@ const Index: NextPage<Props> = ({ wildcard }) => {
                 price={
                   <FormatEth
                     amount={token?.market?.floorSell?.value}
-                    maximumFractionDigits={2}
+                    maximumFractionDigits={4}
                     logoWidth={12}
                   />
                 }
@@ -151,7 +151,7 @@ const Index: NextPage<Props> = ({ wildcard }) => {
                 price={
                   <FormatEth
                     amount={token?.market?.topBuy?.value}
-                    maximumFractionDigits={2}
+                    maximumFractionDigits={4}
                     logoWidth={12}
                   />
                 }

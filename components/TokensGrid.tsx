@@ -52,7 +52,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     <div>
                       <FormatEth
                         amount={token?.topBuyValue}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>
@@ -64,7 +64,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     <div>
                       <FormatEth
                         amount={token?.floorSellValue}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>

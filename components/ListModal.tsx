@@ -130,7 +130,7 @@ const ListModal: FC<Props> = ({
                 <div className="text-2xl font-bold">
                   <FormatEth
                     amount={youGet}
-                    maximumFractionDigits={2}
+                    maximumFractionDigits={4}
                     logoWidth={10}
                   />
                 </div>

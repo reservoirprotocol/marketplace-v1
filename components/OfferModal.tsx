@@ -96,7 +96,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
     async function loadWeth() {
       if (signer) {
         await getBalance({ addressOrName: await signer?.getAddress() })
-        const weth = await getWeth(env.chainId, provider, signer)
+        const weth = await getWeth(env.chainId as 1 | 4, provider, signer)
         if (weth) {
           setWeth(weth)
         }
@@ -178,7 +178,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                     <div className="font-semibold">
                       <FormatEth
                         amount={data.token.topBuyValue}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>
@@ -190,7 +190,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                     <div className="font-semibold">
                       <FormatEth
                         amount={data.token.floorSellValue}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>
@@ -257,7 +257,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                 <div className="text-2xl font-bold">
                   <FormatEth
                     amount={calculations.total}
-                    maximumFractionDigits={3}
+                    maximumFractionDigits={4}
                     logoWidth={10}
                   />
                 </div>
@@ -335,7 +335,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                       setWaitingTx(true)
 
                       await makeOffer(
-                        env.chainId,
+                        env.chainId as 1 | 4,
                         provider,
                         calculations.total,
                         env.apiBase,

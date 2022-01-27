@@ -56,7 +56,7 @@ const CommunityGrid: FC<Props> = ({ communities, viewRef }) => {
                     <div>
                       <FormatEth
                         amount={community?.set?.market?.topBuy?.value}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>
@@ -68,7 +68,7 @@ const CommunityGrid: FC<Props> = ({ communities, viewRef }) => {
                     <div>
                       <FormatEth
                         amount={community?.set?.market?.floorSell?.value}
-                        maximumFractionDigits={2}
+                        maximumFractionDigits={4}
                         logoWidth={7}
                       />
                     </div>
