@@ -32,7 +32,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   const [{ data: network }] = useNetwork()
   const router = useRouter()
 
-  const { tokens, ref } = useTokens(apiBase, [], router)
+  const { tokens, ref } = useTokens(apiBase, wildcard, [], router)
 
   const { communities, ref: refCommunity } = useCommunity(apiBase, wildcard)
 

@@ -10,6 +10,7 @@ type Tokens = paths['/tokens']['get']['responses']['200']['schema']
 
 export default function useTokens(
   apiBase: string | undefined,
+  collectionId: string | undefined,
   fallbackData: Tokens[],
   router: NextRouter
 ) {
@@ -19,13 +20,7 @@ export default function useTokens(
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey(
-        url,
-        router.query?.id?.toString(),
-        router,
-        index,
-        previousPageData
-      ),
+      getKey(url, collectionId, router, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -45,30 +40,23 @@ export default function useTokens(
 
 const getKey: (
   url: URL,
-  collection: string | undefined,
+  collectionId: string | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   url: URL,
-  collection: string | undefined,
+  collectionId: string | undefined,
   router: NextRouter,
   index: number,
   previousPageData: paths['/tokens']['get']['responses']['200']['schema']
 ) => {
-  if (!collection) {
-    console.debug('Data is missing.', {
-      collection,
-    })
-    return null
-  }
-
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
   let query: paths['/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection,
+    collection: collectionId,
   }
 
   // Convert the client sort query into the API sort query

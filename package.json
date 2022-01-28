@@ -21,6 +21,7 @@
     "@radix-ui/react-accordion": "^0.1.5",
     "@radix-ui/react-dialog": "^0.1.5",
     "@radix-ui/react-dropdown-menu": "^0.1.4",
+    "@radix-ui/react-toggle-group": "^0.1.4",
     "@ramosdiego/ui": "^0.0.4",
     "@reservoir0x/sdk": "^0.0.18",
     "@types/ethereum-blockies": "^0.1.0",

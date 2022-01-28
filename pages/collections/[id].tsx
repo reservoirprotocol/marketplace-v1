@@ -22,6 +22,8 @@ import ExploreTokens from 'components/ExploreTokens'
 import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
 import useFiltersApplied from 'hooks/useFiltersApplied'
+import SortMenuExplore from 'components/SortMenuExplore'
+import SortMenu from 'components/SortMenu'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -38,6 +40,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   const { tokens, ref: refTokens } = useTokens(
     apiBase,
+    router.query.id?.toString(),
     [fallback.tokens],
     router
   )
@@ -135,16 +138,26 @@ const Home: NextPage<Props> = ({ fallback }) => {
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
         <div className="flex-grow">
-          <div className="mb-4">
-            <AttributesFlex />
-            <ExploreFlex />
-            {!router.query?.attribute_key &&
-              router.query?.attribute_key !== '' &&
-              !filtersApplied && (
-                <div className="font-medium uppercase opacity-75">
-                  All Tokens
-                </div>
+          <div className="mb-4 flex justify-between">
+            <div>
+              <AttributesFlex />
+              <ExploreFlex />
+              {!router.query?.attribute_key &&
+                router.query?.attribute_key !== '' &&
+                !filtersApplied && (
+                  <div className="font-medium uppercase opacity-75">
+                    All Tokens
+                  </div>
+                )}
+            </div>
+            <div className="flex items-center gap-2">
+              {router.query?.attribute_key ||
+              router.query?.attribute_key === '' ? (
+                <SortMenuExplore setSize={collectionAttributes.setSize} />
+              ) : (
+                <SortMenu setSize={tokens.setSize} />
               )}
+            </div>
           </div>
           {router.query?.attribute_key || router.query?.attribute_key === '' ? (
             <ExploreTokens
