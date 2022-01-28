@@ -17,7 +17,7 @@ const Navbar: FC<Props> = ({ title, image }) => {
         </a>
       </Link>
       <div className="flex items-center gap-6">
-        <div className="grid">
+        <div className="hidden sm:grid">
           <span className="text-sm opacity-75">powered by</span>
           <div className="flex items-center gap-1.5">
             <img

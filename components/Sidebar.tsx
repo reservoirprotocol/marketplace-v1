@@ -19,7 +19,10 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   const router = useRouter()
 
   return (
-    <Accordion.Root type="multiple" className="my-3 w-[250px] space-y-2.5">
+    <Accordion.Root
+      type="multiple"
+      className="my-3 min-w-[200px] max-w-[250px] space-y-2.5"
+    >
       <div className="overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800">
         <button
           onClick={() => {

@@ -1,18 +1,13 @@
 import Layout from 'components/Layout'
 import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
-import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import type {
   GetServerSideProps,
   InferGetServerSidePropsType,
   NextPage,
 } from 'next'
-import fetcher from 'lib/fetcher'
 import TokensGrid from 'components/TokensGrid'
-import { useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
 import Hero from 'components/Hero'
-import useSWR from 'swr'
 import { useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
 import CommunityGrid from 'components/CommunityGrid'
@@ -20,160 +15,52 @@ import CollectionsGrid from 'components/CollectionsGrid'
 import SearchCollection from 'components/SearchCollections'
 import Sidebar from 'components/Sidebar'
 import { useRouter } from 'next/router'
-import { getTokensKey } from 'lib/swrInfiniteKeys'
+import useTokens from 'hooks/useTokens'
+import useCommunity from 'hooks/useCommunity'
+import useCollections from 'hooks/useCollections'
+import useCollection from 'hooks/useCollection'
+import useAttributes from 'hooks/useAttributes'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
-const getKeyCommunity: (
-  url: URL,
-  wildcard: string,
-  ...base: Parameters<SWRInfiniteKeyLoader>
-) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL,
-  wildcard: string,
-  index: number,
-  previousPageData: paths['/collections']['get']['responses']['200']['schema']
-) => {
-  // Reached the end
-  if (previousPageData && previousPageData?.collections?.length === 0)
-    return null
-
-  let query: paths['/collections']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: index * 20,
-    community: wildcard,
-  }
-
-  setParams(url, query)
-
-  return url.href
-}
-
-const getKeyCollections: (
-  url: URL,
-  ...base: Parameters<SWRInfiniteKeyLoader>
-) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL,
-  index: number,
-  previousPageData: paths['/collections']['get']['responses']['200']['schema']
-) => {
-  // Reached the end
-  if (previousPageData && previousPageData?.collections?.length === 0)
-    return null
-
-  let query: paths['/collections']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: index * 20,
-    sortBy: 'floorCap',
-    sortDirection: 'desc',
-  }
-
-  setParams(url, query)
-
-  return url.href
-}
-
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
-  const { ref, inView } = useInView()
-  const { ref: refCommunity, inView: inViewCommunity } = useInView()
-  const { ref: refCollection, inView: inViewCollection } = useInView()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
 
-  const tokensUrl = new URL('/tokens', apiBase)
+  const { tokens, ref } = useTokens(apiBase, [], router)
 
-  const tokens = useSWRInfinite<
-    paths['/tokens']['get']['responses']['200']['schema']
-  >(
-    (index, previousPageData) =>
-      getTokensKey(tokensUrl, wildcard, router, index, previousPageData),
-    fetcher,
-    {
-      // solution only in beta
-      // https://github.com/vercel/swr/pull/1538
-      revalidateFirstPage: false,
-      // revalidateOnMount: false,
-    }
-  )
+  const { communities, ref: refCommunity } = useCommunity(apiBase, wildcard)
 
-  // Fetch more data when component is visible
-  useEffect(() => {
-    if (inView) {
-      tokens.setSize(tokens.size + 1)
-    }
-  }, [inView])
+  const { collections, ref: refCollections } = useCollections(apiBase, wildcard)
 
-  const communityUrl = new URL('/collections', apiBase)
+  const collection = useCollection(apiBase, undefined, wildcard)
 
-  const communities = useSWRInfinite<
-    paths['/collections']['get']['responses']['200']['schema']
-  >(
-    (index, previousPageData) =>
-      getKeyCommunity(communityUrl, wildcard, index, previousPageData),
-    fetcher,
-    {
-      // solution only in beta
-      // https://github.com/vercel/swr/pull/1538
-      revalidateFirstPage: false,
-      // revalidateOnMount: false,
-    }
-  )
+  const attributes = useAttributes(apiBase, wildcard)
 
-  // Fetch more data when component is visible
-  useEffect(() => {
-    if (inViewCommunity) {
-      communities.setSize(communities.size + 1)
-    }
-  }, [inViewCommunity])
-
-  const collectionsUrl = new URL('/collections', apiBase)
-
-  const collections = useSWRInfinite<
-    paths['/collections']['get']['responses']['200']['schema']
-  >(
-    (index, previousPageData) =>
-      getKeyCollections(collectionsUrl, index, previousPageData),
-    fetcher,
-    {
-      // solution only in beta
-      // https://github.com/vercel/swr/pull/1538
-      revalidateFirstPage: false,
-      // revalidateOnMount: false,
-    }
-  )
-
-  // Fetch more data when component is visible
-  useEffect(() => {
-    if (inViewCollection) {
-      collections.setSize(collections.size + 1)
-    }
-  }, [inViewCollection])
-
-  const url = new URL(`/collections/${wildcard}`, apiBase)
-
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
-
-  const attributesUrl = new URL('/attributes', apiBase)
-
-  const query: paths['/attributes']['get']['parameters']['query'] = {
-    collection: wildcard,
-  }
-
-  setParams(attributesUrl, query)
-
-  const attributes = useSWR<
-    paths['/attributes']['get']['responses']['200']['schema']
-  >(attributesUrl.href, fetcher)
-
-  if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
-    console.debug({ apiBase }, { chainId })
+  if (
+    tokens.error ||
+    communities.error ||
+    collections.error ||
+    collection.error ||
+    attributes.error ||
+    !apiBase ||
+    !chainId ||
+    !openSeaApiKey
+  ) {
+    console.debug({
+      apiBase,
+      chainId,
+      tokens,
+      communities,
+      collections,
+      collection,
+      attributes,
+    })
     return <div>There was an error</div>
   }
 
@@ -239,7 +126,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
           <div className="mb-12 grid justify-center">
             <SearchCollection apiBase={apiBase} />
           </div>
-          <CollectionsGrid collections={collections} viewRef={refCollection} />
+          <CollectionsGrid collections={collections} viewRef={refCollections} />
         </>
       ) : isCommunity ? (
         <>

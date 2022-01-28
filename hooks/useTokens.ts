@@ -1,9 +1,49 @@
 import { paths } from 'interfaces/apiTypes'
+import fetcher from 'lib/fetcher'
+import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
-import { SWRInfiniteKeyLoader } from 'swr/infinite/dist/infinite'
-import setParams from './params'
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
+import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const getTokensKey: (
+type Tokens = paths['/tokens']['get']['responses']['200']['schema']
+
+export default function useTokens(
+  apiBase: string | undefined,
+  fallbackData: Tokens[],
+  router: NextRouter
+) {
+  const { ref, inView } = useInView()
+
+  const url = new URL('/tokens', apiBase)
+
+  const tokens = useSWRInfinite<Tokens>(
+    (index, previousPageData) =>
+      getKey(
+        url,
+        router.query?.id?.toString(),
+        router,
+        index,
+        previousPageData
+      ),
+    fetcher,
+    {
+      revalidateFirstPage: false,
+      fallbackData,
+    }
+  )
+
+  // Fetch more data when component is visible
+  useEffect(() => {
+    if (inView) {
+      tokens.setSize(tokens.size + 1)
+    }
+  }, [inView])
+
+  return { tokens, ref }
+}
+
+const getKey: (
   url: URL,
   collection: string | undefined,
   router: NextRouter,
@@ -58,5 +98,3 @@ const getTokensKey: (
 
   return url.href
 }
-
-export { getTokensKey }

@@ -1,24 +1,27 @@
 import Layout from 'components/Layout'
 import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
-import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import type {
   GetStaticPaths,
   GetStaticProps,
   InferGetStaticPropsType,
   NextPage,
 } from 'next'
-import fetcher from 'lib/fetcher'
 import TokensGrid from 'components/TokensGrid'
-import { useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
 import Hero from 'components/Hero'
-import useSWR from 'swr'
 import { useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
 import { useRouter } from 'next/router'
 import Sidebar from 'components/Sidebar'
-import { getTokensKey } from 'lib/swrInfiniteKeys'
+import useCollectionStats from 'hooks/useCollectionStats'
+import useTokens from 'hooks/useTokens'
+import useCollectionAttributes from 'hooks/useCollectionAttributes'
+import useCollection from 'hooks/useCollection'
+import useAttributes from 'hooks/useAttributes'
+import ExploreTokens from 'components/ExploreTokens'
+import AttributesFlex from 'components/AttributesFlex'
+import ExploreFlex from 'components/ExploreFlex'
+import useFiltersApplied from 'hooks/useFiltersApplied'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -27,69 +30,39 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback }) => {
-  const { ref, inView } = useInView()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
 
-  const tokensUrl = new URL('/tokens', apiBase)
+  const stats = useCollectionStats(apiBase, router)
 
-  const tokens = useSWRInfinite<Props['fallback']['tokens']>(
-    (index, previousPageData) =>
-      getTokensKey(
-        tokensUrl,
-        router.query?.id?.toString(),
-        router,
-        index,
-        previousPageData
-      ),
-    fetcher,
-    {
-      // solution only in beta
-      // https://github.com/vercel/swr/pull/1538
-      revalidateFirstPage: false,
-      // revalidateOnMount: false,
-      fallbackData: [fallback.tokens],
-    }
+  const { tokens, ref: refTokens } = useTokens(
+    apiBase,
+    [fallback.tokens],
+    router
   )
 
-  // Fetch more data when component is visible
-  useEffect(() => {
-    if (inView) {
-      tokens.setSize(tokens.size + 1)
-    }
-  }, [inView])
+  const { collectionAttributes, ref: refCollectionAttributes } =
+    useCollectionAttributes(apiBase, router)
 
-  let url = new URL(`/collections/${router.query?.id?.toString()}`, apiBase)
-
-  const collection = useSWR<Props['fallback']['collection']>(
-    url.href,
-    fetcher,
-    {
-      fallbackData: fallback.collection,
-    }
+  const collection = useCollection(
+    apiBase,
+    fallback.collection,
+    router.query.id?.toString()
   )
 
-  const attributesUrl = new URL('/attributes', apiBase)
+  const attributes = useAttributes(apiBase, router.query.id?.toString())
 
-  const query: paths['/attributes']['get']['parameters']['query'] = {
-    collection: router.query?.id?.toString() || '',
-  }
-
-  setParams(attributesUrl, query)
-
-  const attributes = useSWR<
-    paths['/attributes']['get']['responses']['200']['schema']
-  >(attributesUrl.href, fetcher)
+  const filtersApplied = useFiltersApplied(router)
 
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
-    console.debug({ apiBase }, { chainId })
+    console.debug({ apiBase, chainId, openSeaApiKey })
     return <div>There was an error</div>
   }
 
-  const stats = {
+  const statsObj = {
     vol24: 10,
-    count: collection?.data?.collection?.set?.tokenCount,
+    count: stats?.stats?.tokenCount ?? 0,
     topOffer: collection?.data?.collection?.set?.market?.topBuy?.value,
     floor: collection?.data?.collection?.set?.market?.floorSell?.value,
   }
@@ -118,7 +91,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       id: collection?.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
-      tokenCount: collection?.data?.collection?.set?.tokenCount ?? 0,
+      tokenCount: stats?.stats?.tokenCount ?? 0,
     },
     token: {
       contract: undefined,
@@ -141,7 +114,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout title={layoutData?.title} image={layoutData?.image}>
-      <Hero stats={stats} header={header} />
+      <Hero stats={statsObj} header={header} />
       <div className="mt-3 mb-10 flex justify-center">
         <OfferModal
           trigger={
@@ -161,11 +134,31 @@ const Home: NextPage<Props> = ({ fallback }) => {
       </div>
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
-        <TokensGrid
-          tokenCount={data.collection.tokenCount}
-          tokens={tokens}
-          viewRef={ref}
-        />
+        <div className="flex-grow">
+          <div className="mb-4">
+            <AttributesFlex />
+            <ExploreFlex />
+            {!router.query?.attribute_key &&
+              router.query?.attribute_key !== '' &&
+              !filtersApplied && (
+                <div className="font-medium uppercase opacity-75">
+                  All Tokens
+                </div>
+              )}
+          </div>
+          {router.query?.attribute_key || router.query?.attribute_key === '' ? (
+            <ExploreTokens
+              attributes={collectionAttributes}
+              viewRef={refCollectionAttributes}
+            />
+          ) : (
+            <TokensGrid
+              tokenCount={statsObj.count}
+              tokens={tokens}
+              viewRef={refTokens}
+            />
+          )}
+        </div>
       </div>
     </Layout>
   )
