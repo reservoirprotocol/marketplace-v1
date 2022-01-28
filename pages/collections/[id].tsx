@@ -139,7 +139,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
         <div className="flex-grow">
-          <div className="mb-4 flex justify-between">
+          <div className="mb-4 hidden items-center justify-between md:flex">
             <div>
               <AttributesFlex />
               <ExploreFlex />
