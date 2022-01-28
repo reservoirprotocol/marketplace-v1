@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import ClearFilters from './ClearFilters'
+import ExploreTable from './ExploreTable'
 
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
@@ -29,61 +30,79 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
 
   if (!isEmpty) {
     return (
-      <table className="mb-6 w-full table-auto">
-        <thead>
-          <tr className="text-left">
-            <th className="pl-3">Key</th>
-            <th className="pr-3">Value</th>
-            <th className="pr-3">Count</th>
-            <th className="whitespace-nowrap pr-3">On Sale</th>
-            <th className="whitespace-nowrap pr-3">Floor Price</th>
-            <th className="whitespace-nowrap pr-3">Top Offer</th>
-            <th className="pr-3">Samples</th>
-          </tr>
-        </thead>
-        <tbody>
-          {mappedAttributes.map((attribute, index, arr) => (
-            <tr
-              key={`${attribute?.value}-${index}`}
-              ref={index === arr.length - 5 ? viewRef : undefined}
-              className="group even:bg-[#fefbff] dark:even:bg-neutral-900"
-            >
-              <td className="pl-3 pr-3">{attribute?.key}</td>
-              <td className="h-px pr-3">
-                <Link
-                  href={`/collections/${router.query.id}?${formatUrl(
-                    `attributes[${attribute?.key}]`
-                  )}=${formatUrl(`${attribute?.value}`)}`}
-                >
-                  <a className="grid h-full items-center p-2 align-middle font-bold tracking-wide">
-                    {attribute?.value}
-                  </a>
-                </Link>
-              </td>
-              <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
-              <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
-              <td className="pr-3">
-                {formatBN(attribute?.floorSellValues?.[0], 2)}
-              </td>
-              <td className="pr-3">{formatBN(attribute?.topBuy?.value, 2)}</td>
-              <td className="w-[230px] pr-3">
-                <Link
-                  href={`/collections/${router.query.id}?${formatUrl(
-                    `attributes[${attribute?.key}]`
-                  )}=${formatUrl(`${attribute?.value}`)}`}
-                >
-                  <a>
-                    <ExploreImages
-                      sample_images={attribute?.sampleImages}
-                      value={attribute?.value}
-                    />
-                  </a>
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <>
+        {router.query?.view && router.query?.view.toString() === 'table' ? (
+          <ExploreTable viewRef={viewRef} mappedAttributes={mappedAttributes} />
+        ) : (
+          <div className="mx-auto mb-10 max-w-[2400px]">
+            <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+              {size === 1 && isValidating
+                ? Array(20)
+                    .fill(null)
+                    .map((_, index) => (
+                      <LoadingCard key={`loading-card-${index}`} />
+                    ))
+                : mappedAttributes.map((attribute, idx, arr) => (
+                    <Link
+                      key={`${attribute?.value}${idx}`}
+                      href={`/collections/${router.query.id}?${formatUrl(
+                        `attributes[${attribute?.key}]`
+                      )}=${formatUrl(`${attribute?.value}`)}`}
+                    >
+                      <a
+                        ref={idx === arr.length - 1 ? viewRef : null}
+                        className="flex flex-col rounded-md border border-neutral-200 bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
+                      >
+                        <div className="flex-grow"></div>
+                        <ExploreImagesGrid
+                          sample_images={attribute?.sampleImages}
+                          value={attribute?.value}
+                        />
+                        <div className="flex-grow"></div>
+                        <div className="mb-2 mt-2.5 flex items-baseline gap-2 text-lg lg:mt-4">
+                          <span>{attribute?.key}</span>
+                          <span className="mr-2 font-bold tracking-wide">
+                            {attribute?.value}
+                          </span>
+                          <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 text-base dark:bg-neutral-800">
+                            {formatNumber(attribute?.tokenCount)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="grid">
+                            <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                              Offer
+                            </span>
+                            {/* <span>{formatBN(top_bid_price, 2)}</span> */}
+                          </div>
+                          <div className="grid text-right">
+                            <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                              Price
+                            </span>
+                            <span>
+                              {formatBN(attribute?.floorSellValues?.[0], 2)}
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    </Link>
+                  ))}
+              {!isReachingEnd && (
+                <>
+                  {Array(20)
+                    .fill(null)
+                    .map((_, index) => {
+                      if (index === 0) {
+                        return <LoadingCard viewRef={viewRef} key={index} />
+                      }
+                      return <LoadingCard key={index} />
+                    })}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </>
     )
   }
 
@@ -123,7 +142,7 @@ const LoadingCard = ({
   </div>
 )
 
-const ExploreImages = ({
+const ExploreImagesGrid = ({
   sample_images,
   value,
 }: {
@@ -134,25 +153,91 @@ const ExploreImages = ({
     paths['/collections/{collection}/attributes']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
-  <div className="flex justify-start gap-1.5 py-1">
-    {sample_images && sample_images?.length > 0 ? (
-      // SMALLER IMAGE, HAS SIDE IMAGES
-      sample_images.map((image) => (
-        <img
-          key={image}
-          src={optimizeImage(image, 50)}
-          alt={`${value}`}
-          width="50"
-          height="50"
-        />
-      ))
+  <>
+    {!!sample_images && sample_images.length > 0 ? (
+      <div className="flex gap-2">
+        {sample_images.length > 1 ? (
+          // SMALLER IMAGE, HAS SIDE IMAGES
+          <img
+            alt={`${value}`}
+            src={optimizeImage(
+              sample_images[0],
+              window?.innerWidth < 639
+                ? 367
+                : window?.innerWidth < 767
+                ? 210
+                : window?.innerWidth < 1023
+                ? 284
+                : window?.innerWidth < 1279
+                ? 221
+                : window?.innerWidth < 1535
+                ? 196
+                : 170
+            )}
+            className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
+            width="250"
+            height="250"
+          />
+        ) : (
+          // BIG IMAGE, NO SIDE IMAGES
+          <img
+            alt={`${value}`}
+            src={optimizeImage(
+              sample_images[0],
+              window?.innerWidth < 639
+                ? 490
+                : window?.innerWidth < 767
+                ? 275
+                : window?.innerWidth < 1023
+                ? 378
+                : window?.innerWidth < 1279
+                ? 294
+                : window?.innerWidth < 1535
+                ? 261
+                : 226
+            )}
+            className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
+            width="300"
+            height="300"
+          />
+        )}
+        {sample_images.length > 1 && (
+          <div className="w-[25%] space-y-2">
+            {sample_images.slice(1).map((image) => (
+              <img
+                key={image}
+                src={optimizeImage(
+                  image,
+                  window?.innerWidth < 639
+                    ? 123
+                    : window?.innerWidth < 767
+                    ? 69
+                    : window?.innerWidth < 1023
+                    ? 95
+                    : window?.innerWidth < 1279
+                    ? 74
+                    : window?.innerWidth < 1535
+                    ? 66
+                    : 66
+                )}
+                alt={`${value}`}
+                width="70"
+                height="70"
+                className="w-full"
+              />
+            ))}
+          </div>
+        )}
+      </div>
     ) : (
-      <img
-        src="https://via.placeholder.com/50"
-        alt={`${value}`}
-        width="50"
-        height="50"
-      />
+      <div className="aspect-w-1 aspect-h-1 relative">
+        <img
+          src="https://via.placeholder.com/250"
+          alt={`${value}`}
+          width="250"
+          height="250"
+        />
+      </div>
     )}
-  </div>
+  </>
 )

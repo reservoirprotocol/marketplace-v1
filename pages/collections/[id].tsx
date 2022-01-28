@@ -24,6 +24,7 @@ import ExploreFlex from 'components/ExploreFlex'
 import useFiltersApplied from 'hooks/useFiltersApplied'
 import SortMenuExplore from 'components/SortMenuExplore'
 import SortMenu from 'components/SortMenu'
+import ViewMenu from 'components/ViewMenu'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -153,7 +154,10 @@ const Home: NextPage<Props> = ({ fallback }) => {
             <div className="flex items-center gap-2">
               {router.query?.attribute_key ||
               router.query?.attribute_key === '' ? (
-                <SortMenuExplore setSize={collectionAttributes.setSize} />
+                <>
+                  <ViewMenu />
+                  <SortMenuExplore setSize={collectionAttributes.setSize} />
+                </>
               ) : (
                 <SortMenu setSize={tokens.setSize} />
               )}
