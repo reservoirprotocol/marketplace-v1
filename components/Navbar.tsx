@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
+import InfoModal from './InfoModal'
 
 type Props = {
   title: string | undefined
@@ -17,17 +18,7 @@ const Navbar: FC<Props> = ({ title, image }) => {
         </a>
       </Link>
       <div className="flex items-center gap-6">
-        <div className="hidden sm:grid">
-          <span className="text-sm opacity-75">powered by</span>
-          <div className="flex items-center gap-1.5">
-            <img
-              src="/reservoir.svg"
-              alt="Reservoir Logo"
-              className="h-5 w-5"
-            />
-            <span className="font-['Obvia'] text-lg">reservoir</span>
-          </div>
-        </div>
+        <InfoModal />
         <ConnectWallet />
       </div>
     </nav>
