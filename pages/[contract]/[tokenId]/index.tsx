@@ -5,7 +5,6 @@ import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import EthAccount from 'components/EthAccount'
 import useSWR from 'swr'
 import { FC, ReactNode, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -23,7 +22,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ wildcard, isHome }) => {
+const Index: NextPage<Props> = ({ tokenDetails, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -39,11 +38,14 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
 
   setParams(url, query)
 
-  const details = useSWR<
-    paths['/tokens/details']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
+  const details = useSWR<Props['tokenDetails']>(url.href, fetcher, {
+    fallbackData: tokenDetails,
+  })
 
-  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
+  const collectionUrl = new URL(
+    `/collections/${tokenDetails?.tokens?.[0].token?.collection?.id}`,
+    apiBase
+  )
 
   const collection = useSWR<
     paths['/collections/{collection}']['get']['responses']['200']['schema']
@@ -66,8 +68,11 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
     title: isHome
       ? token?.token?.collection?.name
       : collection.data?.collection?.collection?.name,
-    image: isHome ? undefined : collection.data?.collection?.collection?.image,
+    image: isHome
+      ? collection.data?.collection?.collection?.image
+      : collection.data?.collection?.collection?.image,
   }
+
   return (
     <Layout title={layoutData.title} image={layoutData.image}>
       <div className="mt-16 grid grid-cols-2 place-items-center gap-10">
@@ -77,13 +82,11 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
         />
         <div className="mr-auto mb-8">
           <div className="flex gap-3">
-            {layoutData.image && (
-              <img
-                src={optimizeImage(layoutData.image, 50)}
-                alt="collection avatar"
-                className="h-[50px] w-[50px] rounded-full"
-              />
-            )}
+            <img
+              src={optimizeImage(layoutData.image, 50)}
+              alt="collection avatar"
+              className="h-[50px] w-[50px] rounded-full"
+            />
             <div>
               <div className="mb-1 text-2xl font-bold">
                 {token?.token?.name || token?.token?.collection?.name}
@@ -308,7 +311,11 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
   </div>
 )
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps<{
+  wildcard: string
+  isHome: boolean
+  tokenDetails: paths['/tokens/details']['get']['responses']['200']['schema']
+}> = async ({ req, params }) => {
   const hostParts = req.headers.host?.split('.').reverse()
   // Make sure that the host contains at least one subdomain
   // ['subdomain', 'domain', 'TLD']
@@ -328,5 +335,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   const isHome: boolean = wildcard === 'www'
 
-  return { props: { wildcard, isHome } }
+  // GET token details
+  const url = new URL('/tokens/details', apiBase)
+
+  const query: paths['/tokens/details']['get']['parameters']['query'] = {
+    contract: params?.contract?.toString(),
+    tokenId: params?.tokenId?.toString(),
+  }
+
+  setParams(url, query)
+
+  const res = await fetch(url.href)
+
+  const tokenDetails = (await res.json()) as Props['tokenDetails']
+
+  return { props: { wildcard, isHome, tokenDetails } }
 }
