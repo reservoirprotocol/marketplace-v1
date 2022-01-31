@@ -59,7 +59,10 @@ const ListModal: FC<Props> = ({
   return (
     <Dialog.Root onOpenChange={() => setSuccess(false)}>
       <Dialog.Trigger asChild>
-        <button disabled={isInTheWrongNetwork} className="btn-blue-fill w-full">
+        <button
+          disabled={isInTheWrongNetwork}
+          className="btn-neutral-fill-dark w-full"
+        >
           {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sale'}
         </button>
       </Dialog.Trigger>

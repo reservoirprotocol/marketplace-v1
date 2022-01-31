@@ -15,6 +15,7 @@ import { acceptOffer } from 'lib/acceptOffer'
 import { instantBuy } from 'lib/buyToken'
 import cancelOrder from 'lib/cancelOrder'
 import FormatEth from 'components/FormatEth'
+import TokenAttributes from 'components/TokenAttributes'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -69,18 +70,35 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
   }
   return (
     <Layout title={layoutData.title} image={layoutData.image}>
-      <div className="mt-8 grid grid-cols-2 justify-items-center gap-10">
+      <div className="mt-16 grid grid-cols-2 place-items-center gap-10">
         <img
-          className="w-[500px]"
+          className="ml-auto w-[500px] self-start"
           src={optimizeImage(token?.token?.image, 500)}
         />
-        <div>
-          <div className="mb-4 text-lg">{token?.token?.collection?.name}</div>
-          <div className="mb-3 text-xl font-bold">{token?.token?.name}</div>
-          <div className="mb-10">
-            {token?.token?.owner && <EthAccount address={token.token.owner} />}
+        <div className="mr-auto mb-8">
+          <div className="flex gap-3">
+            {layoutData.image && (
+              <img
+                src={optimizeImage(layoutData.image, 50)}
+                alt="collection avatar"
+                className="h-[50px] w-[50px] rounded-full"
+              />
+            )}
+            <div>
+              <div className="mb-1 text-2xl font-bold">
+                {token?.token?.name || token?.token?.collection?.name}
+              </div>
+              <div className="mb-4 text-lg font-medium uppercase opacity-80">
+                #{token?.token?.tokenId}
+              </div>
+              {/* <div className="mb-10">
+                {token?.token?.owner && (
+                  <EthAccount address={token.token.owner} />
+                )}
+              </div> */}
+            </div>
           </div>
-          <div className="rounded-md bg-white p-5 shadow-md">
+          <div className="mb-5 rounded-md border border-neutral-200 p-6">
             <div className="grid grid-cols-2 gap-8">
               <Price
                 title="list price"
@@ -142,7 +160,7 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
                         return
                       }
                     }}
-                    className="btn-blue-fill w-full"
+                    className="btn-neutral-fill-dark w-full"
                   >
                     {waitingTx ? 'Waiting...' : 'Buy Now'}
                   </button>
@@ -195,7 +213,7 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
                         console.error(error)
                       }
                     }}
-                    className="btn-green-fill w-full"
+                    className="btn-neutral-outline w-full border-neutral-900"
                   >
                     {waitingTx ? 'Waiting...' : 'Accept Offer'}
                   </button>
@@ -269,6 +287,7 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
               </button>
             )}
           </div>
+          <TokenAttributes token={token?.token} />
         </div>
       </div>
     </Layout>

@@ -126,7 +126,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
         {trigger ?? (
           <button
             disabled={!signer || isInTheWrongNetwork}
-            className="btn-blue-fill w-full"
+            className="btn-neutral-outline w-full border-neutral-900"
           >
             Make Offer
           </button>
