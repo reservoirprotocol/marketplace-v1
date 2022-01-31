@@ -84,9 +84,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   >(collectionUrl.href, fetcher)
 
   const layoutData = {
-    title: isHome
-      ? 'Your Logo Here'
-      : collection.data?.collection?.collection?.name,
+    title: isHome ? undefined : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
 

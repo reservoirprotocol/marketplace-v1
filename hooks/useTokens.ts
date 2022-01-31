@@ -1,34 +1,62 @@
 import { paths } from 'interfaces/apiTypes'
+import fetcher from 'lib/fetcher'
+import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
-import { SWRInfiniteKeyLoader } from 'swr/infinite/dist/infinite'
-import setParams from './params'
+import { useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
+import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const getTokensKey: (
+type Tokens = paths['/tokens']['get']['responses']['200']['schema']
+
+export default function useTokens(
+  apiBase: string | undefined,
+  collectionId: string | undefined,
+  fallbackData: Tokens[],
+  router: NextRouter
+) {
+  const { ref, inView } = useInView()
+
+  const url = new URL('/tokens', apiBase)
+
+  const tokens = useSWRInfinite<Tokens>(
+    (index, previousPageData) =>
+      getKey(url, collectionId, router, index, previousPageData),
+    fetcher,
+    {
+      revalidateFirstPage: false,
+      fallbackData,
+    }
+  )
+
+  // Fetch more data when component is visible
+  useEffect(() => {
+    if (inView) {
+      tokens.setSize(tokens.size + 1)
+    }
+  }, [inView])
+
+  return { tokens, ref }
+}
+
+const getKey: (
   url: URL,
-  collection: string | undefined,
+  collectionId: string | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   url: URL,
-  collection: string | undefined,
+  collectionId: string | undefined,
   router: NextRouter,
   index: number,
   previousPageData: paths['/tokens']['get']['responses']['200']['schema']
 ) => {
-  if (!collection) {
-    console.debug('Data is missing.', {
-      collection,
-    })
-    return null
-  }
-
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
   let query: paths['/tokens']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    collection,
+    collection: collectionId,
   }
 
   // Convert the client sort query into the API sort query
@@ -58,5 +86,3 @@ const getTokensKey: (
 
   return url.href
 }
-
-export { getTokensKey }

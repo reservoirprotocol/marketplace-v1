@@ -11,15 +11,10 @@ module.exports = {
     require('tailwindcss-radix')(),
     require('@ramosdiego/ui')({
       buttons: {
-        colors: ['blue', 'red', 'green', 'neutral'],
-        themes: ['light', 'dark'],
-        styles: ['fill', 'outline', 'ghost'],
+        baseStyles: {
+          width: 'inherit',
+        },
         animate: true,
-      },
-      inputs: {
-        colors: ['blue', 'red', 'green', 'neutral'],
-        themes: ['light'],
-        styles: ['outline'],
       },
     }),
   ],

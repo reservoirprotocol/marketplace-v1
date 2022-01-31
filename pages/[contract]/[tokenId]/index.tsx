@@ -142,7 +142,7 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
                         return
                       }
                     }}
-                    className="btn-blue-fill w-full justify-center"
+                    className="btn-blue-fill w-full"
                   >
                     {waitingTx ? 'Waiting...' : 'Buy Now'}
                   </button>
@@ -195,7 +195,7 @@ const Index: NextPage<Props> = ({ wildcard, isHome }) => {
                         console.error(error)
                       }
                     }}
-                    className="btn-green-fill w-full justify-center"
+                    className="btn-green-fill w-full"
                   >
                     {waitingTx ? 'Waiting...' : 'Accept Offer'}
                   </button>

@@ -25,7 +25,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
   const didReactEnd = isEmpty || (data && mappedTokens.length < tokenCount)
 
   return (
-    <div className="mx-auto mb-5 grid max-w-[2400px] gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <div className="mx-auto mb-5 grid max-w-[2400px] grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {size === 1 && isValidating
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />

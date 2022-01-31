@@ -58,10 +58,7 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
         }
       }}
       id="search-bar-downshift"
-      onChange={(item) => {
-        item.id &&
-          window.location.replace(`https://${item.id}.reservoir.market`)
-      }}
+      onChange={(item) => item.id && router.push(`/collections/${item.id}`)}
       itemToString={(item) => (item ? item.name : '')}
     >
       {({
@@ -75,7 +72,7 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
         <div
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className={`relative mr-auto inline-flex w-full rounded-md border py-2 transition hover:border-neutral-300 hover:shadow-md dark:hover:border-neutral-700 md:w-[400px] ${
+          className={`relative mr-auto inline-flex w-[300px] rounded-md border py-2 transition hover:border-neutral-300 hover:shadow-md dark:hover:border-neutral-700 md:w-[400px] ${
             focused
               ? 'border-neutral-300 shadow-md dark:border-neutral-700'
               : 'border-neutral-200 dark:border-neutral-800'
@@ -132,7 +129,7 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
                 results?.slice(0, 6).map((item, index) => (
                   <Link
                     key={item?.collection?.name}
-                    href={`https://${item?.collection?.id}.reservoir.market`}
+                    href={`/collections/${item?.collection?.id}`}
                   >
                     <a
                       {...getItemProps({
