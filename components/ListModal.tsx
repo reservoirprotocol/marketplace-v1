@@ -59,10 +59,7 @@ const ListModal: FC<Props> = ({
   return (
     <Dialog.Root onOpenChange={() => setSuccess(false)}>
       <Dialog.Trigger asChild>
-        <button
-          disabled={isInTheWrongNetwork}
-          className="btn-blue-fill w-full justify-center"
-        >
+        <button disabled={isInTheWrongNetwork} className="btn-blue-fill w-full">
           {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sale'}
         </button>
       </Dialog.Trigger>
@@ -138,16 +135,14 @@ const ListModal: FC<Props> = ({
             </div>
             {success ? (
               <Dialog.Close asChild>
-                <button className="btn-green-fill w-full justify-center">
+                <button className="btn-green-fill w-full">
                   Success, Close this menu
                 </button>
               </Dialog.Close>
             ) : (
               <div className="flex items-center gap-4">
                 <Dialog.Close asChild>
-                  <button className="btn-neutral-fill w-full justify-center">
-                    Cancel
-                  </button>
+                  <button className="btn-neutral-fill w-full">Cancel</button>
                 </Dialog.Close>
                 <button
                   disabled={waitingTx || isInTheWrongNetwork}
@@ -211,7 +206,7 @@ const ListModal: FC<Props> = ({
                       setWaitingTx(false)
                     }
                   }}
-                  className="btn-blue-fill w-full justify-center"
+                  className="btn-blue-fill w-full"
                 >
                   {waitingTx ? 'Waiting...' : 'List'}
                 </button>

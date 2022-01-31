@@ -126,7 +126,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
         {trigger ?? (
           <button
             disabled={!signer || isInTheWrongNetwork}
-            className="btn-blue-fill w-full justify-center"
+            className="btn-blue-fill w-full"
           >
             Make Offer
           </button>
@@ -275,16 +275,14 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
             </div>
             {success ? (
               <Dialog.Close asChild>
-                <button className="btn-green-fill w-full justify-center">
+                <button className="btn-green-fill w-full">
                   Success, Close this menu
                 </button>
               </Dialog.Close>
             ) : (
               <div className="flex items-center gap-4">
                 <Dialog.Close asChild>
-                  <button className="btn-neutral-fill w-full justify-center">
-                    Cancel
-                  </button>
+                  <button className="btn-neutral-fill w-full">Cancel</button>
                 </Dialog.Close>
                 <button
                   disabled={
@@ -355,7 +353,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                       setWaitingTx(false)
                     }
                   }}
-                  className="btn-blue-fill w-full justify-center"
+                  className="btn-blue-fill w-full"
                 >
                   {waitingTx ? 'Waiting...' : 'Make Offer'}
                 </button>
