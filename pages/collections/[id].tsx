@@ -110,9 +110,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const isHome = router.asPath.includes('/collections/')
 
   const layoutData = {
-    title: isHome
-      ? 'Your Logo Here'
-      : collection.data?.collection?.collection?.name,
+    title: isHome ? undefined : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
 

@@ -12,10 +12,21 @@ const Navbar: FC<Props> = ({ title, image }) => {
   return (
     <nav className="flex items-center justify-between">
       <Link href="/">
-        <a className="flex items-center justify-between gap-3">
-          {image && <img src={image} alt={title} className="w-[30px]" />}
-          {title && <span className="font-semibold">{title}</span>}
-        </a>
+        {title ? (
+          <a className="flex items-center justify-between gap-3">
+            {image && <img src={image} alt={title} className="w-[30px]" />}
+            {title && <span className="font-semibold">{title}</span>}
+          </a>
+        ) : (
+          <a className="flex items-center gap-1.5">
+            <img
+              src="/reservoir.svg"
+              alt="Reservoir Logo"
+              className="h-5 w-5"
+            />
+            <span className="font-['Obvia'] text-lg">reservoir.market</span>
+          </a>
+        )}
       </Link>
       <div className="flex items-center gap-6">
         <InfoModal />

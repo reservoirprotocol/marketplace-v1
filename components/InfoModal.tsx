@@ -6,18 +6,8 @@ const InfoModal: FC = () => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="hidden sm:grid">
-          <span className="justify-self-start text-sm opacity-75">
-            powered by
-          </span>
-          <div className="flex items-center gap-1.5">
-            <img
-              src="/reservoir.svg"
-              alt="Reservoir Logo"
-              className="h-5 w-5"
-            />
-            <span className="font-['Obvia'] text-lg">reservoir</span>
-          </div>
+        <button className="hidden hover:underline sm:grid">
+          What is reservoir.market?
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

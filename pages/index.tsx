@@ -36,7 +36,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const { communities, ref: refCommunity } = useCommunity(apiBase, wildcard)
 
-  const { collections, ref: refCollections } = useCollections(apiBase, wildcard)
+  const collections = useCollections(apiBase)
 
   const collection = useCollection(apiBase, undefined, wildcard)
 
@@ -107,9 +107,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   const layoutData = {
-    title: isHome
-      ? 'Your Logo Here'
-      : collection.data?.collection?.collection?.name,
+    title: isHome ? undefined : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
 
@@ -125,7 +123,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
           <div className="mb-12 grid justify-center">
             <SearchCollection apiBase={apiBase} />
           </div>
-          <CollectionsGrid collections={collections} viewRef={refCollections} />
+          <CollectionsGrid collections={collections} />
         </>
       ) : isCommunity ? (
         <>
