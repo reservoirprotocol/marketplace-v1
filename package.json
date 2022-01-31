@@ -1,6 +1,5 @@
 {
   "name": "simple-app",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "prettier": "prettier --write .",
@@ -9,7 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "12.0.8",
+    "next": "12.0.9",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
@@ -22,8 +21,8 @@
     "@radix-ui/react-dialog": "^0.1.5",
     "@radix-ui/react-dropdown-menu": "^0.1.4",
     "@radix-ui/react-toggle-group": "^0.1.4",
-    "@ramosdiego/ui": "^0.0.4",
-    "@reservoir0x/sdk": "^0.0.18",
+    "@ramosdiego/ui": "^0.0.8",
+    "@reservoir0x/sdk": "^0.0.22",
     "@types/ethereum-blockies": "^0.1.0",
     "@types/luxon": "^2.0.9",
     "@types/node": "17.0.9",

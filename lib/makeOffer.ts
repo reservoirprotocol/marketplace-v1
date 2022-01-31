@@ -178,7 +178,7 @@ async function postBuyOrder(
  * Post a buy order to OpenSea
  * @param chainId The Ethereum chain ID (eg: 1 - Ethereum Mainnet,
  *  4 - Rinkeby Testnet)
- * @param apiKey The OpenSea API key
+ * @param openSeaApiKey The OpenSea API key
  * @param orderParams The WyvernV2 order parameters
  * @param signer An Ethereum signer object
  * @param tokenId The token ID
@@ -188,13 +188,14 @@ async function postBuyOrder(
  */
 async function postBuyOrderToOpenSea(
   chainId: ChainId,
-  apiKey: string,
+  openSeaApiKey: string | undefined,
   params: WyvernV2.Types.OrderParams,
   tokenId: string,
   contract: string,
   signer: Signer
 ) {
   try {
+    if (!openSeaApiKey) throw new ReferenceError('OpenSea API key is undefined')
     // Instatiate a Wyvern order
     const buyOrder = new WyvernV2.Order(chainId, {
       ...params,
@@ -258,7 +259,7 @@ async function postBuyOrderToOpenSea(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
+          'x-api-key': openSeaApiKey,
         },
         body: JSON.stringify(order),
       }
@@ -280,7 +281,7 @@ async function postBuyOrderToOpenSea(
  * @param provider
  * @param input
  * @param apiBase
- * @param apiKey
+ * @param openSeaApiKey
  * @param signer
  * @param query
  * @param postOnOpenSea
@@ -290,7 +291,7 @@ async function makeOffer(
   provider: Provider,
   input: BigNumber,
   apiBase: string,
-  apiKey: string,
+  openSeaApiKey: string | undefined,
   signer: Signer,
   query: paths['/orders/build']['get']['parameters']['query'],
   postOnOpenSea: boolean,
@@ -325,7 +326,7 @@ async function makeOffer(
     if (postOnOpenSea) {
       await postBuyOrderToOpenSea(
         chainId,
-        apiKey,
+        openSeaApiKey,
         buyOrder.params,
         query.tokenId,
         query.contract,

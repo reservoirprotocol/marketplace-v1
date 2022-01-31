@@ -18,7 +18,7 @@ type Props = {
   env: {
     apiBase: string
     chainId: number
-    openSeaApiKey: string
+    openSeaApiKey: string | undefined
   }
   data:
     | {
@@ -305,6 +305,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                         expirationValue,
                         fee,
                         ethBalance,
+                        env,
                       })
                       return
                     }

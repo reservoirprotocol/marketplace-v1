@@ -49,8 +49,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     collection.error ||
     attributes.error ||
     !apiBase ||
-    !chainId ||
-    !openSeaApiKey
+    !chainId
   ) {
     console.debug({
       apiBase,
@@ -188,7 +187,7 @@ export const getServerSideProps: GetServerSideProps<{
   // Reverse the host parts to make sure that the third element always
   // corresponds to the first subdomain
   // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  if (!hostParts) {
+  if (!hostParts || hostParts.length < 2) {
     return {
       notFound: true,
     }
