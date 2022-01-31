@@ -34,7 +34,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const { tokens, ref } = useTokens(apiBase, wildcard, [], router)
 
-  const { communities, ref: refCommunity } = useCommunity(apiBase, wildcard)
+  const communities = useCommunity(apiBase, wildcard)
 
   const collections = useCollections(apiBase)
 
@@ -127,16 +127,16 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
         </>
       ) : isCommunity ? (
         <>
-          <header className="mb-10 flex items-center justify-center gap-5">
+          <header className="mt-8 mb-14 flex items-center justify-center gap-5">
             <img
               className="h-[50px] w-[50px]"
-              src={communities.data?.[0]?.collections?.[0]?.collection?.image}
+              src={communities.data?.collections?.[0].collection?.image}
             />
-            <h1 className="text-xl font-bold uppercase">
+            <h1 className=" text-xl font-bold uppercase">
               {wildcard} Community
             </h1>
           </header>
-          <CommunityGrid communities={communities} viewRef={refCommunity} />
+          <CommunityGrid communities={communities} />
         </>
       ) : (
         <>

@@ -15,8 +15,8 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
   const { data, isValidating } = collections
 
   return (
-    <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-between">
-      {isValidating
+    <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center">
+      {!data && isValidating
         ? Array(16)
             .fill(null)
             .map((_, index) => (
@@ -30,11 +30,13 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}
             >
-              <a className="group overflow-hidden rounded-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
+              <a className="group overflow-hidden rounded-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg">
                 <img
                   src={optimizeImage(collection?.collection?.image, 130)}
                   alt={`${collection?.collection?.name}`}
                   className="h-[130px] w-[130px] object-contain"
+                  width="130"
+                  height="130"
                 />
               </a>
             </Link>
