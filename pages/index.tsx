@@ -20,6 +20,7 @@ import useCommunity from 'hooks/useCommunity'
 import useCollections from 'hooks/useCollections'
 import useCollection from 'hooks/useCollection'
 import useAttributes from 'hooks/useAttributes'
+import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -41,6 +42,8 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   const collection = useCollection(apiBase, undefined, wildcard)
 
   const attributes = useAttributes(apiBase, wildcard)
+
+  const { data: openSeaMeta } = useGetOpenSeaMetadata(wildcard)
 
   if (
     tokens.error ||
@@ -71,6 +74,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   const header = {
+    banner: openSeaMeta?.collection?.banner_image_url,
     image: collection?.data?.collection?.collection?.image,
     name: collection?.data?.collection?.collection?.name,
   }

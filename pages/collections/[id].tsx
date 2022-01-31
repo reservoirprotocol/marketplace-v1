@@ -9,7 +9,7 @@ import type {
 } from 'next'
 import TokensGrid from 'components/TokensGrid'
 import Hero from 'components/Hero'
-import { useNetwork, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import OfferModal from 'components/OfferModal'
 import { useRouter } from 'next/router'
 import Sidebar from 'components/Sidebar'
@@ -25,6 +25,10 @@ import useFiltersApplied from 'hooks/useFiltersApplied'
 import SortMenuExplore from 'components/SortMenuExplore'
 import SortMenu from 'components/SortMenu'
 import ViewMenu from 'components/ViewMenu'
+import { formatBN } from 'lib/numbers'
+import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
+import { useState } from 'react'
+import { instantBuy } from 'lib/buyToken'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -33,9 +37,11 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback }) => {
+  const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
 
   const stats = useCollectionStats(apiBase, router)
 
@@ -59,10 +65,20 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   const filtersApplied = useFiltersApplied(router)
 
+  const { data: openSeaMeta } = useGetOpenSeaMetadata(
+    router.query.id?.toString() || ''
+  )
+
   if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
     console.debug({ apiBase, chainId, openSeaApiKey })
     return <div>There was an error</div>
   }
+
+  const isOwner =
+    collection.data?.collection?.set?.market?.floorSell?.maker?.toLowerCase() ===
+    accountData?.address.toLowerCase()
+
+  const floor = collection.data?.collection?.set?.market?.floorSell
 
   const statsObj = {
     vol24: 10,
@@ -72,6 +88,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
   }
 
   const header = {
+    banner: openSeaMeta?.collection?.banner_image_url,
     image: collection?.data?.collection?.collection?.image,
     name: collection?.data?.collection?.collection?.name,
   }
@@ -116,12 +133,51 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout title={layoutData?.title} image={layoutData?.image}>
-      <Hero stats={statsObj} header={header} />
-      <div className="mt-3 mb-10 flex justify-center">
+      <Hero stats={statsObj} header={header}>
+        <button
+          disabled={
+            !signer ||
+            isOwner ||
+            floor?.value === null ||
+            waitingTx ||
+            isInTheWrongNetwork
+          }
+          onClick={async () => {
+            const tokenId = floor?.token?.tokenId
+            const contract = floor?.token?.contract
+
+            if (!signer || !tokenId || !contract) {
+              console.debug({ tokenId, signer, contract })
+              return
+            }
+
+            const query: paths['/orders/fill']['get']['parameters']['query'] = {
+              contract,
+              tokenId,
+              side: 'sell',
+            }
+
+            try {
+              setWaitingTx(true)
+              await instantBuy(apiBase, +chainId as 1 | 4, signer, query)
+              await collection.mutate()
+              setWaitingTx(false)
+            } catch (error) {
+              setWaitingTx(false)
+              console.error(error)
+              return
+            }
+          }}
+          className="btn-neutral-fill-dark"
+        >
+          {waitingTx
+            ? 'Waiting...'
+            : `Buy for ${formatBN(floor?.value, 4)} ETH`}
+        </button>
         <OfferModal
           trigger={
             <button
-              className="btn-neutral-fill-dark px-11 py-4"
+              className="btn-neutral-outline border-black py-2"
               disabled={!signer || isInTheWrongNetwork}
             >
               Make a collection bid
@@ -133,7 +189,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
           env={env}
           mutate={collection.mutate}
         />
-      </div>
+      </Hero>
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
         <div className="flex-grow">
