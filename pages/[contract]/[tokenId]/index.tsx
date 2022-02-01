@@ -22,7 +22,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ tokenDetails, isHome }) => {
+const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -38,14 +38,11 @@ const Index: NextPage<Props> = ({ tokenDetails, isHome }) => {
 
   setParams(url, query)
 
-  const details = useSWR<Props['tokenDetails']>(url.href, fetcher, {
-    fallbackData: tokenDetails,
-  })
+  const details = useSWR<
+    paths['/tokens/details']['get']['responses']['200']['schema']
+  >(url.href, fetcher)
 
-  const collectionUrl = new URL(
-    `/collections/${tokenDetails?.tokens?.[0].token?.collection?.id}`,
-    apiBase
-  )
+  const collectionUrl = new URL(`/collections/${collectionId}`, apiBase)
 
   const collection = useSWR<
     paths['/collections/{collection}']['get']['responses']['200']['schema']
@@ -314,7 +311,7 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 export const getServerSideProps: GetServerSideProps<{
   wildcard: string
   isHome: boolean
-  tokenDetails: paths['/tokens/details']['get']['responses']['200']['schema']
+  collectionId: string
 }> = async ({ req, params }) => {
   const hostParts = req.headers.host?.split('.').reverse()
   // Make sure that the host contains at least one subdomain
@@ -347,7 +344,10 @@ export const getServerSideProps: GetServerSideProps<{
 
   const res = await fetch(url.href)
 
-  const tokenDetails = (await res.json()) as Props['tokenDetails']
+  const tokenDetails =
+    (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
 
-  return { props: { wildcard, isHome, tokenDetails } }
+  const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
+
+  return { props: { wildcard, isHome, collectionId } }
 }
