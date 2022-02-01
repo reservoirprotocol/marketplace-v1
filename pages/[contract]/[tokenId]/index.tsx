@@ -72,13 +72,28 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
 
   return (
     <Layout title={layoutData.title} image={layoutData.image}>
-      <div className="mt-16 grid grid-cols-2 place-items-center gap-10">
+      <div className="grid place-items-center sm:mt-16 sm:grid-cols-2 sm:gap-10">
+        <div className="mt-5 flex gap-3 sm:hidden">
+          <img
+            src={optimizeImage(layoutData.image, 50)}
+            alt="collection avatar"
+            className="h-[50px] w-[50px] rounded-full"
+          />
+          <div>
+            <div className="mb-1 text-2xl font-bold">
+              {token?.token?.name || token?.token?.collection?.name}
+            </div>
+            <div className="mb-4 text-lg font-medium uppercase opacity-80">
+              #{token?.token?.tokenId}
+            </div>
+          </div>
+        </div>
         <img
-          className="ml-auto w-[500px] self-start"
+          className="mb-5 sm:mb-0 sm:ml-auto sm:w-[500px] sm:self-start"
           src={optimizeImage(token?.token?.image, 500)}
         />
-        <div className="mr-auto mb-8">
-          <div className="flex gap-3">
+        <div className="mb-8 sm:mr-auto">
+          <div className="hidden gap-3 sm:flex">
             <img
               src={optimizeImage(layoutData.image, 50)}
               alt="collection avatar"

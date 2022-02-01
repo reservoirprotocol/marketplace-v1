@@ -14,7 +14,13 @@ const Navbar: FC<Props> = ({ title, image }) => {
       <Link href="/">
         {title ? (
           <a className="flex items-center justify-between gap-3">
-            {image && <img src={image} alt={title} className="w-[30px]" />}
+            {image && (
+              <img
+                src={image}
+                alt={title}
+                className="hidden w-[30px] sm:block"
+              />
+            )}
             {title && <span className="font-semibold">{title}</span>}
           </a>
         ) : (
