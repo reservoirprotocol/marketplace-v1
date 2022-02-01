@@ -16,7 +16,7 @@ type Props = {
   trigger?: ReactNode
   env: {
     apiBase: string
-    chainId: number
+    chainId: ChainId
     openSeaApiKey: string | undefined
   }
   data: {
@@ -79,7 +79,7 @@ const TokenOfferModal: FC<Props> = ({
     async function loadWeth() {
       if (signer) {
         await getBalance({ addressOrName: await signer?.getAddress() })
-        const weth = await getWeth(env.chainId as 1 | 4, provider, signer)
+        const weth = await getWeth(env.chainId as ChainId, provider, signer)
         if (weth) {
           setWeth(weth)
         }
@@ -282,7 +282,7 @@ const TokenOfferModal: FC<Props> = ({
 
                       const feeRecipient = royalties?.recipient || maker
 
-                      let query: Parameters<typeof makeOffer>[6] = {
+                      let query: Parameters<typeof makeOffer>[0]['query'] = {
                         maker,
                         side: 'buy',
                         price: calculations.total.toString(),
@@ -297,17 +297,15 @@ const TokenOfferModal: FC<Props> = ({
                       // Set loading state for UI
                       setWaitingTx(true)
 
-                      await makeOffer(
-                        env.chainId as 1 | 4,
+                      await makeOffer({
+                        env,
                         provider,
-                        calculations.total,
-                        env.apiBase,
-                        env.openSeaApiKey,
+                        input: calculations.total,
                         signer,
                         query,
                         postOnOpenSea,
-                        calculations.missingWeth
-                      )
+                        missingWeth: calculations.missingWeth,
+                      })
                       // Close modal
                       // closeButton.current?.click()
                       await mutate()

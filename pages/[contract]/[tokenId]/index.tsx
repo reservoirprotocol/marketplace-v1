@@ -148,7 +148,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                         setWaitingTx(true)
                         await instantBuy(
                           apiBase,
-                          +chainId as 1 | 4,
+                          +chainId as ChainId,
                           signer,
                           query
                         )
@@ -202,7 +202,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                         setWaitingTx(true)
                         await acceptOffer(
                           apiBase,
-                          +chainId as 1 | 4,
+                          +chainId as ChainId,
                           signer,
                           query
                         )
@@ -240,7 +240,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                     }}
                     env={{
                       apiBase,
-                      chainId: +chainId,
+                      chainId: +chainId as ChainId,
                       openSeaApiKey,
                     }}
                     mutate={details.mutate}
@@ -265,7 +265,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                       setWaitingTx(true)
                       await cancelOrder(
                         apiBase,
-                        +chainId as 1 | 4,
+                        +chainId as ChainId,
                         signer,
                         query
                       )

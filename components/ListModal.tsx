@@ -195,7 +195,7 @@ const ListModal: FC<Props> = ({
                     try {
                       await listTokenForSale(
                         apiBase,
-                        chainId as 1 | 4,
+                        chainId as ChainId,
                         signer,
                         query
                       )

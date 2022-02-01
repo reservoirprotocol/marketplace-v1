@@ -135,7 +135,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   const env: ModalProps['env'] = {
     apiBase,
-    chainId: +chainId,
+    chainId: +chainId as ChainId,
     openSeaApiKey,
   }
 
@@ -199,7 +199,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
             try {
               setWaitingTx(true)
-              await instantBuy(apiBase, +chainId as 1 | 4, signer, query)
+              await instantBuy(apiBase, +chainId as ChainId, signer, query)
               await collection.mutate()
               setWaitingTx(false)
             } catch (error) {

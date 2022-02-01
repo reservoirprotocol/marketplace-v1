@@ -89,7 +89,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const env: ModalProps['env'] = {
     apiBase,
-    chainId: +chainId,
+    chainId: +chainId as ChainId,
     openSeaApiKey,
   }
 
