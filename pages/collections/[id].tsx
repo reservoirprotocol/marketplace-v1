@@ -113,12 +113,12 @@ const Home: NextPage<Props> = ({ fallback }) => {
     collection.data?.collection?.set?.market?.floorSell?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
 
-  const floor = stats?.stats?.market?.floorSell
+  const floor = stats?.data?.stats?.market?.floorSell
 
   const statsObj = {
     vol24: 10,
-    count: stats?.stats?.tokenCount ?? 0,
-    topOffer: stats?.stats?.market?.topBuy?.value,
+    count: stats?.data?.stats?.tokenCount ?? 0,
+    topOffer: stats?.data?.stats?.market?.topBuy?.value,
     floor: floor?.value,
   }
 
@@ -146,7 +146,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       id: collection?.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
-      tokenCount: stats?.stats?.tokenCount ?? 0,
+      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
   }
 
@@ -157,7 +157,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       id: collection.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
-      tokenCount: stats?.stats?.tokenCount ?? 0,
+      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
     attribute,
   }
@@ -228,7 +228,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
             signer={signer}
             data={attributeData}
             env={env}
-            mutate={collection.mutate}
+            mutate={stats.mutate}
           />
         ) : (
           <CollectionOfferModal
