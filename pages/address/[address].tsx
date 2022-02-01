@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
 import useSWR from 'swr'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
@@ -90,6 +91,9 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
 
   return (
     <Layout title={layoutData.title} image={layoutData.image}>
+      <Head>
+        <title>Address Tokens</title>
+      </Head>
       <div className="mt-4 mb-10 flex items-center justify-center">
         <EthAccount address={router.query?.address?.toString()} />
       </div>

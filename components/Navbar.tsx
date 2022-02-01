@@ -10,11 +10,17 @@ type Props = {
 
 const Navbar: FC<Props> = ({ title, image }) => {
   return (
-    <nav className="flex items-center justify-between">
+    <nav className="flex items-center justify-between py-3 px-3 sm:py-4">
       <Link href="/">
         {title ? (
           <a className="flex items-center justify-between gap-3">
-            {image && <img src={image} alt={title} className="w-[30px]" />}
+            {image && (
+              <img
+                src={image}
+                alt={title}
+                className="hidden w-[30px] sm:block"
+              />
+            )}
             {title && <span className="font-semibold">{title}</span>}
           </a>
         ) : (

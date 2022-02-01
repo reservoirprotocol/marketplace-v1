@@ -9,7 +9,6 @@ import type {
 import TokensGrid from 'components/TokensGrid'
 import Hero from 'components/Hero'
 import { useNetwork, useSigner } from 'wagmi'
-import OfferModal from 'components/OfferModal'
 import CommunityGrid from 'components/CommunityGrid'
 import CollectionsGrid from 'components/CollectionsGrid'
 import SearchCollection from 'components/SearchCollections'
@@ -20,6 +19,10 @@ import useCommunity from 'hooks/useCommunity'
 import useCollections from 'hooks/useCollections'
 import useCollection from 'hooks/useCollection'
 import useAttributes from 'hooks/useAttributes'
+import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
+import CollectionOfferModal from 'components/CollectionOfferModal'
+import { ComponentProps } from 'react'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -34,13 +37,15 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const { tokens, ref } = useTokens(apiBase, wildcard, [], router)
 
-  const { communities, ref: refCommunity } = useCommunity(apiBase, wildcard)
+  const communities = useCommunity(apiBase, wildcard)
 
   const collections = useCollections(apiBase)
 
   const collection = useCollection(apiBase, undefined, wildcard)
 
   const attributes = useAttributes(apiBase, wildcard)
+
+  const { data: openSeaMeta } = useGetOpenSeaMetadata(wildcard)
 
   if (
     tokens.error ||
@@ -63,6 +68,8 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     return <div>There was an error</div>
   }
 
+  type ModalProps = ComponentProps<typeof CollectionOfferModal>
+
   const stats = {
     vol24: 10,
     count: collection?.data?.collection?.set?.tokenCount,
@@ -71,38 +78,30 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   const header = {
+    banner: openSeaMeta?.collection?.banner_image_url,
     image: collection?.data?.collection?.collection?.image,
     name: collection?.data?.collection?.collection?.name,
   }
 
-  const royalties = {
+  const royalties: ModalProps['royalties'] = {
     bps: collection.data?.collection?.royalties?.bps,
     recipient: collection.data?.collection?.royalties?.recipient,
   }
 
-  const env = {
+  const env: ModalProps['env'] = {
     apiBase,
-    chainId: +chainId,
+    chainId: +chainId as ChainId,
     openSeaApiKey,
   }
 
   const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
 
-  const data = {
-    // COLLECTION WIDE OFFER
+  const data: ModalProps['data'] = {
     collection: {
       id: collection?.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
       tokenCount: collection?.data?.collection?.set?.tokenCount ?? 0,
-    },
-    token: {
-      contract: undefined,
-      id: undefined,
-      image: undefined,
-      name: undefined,
-      topBuyValue: undefined,
-      floorSellValue: undefined,
     },
   }
 
@@ -113,6 +112,9 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   return (
     <Layout title={layoutData?.title} image={layoutData?.image}>
+      <Head>
+        <title>Reservoir Market</title>
+      </Head>
       {isHome ? (
         <>
           <header className="mb-10 flex items-center justify-center gap-5">
@@ -127,22 +129,22 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
         </>
       ) : isCommunity ? (
         <>
-          <header className="mb-10 flex items-center justify-center gap-5">
+          <header className="mt-8 mb-14 flex items-center justify-center gap-5">
             <img
               className="h-[50px] w-[50px]"
-              src={communities.data?.[0]?.collections?.[0]?.collection?.image}
+              src={communities.data?.collections?.[0].collection?.image}
             />
-            <h1 className="text-xl font-bold uppercase">
+            <h1 className=" text-xl font-bold uppercase">
               {wildcard} Community
             </h1>
           </header>
-          <CommunityGrid communities={communities} viewRef={refCommunity} />
+          <CommunityGrid communities={communities} />
         </>
       ) : (
         <>
           <Hero stats={stats} header={header} />
           <div className="mt-3 mb-10 flex justify-center">
-            <OfferModal
+            <CollectionOfferModal
               trigger={
                 <button
                   className="btn-neutral-fill-dark px-11 py-4"

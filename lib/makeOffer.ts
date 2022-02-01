@@ -156,14 +156,42 @@ async function postBuyOrder(
     // Post buy order to Reservoir
     let url2 = new URL('/orders', apiBase)
 
+    let orders: [
+      {
+        kind: 'wyvern-v2'
+        data: WyvernV2.Types.OrderParams
+        attribute?: {
+          collection: string
+          key: string
+          value: string
+        }
+      }
+    ] = [
+      {
+        kind: 'wyvern-v2',
+        data: buyOrder.params,
+      },
+    ]
+
+    // Add data for attribute wide offers
+    if (
+      typeof query.collection === 'string' &&
+      typeof query.attributeKey === 'string' &&
+      typeof query.attributeValue === 'string'
+    ) {
+      orders[0]['attribute'] = {
+        collection: query.collection,
+        key: query.attributeKey,
+        value: query.attributeValue,
+      }
+    }
+
     await fetch(url2.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        orders: [{ kind: 'wyvern-v2', data: buyOrder.params }],
-      }),
+      body: JSON.stringify({ orders }),
     })
 
     return buyOrder
@@ -286,17 +314,28 @@ async function postBuyOrderToOpenSea(
  * @param query
  * @param postOnOpenSea
  */
-async function makeOffer(
-  chainId: ChainId,
-  provider: Provider,
-  input: BigNumber,
-  apiBase: string,
-  openSeaApiKey: string | undefined,
-  signer: Signer,
-  query: paths['/orders/build']['get']['parameters']['query'],
-  postOnOpenSea: boolean,
+async function makeOffer(data: {
+  env: {
+    apiBase: string
+    openSeaApiKey: string | undefined
+    chainId: ChainId
+  }
+  provider: Provider
+  input: BigNumber
+  signer: Signer
+  query: paths['/orders/build']['get']['parameters']['query']
+  postOnOpenSea: boolean
   missingWeth: BigNumber
-) {
+}) {
+  const {
+    env: { apiBase, openSeaApiKey, chainId },
+    provider,
+    input,
+    signer,
+    query,
+    postOnOpenSea,
+    missingWeth,
+  } = data
   try {
     // Get a wETH instance
     const weth = await getWeth(chainId, provider, signer)

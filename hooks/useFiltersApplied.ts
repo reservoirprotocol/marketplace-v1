@@ -8,7 +8,6 @@ export default function useFiltersApplied(router: NextRouter) {
   useEffect(() => {
     if (router.isReady) {
       let filtersApplied = Object.keys(router.query).find(
-        // Does the key have a leading underscore and has a value
         (key) =>
           key.startsWith('attributes[') &&
           key.endsWith(']') &&

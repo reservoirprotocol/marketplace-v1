@@ -10,26 +10,43 @@ type Props = {
     floor: number | undefined
   }
   header: {
+    banner: string | undefined
     image: string | undefined
     name: string | undefined
   }
 }
 
-const Hero: FC<Props> = ({ stats, header }) => {
+const Hero: FC<Props> = ({ stats, header, children }) => {
   return (
-    <div className="mt-7 mb-10 space-y-5">
-      <header className="flex items-center justify-center gap-5">
-        <img className="h-[50px] w-[50px]" src={header.image} />
-        <h1 className="text-xl font-bold">{header.name}</h1>
-      </header>
-      <div className="mx-auto grid max-w-screen-sm grid-cols-3 place-items-center gap-3 rounded-md bg-white p-4 shadow-md">
-        <Stat name="count">{formatNumber(stats.count)}</Stat>
-        <Stat name="top offer">
-          <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
-        </Stat>
-        <Stat name="floor">
-          <FormatEth amount={stats.floor} maximumFractionDigits={4} />
-        </Stat>
+    <div className="relative mb-48 sm:mb-20">
+      {header?.banner && (
+        <img
+          src={header?.banner}
+          alt={`${header.name} banner image`}
+          className="h-[100px] w-full object-cover sm:h-[200px] sm:px-[1px]"
+        />
+      )}
+      <div
+        className={`${
+          header?.banner ? 'absolute' : ''
+        } grid w-full place-items-center gap-5 bg-[#f7f4f8] pt-4 sm:-bottom-12 sm:pt-3 lg:flex lg:items-center lg:justify-between lg:gap-2 lg:bg-transparent lg:bg-gradient-to-t lg:from-[#f7f4f8] lg:via-[#f7f4f8] lg:px-2 lg:pt-10`}
+      >
+        <div className="flex items-center">
+          <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
+          <div className="ml-3">
+            <h1 className="mb-1 text-2xl font-semibold">{header.name}</h1>
+            <div className="flex items-center gap-5">
+              <Stat name="top offer">
+                <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
+              </Stat>
+              <Stat name="floor">
+                <FormatEth amount={stats.floor} maximumFractionDigits={4} />
+              </Stat>
+              <Stat name="items">{formatNumber(stats.count)}</Stat>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-3">{children}</div>
       </div>
     </div>
   )
@@ -38,8 +55,8 @@ const Hero: FC<Props> = ({ stats, header }) => {
 export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
-  <div>
-    <div className="font-medium uppercase opacity-75">{name}</div>
-    <div className="text-lg font-semibold">{children}</div>
+  <div className="grid items-center sm:flex sm:gap-1">
+    <div className="text-sm font-medium uppercase opacity-75">{name}</div>
+    <div className="font-semibold">{children}</div>
   </div>
 )

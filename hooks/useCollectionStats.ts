@@ -1,46 +1,44 @@
 import { paths } from 'interfaces/apiTypes'
-import setParams from 'lib/params'
+import fetcher from 'lib/fetcher'
 import { NextRouter } from 'next/router'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 export default function useCollectionStats(
   apiBase: string | undefined,
   router: NextRouter
 ) {
-  const [stats, setStats] =
-    useState<paths['/stats']['get']['responses']['200']['schema']>()
-
-  const url = new URL('/stats', apiBase)
-
   useEffect(() => {
-    async function getStats() {
-      if (router.isReady) {
-        const query: paths['/stats']['get']['parameters']['query'] = {
-          collection: router.query?.id?.toString(),
+    stats.mutate()
+  }, [router.query])
+
+  function getUrl() {
+    const url = new URL('/stats', apiBase)
+    url.searchParams.set('collection', router.query?.id?.toString() || '')
+
+    const attributes = Object.keys(router.query).filter(
+      (key) =>
+        key.startsWith('attributes[') &&
+        key.endsWith(']') &&
+        router.query[key] !== ''
+    )
+
+    if (attributes.length > 0) {
+      attributes.forEach((key) => {
+        const value = router.query[key]?.toString()
+        if (value) {
+          url.searchParams.set(key, value)
         }
-
-        setParams(url, query)
-
-        const attributes = Object.keys(router.query).filter(
-          (key) => key.startsWith('attributes[') && key.endsWith(']')
-        )
-
-        if (attributes.length > 0) {
-          attributes.forEach((key) => {
-            // @ts-ignore
-            url.searchParams.set(key, router.query[key].toString())
-          })
-        }
-
-        const res = await fetch(url.href)
-        const stats =
-          (await res.json()) as paths['/stats']['get']['responses']['200']['schema']
-
-        setStats(stats)
-      }
+      })
     }
-    getStats()
-  }, [router])
+
+    return url
+  }
+
+  const stats = useSWR<paths['/stats']['get']['responses']['200']['schema']>(
+    getUrl().href,
+    fetcher
+  )
 
   return stats
 }

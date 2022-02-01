@@ -25,7 +25,7 @@ function formatBN(
   amount: BigNumberish | null | undefined,
   maximumFractionDigits: number
 ) {
-  if (!amount) return '-'
+  if (typeof amount === 'undefined' || amount === null) return '-'
 
   let value = ''
 

@@ -11,9 +11,6 @@ module.exports = {
     require('tailwindcss-radix')(),
     require('@ramosdiego/ui')({
       buttons: {
-        baseStyles: {
-          width: 'inherit',
-        },
         animate: true,
       },
     }),
