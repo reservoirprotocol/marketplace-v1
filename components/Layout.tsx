@@ -8,7 +8,7 @@ const Layout: FC<Props> = ({ children, title, image }) => {
   return (
     <>
       <NetworkWarning />
-      <main className="container mx-auto px-2 pt-4">
+      <main className="container mx-auto">
         <Navbar title={title} image={image} />
         {children}
       </main>
