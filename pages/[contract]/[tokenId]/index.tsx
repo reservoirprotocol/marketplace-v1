@@ -9,12 +9,12 @@ import useSWR from 'swr'
 import { FC, ReactNode, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
-import OfferModal from 'components/OfferModal'
 import { acceptOffer } from 'lib/acceptOffer'
 import { instantBuy } from 'lib/buyToken'
 import cancelOrder from 'lib/cancelOrder'
 import FormatEth from 'components/FormatEth'
 import TokenAttributes from 'components/TokenAttributes'
+import TokenOfferModal from 'components/TokenOfferModal'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -218,15 +218,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                     {waitingTx ? 'Waiting...' : 'Accept Offer'}
                   </button>
                 ) : (
-                  <OfferModal
+                  <TokenOfferModal
                     signer={signer}
                     data={{
-                      // SINGLE TOKEN OFFER
                       collection: {
-                        id: undefined,
-                        image: undefined,
                         name: collection.data?.collection?.collection?.name,
-                        tokenCount: undefined,
                       },
                       token: {
                         contract: token?.token?.contract,

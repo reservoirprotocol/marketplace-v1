@@ -2,9 +2,7 @@ import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
-import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
-import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
@@ -12,6 +10,7 @@ import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { MutatorCallback } from 'swr'
 import FormatEth from './FormatEth'
+import expirationPresets from 'lib/offerExpirationPresets'
 
 type Props = {
   trigger?: ReactNode
@@ -20,41 +19,14 @@ type Props = {
     chainId: number
     openSeaApiKey: string | undefined
   }
-  data:
-    | {
-        // SINGLE TOKEN OFFER
-        token: {
-          image: string | undefined
-          name: string | undefined
-          id: string | undefined
-          contract: string | undefined
-          topBuyValue: number | undefined
-          floorSellValue: number | undefined
-        }
-        collection: {
-          image: undefined
-          name: string | undefined
-          id: undefined
-          tokenCount: undefined
-        }
-      }
-    | {
-        // COLLECTION WIDE OFFER
-        token: {
-          image: undefined
-          name: undefined
-          id: undefined
-          contract: undefined
-          topBuyValue: undefined
-          floorSellValue: undefined
-        }
-        collection: {
-          image: string | undefined
-          name: string | undefined
-          id: string | undefined
-          tokenCount: number
-        }
-      }
+  data: {
+    collection: {
+      image: string | undefined
+      name: string | undefined
+      id: string | undefined
+      tokenCount: number
+    }
+  }
   royalties: {
     bps: number | undefined
     recipient: string | undefined
@@ -62,9 +34,15 @@ type Props = {
   signer: ethers.Signer | undefined
   mutate: MutatorCallback
 }
-const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
+
+const CollectionOfferModal: FC<Props> = ({
+  trigger,
+  env,
+  royalties,
+  mutate,
+  data,
+}) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
-  const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
@@ -90,7 +68,6 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
   const isInTheWrongNetwork = network.chain?.id !== env.chainId
-  const isCollectionWide = !!data.collection.id
 
   useEffect(() => {
     async function loadWeth() {
@@ -137,9 +114,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
           <Dialog.Content className="fixed top-1/2 left-1/2 w-[360px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
             <div className="mb-5 flex items-center justify-between">
               <Dialog.Title className="text-lg font-medium uppercase opacity-75">
-                {isCollectionWide
-                  ? 'Make a collection offer'
-                  : 'Make a token offer'}
+                Make a collection offer
               </Dialog.Title>
               <Dialog.Close asChild>
                 <button ref={closeButton} className="btn-neutral-ghost p-1.5">
@@ -149,55 +124,20 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
             </div>
             <div className="mb-3 flex items-center gap-4">
               <img
-                src={optimizeImage(
-                  data.token.image ?? data.collection.image,
-                  50
-                )}
+                src={optimizeImage(data.collection.image, 50)}
                 alt=""
                 className="w-[50px]"
               />
               <div className="overflow-auto">
-                <div className="text-sm">
-                  {isCollectionWide ? 'Collection' : data.collection.name}
-                </div>
+                <div className="text-sm">Collection</div>
                 <div className="my-1.5 text-lg font-medium">
-                  {data.token.name ?? data.collection.name}
+                  {data.collection.name}
                 </div>
                 <div className="mb-1.5 text-sm">
-                  {isCollectionWide
-                    ? `${data.collection.tokenCount} Eligible Tokens`
-                    : '1 Eligible Token'}
+                  {data.collection.tokenCount} Eligible Tokens
                 </div>
               </div>
             </div>
-            {!isCollectionWide && (
-              <div className="mb-5 flex flex-wrap items-stretch gap-1.5 text-sm">
-                {data.token.topBuyValue && (
-                  <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
-                    <span className="whitespace-nowrap">Current Top Offer</span>
-                    <div className="font-semibold">
-                      <FormatEth
-                        amount={data.token.topBuyValue}
-                        maximumFractionDigits={4}
-                        logoWidth={7}
-                      />
-                    </div>
-                  </div>
-                )}
-                {data.token.floorSellValue && (
-                  <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
-                    <span className="whitespace-nowrap">List Price</span>
-                    <div className="font-semibold">
-                      <FormatEth
-                        amount={data.token.floorSellValue}
-                        maximumFractionDigits={4}
-                        logoWidth={7}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
                 <label
@@ -217,25 +157,6 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                   className="input-blue-outline w-[120px]"
                 />
               </div>
-              {!isCollectionWide && (
-                <div className="flex items-center gap-3">
-                  <label
-                    htmlFor="postOpenSea"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Also post to Open Sea
-                  </label>
-                  <input
-                    type="checkbox"
-                    name="postOpenSea"
-                    id="postOpenSea"
-                    className="scale-125 transform"
-                    checked={postOnOpenSea}
-                    onChange={(e) => setPostOnOpenSea(e.target.checked)}
-                  />
-                </div>
-              )}
-
               <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
@@ -323,12 +244,7 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                         expirationTime: expirationValue,
                       }
 
-                      if (isCollectionWide) {
-                        query.collection = data.collection.id
-                      } else {
-                        query.contract = data.token.contract
-                        query.tokenId = data.token.id
-                      }
+                      query.collection = data.collection.id
 
                       // Set loading state for UI
                       setWaitingTx(true)
@@ -338,10 +254,10 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
                         provider,
                         calculations.total,
                         env.apiBase,
-                        env.openSeaApiKey,
+                        undefined,
                         signer,
                         query,
-                        postOnOpenSea,
+                        false,
                         calculations.missingWeth
                       )
                       // Close modal
@@ -366,30 +282,4 @@ const OfferModal: FC<Props> = ({ trigger, env, royalties, mutate, data }) => {
   )
 }
 
-export default OfferModal
-
-const expirationPresets = [
-  {
-    preset: 'oneHour',
-    value: () =>
-      DateTime.now().plus({ hours: 1 }).toMillis().toString().slice(0, -3),
-    display: '1 Hour',
-  },
-  {
-    preset: 'oneDay',
-    value: () =>
-      DateTime.now().plus({ days: 1 }).toMillis().toString().slice(0, -3),
-    display: '1 Day',
-  },
-  {
-    preset: 'oneWeek',
-    value: () =>
-      DateTime.now().plus({ weeks: 1 }).toMillis().toString().slice(0, -3),
-    display: '1 Week',
-  },
-  {
-    preset: 'none',
-    value: () => '0',
-    display: 'None',
-  },
-]
+export default CollectionOfferModal

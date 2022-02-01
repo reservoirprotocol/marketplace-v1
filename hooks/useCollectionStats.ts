@@ -27,8 +27,10 @@ export default function useCollectionStats(
 
         if (attributes.length > 0) {
           attributes.forEach((key) => {
-            // @ts-ignore
-            url.searchParams.set(key, router.query[key].toString())
+            const value = router.query[key]?.toString()
+            if (value) {
+              url.searchParams.set(key, value)
+            }
           })
         }
 

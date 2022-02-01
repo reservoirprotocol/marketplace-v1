@@ -9,7 +9,6 @@ import type {
 import TokensGrid from 'components/TokensGrid'
 import Hero from 'components/Hero'
 import { useNetwork, useSigner } from 'wagmi'
-import OfferModal from 'components/OfferModal'
 import CommunityGrid from 'components/CommunityGrid'
 import CollectionsGrid from 'components/CollectionsGrid'
 import SearchCollection from 'components/SearchCollections'
@@ -21,6 +20,8 @@ import useCollections from 'hooks/useCollections'
 import useCollection from 'hooks/useCollection'
 import useAttributes from 'hooks/useAttributes'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
+import CollectionOfferModal from 'components/CollectionOfferModal'
+import { ComponentProps } from 'react'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -66,6 +67,8 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     return <div>There was an error</div>
   }
 
+  type ModalProps = ComponentProps<typeof CollectionOfferModal>
+
   const stats = {
     vol24: 10,
     count: collection?.data?.collection?.set?.tokenCount,
@@ -79,12 +82,12 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
     name: collection?.data?.collection?.collection?.name,
   }
 
-  const royalties = {
+  const royalties: ModalProps['royalties'] = {
     bps: collection.data?.collection?.royalties?.bps,
     recipient: collection.data?.collection?.royalties?.recipient,
   }
 
-  const env = {
+  const env: ModalProps['env'] = {
     apiBase,
     chainId: +chainId,
     openSeaApiKey,
@@ -92,21 +95,12 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
 
-  const data = {
-    // COLLECTION WIDE OFFER
+  const data: ModalProps['data'] = {
     collection: {
       id: collection?.data?.collection?.collection?.id,
       image: collection?.data?.collection?.collection?.image,
       name: collection?.data?.collection?.collection?.name,
       tokenCount: collection?.data?.collection?.set?.tokenCount ?? 0,
-    },
-    token: {
-      contract: undefined,
-      id: undefined,
-      image: undefined,
-      name: undefined,
-      topBuyValue: undefined,
-      floorSellValue: undefined,
     },
   }
 
@@ -146,7 +140,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
         <>
           <Hero stats={stats} header={header} />
           <div className="mt-3 mb-10 flex justify-center">
-            <OfferModal
+            <CollectionOfferModal
               trigger={
                 <button
                   className="btn-neutral-fill-dark px-11 py-4"
