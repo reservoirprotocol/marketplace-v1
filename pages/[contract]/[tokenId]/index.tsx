@@ -15,6 +15,7 @@ import cancelOrder from 'lib/cancelOrder'
 import FormatEth from 'components/FormatEth'
 import TokenAttributes from 'components/TokenAttributes'
 import TokenOfferModal from 'components/TokenOfferModal'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -72,6 +73,9 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
 
   return (
     <Layout title={layoutData.title} image={layoutData.image}>
+      <Head>
+        <title>{token?.token?.name || ''}</title>
+      </Head>
       <div className="grid place-items-center sm:mt-16 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img

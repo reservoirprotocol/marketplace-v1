@@ -22,6 +22,7 @@ import useAttributes from 'hooks/useAttributes'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import CollectionOfferModal from 'components/CollectionOfferModal'
 import { ComponentProps } from 'react'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -111,6 +112,9 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   return (
     <Layout title={layoutData?.title} image={layoutData?.image}>
+      <Head>
+        <title>Reservoir Market</title>
+      </Head>
       {isHome ? (
         <>
           <header className="mb-10 flex items-center justify-center gap-5">

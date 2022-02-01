@@ -30,6 +30,7 @@ import { ComponentProps, useEffect, useState } from 'react'
 import { instantBuy } from 'lib/buyToken'
 import CollectionOfferModal from 'components/CollectionOfferModal'
 import AttributeOfferModal from 'components/AttributeOfferModal'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -173,6 +174,9 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout title={layoutData?.title} image={layoutData?.image}>
+      <Head>
+        <title>{collection.data?.collection?.collection?.name || ''}</title>
+      </Head>
       <Hero stats={statsObj} header={header}>
         <button
           disabled={
