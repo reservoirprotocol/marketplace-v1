@@ -113,13 +113,13 @@ const Home: NextPage<Props> = ({ fallback }) => {
     collection.data?.collection?.set?.market?.floorSell?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
 
-  const floor = collection.data?.collection?.set?.market?.floorSell
+  const floor = stats?.stats?.market?.floorSell
 
   const statsObj = {
     vol24: 10,
     count: stats?.stats?.tokenCount ?? 0,
-    topOffer: collection?.data?.collection?.set?.market?.topBuy?.value,
-    floor: collection?.data?.collection?.set?.market?.floorSell?.value,
+    topOffer: stats?.stats?.market?.topBuy?.value,
+    floor: floor?.value,
   }
 
   const header = {
