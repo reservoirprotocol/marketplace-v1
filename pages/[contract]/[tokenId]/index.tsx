@@ -72,7 +72,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
       <Head>
         <title>{token?.token?.name || ''}</title>
       </Head>
-      <div className="grid place-items-center sm:mt-16 sm:grid-cols-2 sm:gap-10">
+      <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img
             src={optimizeImage(
@@ -95,7 +95,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
           className="mb-5 sm:mb-0 sm:ml-auto sm:w-[500px] sm:self-start"
           src={optimizeImage(token?.token?.image, 500)}
         />
-        <div className="mb-8 sm:mr-auto">
+        <div className="mb-8 sm:mr-auto sm:self-start">
           <div className="hidden gap-3 sm:flex">
             <img
               src={optimizeImage(
