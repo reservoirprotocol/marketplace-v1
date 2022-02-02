@@ -49,8 +49,8 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
     paths['/collections/{collection}']['get']['responses']['200']['schema']
   >(collectionUrl.href, fetcher)
 
-  if (details.error || !apiBase || !chainId || !openSeaApiKey) {
-    console.debug({ apiBase }, { chainId })
+  if (details.error || !apiBase || !chainId) {
+    console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
 
@@ -63,12 +63,8 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
   const layoutData = {
-    title: isHome
-      ? token?.token?.collection?.name
-      : collection.data?.collection?.collection?.name,
-    image: isHome
-      ? collection.data?.collection?.collection?.image
-      : collection.data?.collection?.collection?.image,
+    title: isHome ? undefined : collection.data?.collection?.collection?.name,
+    image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
 
   return (
@@ -79,16 +75,19 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
       <div className="grid place-items-center sm:mt-16 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img
-            src={optimizeImage(layoutData.image, 50)}
+            src={optimizeImage(
+              collection.data?.collection?.collection?.image,
+              50
+            )}
             alt="collection avatar"
             className="h-[50px] w-[50px] rounded-full"
           />
           <div>
             <div className="mb-1 text-2xl font-bold">
-              {token?.token?.name || token?.token?.collection?.name}
+              {token?.token?.collection?.name}
             </div>
             <div className="mb-4 text-lg font-medium uppercase opacity-80">
-              #{token?.token?.tokenId}
+              {token?.token?.name || `#${token?.token?.tokenId}`}
             </div>
           </div>
         </div>
@@ -99,16 +98,19 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
         <div className="mb-8 sm:mr-auto">
           <div className="hidden gap-3 sm:flex">
             <img
-              src={optimizeImage(layoutData.image, 50)}
+              src={optimizeImage(
+                collection.data?.collection?.collection?.image,
+                50
+              )}
               alt="collection avatar"
               className="h-[50px] w-[50px] rounded-full"
             />
             <div>
               <div className="mb-1 text-2xl font-bold">
-                {token?.token?.name || token?.token?.collection?.name}
+                {token?.token?.collection?.name}
               </div>
-              <div className="mb-4 text-lg font-medium uppercase opacity-80">
-                #{token?.token?.tokenId}
+              <div className="mb-4 text-lg font-medium opacity-80">
+                {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
               {/* <div className="mb-10">
                 {token?.token?.owner && (
