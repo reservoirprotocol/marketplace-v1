@@ -18,19 +18,15 @@ type Props = {
 
 const Hero: FC<Props> = ({ stats, header, children }) => {
   return (
-    <div className="relative mb-48 sm:mb-20">
+    <div>
       {header?.banner && (
         <img
           src={header?.banner}
           alt={`${header.name} banner image`}
-          className="h-[100px] w-full object-cover sm:h-[200px] sm:px-[1px]"
+          className="h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
         />
       )}
-      <div
-        className={`${
-          header?.banner ? 'absolute' : ''
-        } grid w-full place-items-center gap-5 bg-[#f7f4f8] pt-4 sm:-bottom-12 sm:pt-3 lg:flex lg:items-center lg:justify-between lg:gap-2 lg:bg-transparent lg:bg-gradient-to-t lg:from-[#f7f4f8] lg:via-[#f7f4f8] lg:px-2 lg:pt-10`}
-      >
+      <div className="grid w-full place-items-center gap-5 px-2 py-6 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
