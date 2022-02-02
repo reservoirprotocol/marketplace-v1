@@ -11,7 +11,7 @@ const InfoModal: FC = () => {
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-sm">
+        <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-lg">
           <Dialog.Content className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
             <Dialog.Close asChild>
               <button className="btn-neutral-ghost ml-auto mb-3 p-1.5">
