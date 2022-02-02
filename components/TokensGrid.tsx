@@ -35,7 +35,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
               key={`${token?.collection?.name}${idx}`}
               href={`/${token?.contract}/${token?.tokenId}`}
             >
-              <a className="group grid rounded-b-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
+              <a className="group grid rounded-b-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
                 <img
                   src={optimizeImage(token?.image, 250)}
                   alt={`${token?.collection?.name}`}

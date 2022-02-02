@@ -103,8 +103,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
     })
   }, [router.query])
 
-  if (tokens.error || !apiBase || !chainId || !openSeaApiKey) {
-    console.debug({ apiBase, chainId, openSeaApiKey })
+  if (tokens.error || !apiBase || !chainId) {
+    console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
 

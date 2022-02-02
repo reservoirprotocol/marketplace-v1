@@ -30,7 +30,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
               key={`${community?.collection?.name}${idx}`}
               href={`/collections/${community?.collection?.id}`}
             >
-              <a className="group overflow-hidden rounded-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg">
+              <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                 <img
                   src={optimizeImage(community?.collection?.image, 250)}
                   alt={`${community?.collection?.name}`}

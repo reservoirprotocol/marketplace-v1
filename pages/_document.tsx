@@ -23,7 +23,7 @@ class MyDocument extends Document {
         <meta name="description" content="Reservoir" />
         <meta name="keywords" content="nft, ethereum, protocol" />
         <link rel="shortcut icon" type="image/svg" href="/reservoir.svg" />
-        <body className="bg-[#f7f4f8] text-neutral-800 dark:bg-[#121212] dark:text-neutral-300">
+        <body className="bg-white text-neutral-800">
           <Main />
           <NextScript />
         </body>

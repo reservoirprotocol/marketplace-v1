@@ -30,7 +30,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}
             >
-              <a className="group overflow-hidden rounded-md bg-white transition hover:-translate-y-0.5 hover:shadow-lg">
+              <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                 <img
                   src={optimizeImage(collection?.collection?.image, 130)}
                   alt={`${collection?.collection?.name}`}
