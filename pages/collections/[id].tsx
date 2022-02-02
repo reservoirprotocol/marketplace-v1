@@ -241,7 +241,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
                 className="btn-neutral-outline border-black py-2"
                 disabled={!signer || isInTheWrongNetwork}
               >
-                Make a collection bid
+                Make a collection offer
               </button>
             }
             royalties={royalties}

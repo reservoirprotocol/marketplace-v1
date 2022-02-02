@@ -150,7 +150,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
                   className="btn-neutral-fill-dark px-11 py-4"
                   disabled={!signer || isInTheWrongNetwork}
                 >
-                  Make a collection bid
+                  Make a collection offer
                 </button>
               }
               royalties={royalties}
