@@ -210,7 +210,7 @@ const TokensMain: FC<Props> = ({
                 className="btn-neutral-outline border-black py-2"
                 disabled={!signer || isInTheWrongNetwork}
               >
-                Make an attribute bid
+                Make an attribute offer
               </button>
             }
             royalties={royalties}
