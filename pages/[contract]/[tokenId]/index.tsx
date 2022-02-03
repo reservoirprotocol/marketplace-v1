@@ -19,6 +19,7 @@ import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -326,10 +327,18 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 )
 
 export const getServerSideProps: GetServerSideProps<{
-  wildcard: string
   isHome: boolean
   collectionId: string
 }> = async ({ req, params }) => {
+  if (collectionEnv) {
+    return {
+      props: {
+        isHome: false,
+        collectionId: collectionEnv,
+      },
+    }
+  }
+
   const hostParts = req.headers.host?.split('.').reverse()
   // Make sure that the host contains at least one subdomain
   // ['subdomain', 'domain', 'TLD']
@@ -366,5 +375,5 @@ export const getServerSideProps: GetServerSideProps<{
 
   const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
 
-  return { props: { wildcard, isHome, collectionId } }
+  return { props: { isHome, collectionId } }
 }

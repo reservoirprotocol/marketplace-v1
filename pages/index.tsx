@@ -15,6 +15,8 @@ import { ComponentProps } from 'react'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
+const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -66,6 +68,18 @@ export const getServerSideProps: GetServerSideProps<{
   isCommunity: boolean
   isHome: boolean
 }> = async ({ req }) => {
+  if (communityEnv) {
+    return {
+      props: { wildcard: communityEnv, isCommunity: true, isHome: false },
+    }
+  }
+
+  if (collectionEnv) {
+    return {
+      props: { wildcard: collectionEnv, isCommunity: false, isHome: false },
+    }
+  }
+
   const hostParts = req.headers.host?.split('.').reverse()
   // Make sure that the host contains at least one subdomain
   // ['subdomain', 'domain', 'TLD']

@@ -26,29 +26,24 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
                 className="h-[130px] w-[130px] animate-pulse rounded-md bg-white shadow-md"
               ></div>
             ))
-        : data?.collections?.map((community, idx) => (
-            <Link
-              key={`${community?.collection?.name}${idx}`}
-              href={
-                community?.collection?.id
-                  ? window.location.href.replace(
-                      wildcard,
-                      community?.collection?.id
-                    )
-                  : '#'
-              }
-            >
-              <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
-                <img
-                  src={optimizeImage(community?.collection?.image, 250)}
-                  alt={`${community?.collection?.name}`}
-                  className="h-[130px] w-[130px] object-contain"
-                  width="130"
-                  height="130"
-                />
-              </a>
-            </Link>
-          ))}
+        : data?.collections?.map((community, idx) => {
+            return (
+              <Link
+                key={`${community?.collection?.name}${idx}`}
+                href={`/collections/${community?.collection?.id}`}
+              >
+                <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <img
+                    src={optimizeImage(community?.collection?.image, 250)}
+                    alt={`${community?.collection?.name}`}
+                    className="h-[130px] w-[130px] object-contain"
+                    width="130"
+                    height="130"
+                  />
+                </a>
+              </Link>
+            )
+          })}
     </div>
   )
 }
