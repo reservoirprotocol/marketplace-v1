@@ -6,7 +6,8 @@ import useSWR from 'swr'
 
 export default function useCollectionStats(
   apiBase: string | undefined,
-  router: NextRouter
+  router: NextRouter,
+  collectionId: string
 ) {
   useEffect(() => {
     stats.mutate()
@@ -14,7 +15,7 @@ export default function useCollectionStats(
 
   function getUrl() {
     const url = new URL('/stats', apiBase)
-    url.searchParams.set('collection', router.query?.id?.toString() || '')
+    url.searchParams.set('collection', collectionId)
 
     const attributes = Object.keys(router.query).filter(
       (key) =>

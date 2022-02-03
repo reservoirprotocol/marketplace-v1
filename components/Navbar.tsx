@@ -8,11 +8,12 @@ import { useRouter } from 'next/router'
 type Props = {
   title: string | undefined
   image: string | undefined
+  isHome: boolean
 }
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
-const Navbar: FC<Props> = ({ title, image }) => {
+const Navbar: FC<Props> = ({ title, image, isHome }) => {
   const router = useRouter()
   return (
     <nav className="flex items-center justify-between py-3 px-3 sm:py-4">
@@ -39,7 +40,7 @@ const Navbar: FC<Props> = ({ title, image }) => {
           </a>
         )}
       </Link>
-      {apiBase && router.pathname !== '/' && (
+      {apiBase && router.pathname !== '/' && isHome && (
         <div className="hidden lg:block">
           <SearchCollection apiBase={apiBase} />
         </div>

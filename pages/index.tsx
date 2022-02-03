@@ -6,23 +6,12 @@ import type {
   InferGetServerSidePropsType,
   NextPage,
 } from 'next'
-import TokensGrid from 'components/TokensGrid'
-import Hero from 'components/Hero'
-import { useNetwork, useSigner } from 'wagmi'
-import CommunityGrid from 'components/CommunityGrid'
-import CollectionsGrid from 'components/CollectionsGrid'
-import SearchCollection from 'components/SearchCollections'
-import Sidebar from 'components/Sidebar'
-import { useRouter } from 'next/router'
-import useTokens from 'hooks/useTokens'
-import useCommunity from 'hooks/useCommunity'
-import useCollections from 'hooks/useCollections'
 import useCollection from 'hooks/useCollection'
-import useAttributes from 'hooks/useAttributes'
-import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
-import CollectionOfferModal from 'components/CollectionOfferModal'
-import { ComponentProps } from 'react'
 import Head from 'next/head'
+import Homepage from 'components/Homepage'
+import CommunityLanding from 'components/CommunityLanding'
+import TokensMain from 'components/TokensMain'
+import { ComponentProps } from 'react'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -31,144 +20,40 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
-  const [{ data: signer }] = useSigner()
-  const [{ data: network }] = useNetwork()
-  const router = useRouter()
-
-  const { tokens, ref } = useTokens(apiBase, wildcard, [], router)
-
-  const communities = useCommunity(apiBase, wildcard)
-
-  const collections = useCollections(apiBase)
-
-  const collection = useCollection(apiBase, undefined, wildcard)
-
-  const attributes = useAttributes(apiBase, wildcard)
-
-  const { data: openSeaMeta } = useGetOpenSeaMetadata(wildcard)
-
-  if (
-    tokens.error ||
-    communities.error ||
-    collections.error ||
-    collection.error ||
-    attributes.error ||
-    !apiBase ||
-    !chainId
-  ) {
-    console.debug({
-      apiBase,
-      chainId,
-      tokens,
-      communities,
-      collections,
-      collection,
-      attributes,
-    })
-    return <div>There was an error</div>
+  const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
+    collection: { collection: undefined },
+    tokens: { tokens: undefined },
   }
 
-  type ModalProps = ComponentProps<typeof CollectionOfferModal>
-
-  const stats = {
-    vol24: 10,
-    count: collection?.data?.collection?.set?.tokenCount,
-    topOffer: collection?.data?.collection?.set?.market?.topBuy?.value,
-    floor: collection?.data?.collection?.set?.market?.floorSell?.value,
-  }
-
-  const header = {
-    banner: openSeaMeta?.collection?.banner_image_url,
-    image: collection?.data?.collection?.collection?.image,
-    name: collection?.data?.collection?.collection?.name,
-  }
-
-  const royalties: ModalProps['royalties'] = {
-    bps: collection.data?.collection?.royalties?.bps,
-    recipient: collection.data?.collection?.royalties?.recipient,
-  }
-
-  const env: ModalProps['env'] = {
-    apiBase,
-    chainId: +chainId as ChainId,
-    openSeaApiKey,
-  }
-
-  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
-
-  const data: ModalProps['data'] = {
-    collection: {
-      id: collection?.data?.collection?.collection?.id,
-      image: collection?.data?.collection?.collection?.image,
-      name: collection?.data?.collection?.collection?.name,
-      tokenCount: collection?.data?.collection?.set?.tokenCount ?? 0,
-    },
-  }
+  const collection = useCollection(apiBase, fallback.collection, wildcard)
 
   const layoutData = {
     title: isHome ? undefined : collection.data?.collection?.collection?.name,
     image: isHome ? undefined : collection.data?.collection?.collection?.image,
   }
 
+  if (!apiBase || !chainId) {
+    console.debug({ apiBase, chainId })
+    return <div>There was an error</div>
+  }
+
   return (
-    <Layout title={layoutData?.title} image={layoutData?.image}>
+    <Layout title={layoutData?.title} image={layoutData?.image} isHome={isHome}>
       <Head>
-        <title>Reservoir Market</title>
+        <title>{collection.data?.collection?.collection?.name || ''}</title>
       </Head>
       {isHome ? (
-        <>
-          <header className="mb-10 flex items-center justify-center gap-5">
-            <h1 className="mt-12 text-3xl font-bold">
-              Discover, buy and sell NFTs
-            </h1>
-          </header>
-          <div className="mb-12 grid justify-center">
-            <SearchCollection apiBase={apiBase} />
-          </div>
-          <CollectionsGrid collections={collections} />
-        </>
+        <Homepage apiBase={apiBase} />
       ) : isCommunity ? (
-        <>
-          <header className="mt-8 mb-14 flex items-center justify-center gap-5">
-            <img
-              className="h-[50px] w-[50px]"
-              src={communities.data?.collections?.[0].collection?.image}
-            />
-            <h1 className=" text-xl font-bold uppercase">
-              {wildcard} Community
-            </h1>
-          </header>
-          <CommunityGrid communities={communities} />
-        </>
+        <CommunityLanding apiBase={apiBase} wildcard={wildcard} />
       ) : (
-        <>
-          <Hero stats={stats} header={header} />
-          <div className="mt-3 mb-10 flex justify-center">
-            <CollectionOfferModal
-              trigger={
-                <button
-                  className="btn-neutral-fill-dark px-11 py-4"
-                  disabled={!signer || isInTheWrongNetwork}
-                >
-                  Make a collection offer
-                </button>
-              }
-              royalties={royalties}
-              signer={signer}
-              data={data}
-              env={env}
-              mutate={collection.mutate}
-            />
-          </div>
-          <div className="flex gap-5">
-            <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
-            <TokensGrid
-              tokenCount={data.collection.tokenCount}
-              tokens={tokens}
-              viewRef={ref}
-            />
-          </div>
-        </>
+        <TokensMain
+          id={wildcard}
+          apiBase={apiBase}
+          chainId={+chainId as ChainId}
+          fallback={fallback}
+          openSeaApiKey={openSeaApiKey}
+        />
       )}
     </Layout>
   )

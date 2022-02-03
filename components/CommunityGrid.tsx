@@ -9,9 +9,10 @@ type Props = {
     paths['/collections']['get']['responses']['200']['schema'],
     any
   >
+  wildcard: string
 }
 
-const CommunityGrid: FC<Props> = ({ communities }) => {
+const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
   const { data, isValidating } = communities
 
   return (
@@ -28,7 +29,14 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
         : data?.collections?.map((community, idx) => (
             <Link
               key={`${community?.collection?.name}${idx}`}
-              href={`/collections/${community?.collection?.id}`}
+              href={
+                community?.collection?.id
+                  ? window.location.href.replace(
+                      wildcard,
+                      community?.collection?.id
+                    )
+                  : '#'
+              }
             >
               <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                 <img

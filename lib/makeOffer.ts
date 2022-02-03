@@ -303,17 +303,6 @@ async function postBuyOrderToOpenSea(
   return null
 }
 
-/**
- * Make an offer
- * @param chainId
- * @param provider
- * @param input
- * @param apiBase
- * @param openSeaApiKey
- * @param signer
- * @param query
- * @param postOnOpenSea
- */
 async function makeOffer(data: {
   env: {
     apiBase: string

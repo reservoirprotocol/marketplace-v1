@@ -68,7 +68,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   }
 
   return (
-    <Layout title={layoutData.title} image={layoutData.image}>
+    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
       <Head>
         <title>{token?.token?.name || ''}</title>
       </Head>

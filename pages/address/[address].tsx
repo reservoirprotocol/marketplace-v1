@@ -90,7 +90,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   }
 
   return (
-    <Layout title={layoutData.title} image={layoutData.image}>
+    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
       <Head>
         <title>Address Tokens</title>
       </Head>
