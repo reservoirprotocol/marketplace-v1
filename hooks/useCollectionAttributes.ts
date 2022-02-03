@@ -56,7 +56,7 @@ const getKey: (
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {
     if (`${router.query?.sort}` === 'best_offer') {
-      query.sortBy = 'floorSellValue'
+      query.sortBy = 'topBuyValue'
       query.sortDirection = 'desc'
     }
 
@@ -65,7 +65,7 @@ const getKey: (
       query.sortDirection = 'asc'
     }
   } else {
-    query.sortBy = 'floorCap'
+    query.sortBy = 'floorSellValue'
     query.sortDirection = 'desc'
   }
 
