@@ -45,9 +45,15 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                 : mappedAttributes.map((attribute, idx, arr) => (
                     <Link
                       key={`${attribute?.value}${idx}`}
-                      href={`/collections/${router.query.id}?${formatUrl(
-                        `attributes[${attribute?.key}]`
-                      )}=${formatUrl(`${attribute?.value}`)}`}
+                      href={
+                        router.query.id
+                          ? `/collections/${router.query.id}?${formatUrl(
+                              `attributes[${attribute?.key}]`
+                            )}=${formatUrl(`${attribute?.value}`)}`
+                          : `?${formatUrl(
+                              `attributes[${attribute?.key}]`
+                            )}=${formatUrl(`${attribute?.value}`)}`
+                      }
                     >
                       <a
                         ref={idx === arr.length - 1 ? viewRef : null}

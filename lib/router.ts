@@ -3,7 +3,6 @@ import { NextRouter } from 'next/router'
 function toggleOnItem(router: NextRouter, item: string, value: string) {
   router.push(
     {
-      pathname: router.pathname,
       query: { ...router.query, [`${item}`]: value },
     },
     undefined,
@@ -20,7 +19,6 @@ function toggleOffItem(router: NextRouter, item: string) {
 
   router.push(
     {
-      pathname: router.pathname,
       query,
     },
     undefined,
@@ -46,7 +44,6 @@ function toggleOnAttributeKey(router: NextRouter, item: string, value: string) {
 
   router.push(
     {
-      pathname: router.pathname,
       query: { ...router.query, [`${item}`]: value },
     },
     undefined,
@@ -59,7 +56,6 @@ function toggleOnAttributeKey(router: NextRouter, item: string, value: string) {
 function updateItem(router: NextRouter, item: string, value: string) {
   router.push(
     {
-      pathname: router.pathname,
       query: { ...router.query, [`${item}`]: value },
     },
     undefined,

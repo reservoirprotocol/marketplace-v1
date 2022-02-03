@@ -11,11 +11,15 @@ type Attributes =
 
 export default function useCollectionAttributes(
   apiBase: string | undefined,
-  router: NextRouter
+  router: NextRouter,
+  collectionId: string
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(`/collections/${router.query.id}/attributes`, apiBase)
+  const url = new URL(
+    `/collections/${router.query.id || collectionId}/attributes`,
+    apiBase
+  )
 
   const collectionAttributes = useSWRInfinite<Attributes>(
     (index, previousPageData) => getKey(url, router, index, previousPageData),

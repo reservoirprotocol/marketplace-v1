@@ -31,7 +31,7 @@ type Props = {
   apiBase: string
   chainId: ChainId
   openSeaApiKey: string | undefined
-  id: string
+  collectionId: string
 }
 
 const TokensMain: FC<Props> = ({
@@ -39,7 +39,7 @@ const TokensMain: FC<Props> = ({
   apiBase,
   chainId,
   openSeaApiKey,
-  id,
+  collectionId,
 }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
@@ -53,25 +53,25 @@ const TokensMain: FC<Props> = ({
     value: undefined,
   })
 
-  const stats = useCollectionStats(apiBase, router, id)
+  const stats = useCollectionStats(apiBase, router, collectionId)
 
   const { tokens, ref: refTokens } = useTokens(
     apiBase,
-    id,
+    collectionId,
     [fallback.tokens],
     router
   )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
-    useCollectionAttributes(apiBase, router)
+    useCollectionAttributes(apiBase, router, collectionId)
 
-  const collection = useCollection(apiBase, fallback.collection, id)
+  const collection = useCollection(apiBase, fallback.collection, collectionId)
 
-  const attributes = useAttributes(apiBase, id)
+  const attributes = useAttributes(apiBase, collectionId)
 
   const filtersApplied = useFiltersApplied(router)
 
-  const { data: openSeaMeta } = useGetOpenSeaMetadata(id || '')
+  const { data: openSeaMeta } = useGetOpenSeaMetadata(collectionId || '')
 
   useEffect(() => {
     const keys = Object.keys(router.query)

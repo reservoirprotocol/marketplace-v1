@@ -7,7 +7,6 @@ function toggleOnAttribute(
 ) {
   router.push(
     {
-      pathname: '/collections/[id]',
       query: { ...router.query, [`attributes[${attribute}]`]: value },
     },
     undefined,
@@ -25,7 +24,6 @@ function toggleOffAttribute(router: NextRouter, attribute: string) {
 
   router.push(
     {
-      pathname: '/collections/[id]',
       query,
     },
     undefined,
@@ -39,7 +37,6 @@ function toggleOffAttribute(router: NextRouter, attribute: string) {
 function updateAttribute(router: NextRouter, attribute: string, value: string) {
   router.push(
     {
-      pathname: '/collections/[id]',
       query: { ...router.query, [`attributes[${attribute}]`]: value },
     },
     undefined,

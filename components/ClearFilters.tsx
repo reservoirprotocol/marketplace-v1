@@ -6,18 +6,29 @@ const ClearFilters = ({ router }: { router: NextRouter }) => {
       <p className="text-center">No tokens found.</p>
       <button
         className="btn-neutral-outline"
-        onClick={() =>
+        onClick={() => {
+          if (router.query.pathname === '/collections/[id]') {
+            router.push(
+              {
+                query: { id: router.query.id },
+              },
+              undefined,
+              {
+                shallow: true,
+              }
+            )
+            return
+          }
           router.push(
             {
-              pathname: '/collections/[id]',
-              query: { id: router.query.id },
+              query: {},
             },
             undefined,
             {
               shallow: true,
             }
           )
-        }
+        }}
       >
         Clear filters
       </button>

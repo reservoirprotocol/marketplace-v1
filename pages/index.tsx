@@ -50,7 +50,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
         <CommunityLanding apiBase={apiBase} wildcard={wildcard} />
       ) : (
         <TokensMain
-          id={wildcard}
+          collectionId={wildcard}
           apiBase={apiBase}
           chainId={+chainId as ChainId}
           fallback={fallback}
