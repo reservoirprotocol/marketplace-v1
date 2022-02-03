@@ -20,24 +20,17 @@ const InfoModal: FC = () => {
             </Dialog.Close>
             <div className="space-y-3">
               <section>
+                <strong className="mb-3 block text-xl">
+                  What is reservoir.market?
+                </strong>
                 <p className="mb-1">
-                  <Link href="https://reservoirprotocol.github.io/">
-                    <a
-                      className="underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Reservoir
-                    </a>
-                  </Link>
-                  .market is a demo marketplace designed to show how simple it
-                  is to build on top of Reservoir, a web3-native order book
-                  protocol.
+                  Reservoir.market is a demo marketplace designed to show how
+                  simple it is to build on top of Reservoir, a web3-native order
+                  book protocol.
                 </p>
               </section>
-
               <section>
-                <p className="mb-2">It supports 3 modes:</p>
+                <strong className="mb-2 block">It supports 3 modes:</strong>
                 <ul>
                   <li>
                     Single collection community:{' '}
