@@ -20,82 +20,101 @@ const InfoModal: FC = () => {
             </Dialog.Close>
             <div className="space-y-3">
               <section>
-                <strong className="text-lg">What is Reservoir?</strong>
                 <p className="mb-1">
-                  Reservoir is a web3-native NFT order book protocol and
-                  framework powering marketplaces and tools all sharing a global
-                  pool of liquidity.
-                </p>
-
-                <Link href="https://reservoirprotocol.github.io/">
-                  <a
-                    className="underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn more
-                  </a>
-                </Link>
-              </section>
-
-              <section>
-                <strong className="text-lg">
-                  What is this sample app for?
-                </strong>
-                <p>
-                  This is a sample marketplace built to highlight some of the
-                  functionality you can access immediately when building with
-                  Reservoir.
+                  <Link href="https://reservoirprotocol.github.io/">
+                    <a
+                      className="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Reservoir
+                    </a>
+                  </Link>
+                  .market is a demo marketplace designed to show how simple it
+                  is to build on top of Reservoir, a web3-native order book
+                  protocol.
                 </p>
               </section>
 
               <section>
-                <p className="mb-3">Check out some other examples below:</p>
-
-                {[
-                  {
-                    title: 'General Marketplace',
-                    href: 'https://reservoir.market/',
-                  },
-                  {
-                    title: 'Bored Ape Yacht Club Collection Marketplace',
-                    href: 'https://boredapeyachtclub.reservoir.market/',
-                  },
-                  {
-                    title: 'BAYC Community Marketplace',
-                    href: 'https://bayc.reservoir.market/',
-                  },
-                ].map(({ title, href }) => (
-                  <Fragment key={title}>
-                    <strong>{title}</strong>
-                    <Link href={href}>
+                <p className="mb-2">It supports 3 modes:</p>
+                <ul>
+                  <li>
+                    Single collection community:{' '}
+                    <Link href="https://cryptocoven.reservoir.market/">
                       <a
-                        className="mb-3 block underline"
+                        className="underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {href}
+                        cryptocoven.reservoir.market
                       </a>
                     </Link>
-                  </Fragment>
-                ))}
+                  </li>
+                  <li>
+                    Multi collection community:{' '}
+                    <Link href="https://bayc.reservoir.market/">
+                      <a
+                        className="underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        bayc.reservoir.market
+                      </a>
+                    </Link>
+                  </li>
+                  <li>
+                    All collections:{' '}
+                    <Link href="https://www.reservoir.market/">
+                      <a
+                        className="underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        www.reservoir.market
+                      </a>
+                    </Link>
+                  </li>
+                </ul>
               </section>
 
-              <p>
-                <span>
-                  All of our sample marketplaces are fully functional but we
-                  also encourage developers to{' '}
-                </span>
-                <Link href="https://github.com/reservoirprotocol/sample-marketplace">
-                  <a
-                    className="underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    fork our GitHub repository here.
-                  </a>
-                </Link>
-              </p>
+              <section>
+                <p>
+                  It comes with all the functionality you expect (browsing,
+                  listing, buying, etc), as well as powerful new features like
+                  trait exploration and bidding.
+                </p>
+              </section>
+              <section>
+                <p>
+                  It's open-source, and{' '}
+                  <Link href="https://github.com/reservoirprotocol/sample-marketplace">
+                    <a
+                      className="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      ready to be forked
+                    </a>
+                  </Link>
+                  . Just add lore.
+                </p>
+              </section>
+              <section>
+                <p>
+                  Learn more about{' '}
+                  <Link href="https://reservoirprotocol.github.io/">
+                    <a
+                      className="underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      our project
+                    </a>
+                  </Link>
+                  .
+                </p>
+              </section>
             </div>
           </Dialog.Content>
         </Dialog.Overlay>
