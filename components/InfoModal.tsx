@@ -87,7 +87,7 @@ const InfoModal: FC = () => {
               </section>
               <section>
                 <p>
-                  It's open-source, and{' '}
+                  It&apos;s open-source, and{' '}
                   <Link href="https://github.com/reservoirprotocol/sample-marketplace">
                     <a
                       className="underline"
