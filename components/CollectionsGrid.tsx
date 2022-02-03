@@ -34,7 +34,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                 <img
                   src={optimizeImage(collection?.collection?.image, 130)}
                   alt={`${collection?.collection?.name}`}
-                  className="h-[130px] w-[130px] object-contain"
+                  className="h-[130px] w-[130px] object-cover"
                   width="130"
                   height="130"
                 />

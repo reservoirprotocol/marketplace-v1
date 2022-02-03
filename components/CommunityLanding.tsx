@@ -13,7 +13,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
     <>
       <header className="mt-8 mb-14 flex items-center justify-center gap-5">
         <img
-          className="h-[50px] w-[50px]"
+          className="h-[50px] w-[50px] rounded-full"
           src={communities.data?.collections?.[0].collection?.image}
         />
         <h1 className=" text-xl font-bold uppercase">{wildcard} Community</h1>

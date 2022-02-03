@@ -13,6 +13,8 @@ export default function useCommunity(
 
   const query: paths['/collections']['get']['parameters']['query'] = {
     community: wildcard,
+    sortBy: 'floorCap',
+    sortDirection: 'desc',
   }
 
   setParams(url, query)

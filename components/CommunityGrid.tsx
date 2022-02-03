@@ -36,7 +36,7 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
                   <img
                     src={optimizeImage(community?.collection?.image, 250)}
                     alt={`${community?.collection?.name}`}
-                    className="h-[130px] w-[130px] object-contain"
+                    className="h-[130px] w-[130px] object-cover"
                     width="130"
                     height="130"
                   />
