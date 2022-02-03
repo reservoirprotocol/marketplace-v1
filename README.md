@@ -1,18 +1,24 @@
 # Sample Marketplace
 
-Use this example project to get yourself familiarized with the Reservoir API.
+This repo is designed to help you quickly get started building on top of [Reservoir](https://reservoirprotocol.github.io/), a web3-native order book protocol.
 
-## Live Example
+## Modes
 
-You first have the option to see a live example using the collection ids as subdomains:
+The marketplace supports 3 different modes: 
 
-`https://{collectionId}.reservoir.market`
+- Single collection (e.g. [Crypto Coven](https://cryptocoven.reservoir.market))
+- Multi collection community (e.g. [BAYC](https://bayc.reservoir.market))
+- All collections ([example](https://www.reservoir.market))
 
-For example, you can see the _Bored Ape Yatch Club_ collection at https://boredapeyachtclub.reservoir.market, or the _Ringers by Dmitri Cherniak_ collection at https://ringers-by-dmitri-cherniak.reservoir.market/.
+A demo deployment allows you to test any collection, by changing the subdomain:
+
+- [{collection-slug}.reservoir.market](https://cryptocoven.reservoir.market) (if a collection is unsupported, ping us on Discord to get it added) 
+- [{community-id}.reservoir.market](https://bayc.reservoir.market) (currently works with `bayc`,`loot`,`forgottenrunes`)
+
 
 ## Get started
 
-To start developing with Reservoir, fork this repository and follow these instructions:
+Fork this repository and follow these instructions:
 
 ### Install dependencies
 
@@ -30,29 +36,22 @@ $ npm install
 
 ### Add environment variables
 
-You need to provide an Infura ID to get blockchain data and an OpenSea API key if you want to interact with OpenSea from the app.
+There are also two main environment variables used in this repo:
 
-```
-NEXT_PUBLIC_INFURA_ID=
-NEXT_PUBLIC_OPENSEA_API_KEY=
-```
+`NEXT_PUBLIC_CHAIN_ID` is the Ethereum Chain ID. Use 1 for Ethereum Mainnet and 4 for Rinkeby Testnet.  
+`NEXT_PUBLIC_API_BASE` is the base url for the Reservoir API. This will vary depending on the network you are using.
 
-Setup your `.env.local` file with this command.
+You can copy the values you want to use from `env.development` or `env.production` into a new file called  `.env.local`
 
-```bash
-touch .env.local && \
-echo 'NEXT_PUBLIC_INFURA_ID=\nNEXT_PUBLIC_OPENSEA_API_KEY=' >> .env.local
-```
+If you want to focus on a particular collection or community, add one of the following variables:
 
-There are also two more environment variables provided in this repo:
+`NEXT_PUBLIC_COLLECTION={collection-slug}`  
+`NEXT_PUBLIC_COMMUNITY={community-id}` 
 
-`NEXT_PUBLIC_CHAIN_ID` is the Ethereum Chain ID. Use 1 for Ethereum Mainnet and 4 for Rinkeby Testnet.
+If you want to support cross-posting listings to Open Sea (optional), you'll need an API key:
 
-`NEXT_PUBLIC_API_BASE` is the base url for the Reservoir API. This will vary depending on the Node.js environment the app is running on.
+`NEXT_PUBLIC_OPENSEA_API_KEY=abc`
 
-Note: The Reservoir base URL changes with each new version, so make sure to check our releases to get the latest API features.
-
-Also, remember setup these environment variables where you host your application.
 
 ### Run the app
 
@@ -71,3 +70,7 @@ $ npm run dev
 ```
 
 Then navigate to http://localhost:3000 in your browser.
+
+### Deploy
+
+This is a Next.js app that can be easily deployed using [Vercel](https://vercel.com/)
