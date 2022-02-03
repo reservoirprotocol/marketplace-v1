@@ -1,4 +1,4 @@
-# Sample Marketplace
+# Reservoir Sample Marketplace
 
 This repo is designed to help you quickly get started building on top of [Reservoir](https://reservoirprotocol.github.io/), a web3-native order book protocol.
 
