@@ -24,7 +24,7 @@ const Navbar: FC<Props> = ({ title, image, isHome }) => {
               <img
                 src={image}
                 alt={title}
-                className="hidden w-[30px] sm:block"
+                className="hidden w-[30px] rounded-full sm:block"
               />
             )}
             {title && <span className="font-semibold">{title}</span>}

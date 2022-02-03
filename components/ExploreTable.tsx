@@ -42,9 +42,15 @@ const ExploreTable = ({
             <td className="pl-3 pr-3">{attribute?.key}</td>
             <td className="h-px pr-3">
               <Link
-                href={`/collections/${router.query.id}?${formatUrl(
-                  `attributes[${attribute?.key}]`
-                )}=${formatUrl(`${attribute?.value}`)}`}
+                href={
+                  router.query.id
+                    ? `/collections/${router.query.id}?${formatUrl(
+                        `attributes[${attribute?.key}]`
+                      )}=${formatUrl(`${attribute?.value}`)}`
+                    : `?${formatUrl(
+                        `attributes[${attribute?.key}]`
+                      )}=${formatUrl(`${attribute?.value}`)}`
+                }
               >
                 <a className="grid h-full items-center p-2 align-middle font-bold tracking-wide">
                   {attribute?.value}
@@ -59,9 +65,15 @@ const ExploreTable = ({
             <td className="pr-3">{formatBN(attribute?.topBuy?.value, 2)}</td>
             <td className="w-[230px] pr-3">
               <Link
-                href={`/collections/${router.query.id}?${formatUrl(
-                  `attributes[${attribute?.key}]`
-                )}=${formatUrl(`${attribute?.value}`)}`}
+                href={
+                  router.query.id
+                    ? `/collections/${router.query.id}?${formatUrl(
+                        `attributes[${attribute?.key}]`
+                      )}=${formatUrl(`${attribute?.value}`)}`
+                    : `?${formatUrl(
+                        `attributes[${attribute?.key}]`
+                      )}=${formatUrl(`${attribute?.value}`)}`
+                }
               >
                 <a>
                   <ExploreImages
