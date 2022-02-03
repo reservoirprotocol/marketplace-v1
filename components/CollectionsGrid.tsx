@@ -22,7 +22,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
             .map((_, index) => (
               <div
                 key={`loading-card-${index}`}
-                className="h-[130px] w-[130px] animate-pulse rounded-md bg-white shadow-md"
+                className="h-[130px] w-[130px] animate-pulse rounded-full bg-white shadow-md"
               ></div>
             ))
         : data?.collections?.map((collection, idx) => (
@@ -30,7 +30,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}
             >
-              <a className="group overflow-hidden rounded-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+              <a className="group overflow-hidden rounded-full bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                 <img
                   src={optimizeImage(collection?.collection?.image, 130)}
                   alt={`${collection?.collection?.name}`}

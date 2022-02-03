@@ -119,7 +119,7 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
                           'https://via.placeholder.com/30'
                         }
                         alt={`${collection?.collection?.name}'s logo.`}
-                        className="h-[40px] w-[40px] overflow-hidden rounded-md"
+                        className="h-[40px] w-[40px] overflow-hidden rounded-full"
                       />
                       <span>{collection?.collection?.name}</span>
                     </a>
@@ -150,7 +150,7 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
                             : 'https://via.placeholder.com/30'
                         }
                         alt={`${item?.collection?.name}'s logo.`}
-                        className="h-[40px] w-[40px] overflow-hidden rounded-md"
+                        className="h-[40px] w-[40px] overflow-hidden rounded-full"
                       />
                       <span>{item?.collection?.name}</span>
                     </a>

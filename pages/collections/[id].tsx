@@ -25,8 +25,23 @@ const Home: NextPage<Props> = ({ fallback }) => {
     return <div>There was an error</div>
   }
 
+  let isHome = true
+  let communityId = ''
+
+  if (typeof window !== 'undefined') {
+    isHome = window?.location?.hostname.includes('www.')
+    communityId = `${
+      window.location.hostname.split('.')[0]
+    } Community`.toUpperCase()
+  }
+
+  const layoutData = {
+    title: isHome ? undefined : communityId,
+    image: undefined,
+  }
+
   return (
-    <Layout title={undefined} image={undefined} isHome={true}>
+    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
       <Head>
         <title>{router.query.id?.toString() || ''}</title>
       </Head>

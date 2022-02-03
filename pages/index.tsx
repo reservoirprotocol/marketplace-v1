@@ -30,8 +30,16 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   const collection = useCollection(apiBase, fallback.collection, wildcard)
 
   const layoutData = {
-    title: isHome ? undefined : collection.data?.collection?.collection?.name,
-    image: isHome ? undefined : collection.data?.collection?.collection?.image,
+    title: isCommunity
+      ? `${wildcard} Community`.toUpperCase()
+      : isHome
+      ? undefined
+      : collection.data?.collection?.collection?.name,
+    image: isCommunity
+      ? undefined
+      : isHome
+      ? undefined
+      : collection.data?.collection?.collection?.image,
   }
 
   if (!apiBase || !chainId) {
@@ -42,7 +50,11 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   return (
     <Layout title={layoutData?.title} image={layoutData?.image} isHome={isHome}>
       <Head>
-        <title>{collection.data?.collection?.collection?.name || ''}</title>
+        <title>
+          {collection.data?.collection?.collection?.name ||
+            layoutData?.title ||
+            ''}
+        </title>
       </Head>
       {isHome ? (
         <Homepage apiBase={apiBase} />
