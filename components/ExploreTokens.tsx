@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import ClearFilters from './ClearFilters'
 import ExploreTable from './ExploreTable'
+import FormatEth from './FormatEth'
 
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
@@ -79,14 +80,22 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                             <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
                               Offer
                             </span>
-                            {/* <span>{formatBN(top_bid_price, 2)}</span> */}
+                            <FormatEth
+                              amount={attribute?.topBuy?.value}
+                              maximumFractionDigits={4}
+                              logoWidth={7}
+                            />
                           </div>
                           <div className="grid text-right">
                             <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
                               Price
                             </span>
                             <span>
-                              {formatBN(attribute?.floorSellValues?.[0], 2)}
+                              <FormatEth
+                                amount={attribute?.floorSellValues?.[0]}
+                                maximumFractionDigits={4}
+                                logoWidth={5}
+                              />
                             </span>
                           </div>
                         </div>

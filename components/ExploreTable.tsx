@@ -4,6 +4,7 @@ import { formatBN, formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import FormatEth from './FormatEth'
 
 const ExploreTable = ({
   mappedAttributes,
@@ -60,9 +61,20 @@ const ExploreTable = ({
             <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
             <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
             <td className="pr-3">
-              {formatBN(attribute?.floorSellValues?.[0], 2)}
+              <FormatEth
+                amount={attribute?.floorSellValues?.[0]}
+                maximumFractionDigits={4}
+                logoWidth={7}
+              />
             </td>
-            <td className="pr-3">{formatBN(attribute?.topBuy?.value, 2)}</td>
+            <td className="pr-3">
+              <FormatEth
+                amount={attribute?.topBuy?.value}
+                maximumFractionDigits={4}
+                logoWidth={7}
+              />
+            </td>
+
             <td className="w-[230px] pr-3">
               <Link
                 href={
