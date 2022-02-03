@@ -197,7 +197,7 @@ const TokensMain: FC<Props> = ({
               return
             }
           }}
-          className="btn-neutral-fill-dark"
+          className="btn-neutral-fill-dark hidden"
         >
           {waitingTx
             ? 'Waiting...'
