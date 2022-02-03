@@ -14,8 +14,9 @@ export default function calculateOffer(
   signerWeth: BigNumber,
   bps: number
 ) {
-  let fee = userInput.mul(BigNumber.from(bps)).div(BigNumber.from('10000'))
-  let total = userInput.add(fee)
+  let bpsDivider = BigNumber.from('10000')
+  let total = userInput.mul(bpsDivider).div(bpsDivider.sub(BigNumber.from(bps)))
+  let fee = total.sub(userInput)
 
   if (signerWeth.add(signerEth).lt(total)) {
     // The signer has insufficient balance
