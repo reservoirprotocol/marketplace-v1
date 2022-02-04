@@ -17,6 +17,8 @@ import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
+import EthAccount from 'components/EthAccount'
+import Link from 'next/link'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -114,11 +116,15 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               <div className="mb-4 text-lg font-medium opacity-80">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
-              {/* <div className="mb-10">
+              <div className="mb-6">
                 {token?.token?.owner && (
-                  <EthAccount address={token.token.owner} />
+                  <Link href={`/address/${token.token.owner}`}>
+                    <a>
+                      <EthAccount address={token.token.owner} />
+                    </a>
+                  </Link>
                 )}
-              </div> */}
+              </div>
             </div>
           </div>
           <div className="mb-5 rounded-md border border-neutral-200 p-6">
