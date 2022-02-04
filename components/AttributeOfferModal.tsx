@@ -116,7 +116,7 @@ const AttributeOfferModal: FC<Props> = ({
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-            <div className="fixed top-1/2 left-1/2 h-20 w-[360px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
+            <div className="fixed top-1/2 left-1/2 w-[360px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
               <div className="mb-5 flex items-center justify-between">
                 <Dialog.Title className="text-lg font-medium uppercase opacity-75">
                   Maker an attribute offer
