@@ -19,6 +19,7 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
+import useDataDog from 'hooks/useAnalytics'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -32,6 +33,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
+  useDataDog(accountData)
 
   let url = new URL('/tokens/details', apiBase)
 

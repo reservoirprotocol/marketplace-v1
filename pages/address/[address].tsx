@@ -11,6 +11,8 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
 import useSWR from 'swr'
 import Head from 'next/head'
+import { useAccount } from 'wagmi'
+import useDataDog from 'hooks/useAnalytics'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
@@ -53,7 +55,9 @@ const getKey: InfiniteKeyLoader = (
 type Props = InferGetStaticPropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ wildcard, isHome }) => {
+  const [{ data: accountData }] = useAccount()
   const router = useRouter()
+  useDataDog(accountData)
 
   const { ref, inView } = useInView()
 

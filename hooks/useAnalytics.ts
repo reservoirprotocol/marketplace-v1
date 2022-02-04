@@ -18,13 +18,7 @@ export default function useDataDog(
   if (typeof window !== 'undefined' && !isDatadogRunning) {
     const origin = window.location.origin
 
-    if (!ddApplicationId || !ddClientToken) {
-      console.debug('Environment variables are not set correctly.', {
-        ddApplicationId,
-        ddClientToken,
-      })
-      return
-    }
+    if (!ddApplicationId || !ddClientToken) return
 
     let url = new URL('/api/dd', origin)
 
