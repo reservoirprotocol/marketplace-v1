@@ -11,6 +11,8 @@ import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { MutatorCallback } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
+import longPoll from 'lib/pollApi'
+import useCollectionStats from 'hooks/useCollectionStats'
 
 type Props = {
   trigger?: ReactNode
@@ -36,14 +38,14 @@ type Props = {
     recipient: string | undefined
   }
   signer: ethers.Signer | undefined
-  mutate: MutatorCallback
+  stats: ReturnType<typeof useCollectionStats>
 }
 
 const AttributeOfferModal: FC<Props> = ({
   trigger,
   env,
   royalties,
-  mutate,
+  stats,
   data,
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
@@ -272,7 +274,7 @@ const AttributeOfferModal: FC<Props> = ({
                         })
                         // Close modal
                         // closeButton.current?.click()
-                        await mutate()
+                        await longPoll(stats.data, stats.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

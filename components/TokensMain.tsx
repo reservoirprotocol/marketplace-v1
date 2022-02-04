@@ -8,6 +8,7 @@ import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
 import { instantBuy } from 'lib/buyToken'
 import { formatBN } from 'lib/numbers'
+import longPoll from 'lib/pollApi'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -189,7 +190,7 @@ const TokensMain: FC<Props> = ({
             try {
               setWaitingTx(true)
               await instantBuy(apiBase, +chainId as ChainId, signer, query)
-              await collection.mutate()
+              await longPoll(collection.data, collection.mutate)
               setWaitingTx(false)
             } catch (error) {
               setWaitingTx(false)
@@ -217,7 +218,7 @@ const TokensMain: FC<Props> = ({
             signer={signer}
             data={attributeData}
             env={env}
-            mutate={stats.mutate}
+            stats={stats}
           />
         ) : (
           <CollectionOfferModal
@@ -233,7 +234,7 @@ const TokensMain: FC<Props> = ({
             signer={signer}
             data={data}
             env={env}
-            mutate={collection.mutate}
+            collection={collection}
           />
         )}
       </Hero>

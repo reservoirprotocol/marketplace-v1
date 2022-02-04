@@ -12,7 +12,6 @@ import Homepage from 'components/Homepage'
 import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
 import { ComponentProps } from 'react'
-import useCommunity from 'hooks/useCommunity'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -30,8 +29,6 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const collection = useCollection(apiBase, fallback.collection, wildcard)
 
-  const communities = useCommunity(apiBase, wildcard)
-
   const layoutData = {
     title: isCommunity
       ? `${wildcard} Community`.toUpperCase()
@@ -39,7 +36,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
       ? undefined
       : collection.data?.collection?.collection?.name,
     image: isCommunity
-      ? communities.data?.collections?.[0]?.collection?.image
+      ? undefined
       : isHome
       ? undefined
       : collection.data?.collection?.collection?.image,
@@ -56,13 +53,13 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
         <title>
           {collection.data?.collection?.collection?.name ||
             layoutData?.title ||
-            ''}
+            'reservoir.market'}
         </title>
       </Head>
       {isHome ? (
         <Homepage apiBase={apiBase} />
       ) : isCommunity ? (
-        <CommunityLanding communities={communities} wildcard={wildcard} />
+        <CommunityLanding apiBase={apiBase} wildcard={wildcard} />
       ) : (
         <TokensMain
           collectionId={wildcard}

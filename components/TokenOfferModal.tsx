@@ -8,9 +8,11 @@ import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
-import { MutatorCallback } from 'swr'
+import { MutatorCallback, SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
+import longPoll from 'lib/pollApi'
+import { paths } from 'interfaces/apiTypes'
 
 type Props = {
   trigger?: ReactNode
@@ -37,14 +39,17 @@ type Props = {
     recipient: string | undefined
   }
   signer: ethers.Signer | undefined
-  mutate: MutatorCallback
+  details: SWRResponse<
+    paths['/tokens/details']['get']['responses']['200']['schema'],
+    any
+  >
 }
 
 const TokenOfferModal: FC<Props> = ({
   trigger,
   env,
   royalties,
-  mutate,
+  details,
   data,
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
@@ -309,7 +314,7 @@ const TokenOfferModal: FC<Props> = ({
                         })
                         // Close modal
                         // closeButton.current?.click()
-                        await mutate()
+                        await longPoll(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

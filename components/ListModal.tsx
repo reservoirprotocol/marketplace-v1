@@ -7,32 +7,32 @@ import { listTokenForSale } from 'lib/acceptOffer'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
-import { MutatorCallback } from 'swr/dist/types'
 import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
+import longPoll from 'lib/pollApi'
+import { SWRResponse } from 'swr'
 
 type Props = {
   apiBase: string
   chainId: number
   signer: ethers.Signer | undefined
   maker: string | undefined
-  tokens:
-    | paths['/tokens/details']['get']['responses']['200']['schema']
-    | undefined
+  details: SWRResponse<
+    paths['/tokens/details']['get']['responses']['200']['schema'],
+    any
+  >
   collection:
     | paths['/collections/{collection}']['get']['responses']['200']['schema']
     | undefined
-  mutate: MutatorCallback
 }
 
 const ListModal: FC<Props> = ({
   maker,
-  tokens,
   collection,
   chainId,
   apiBase,
   signer,
-  mutate,
+  details,
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('')
@@ -40,7 +40,7 @@ const ListModal: FC<Props> = ({
   const [success, setSuccess] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
-  const token = tokens?.tokens?.[0]
+  const token = details.data?.tokens?.[0]
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
@@ -206,7 +206,7 @@ const ListModal: FC<Props> = ({
                         )
                         // Close modal
                         // closeButton.current?.click()
-                        await mutate()
+                        await longPoll(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

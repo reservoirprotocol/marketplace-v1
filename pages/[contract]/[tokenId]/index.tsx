@@ -6,16 +6,17 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactNode } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
-import { acceptOffer } from 'lib/acceptOffer'
-import { instantBuy } from 'lib/buyToken'
-import cancelOrder from 'lib/cancelOrder'
 import FormatEth from 'components/FormatEth'
 import TokenAttributes from 'components/TokenAttributes'
 import TokenOfferModal from 'components/TokenOfferModal'
 import Head from 'next/head'
+import CancelListing from 'components/CancelListing'
+import CancelOffer from 'components/CancelOffer'
+import AcceptOffer from 'components/AcceptOffer'
+import BuyNow from 'components/BuyNow'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -27,7 +28,6 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
-  const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
   const router = useRouter()
 
@@ -61,6 +61,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const isTopBidder =
     token?.market?.topBuy?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
+  const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
   const layoutData = {
@@ -134,58 +135,21 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               >
                 {isOwner ? (
                   <ListModal
+                    signer={signer}
                     apiBase={apiBase}
                     chainId={+chainId}
-                    signer={signer}
                     maker={accountData?.address}
                     collection={collection.data}
-                    tokens={details.data}
-                    mutate={details.mutate}
+                    details={details}
                   />
                 ) : (
-                  <button
-                    disabled={
-                      !signer ||
-                      token?.market?.floorSell?.value === null ||
-                      waitingTx ||
-                      isInTheWrongNetwork
-                    }
-                    onClick={async () => {
-                      const tokenId = token?.token?.tokenId
-                      const contract = token?.token?.contract
-
-                      if (!signer || !tokenId || !contract) {
-                        console.debug({ tokenId, signer, contract })
-                        return
-                      }
-
-                      const query: paths['/orders/fill']['get']['parameters']['query'] =
-                        {
-                          contract,
-                          tokenId,
-                          side: 'sell',
-                        }
-
-                      try {
-                        setWaitingTx(true)
-                        await instantBuy(
-                          apiBase,
-                          +chainId as ChainId,
-                          signer,
-                          query
-                        )
-                        await details.mutate()
-                        setWaitingTx(false)
-                      } catch (error) {
-                        setWaitingTx(false)
-                        console.error(error)
-                        return
-                      }
-                    }}
-                    className="btn-neutral-fill-dark w-full"
-                  >
-                    {waitingTx ? 'Waiting...' : 'Buy Now'}
-                  </button>
+                  <BuyNow
+                    apiBase={apiBase}
+                    chainId={chainId}
+                    details={details}
+                    signer={signer}
+                    isInTheWrongNetwork={isInTheWrongNetwork}
+                  />
                 )}
               </Price>
               <Price
@@ -199,46 +163,13 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                 }
               >
                 {isOwner ? (
-                  <button
-                    disabled={
-                      waitingTx ||
-                      !token?.market?.topBuy?.value ||
-                      isInTheWrongNetwork
-                    }
-                    onClick={async () => {
-                      const tokenId = token?.token?.tokenId
-                      const contract = token?.token?.contract
-
-                      if (!tokenId || !contract || !signer) {
-                        console.debug({ tokenId, contract, signer })
-                        return
-                      }
-
-                      const query: Parameters<typeof acceptOffer>[3] = {
-                        tokenId,
-                        contract,
-                        side: 'buy',
-                      }
-
-                      try {
-                        setWaitingTx(true)
-                        await acceptOffer(
-                          apiBase,
-                          +chainId as ChainId,
-                          signer,
-                          query
-                        )
-                        await details.mutate()
-                        setWaitingTx(false)
-                      } catch (error) {
-                        setWaitingTx(false)
-                        console.error(error)
-                      }
-                    }}
-                    className="btn-neutral-outline w-full border-neutral-900"
-                  >
-                    {waitingTx ? 'Waiting...' : 'Accept Offer'}
-                  </button>
+                  <AcceptOffer
+                    apiBase={apiBase}
+                    chainId={chainId}
+                    details={details}
+                    signer={signer}
+                    isInTheWrongNetwork={isInTheWrongNetwork}
+                  />
                 ) : (
                   <TokenOfferModal
                     signer={signer}
@@ -265,44 +196,28 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                       chainId: +chainId as ChainId,
                       openSeaApiKey,
                     }}
-                    mutate={details.mutate}
+                    details={details}
                   />
                 )}
               </Price>
             </div>
-            {signer && isTopBidder && (
-              <button
-                disabled={waitingTx || isInTheWrongNetwork}
-                onClick={async () => {
-                  const tokenId = token?.token?.tokenId
-                  const contract = token?.token?.contract
-                  if (tokenId && contract) {
-                    const query: Parameters<typeof cancelOrder>[3] = {
-                      contract,
-                      tokenId,
-                      side: 'buy',
-                    }
-
-                    try {
-                      setWaitingTx(true)
-                      await cancelOrder(
-                        apiBase,
-                        +chainId as ChainId,
-                        signer,
-                        query
-                      )
-                      await details.mutate()
-                      setWaitingTx(false)
-                    } catch (error) {
-                      setWaitingTx(false)
-                      console.error(error)
-                    }
-                  }
-                }}
-                className="btn-red-ghost col-span-2 mx-auto mt-8"
-              >
-                {waitingTx ? 'Waiting...' : 'Cancel your offer'}
-              </button>
+            {isTopBidder && (
+              <CancelOffer
+                apiBase={apiBase}
+                chainId={chainId}
+                details={details}
+                signer={signer}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+              />
+            )}
+            {isOwner && isListed && (
+              <CancelListing
+                apiBase={apiBase}
+                signer={signer}
+                chainId={chainId}
+                details={details}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+              />
             )}
           </div>
           <TokenAttributes token={token?.token} />
