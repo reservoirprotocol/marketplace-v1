@@ -4,11 +4,10 @@ import CommunityGrid from './CommunityGrid'
 
 type Props = {
   wildcard: string
-  apiBase: string
+  communities: ReturnType<typeof useCommunity>
 }
 
-const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
-  const communities = useCommunity(apiBase, wildcard)
+const CommunityLanding: FC<Props> = ({ wildcard, communities }) => {
   return (
     <>
       <header className="mt-8 mb-14 flex items-center justify-center gap-5">
