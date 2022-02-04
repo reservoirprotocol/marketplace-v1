@@ -67,154 +67,160 @@ const ListModal: FC<Props> = ({
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="absolute inset-0 h-screen backdrop-blur-lg">
-          <Dialog.Content className="fixed top-1/2 left-1/2 w-[350px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
-            <div className="mb-5 flex items-center justify-between">
-              <Dialog.Title className="text-lg font-medium uppercase opacity-75">
-                List Token for Sale
-              </Dialog.Title>
-              <Dialog.Close asChild>
-                <button ref={closeButton} className="btn-neutral-ghost p-1.5">
-                  <HiX className="h-5 w-5 " />
-                </button>
-              </Dialog.Close>
-            </div>
-            <div className="mb-8 flex items-center gap-4">
-              <img
-                src={optimizeImage(token?.token?.image, 50)}
-                alt={token?.token?.name}
-                className="w-[50px]"
-              />
-              <div className="overflow-auto">
-                <div className="mb-1 text-lg font-medium">
-                  {token?.token?.name}
-                </div>
-                <div className="text-sm">{token?.token?.collection?.name}</div>
+        <Dialog.Overlay>
+          <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
+            <div className="fixed top-1/2 left-1/2 w-[350px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md">
+              <div className="mb-5 flex items-center justify-between">
+                <Dialog.Title className="text-lg font-medium uppercase opacity-75">
+                  List Token for Sale
+                </Dialog.Title>
+                <Dialog.Close asChild>
+                  <button ref={closeButton} className="btn-neutral-ghost p-1.5">
+                    <HiX className="h-5 w-5 " />
+                  </button>
+                </Dialog.Close>
               </div>
-            </div>
-            <div className="mb-8 space-y-5">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="price"
-                  className="font-medium uppercase opacity-75"
-                >
-                  Price (ETH)
-                </label>
-                <input
-                  placeholder="Choose a price"
-                  id="price"
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={listingPrice}
-                  onChange={(e) => setListingPrice(e.target.value)}
-                  className="input-blue-outline w-[140px]"
+              <div className="mb-8 flex items-center gap-4">
+                <img
+                  src={optimizeImage(token?.token?.image, 50)}
+                  alt={token?.token?.name}
+                  className="w-[50px]"
                 />
-              </div>
-              <div className="flex items-center justify-between">
-                <ExpirationSelector
-                  presets={expirationPresets}
-                  setExpiration={setExpiration}
-                  expiration={expiration}
-                />
-              </div>
-              <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">Fees</div>
-                <div className="text-right">
-                  <div>Royalty {royaltyPercentage}</div>
-                  <div>Marketplace 0%</div>
+                <div className="overflow-auto">
+                  <div className="mb-1 text-lg font-medium">
+                    {token?.token?.name}
+                  </div>
+                  <div className="text-sm">
+                    {token?.token?.collection?.name}
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">You get</div>
-                <div className="text-2xl font-bold">
-                  <FormatEth
-                    amount={youGet}
-                    maximumFractionDigits={4}
-                    logoWidth={10}
+              <div className="mb-8 space-y-5">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="price"
+                    className="font-medium uppercase opacity-75"
+                  >
+                    Price (ETH)
+                  </label>
+                  <input
+                    placeholder="Choose a price"
+                    id="price"
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    value={listingPrice}
+                    onChange={(e) => setListingPrice(e.target.value)}
+                    className="input-blue-outline w-[140px]"
                   />
                 </div>
+                <div className="flex items-center justify-between">
+                  <ExpirationSelector
+                    presets={expirationPresets}
+                    setExpiration={setExpiration}
+                    expiration={expiration}
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <div className="font-medium uppercase opacity-75">Fees</div>
+                  <div className="text-right">
+                    <div>Royalty {royaltyPercentage}</div>
+                    <div>Marketplace 0%</div>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="font-medium uppercase opacity-75">
+                    You get
+                  </div>
+                  <div className="text-2xl font-bold">
+                    <FormatEth
+                      amount={youGet}
+                      maximumFractionDigits={4}
+                      logoWidth={10}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            {success ? (
-              <Dialog.Close asChild>
-                <button className="btn-green-fill w-full">
-                  Success, Close this menu
-                </button>
-              </Dialog.Close>
-            ) : (
-              <div className="flex items-center gap-4">
+              {success ? (
                 <Dialog.Close asChild>
-                  <button className="btn-neutral-fill w-full">Cancel</button>
+                  <button className="btn-green-fill w-full">
+                    Success, Close this menu
+                  </button>
                 </Dialog.Close>
-                <button
-                  disabled={waitingTx || isInTheWrongNetwork}
-                  onClick={async () => {
-                    // Get the expiration time as a UNIX timestamp
-                    const expirationValue = expirationPresets
-                      .find(({ preset }) => preset === expiration)
-                      ?.value()
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Dialog.Close asChild>
+                    <button className="btn-neutral-fill w-full">Cancel</button>
+                  </Dialog.Close>
+                  <button
+                    disabled={waitingTx || isInTheWrongNetwork}
+                    onClick={async () => {
+                      // Get the expiration time as a UNIX timestamp
+                      const expirationValue = expirationPresets
+                        .find(({ preset }) => preset === expiration)
+                        ?.value()
 
-                    const contract = token?.token?.contract
-                    const tokenId = token?.token?.tokenId
-                    const fee =
-                      collection?.collection?.royalties?.bps?.toString()
+                      const contract = token?.token?.contract
+                      const tokenId = token?.token?.tokenId
+                      const fee =
+                        collection?.collection?.royalties?.bps?.toString()
 
-                    if (
-                      !contract ||
-                      !maker ||
-                      !fee ||
-                      !expirationValue ||
-                      !signer ||
-                      !tokenId
-                    ) {
-                      console.error('Some data is undefined.', {
+                      if (
+                        !contract ||
+                        !maker ||
+                        !fee ||
+                        !expirationValue ||
+                        !signer ||
+                        !tokenId
+                      ) {
+                        console.error('Some data is undefined.', {
+                          contract,
+                          maker,
+                          fee,
+                          expirationValue,
+                          signer,
+                          tokenId,
+                        })
+                        return
+                      }
+
+                      const query: Parameters<typeof listTokenForSale>['3'] = {
                         contract,
                         maker,
+                        side: 'sell',
+                        price: ethers.utils.parseEther(listingPrice).toString(),
                         fee,
-                        expirationValue,
-                        signer,
+                        feeRecipient:
+                          collection?.collection?.royalties?.recipient || maker,
                         tokenId,
-                      })
-                      return
-                    }
+                        expirationTime: expirationValue,
+                      }
 
-                    const query: Parameters<typeof listTokenForSale>['3'] = {
-                      contract,
-                      maker,
-                      side: 'sell',
-                      price: ethers.utils.parseEther(listingPrice).toString(),
-                      fee,
-                      feeRecipient:
-                        collection?.collection?.royalties?.recipient || maker,
-                      tokenId,
-                      expirationTime: expirationValue,
-                    }
-
-                    setWaitingTx(true)
-                    try {
-                      await listTokenForSale(
-                        apiBase,
-                        chainId as ChainId,
-                        signer,
-                        query
-                      )
-                      // Close modal
-                      // closeButton.current?.click()
-                      await mutate()
-                      setSuccess(true)
-                      setWaitingTx(false)
-                    } catch (error) {
-                      console.error(error)
-                      setWaitingTx(false)
-                    }
-                  }}
-                  className="btn-blue-fill w-full"
-                >
-                  {waitingTx ? 'Waiting...' : 'List'}
-                </button>
-              </div>
-            )}
+                      setWaitingTx(true)
+                      try {
+                        await listTokenForSale(
+                          apiBase,
+                          chainId as ChainId,
+                          signer,
+                          query
+                        )
+                        // Close modal
+                        // closeButton.current?.click()
+                        await mutate()
+                        setSuccess(true)
+                        setWaitingTx(false)
+                      } catch (error) {
+                        console.error(error)
+                        setWaitingTx(false)
+                      }
+                    }}
+                    className="btn-blue-fill w-full"
+                  >
+                    {waitingTx ? 'Waiting...' : 'List'}
+                  </button>
+                </div>
+              )}
+            </div>
           </Dialog.Content>
         </Dialog.Overlay>
       </Dialog.Portal>
