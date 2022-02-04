@@ -15,6 +15,10 @@ type Props = {
 const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
   const { data, isValidating } = communities
 
+  const filteredCollecitons = data?.collections?.filter(
+    (collection) => !!collection.collection?.tokenSetId
+  )
+
   return (
     <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center">
       {!data && isValidating
@@ -26,7 +30,7 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
                 className="h-[130px] w-[130px] animate-pulse rounded-md bg-white shadow-md"
               ></div>
             ))
-        : data?.collections?.map((community, idx) => {
+        : filteredCollecitons?.map((community, idx) => {
             return (
               <Link
                 key={`${community?.collection?.name}${idx}`}

@@ -14,6 +14,10 @@ type Props = {
 const CollectionsGrid: FC<Props> = ({ collections }) => {
   const { data, isValidating } = collections
 
+  const filteredCollecitons = data?.collections?.filter(
+    (collection) => !!collection.collection?.tokenSetId
+  )
+
   return (
     <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center">
       {!data && isValidating
@@ -25,7 +29,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                 className="h-[130px] w-[130px] animate-pulse rounded-full bg-white shadow-md"
               ></div>
             ))
-        : data?.collections?.map((collection, idx) => (
+        : filteredCollecitons?.map((collection, idx) => (
             <Link
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}
