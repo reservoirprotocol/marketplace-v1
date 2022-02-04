@@ -17,6 +17,7 @@
     "singleQuote": true
   },
   "devDependencies": {
+    "@datadog/browser-rum": "^4.2.0",
     "@radix-ui/react-accordion": "^0.1.5",
     "@radix-ui/react-dialog": "^0.1.5",
     "@radix-ui/react-dropdown-menu": "^0.1.4",
