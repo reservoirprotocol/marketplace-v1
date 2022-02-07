@@ -30,18 +30,17 @@ const CancelListing: FC<Props> = ({
     <button
       disabled={waitingTx || isInTheWrongNetwork}
       onClick={async () => {
-        const tokenId = token?.token?.tokenId
-        const contract = token?.token?.contract
+        const hash = token?.market?.floorSell?.hash
+        const maker = token?.market?.floorSell?.maker
 
-        if (!signer || !tokenId || !contract) {
-          console.debug({ tokenId, signer, contract })
+        if (!signer || !hash || !maker) {
+          console.debug({ hash, signer, maker })
           return
         }
 
         const query: Parameters<typeof cancelOrder>[3] = {
-          contract,
-          tokenId,
-          side: 'sell',
+          hash,
+          maker,
         }
 
         try {
