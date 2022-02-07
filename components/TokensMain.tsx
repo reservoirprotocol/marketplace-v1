@@ -8,7 +8,7 @@ import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
 import { instantBuy } from 'lib/buyToken'
 import { formatBN } from 'lib/numbers'
-import longPoll from 'lib/pollApi'
+import { pollSwr } from 'lib/pollApi'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -190,7 +190,7 @@ const TokensMain: FC<Props> = ({
             try {
               setWaitingTx(true)
               await instantBuy(apiBase, +chainId as ChainId, signer, query)
-              await longPoll(collection.data, collection.mutate)
+              await pollSwr(collection.data, collection.mutate)
               setWaitingTx(false)
             } catch (error) {
               setWaitingTx(false)

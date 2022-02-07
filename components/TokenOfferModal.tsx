@@ -8,10 +8,10 @@ import { getWeth, makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
-import { MutatorCallback, SWRResponse } from 'swr'
+import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import longPoll from 'lib/pollApi'
+import { pollSwr } from 'lib/pollApi'
 import { paths } from 'interfaces/apiTypes'
 
 type Props = {
@@ -314,7 +314,7 @@ const TokenOfferModal: FC<Props> = ({
                         })
                         // Close modal
                         // closeButton.current?.click()
-                        await longPoll(details.data, details.mutate)
+                        await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

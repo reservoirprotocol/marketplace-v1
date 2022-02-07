@@ -11,7 +11,7 @@ import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { MutatorCallback } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import longPoll from 'lib/pollApi'
+import { pollSwr } from 'lib/pollApi'
 import useCollectionStats from 'hooks/useCollectionStats'
 
 type Props = {
@@ -274,7 +274,7 @@ const AttributeOfferModal: FC<Props> = ({
                         })
                         // Close modal
                         // closeButton.current?.click()
-                        await longPoll(stats.data, stats.mutate)
+                        await pollSwr(stats.data, stats.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

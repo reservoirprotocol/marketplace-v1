@@ -9,7 +9,7 @@ import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
-import longPoll from 'lib/pollApi'
+import { pollSwr } from 'lib/pollApi'
 import { SWRResponse } from 'swr'
 
 type Props = {
@@ -206,7 +206,7 @@ const ListModal: FC<Props> = ({
                         )
                         // Close modal
                         // closeButton.current?.click()
-                        await longPoll(details.data, details.mutate)
+                        await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (error) {

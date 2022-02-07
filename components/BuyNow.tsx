@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { instantBuy } from 'lib/buyToken'
-import longPoll from 'lib/pollApi'
+import { pollSwr } from 'lib/pollApi'
 import React, { FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 
@@ -51,7 +51,7 @@ const BuyNow: FC<Props> = ({
         try {
           setWaitingTx(true)
           await instantBuy(apiBase, +chainId as ChainId, signer, query)
-          await longPoll(details.data, details.mutate)
+          await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
         } catch (error) {
           setWaitingTx(false)
