@@ -23,19 +23,20 @@ export default async function checkCompleteness(url: URL, signer: Signer) {
 
   if (!json.steps) return false
 
-  console.log(json.steps)
+  json.steps.forEach(async (step, index) => {
+    if (step.status === 'incomplete' && !step?.data) {
+      const polledData = (await pollApi(json, url)) as Execute
+      const tx = await signer.sendTransaction(
+        polledData.steps?.[index].data as any
+      )
 
-  json.steps.forEach(async (step: any) => {
+      await tx.wait()
+    }
+
     if (step.status === 'incomplete' && step?.data) {
       const tx = await signer.sendTransaction(step.data as any)
 
-      // Wait for transaction to be mined
       await tx.wait()
-      // checkCompleteness(url, signer)
-    }
-
-    if (step.status === 'incomplete' && !step?.data) {
-      await pollApi(json, url)
     }
   })
 }

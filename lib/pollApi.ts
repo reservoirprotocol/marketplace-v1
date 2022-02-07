@@ -24,7 +24,7 @@ async function pollApi(previousJson: any, url: URL) {
 
   // Check that the response from an endpoint updated
   if (JSON.stringify(previousJson) !== JSON.stringify(json)) {
-    return true
+    return json
   } else {
     // The response is still unchanged. Check again in five seconds
     await new Promise((resolve) => setTimeout(resolve, 5000))
