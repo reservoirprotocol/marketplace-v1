@@ -3,7 +3,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
-import { listTokenForSale } from 'lib/acceptOffer'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -11,6 +10,7 @@ import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
 import { pollSwr } from 'lib/pollApi'
 import { SWRResponse } from 'swr'
+import listTokenForSale from 'lib/listTokenForSale'
 
 type Props = {
   apiBase: string

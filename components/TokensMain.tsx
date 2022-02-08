@@ -6,7 +6,7 @@ import useFiltersApplied from 'hooks/useFiltersApplied'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
-import { instantBuy } from 'lib/buyToken'
+import instantBuy from 'lib/buyToken'
 import { formatBN } from 'lib/numbers'
 import { pollSwr } from 'lib/pollApi'
 import { useRouter } from 'next/router'
@@ -181,15 +181,15 @@ const TokensMain: FC<Props> = ({
               return
             }
 
-            const query: paths['/orders/fill']['get']['parameters']['query'] = {
-              contract,
-              tokenId,
-              side: 'sell',
-            }
-
             try {
+              const query: Parameters<typeof instantBuy>[2] = {
+                contract,
+                tokenId,
+                side: 'sell',
+                taker: await signer.getAddress(),
+              }
               setWaitingTx(true)
-              await instantBuy(apiBase, +chainId as ChainId, signer, query)
+              await instantBuy(apiBase, signer, query)
               await pollSwr(collection.data, collection.mutate)
               setWaitingTx(false)
             } catch (error) {

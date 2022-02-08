@@ -1,6 +1,6 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { instantBuy } from 'lib/buyToken'
+import instantBuy from 'lib/buyToken'
 import { pollSwr } from 'lib/pollApi'
 import React, { FC, useState } from 'react'
 import { SWRResponse } from 'swr'
@@ -42,15 +42,15 @@ const BuyNow: FC<Props> = ({
           return
         }
 
-        const query: paths['/orders/fill']['get']['parameters']['query'] = {
-          contract,
-          tokenId,
-          side: 'sell',
-        }
-
         try {
+          const query: Parameters<typeof instantBuy>[2] = {
+            contract,
+            tokenId,
+            side: 'sell',
+            taker: await signer.getAddress(),
+          }
           setWaitingTx(true)
-          await instantBuy(apiBase, +chainId as ChainId, signer, query)
+          await instantBuy(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
         } catch (error) {

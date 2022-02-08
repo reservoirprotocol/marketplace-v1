@@ -4,7 +4,7 @@ import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { getWeth, makeOffer } from 'lib/makeOffer'
+import makeOffer from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
@@ -63,45 +63,45 @@ const AttributeOfferModal: FC<Props> = ({
     warning: null,
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
-  const [weth, setWeth] = useState<{
-    weth: Weth
-    balance: BigNumber
-  } | null>(null)
+  // const [weth, setWeth] = useState<{
+  //   weth: Weth
+  //   balance: BigNumber
+  // } | null>(null)
   const [{ data: signer }] = useSigner()
-  const [{ data: ethBalance }, getBalance] = useBalance()
-  const provider = useProvider()
+  // const [{ data: ethBalance }, getBalance] = useBalance()
+  // const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
   const isInTheWrongNetwork = network.chain?.id !== env.chainId
 
-  useEffect(() => {
-    async function loadWeth() {
-      if (signer) {
-        await getBalance({ addressOrName: await signer?.getAddress() })
-        const weth = await getWeth(env.chainId as ChainId, provider, signer)
-        if (weth) {
-          setWeth(weth)
-        }
-      }
-    }
-    loadWeth()
-  }, [signer])
+  // useEffect(() => {
+  //   async function loadWeth() {
+  //     if (signer) {
+  //       await getBalance({ addressOrName: await signer?.getAddress() })
+  //       const weth = await getWeth(env.chainId as ChainId, provider, signer)
+  //       if (weth) {
+  //         setWeth(weth)
+  //       }
+  //     }
+  //   }
+  //   loadWeth()
+  // }, [signer])
 
-  useEffect(() => {
-    const userInput = ethers.utils.parseEther(
-      offerPrice === '' ? '0' : offerPrice
-    )
-    if (weth?.balance && ethBalance?.value) {
-      const calculations = calculateOffer(
-        userInput,
-        ethBalance.value,
-        weth.balance,
-        bps
-      )
-      setCalculations(calculations)
-    }
-  }, [offerPrice])
+  // useEffect(() => {
+  //   const userInput = ethers.utils.parseEther(
+  //     offerPrice === '' ? '0' : offerPrice
+  //   )
+  //   if (weth?.balance && ethBalance?.value) {
+  //     const calculations = calculateOffer(
+  //       userInput,
+  //       ethBalance.value,
+  //       weth.balance,
+  //       bps
+  //     )
+  //     setCalculations(calculations)
+  //   }
+  // }, [offerPrice])
 
   return (
     <Dialog.Root onOpenChange={() => setSuccess(false)}>
@@ -230,12 +230,11 @@ const AttributeOfferModal: FC<Props> = ({
 
                       const fee = royalties?.bps?.toString()
 
-                      if (!signer || !expirationValue || !fee || !ethBalance) {
+                      if (!signer || !expirationValue || !fee) {
                         console.debug({
                           signer,
                           expirationValue,
                           fee,
-                          ethBalance,
                           env,
                         })
                         return
@@ -247,7 +246,7 @@ const AttributeOfferModal: FC<Props> = ({
 
                         const feeRecipient = royalties?.recipient || maker
 
-                        let query: Parameters<typeof makeOffer>[0]['query'] = {
+                        let query: Parameters<typeof makeOffer>[2] = {
                           maker,
                           side: 'buy',
                           price: calculations.total.toString(),
@@ -263,15 +262,16 @@ const AttributeOfferModal: FC<Props> = ({
                         // Set loading state for UI
                         setWaitingTx(true)
 
-                        await makeOffer({
-                          env,
-                          provider,
-                          input: calculations.total,
-                          signer,
-                          query,
-                          postOnOpenSea: false,
-                          missingWeth: calculations.missingWeth,
-                        })
+                        await makeOffer(env.apiBase, signer, query)
+                        // await makeOffer({
+                        //   env,
+                        //   provider,
+                        //   input: calculations.total,
+                        //   signer,
+                        //   query,
+                        //   postOnOpenSea: false,
+                        //   missingWeth: calculations.missingWeth,
+                        // })
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(stats.data, stats.mutate)
