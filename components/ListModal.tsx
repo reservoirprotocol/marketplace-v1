@@ -184,7 +184,7 @@ const ListModal: FC<Props> = ({
                         return
                       }
 
-                      const query: Parameters<typeof listTokenForSale>['3'] = {
+                      const query: Parameters<typeof listTokenForSale>[2] = {
                         contract,
                         maker,
                         side: 'sell',
@@ -198,12 +198,7 @@ const ListModal: FC<Props> = ({
 
                       setWaitingTx(true)
                       try {
-                        await listTokenForSale(
-                          apiBase,
-                          chainId as ChainId,
-                          signer,
-                          query
-                        )
+                        await listTokenForSale(apiBase, signer, query)
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)

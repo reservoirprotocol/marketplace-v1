@@ -37,14 +37,14 @@ const CancelOffer: FC<Props> = ({
           return
         }
 
-        const query: Parameters<typeof cancelOrder>[3] = {
+        const query: Parameters<typeof cancelOrder>[2] = {
           maker,
           hash,
         }
 
         try {
           setWaitingTx(true)
-          await cancelOrder(apiBase, +chainId as ChainId, signer, query)
+          await cancelOrder(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
         } catch (error) {

@@ -40,15 +40,16 @@ const AcceptOffer: FC<Props> = ({
           return
         }
 
-        const query: Parameters<typeof acceptOffer>[3] = {
-          tokenId,
-          contract,
-          side: 'buy',
-        }
-
         try {
+          const query: Parameters<typeof acceptOffer>[2] = {
+            tokenId,
+            contract,
+            side: 'buy',
+            taker: await signer.getAddress(),
+          }
+
           setWaitingTx(true)
-          await acceptOffer(apiBase, +chainId as ChainId, signer, query)
+          await acceptOffer(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
         } catch (error) {
