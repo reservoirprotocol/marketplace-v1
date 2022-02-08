@@ -52,9 +52,9 @@ const AcceptOffer: FC<Props> = ({
           await acceptOffer(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
-        } catch (error) {
+        } catch (err) {
+          console.error(err)
           setWaitingTx(false)
-          console.error(error)
         }
       }}
       className="btn-neutral-outline w-full border-neutral-900"

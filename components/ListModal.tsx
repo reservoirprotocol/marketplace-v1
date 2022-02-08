@@ -204,8 +204,8 @@ const ListModal: FC<Props> = ({
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
-                      } catch (error) {
-                        console.error(error)
+                      } catch (err) {
+                        console.error(err)
                         setWaitingTx(false)
                       }
                     }}

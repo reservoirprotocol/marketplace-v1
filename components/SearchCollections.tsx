@@ -47,8 +47,8 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
                 (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
 
               data.collections && setResults(data.collections)
-            } catch (error) {
-              console.error(error)
+            } catch (err) {
+              console.error(err)
             }
             setLoading(false)
           }, 600)

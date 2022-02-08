@@ -4,15 +4,16 @@ import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import makeOffer from 'lib/makeOffer'
+import { makeOffer, postBuyOrderToOpenSea } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
-import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
 import { pollSwr } from 'lib/pollApi'
 import { paths } from 'interfaces/apiTypes'
+import { Common } from '@reservoir0x/sdk'
+import getWeth from 'lib/getWeth'
 
 type Props = {
   trigger?: ReactNode
@@ -68,45 +69,45 @@ const TokenOfferModal: FC<Props> = ({
     warning: null,
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
-  // const [weth, setWeth] = useState<{
-  //   weth: Weth
-  //   balance: BigNumber
-  // } | null>(null)
+  const [weth, setWeth] = useState<{
+    weth: Common.Helpers.Weth
+    balance: BigNumber
+  } | null>(null)
   const [{ data: signer }] = useSigner()
-  // const [{ data: ethBalance }, getBalance] = useBalance()
-  // const provider = useProvider()
+  const [{ data: ethBalance }, getBalance] = useBalance()
+  const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const closeButton = useRef<HTMLButtonElement>(null)
   const isInTheWrongNetwork = network.chain?.id !== env.chainId
 
-  // useEffect(() => {
-  //   async function loadWeth() {
-  //     if (signer) {
-  //       await getBalance({ addressOrName: await signer?.getAddress() })
-  //       const weth = await getWeth(env.chainId as ChainId, provider, signer)
-  //       if (weth) {
-  //         setWeth(weth)
-  //       }
-  //     }
-  //   }
-  //   loadWeth()
-  // }, [signer])
+  useEffect(() => {
+    async function loadWeth() {
+      if (signer) {
+        await getBalance({ addressOrName: await signer?.getAddress() })
+        const weth = await getWeth(env.chainId as ChainId, provider, signer)
+        if (weth) {
+          setWeth(weth)
+        }
+      }
+    }
+    loadWeth()
+  }, [signer])
 
-  // useEffect(() => {
-  //   const userInput = ethers.utils.parseEther(
-  //     offerPrice === '' ? '0' : offerPrice
-  //   )
-  //   if (weth?.balance && ethBalance?.value) {
-  //     const calculations = calculateOffer(
-  //       userInput,
-  //       ethBalance.value,
-  //       weth.balance,
-  //       bps
-  //     )
-  //     setCalculations(calculations)
-  //   }
-  // }, [offerPrice])
+  useEffect(() => {
+    const userInput = ethers.utils.parseEther(
+      offerPrice === '' ? '0' : offerPrice
+    )
+    if (weth?.balance && ethBalance?.value) {
+      const calculations = calculateOffer(
+        userInput,
+        ethBalance.value,
+        weth.balance,
+        bps
+      )
+      setCalculations(calculations)
+    }
+  }, [offerPrice])
 
   return (
     <Dialog.Root onOpenChange={() => setSuccess(false)}>
@@ -270,12 +271,22 @@ const TokenOfferModal: FC<Props> = ({
                         ?.value()
 
                       const fee = royalties?.bps?.toString()
+                      const contract = data.token.contract
+                      const tokenId = data.token.id
 
-                      if (!signer || !expirationValue || !fee) {
+                      if (
+                        !signer ||
+                        !expirationValue ||
+                        !fee ||
+                        !contract ||
+                        !tokenId
+                      ) {
                         console.debug({
                           signer,
                           expirationValue,
                           fee,
+                          contract,
+                          tokenId,
                           env,
                         })
                         return
@@ -294,30 +305,32 @@ const TokenOfferModal: FC<Props> = ({
                           fee,
                           feeRecipient,
                           expirationTime: expirationValue,
+                          contract,
+                          tokenId,
                         }
-
-                        query.contract = data.token.contract
-                        query.tokenId = data.token.id
 
                         // Set loading state for UI
                         setWaitingTx(true)
 
-                        await makeOffer(env.apiBase, signer, query)
-                        // await makeOffer({
-                        //   env,
-                        //   provider,
-                        //   input: calculations.total,
-                        //   signer,
-                        //   query,
-                        //   postOnOpenSea,
-                        //   missingWeth: calculations.missingWeth,
-                        // })
+                        const data = await makeOffer(env.apiBase, signer, query)
+
+                        if (postOnOpenSea) {
+                          await postBuyOrderToOpenSea(
+                            env.chainId,
+                            env.openSeaApiKey,
+                            data,
+                            tokenId,
+                            contract,
+                            signer
+                          )
+                        }
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
-                      } catch (error) {
+                      } catch (err) {
+                        console.error(err)
                         setWaitingTx(false)
                       }
                     }}

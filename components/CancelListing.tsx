@@ -48,9 +48,9 @@ const CancelListing: FC<Props> = ({
           await cancelOrder(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
-        } catch (error) {
+        } catch (err) {
+          console.error(err)
           setWaitingTx(false)
-          console.error(error)
         }
       }}
       className="btn-red-ghost col-span-2 mx-auto mt-8"

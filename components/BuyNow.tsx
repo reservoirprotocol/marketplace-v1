@@ -53,10 +53,9 @@ const BuyNow: FC<Props> = ({
           await instantBuy(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
-        } catch (error) {
+        } catch (err) {
+          console.error(err)
           setWaitingTx(false)
-          console.error(error)
-          return
         }
       }}
       className="btn-neutral-fill-dark w-full"

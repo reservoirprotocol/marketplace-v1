@@ -29,8 +29,8 @@ const CancelOffer: FC<Props> = ({
     <button
       disabled={waitingTx || isInTheWrongNetwork}
       onClick={async () => {
-        const hash = token?.market?.floorSell?.hash
-        const maker = token?.market?.floorSell?.maker
+        const hash = token?.market?.topBuy?.hash
+        const maker = token?.market?.topBuy?.maker
 
         if (!signer || !hash || !maker) {
           console.debug({ hash, signer, maker })
@@ -47,9 +47,9 @@ const CancelOffer: FC<Props> = ({
           await cancelOrder(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
-        } catch (error) {
+        } catch (err) {
+          console.error(err)
           setWaitingTx(false)
-          console.error(error)
         }
       }}
       className="btn-red-ghost col-span-2 mx-auto mt-8"

@@ -140,7 +140,8 @@ export const getServerSideProps: GetServerSideProps<{
     if (collections.collections) {
       isCommunity = collections.collections.length > 0
     }
-  } catch (error) {
+  } catch (err) {
+    console.log(err)
     return {
       notFound: true,
     }

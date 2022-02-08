@@ -1,10 +1,11 @@
-import { Signer } from 'ethers'
-import { arrayify, splitSignature } from 'ethers/lib/utils'
+import { BigNumber, Signer } from 'ethers'
+import { arrayify, randomBytes, splitSignature } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
 import checkCompleteness from './checkCompleteness'
 import setParams from './params'
+import { WyvernV2 } from '@reservoir0x/sdk'
 
-export default async function makeOffer(
+async function makeOffer(
   apiBase: string,
   signer: Signer,
   query: paths['/execute/build']['get']['parameters']['query']
@@ -53,16 +54,7 @@ export default async function makeOffer(
     body: JSON.stringify({ orders }),
   })
 
-  // if (postOnOpenSea) {
-  //   await postBuyOrderToOpenSea(
-  //     chainId,
-  //     openSeaApiKey,
-  //     buyOrder.params,
-  //     query.tokenId,
-  //     query.contract,
-  //     signer
-  //   )
-  // }
+  return data.order.data
 }
 
 /**
@@ -77,91 +69,93 @@ export default async function makeOffer(
  * @returns The response from the OpenSea API or `null` if
  * there was a failure posting the order
  */
-// async function postBuyOrderToOpenSea(
-//   chainId: ChainId,
-//   openSeaApiKey: string | undefined,
-//   params: WyvernV2.Types.OrderParams,
-//   tokenId: string,
-//   contract: string,
-//   signer: Signer
-// ) {
-//   try {
-//     if (!openSeaApiKey) throw new ReferenceError('OpenSea API key is undefined')
-//     // Instatiate a Wyvern order
-//     const buyOrder = new WyvernV2.Order(chainId, {
-//       ...params,
-//       takerRelayerFee: params.takerRelayerFee + 250,
-//       // The fee recipient on the maker's order should never be the zero address.
-//       // Even if the fee is 0, the fee recipient should be set to the maker's address.
-//       feeRecipient: '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073',
-//       // Set listing time 2 minutes in the past to make sure on-chain validation passes
-//       listingTime: Math.floor(Date.now() / 1000) - 120,
-//       salt: BigNumber.from(randomBytes(32)).toString(),
-//     })
+async function postBuyOrderToOpenSea(
+  chainId: ChainId,
+  openSeaApiKey: string | undefined,
+  params: WyvernV2.Types.OrderParams,
+  tokenId: string,
+  contract: string,
+  signer: Signer
+) {
+  try {
+    if (!openSeaApiKey) throw new ReferenceError('OpenSea API key is undefined')
+    // Instatiate a Wyvern order
+    const buyOrder = new WyvernV2.Order(chainId, {
+      ...params,
+      takerRelayerFee: params.takerRelayerFee + 250,
+      // The fee recipient on the maker's order should never be the zero address.
+      // Even if the fee is 0, the fee recipient should be set to the maker's address.
+      feeRecipient: '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073',
+      // Set listing time 2 minutes in the past to make sure on-chain validation passes
+      listingTime: Math.floor(Date.now() / 1000) - 120,
+      salt: BigNumber.from(randomBytes(32)).toString(),
+    })
 
-//     // Sign the order before posting to Reservoir
-//     await buyOrder.sign(signer)
+    // Sign the order before posting to Reservoir
+    await buyOrder.sign(signer)
 
-//     const order = {
-//       exchange: buyOrder.params.exchange,
-//       maker: buyOrder.params.maker,
-//       taker: buyOrder.params.taker,
-//       makerRelayerFee: buyOrder.params.makerRelayerFee,
-//       takerRelayerFee: buyOrder.params.takerRelayerFee,
-//       makerProtocolFee: '0',
-//       takerProtocolFee: '0',
-//       makerReferrerFee: '0',
-//       feeMethod: 1,
-//       feeRecipient: buyOrder.params.feeRecipient,
-//       side: buyOrder.params.side,
-//       saleKind: buyOrder.params.saleKind,
-//       target: buyOrder.params.target,
-//       howToCall: buyOrder.params.howToCall,
-//       calldata: buyOrder.params.calldata,
-//       replacementPattern: buyOrder.params.replacementPattern,
-//       staticTarget: buyOrder.params.staticTarget,
-//       staticExtradata: buyOrder.params.staticExtradata,
-//       paymentToken: buyOrder.params.paymentToken,
-//       quantity: '1',
-//       basePrice: buyOrder.params.basePrice,
-//       extra: buyOrder.params.extra,
-//       listingTime: buyOrder.params.listingTime,
-//       expirationTime: buyOrder.params.expirationTime,
-//       salt: buyOrder.params.salt,
-//       metadata: {
-//         asset: {
-//           id: tokenId,
-//           address: contract,
-//         },
-//         schema: 'ERC721',
-//       },
-//       v: buyOrder.params.v,
-//       r: buyOrder.params.r,
-//       s: buyOrder.params.s,
-//       hash: buyOrder.hash(),
-//     }
+    const order = {
+      exchange: buyOrder.params.exchange,
+      maker: buyOrder.params.maker,
+      taker: buyOrder.params.taker,
+      makerRelayerFee: buyOrder.params.makerRelayerFee,
+      takerRelayerFee: buyOrder.params.takerRelayerFee,
+      makerProtocolFee: '0',
+      takerProtocolFee: '0',
+      makerReferrerFee: '0',
+      feeMethod: 1,
+      feeRecipient: buyOrder.params.feeRecipient,
+      side: buyOrder.params.side,
+      saleKind: buyOrder.params.saleKind,
+      target: buyOrder.params.target,
+      howToCall: buyOrder.params.howToCall,
+      calldata: buyOrder.params.calldata,
+      replacementPattern: buyOrder.params.replacementPattern,
+      staticTarget: buyOrder.params.staticTarget,
+      staticExtradata: buyOrder.params.staticExtradata,
+      paymentToken: buyOrder.params.paymentToken,
+      quantity: '1',
+      basePrice: buyOrder.params.basePrice,
+      extra: buyOrder.params.extra,
+      listingTime: buyOrder.params.listingTime,
+      expirationTime: buyOrder.params.expirationTime,
+      salt: buyOrder.params.salt,
+      metadata: {
+        asset: {
+          id: tokenId,
+          address: contract,
+        },
+        schema: 'ERC721',
+      },
+      v: buyOrder.params.v,
+      r: buyOrder.params.r,
+      s: buyOrder.params.s,
+      hash: buyOrder.hash(),
+    }
 
-//     // Post buy order to OpenSea
-//     const res = await fetch(
-//       `https://${
-//         chainId === 4 ? 'testnets-api.' : ''
-//       }opensea.io/wyvern/v1/orders/post`,
-//       {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'x-api-key': openSeaApiKey,
-//         },
-//         body: JSON.stringify(order),
-//       }
-//     )
+    // Post buy order to OpenSea
+    const res = await fetch(
+      `https://${
+        chainId === 4 ? 'testnets-api.' : ''
+      }opensea.io/wyvern/v1/orders/post`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': openSeaApiKey,
+        },
+        body: JSON.stringify(order),
+      }
+    )
 
-//     const json = await res.json()
+    const json = await res.json()
 
-//     return json
-//   } catch (err) {
-//     console.error(err)
-//   }
+    return json
+  } catch (err) {
+    console.error(err)
+  }
 
-//   return null
-// }
+  return null
+}
+
+export { makeOffer, postBuyOrderToOpenSea }

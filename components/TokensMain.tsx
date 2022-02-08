@@ -192,9 +192,9 @@ const TokensMain: FC<Props> = ({
               await instantBuy(apiBase, signer, query)
               await pollSwr(collection.data, collection.mutate)
               setWaitingTx(false)
-            } catch (error) {
+            } catch (err) {
+              console.error(err)
               setWaitingTx(false)
-              console.error(error)
               return
             }
           }}
