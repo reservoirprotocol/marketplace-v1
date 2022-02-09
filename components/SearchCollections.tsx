@@ -1,61 +1,71 @@
-import React, { FC, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { paths } from 'interfaces/apiTypes'
 import { RiLoader2Fill } from 'react-icons/ri'
 import setParams from 'lib/params'
+import useCollections from 'hooks/useCollections'
 
 type Props = {
   apiBase: string
+  fallback: ReturnType<typeof useCollections>
 }
 
-const SearchCollection: FC<Props> = ({ apiBase }) => {
+const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
-    paths['/collections']['get']['responses']['200']['schema']['collections']
+    NonNullable<Props['fallback']['data']>['collections']
   >([])
   const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    setResults(fallback.data?.collections)
+  }, [fallback.data])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
   countRef.current = count
 
+  const url = new URL('/collections', apiBase)
+
+  const query: paths['/collections']['get']['parameters']['query'] = {
+    sortBy: 'floorCap',
+    sortDirection: 'desc',
+  }
+
   return (
     <Downshift
       onInputValueChange={(value) => {
         setLoading(true)
-        if (value !== '') {
-          setTimeout(async () => {
-            setCount(countRef.current)
-            try {
-              const url = new URL('/collections', apiBase)
-
-              const query: paths['/collections']['get']['parameters']['query'] =
-                {
-                  sortBy: 'floorCap',
-                  sortDirection: 'desc',
-                  name: value,
-                }
-
-              setParams(url, query)
-
-              const res = await fetch(url.href)
-
-              const data =
-                (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
-
-              data.collections && setResults(data.collections)
-            } catch (err) {
-              console.error(err)
-            }
-            setLoading(false)
-          }, 600)
-        } else {
-          setResults([])
+        // Reset results
+        if (value === '') {
+          setResults(fallback.data?.collections)
           setLoading(false)
+          return
         }
+
+        // Fetch new results
+        setTimeout(async () => {
+          setCount(countRef.current)
+
+          try {
+            setParams(url, { ...query, name: value })
+
+            const res = await fetch(url.href)
+
+            const data = (await res.json()) as Props['fallback']['data']
+
+            if (!data) throw new ReferenceError('Data does not exist.')
+
+            setResults(data.collections)
+          } catch (err) {
+            console.error(err)
+          }
+
+          setLoading(false)
+        }, 600)
       }}
       id="search-bar-downshift"
       onChange={(item) => item.id && router.push(`/collections/${item.id}`)}
@@ -80,22 +90,22 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
         >
           <input
             type="search"
-            className="w-full bg-transparent px-2 placeholder-neutral-600 focus:outline-none dark:placeholder-neutral-500"
+            className="w-full bg-transparent px-4 py-1 placeholder-neutral-600 focus:outline-none dark:placeholder-neutral-500"
             placeholder="Search for an NFT collection"
             {...getInputProps()}
           />
 
-          {(focused || isOpen) && inputValue !== '' && (
+          {(focused || isOpen) && (
             <div
-              className="absolute top-12 z-10 w-full overflow-hidden rounded-md border border-neutral-300 bg-white shadow-md dark:border-neutral-700 dark:bg-[#121212]"
+              className="absolute top-14 z-10 w-full overflow-hidden rounded-md border border-neutral-200 bg-white shadow-lg"
               {...getMenuProps()}
             >
               {loading && (
                 <div className="absolute right-0 z-20 p-1.5">
-                  <RiLoader2Fill className="animate-spin-slow h-6 w-6" />
+                  <RiLoader2Fill className="h-6 w-6 animate-spin" />
                 </div>
               )}
-              {inputValue === '' ? (
+              {results?.length !== 0 ? (
                 results?.slice(0, 6).map((collection, index) => (
                   <Link
                     key={collection?.collection?.name}
@@ -125,44 +135,9 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
                     </a>
                   </Link>
                 ))
-              ) : results && results.length > 0 ? (
-                results?.slice(0, 6).map((item, index) => (
-                  <Link
-                    key={item?.collection?.name}
-                    href={`/collections/${item?.collection?.id}`}
-                  >
-                    <a
-                      {...getItemProps({
-                        key: item?.collection?.name,
-                        index,
-                        item,
-                      })}
-                      className={`flex items-center gap-4 p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 md:p-3.5 ${
-                        highlightedIndex === index
-                          ? 'bg-neutral-200 dark:bg-neutral-800'
-                          : ''
-                      }`}
-                    >
-                      <img
-                        src={
-                          item?.collection?.image
-                            ? item.collection.image
-                            : 'https://via.placeholder.com/30'
-                        }
-                        alt={`${item?.collection?.name}'s logo.`}
-                        className="h-[40px] w-[40px] overflow-hidden rounded-full"
-                      />
-                      <span>{item?.collection?.name}</span>
-                    </a>
-                  </Link>
-                ))
-              ) : results?.length === 0 && !loading ? (
+              ) : (
                 <div className="flex items-center gap-4 p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 md:p-3.5">
                   No collections found
-                </div>
-              ) : (
-                <div className="flex items-center gap-4 p-2 md:p-3.5">
-                  Loading
                 </div>
               )}
             </div>
@@ -173,4 +148,4 @@ const SearchCollection: FC<Props> = ({ apiBase }) => {
   )
 }
 
-export default SearchCollection
+export default SearchCollections

@@ -13,6 +13,7 @@ import useSWR from 'swr'
 import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
+import useCollections from 'hooks/useCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
@@ -58,6 +59,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
+  const collections = useCollections(apiBase)
 
   const { ref, inView } = useInView()
 
@@ -94,7 +96,14 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   }
 
   return (
-    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
+    <Layout
+      navbar={{
+        title: layoutData.title,
+        image: layoutData.image,
+        isHome,
+        collections,
+      }}
+    >
       <Head>
         <title>Address Tokens</title>
       </Head>

@@ -1,19 +1,20 @@
-import { FC } from 'react'
+import { ComponentProps, FC } from 'react'
 import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
 import InfoModal from './InfoModal'
-import SearchCollection from './SearchCollections'
+import SearchCollections from './SearchCollections'
 import { useRouter } from 'next/router'
 
 type Props = {
   title: string | undefined
   image: string | undefined
   isHome: boolean
+  collections: ComponentProps<typeof SearchCollections>['fallback']
 }
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
-const Navbar: FC<Props> = ({ title, image, isHome }) => {
+const Navbar: FC<Props> = ({ title, image, isHome, collections }) => {
   const router = useRouter()
   return (
     <nav className="flex items-center justify-between py-3 px-3 sm:py-4">
@@ -42,7 +43,7 @@ const Navbar: FC<Props> = ({ title, image, isHome }) => {
       </Link>
       {apiBase && router.pathname !== '/' && isHome && (
         <div className="hidden lg:block">
-          <SearchCollection apiBase={apiBase} />
+          <SearchCollections apiBase={apiBase} fallback={collections} />
         </div>
       )}
       <div className="flex items-center gap-6">

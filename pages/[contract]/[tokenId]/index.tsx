@@ -20,6 +20,7 @@ import BuyNow from 'components/BuyNow'
 import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
+import useCollections from 'hooks/useCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -34,6 +35,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
+  const collections = useCollections(apiBase)
 
   let url = new URL('/tokens/details', apiBase)
 
@@ -74,7 +76,14 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   }
 
   return (
-    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
+    <Layout
+      navbar={{
+        title: layoutData.title,
+        image: layoutData.image,
+        isHome,
+        collections,
+      }}
+    >
       <Head>
         <title>{token?.token?.name || ''}</title>
       </Head>

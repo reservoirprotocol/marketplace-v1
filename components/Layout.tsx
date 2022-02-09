@@ -2,14 +2,16 @@ import { ComponentProps, FC } from 'react'
 import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
-type Props = ComponentProps<typeof Navbar>
+type Props = {
+  navbar: ComponentProps<typeof Navbar>
+}
 
-const Layout: FC<Props> = ({ children, title, image, isHome }) => {
+const Layout: FC<Props> = ({ children, navbar }) => {
   return (
     <>
       <NetworkWarning />
       <main className="container mx-auto px-3">
-        <Navbar title={title} image={image} isHome={isHome} />
+        <Navbar {...navbar} />
         {children}
       </main>
     </>

@@ -12,6 +12,7 @@ import TokensMain from 'components/TokensMain'
 import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
+import useCollections from 'hooks/useCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -23,6 +24,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const router = useRouter()
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
+  const collections = useCollections(apiBase)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -45,7 +47,14 @@ const Home: NextPage<Props> = ({ fallback }) => {
   }
 
   return (
-    <Layout title={layoutData.title} image={layoutData.image} isHome={isHome}>
+    <Layout
+      navbar={{
+        title: layoutData.title,
+        image: layoutData.image,
+        isHome,
+        collections,
+      }}
+    >
       <Head>
         <title>{router.query.id?.toString() || ''}</title>
       </Head>

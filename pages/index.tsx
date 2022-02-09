@@ -14,6 +14,7 @@ import TokensMain from 'components/TokensMain'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
+import useCollections from 'hooks/useCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -30,6 +31,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
+  const collections = useCollections(apiBase)
 
   const collection = useCollection(apiBase, fallback.collection, wildcard)
 
@@ -52,7 +54,14 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   return (
-    <Layout title={layoutData?.title} image={layoutData?.image} isHome={isHome}>
+    <Layout
+      navbar={{
+        title: layoutData.title,
+        image: layoutData.image,
+        isHome,
+        collections,
+      }}
+    >
       <Head>
         <title>
           {collection.data?.collection?.collection?.name ||
