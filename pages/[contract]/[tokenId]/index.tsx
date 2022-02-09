@@ -106,10 +106,22 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
             </div>
           </div>
         </div>
-        <img
-          className="mb-5 sm:mb-0 sm:ml-auto sm:w-[500px] sm:self-start"
-          src={optimizeImage(token?.token?.image, 500)}
-        />
+        <div className="mb-6 sm:ml-auto sm:mb-0 sm:self-start">
+          <img
+            className="mb-4 w-[500px]"
+            src={optimizeImage(token?.token?.image, 500)}
+          />
+          <div className="mb-3 w-min ">
+            {token?.token?.owner && (
+              <Link href={`/address/${token.token.owner}`}>
+                <a className="block">
+                  <EthAccount address={token.token.owner} title="owner" />
+                </a>
+              </Link>
+            )}
+          </div>
+        </div>
+
         <div className="mb-8 sm:mr-auto sm:self-start">
           <div className="hidden gap-3 sm:flex">
             <img
@@ -126,15 +138,6 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               </div>
               <div className="mb-4 text-lg font-medium opacity-80">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
-              </div>
-              <div className="mb-6">
-                {token?.token?.owner && (
-                  <Link href={`/address/${token.token.owner}`}>
-                    <a>
-                      <EthAccount address={token.token.owner} />
-                    </a>
-                  </Link>
-                )}
               </div>
             </div>
           </div>

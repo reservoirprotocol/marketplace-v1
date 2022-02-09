@@ -34,9 +34,10 @@ type Props = {
     avatar: string | null | undefined
     name: string | null | undefined
   }
+  title?: string
 }
 
-const EthAccount: FC<Props> = ({ address, ens }) => {
+const EthAccount: FC<Props> = ({ address, ens, title }) => {
   const isBrowser = typeof window !== 'undefined'
   const [dataUrl, setDataUrl] = useState('')
 
@@ -58,24 +59,30 @@ const EthAccount: FC<Props> = ({ address, ens }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <>
-        {ens?.avatar ? (
-          <img
-            className="h-[32px] w-[32px] rounded-full"
-            src={ens.avatar}
-            alt="ENS Avatar"
-          />
-        ) : (
-          blockie
+      {ens?.avatar ? (
+        <img
+          className="block h-[32px] w-[32px] rounded-full"
+          src={ens.avatar}
+          alt="ENS Avatar"
+        />
+      ) : (
+        blockie
+      )}
+      <div>
+        {title && (
+          <p className="text-sm font-medium uppercase opacity-75">{title}</p>
         )}
         {ens?.name ? (
-          <span title={address}>{shrinkEns(ens.name)}</span>
+          <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
-          <span className="font-mono lowercase" title={address}>
+          <div
+            className="block min-w-[110px] whitespace-nowrap font-mono lowercase"
+            title={address}
+          >
             {shrinkAddress(address)}
-          </span>
+          </div>
         )}
-      </>
+      </div>
     </div>
   )
 }
