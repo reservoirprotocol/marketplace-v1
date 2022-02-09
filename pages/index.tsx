@@ -7,7 +7,6 @@ import type {
   NextPage,
 } from 'next'
 import useCollection from 'hooks/useCollection'
-import Head from 'next/head'
 import Homepage from 'components/Homepage'
 import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
@@ -55,20 +54,16 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   return (
     <Layout
+      title={
+        collection.data?.collection?.collection?.name ||
+        layoutData?.title ||
+        'reservoir.market'
+      }
       navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
         isHome,
         collections,
       }}
     >
-      <Head>
-        <title>
-          {collection.data?.collection?.collection?.name ||
-            layoutData?.title ||
-            'reservoir.market'}
-        </title>
-      </Head>
       {isHome ? (
         <Homepage apiBase={apiBase} />
       ) : isCommunity ? (

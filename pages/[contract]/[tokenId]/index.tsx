@@ -12,7 +12,6 @@ import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
 import TokenAttributes from 'components/TokenAttributes'
 import TokenOfferModal from 'components/TokenOfferModal'
-import Head from 'next/head'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import AcceptOffer from 'components/AcceptOffer'
@@ -70,23 +69,14 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
-  const layoutData = {
-    title: isHome ? undefined : collection.data?.collection?.collection?.name,
-    image: isHome ? undefined : collection.data?.collection?.collection?.image,
-  }
-
   return (
     <Layout
+      title={token?.token?.name || ''}
       navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
         isHome,
         collections,
       }}
     >
-      <Head>
-        <title>{token?.token?.name || ''}</title>
-      </Head>
       <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img

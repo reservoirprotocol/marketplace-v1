@@ -48,16 +48,12 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   return (
     <Layout
+      title={router.query.id?.toString() || ''}
       navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
         isHome,
         collections,
       }}
     >
-      <Head>
-        <title>{router.query.id?.toString() || ''}</title>
-      </Head>
       <TokensMain
         collectionId={router.query.id?.toString() || ''}
         apiBase={apiBase}
