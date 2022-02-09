@@ -14,9 +14,11 @@ type Props = {
 const CollectionsGrid: FC<Props> = ({ collections }) => {
   const { data, isValidating } = collections
 
-  const filteredCollecitons = data?.collections?.filter(
-    (collection) => !!collection.collection?.tokenSetId
-  )
+  const filteredCollecitons = data?.collections?.filter((collection) => {
+    if (collection?.collection?.id === 'bored-ape-chemistry-club') return true
+
+    return !!collection.collection?.tokenSetId
+  })
 
   return (
     <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center">

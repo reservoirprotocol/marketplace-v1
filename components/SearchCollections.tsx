@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
 import { useRouter } from 'next/router'
@@ -6,6 +6,7 @@ import { paths } from 'interfaces/apiTypes'
 import { RiLoader2Fill } from 'react-icons/ri'
 import setParams from 'lib/params'
 import useCollections from 'hooks/useCollections'
+import debounce from 'lodash.debounce'
 
 type Props = {
   apiBase: string
@@ -21,12 +22,48 @@ const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    setResults(fallback.data?.collections)
-  }, [fallback.data])
+    if (fallback.data?.collections && fallback.data?.collections?.length > 0) {
+      setResults(fallback.data?.collections)
+    }
+  }, [fallback])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
   countRef.current = count
+
+  const debouncedSearch = useCallback(
+    debounce(async (value) => {
+      if (value === '') return
+
+      // Fetch new results
+      setCount(countRef.current)
+
+      setLoading(true)
+      try {
+        setParams(url, { ...query, name: value })
+
+        const res = await fetch(url.href)
+
+        const data = (await res.json()) as Props['fallback']['data']
+
+        if (!data) throw new ReferenceError('Data does not exist.')
+
+        const results = data.collections?.filter((collection) => {
+          if (collection?.collection?.id === 'bored-ape-chemistry-club')
+            return true
+
+          return !!collection.collection?.tokenSetId
+        })
+
+        setResults(results)
+      } catch (err) {
+        console.error(err)
+      }
+
+      setLoading(false)
+    }, 700),
+    []
+  )
 
   const url = new URL('/collections', apiBase)
 
@@ -37,36 +74,7 @@ const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {
 
   return (
     <Downshift
-      onInputValueChange={(value) => {
-        setLoading(true)
-        // Reset results
-        if (value === '') {
-          setResults(fallback.data?.collections)
-          setLoading(false)
-          return
-        }
-
-        // Fetch new results
-        setTimeout(async () => {
-          setCount(countRef.current)
-
-          try {
-            setParams(url, { ...query, name: value })
-
-            const res = await fetch(url.href)
-
-            const data = (await res.json()) as Props['fallback']['data']
-
-            if (!data) throw new ReferenceError('Data does not exist.')
-
-            setResults(data.collections)
-          } catch (err) {
-            console.error(err)
-          }
-
-          setLoading(false)
-        }, 600)
-      }}
+      onInputValueChange={(value) => debouncedSearch(value)}
       id="search-bar-downshift"
       onChange={(item) => item.id && router.push(`/collections/${item.id}`)}
       itemToString={(item) => (item ? item.name : '')}
