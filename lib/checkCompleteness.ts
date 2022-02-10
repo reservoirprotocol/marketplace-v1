@@ -29,22 +29,23 @@ export default async function checkCompleteness(
 
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
-  const { status, kind, data } = json.steps[index]
+  // Check that index is not greater than the length of steps
+  if (json.steps.length - 1 >= index) {
+    const { status, kind, data } = json.steps[index]
+    if (status === 'incomplete' && kind !== 'order-signature') {
+      if (data) {
+        const tx = await signer.sendTransaction(data)
 
-  if (status === 'incomplete' && kind !== 'order-signature') {
-    // The incomplete transaction needs to be signed by the user
-    if (data) {
-      const tx = await signer.sendTransaction(data)
+        await tx.wait()
+      } else {
+        const polledData = (await pollApi(json, url)) as Execute
+        const tx = await signer.sendTransaction(polledData.steps?.[index].data)
 
-      await tx.wait()
-    } else {
-      const polledData = (await pollApi(json, url)) as Execute
-      const tx = await signer.sendTransaction(polledData.steps?.[index].data)
+        await tx.wait()
+      }
 
-      await tx.wait()
+      await checkCompleteness(url, signer, index + 1)
     }
-
-    await checkCompleteness(url, signer, index + 1)
   }
 
   return json.steps[json.steps.length - 1]?.data
