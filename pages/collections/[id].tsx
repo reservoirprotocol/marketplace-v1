@@ -13,7 +13,6 @@ import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
-import useSearchCollections from 'hooks/useSearch'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -25,30 +24,23 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const router = useRouter()
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
 
-  const search = useSearchCollections(apiBase)
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
 
-  let isHome = true
   let communityId = ''
 
   if (typeof window !== 'undefined') {
-    isHome = window?.location?.hostname.includes('www.')
-    communityId = `${
-      window.location.hostname.split('.')[0]
-    } Community`.toUpperCase()
+    communityId = window.location.hostname.split('.')[0]
   }
 
   return (
     <Layout
-      // title={router.query.id?.toString() || ''}
       navbar={{
-        isHome,
-        collections: search,
+        communityId,
       }}
     >
       <TokensMain

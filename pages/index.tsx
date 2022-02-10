@@ -15,7 +15,6 @@ import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
-import useSearchCollections from 'hooks/useSearch'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -32,11 +31,9 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
 
-  const search = useSearchCollections(apiBase)
-
-  const collection = useCollection(apiBase, fallback.collection, wildcard)
+  // const collection = useCollection(apiBase, fallback.collection, wildcard)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -44,17 +41,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   return (
-    <Layout
-      // title={
-      //   collection.data?.collection?.collection?.name ||
-      //   layoutData?.title ||
-      //   'reservoir.market'
-      // }
-      navbar={{
-        isHome,
-        collections: search,
-      }}
-    >
+    <Layout>
       {isHome ? (
         <Homepage apiBase={apiBase} />
       ) : isCommunity ? (

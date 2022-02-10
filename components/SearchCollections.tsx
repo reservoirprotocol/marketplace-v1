@@ -6,27 +6,54 @@ import { paths } from 'interfaces/apiTypes'
 import { RiLoader2Fill } from 'react-icons/ri'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
-import useSearchCollections from 'hooks/useSearch'
 
 type Props = {
-  apiBase: string
-  fallback: ReturnType<typeof useSearchCollections>
   communityId?: string
 }
 
-const SearchCollections: FC<Props> = ({ apiBase, fallback, communityId }) => {
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
+
+const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
-    NonNullable<Props['fallback']['data']>['collections']
-  >([])
+    paths['/collections']['get']['responses']['200']['schema']
+  >({})
   const [loading, setLoading] = useState<boolean>(false)
 
+  // LOAD INITIAL RESULTS
   useEffect(() => {
-    if (fallback.data?.collections && fallback.data?.collections?.length > 0) {
-      setResults(fallback.data?.collections)
+    if (!apiBase) return
+
+    const url = new URL('/collections', apiBase)
+
+    const query: paths['/collections']['get']['parameters']['query'] = {
+      sortBy: 'floorCap',
+      sortDirection: 'desc',
     }
-  }, [fallback])
+
+    if (communityId && communityId !== 'www') query['community'] = communityId
+
+    setParams(url, query)
+
+    async function initialData(url: URL) {
+      const res = await fetch(url.href)
+
+      const json =
+        (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
+
+      const collections = json.collections?.filter((collection) => {
+        if (collection?.collection?.id === 'bored-ape-chemistry-club')
+          return true
+
+        return !!collection.collection?.tokenSetId
+      })
+
+      setResults({ collections })
+    }
+
+    initialData(url)
+  }, [apiBase, communityId])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
@@ -41,24 +68,26 @@ const SearchCollections: FC<Props> = ({ apiBase, fallback, communityId }) => {
 
       setLoading(true)
       try {
-        if (communityId) setParams(url, { ...query, community: communityId })
+        if (communityId && communityId !== 'www')
+          setParams(url, { ...query, community: communityId })
 
         setParams(url, { ...query, name: value })
 
         const res = await fetch(url.href)
 
-        const data = (await res.json()) as Props['fallback']['data']
+        const data =
+          (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
-        const results = data.collections?.filter((collection) => {
+        const collections = data.collections?.filter((collection) => {
           if (collection?.collection?.id === 'bored-ape-chemistry-club')
             return true
 
           return !!collection.collection?.tokenSetId
         })
 
-        setResults(results)
+        setResults({ collections })
       } catch (err) {
         console.error(err)
       }
@@ -116,8 +145,8 @@ const SearchCollections: FC<Props> = ({ apiBase, fallback, communityId }) => {
                   <RiLoader2Fill className="h-6 w-6 animate-spin" />
                 </div>
               )}
-              {results?.length !== 0 ? (
-                results?.slice(0, 6).map((collection, index) => (
+              {results?.collections?.length !== 0 ? (
+                results?.collections?.slice(0, 6).map((collection, index) => (
                   <Link
                     key={collection?.collection?.name}
                     href={`/collections/${collection?.collection?.id}`}

@@ -1,5 +1,4 @@
 import useCommunity from 'hooks/useCommunity'
-import useSearchCollections from 'hooks/useSearch'
 import Head from 'next/head'
 import React, { FC } from 'react'
 import CommunityGrid from './CommunityGrid'
@@ -12,7 +11,6 @@ type Props = {
 
 const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
   const communities = useCommunity(apiBase, wildcard)
-  const search = useSearchCollections(apiBase, wildcard)
 
   const { data } = communities.communities
 
@@ -52,11 +50,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
       </header>
       {isBigCommunity && (
         <div className="mb-12 grid justify-center">
-          <SearchCollections
-            apiBase={apiBase}
-            fallback={search}
-            communityId={wildcard}
-          />
+          <SearchCollections communityId={wildcard} />
         </div>
       )}
       <CommunityGrid communities={communities} wildcard={wildcard} />

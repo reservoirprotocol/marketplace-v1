@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
 type Props = {
-  navbar: ComponentProps<typeof Navbar>
+  navbar?: ComponentProps<typeof Navbar>
 }
 
 const Layout: FC<Props> = ({ children, navbar }) => {
