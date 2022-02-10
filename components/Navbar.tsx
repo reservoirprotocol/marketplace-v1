@@ -23,7 +23,7 @@ const Navbar: FC<Props> = ({ isHome, collections }) => {
           <img
             src={logo || '/reservoir.svg'}
             alt={`${title} Logo` || 'Reservoir Logo'}
-            className="hidden w-[25px] rounded-full sm:block"
+            className="hidden w-[25px] sm:block"
           />
           {title ? (
             <span className="font-semibold">{title}</span>

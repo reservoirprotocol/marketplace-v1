@@ -34,7 +34,7 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
       ) : (
         <div
           className={`h-[100px] ${
-            delay ? '' : 'bg-gradient-to-tr from-neutral-500 to-neutral-100'
+            delay ? '' : 'bg-gradient-to-r from-violet-500 to-fuchsia-500'
           } sm:h-[200px] sm:rounded-xl`}
         ></div>
       )}

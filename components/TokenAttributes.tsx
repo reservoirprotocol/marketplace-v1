@@ -15,7 +15,7 @@ const TokenAttributes = ({ token }: Props) => {
       <div className="flex max-w-sm flex-wrap gap-3">
         {token?.attributes?.map(({ key, value }) => (
           <Link
-            key={key}
+            key={`${key}-${value}`}
             href={`/collections/${token?.collection?.id}?${formatUrl(
               `attributes[${key}]`
             )}=${formatUrl(`${value}`)}`}
