@@ -32,7 +32,7 @@ export default async function checkCompleteness(
   // Check that index is not greater than the length of steps
   if (json.steps.length - 1 >= index) {
     const { status, kind, data } = json.steps[index]
-    if (status === 'incomplete' && kind !== 'order-signature') {
+    if (status === 'incomplete' && kind === 'transaction') {
       if (data) {
         const tx = await signer.sendTransaction(data)
 
@@ -43,7 +43,8 @@ export default async function checkCompleteness(
 
         await tx.wait()
       }
-
+    }
+    if (index !== json.steps.length - 1) {
       await checkCompleteness(url, signer, index + 1)
     }
   }
