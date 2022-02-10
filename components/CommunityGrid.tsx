@@ -1,37 +1,43 @@
-import { paths } from 'interfaces/apiTypes'
 import { FC } from 'react'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import { SWRResponse } from 'swr'
 import Head from 'next/head'
+import ImagesGrid from './ImagesGrid'
+import useCommunity from 'hooks/useCommunity'
+import LoadingCard from './LoadingCard'
 
 type Props = {
-  communities: SWRResponse<
-    paths['/collections']['get']['responses']['200']['schema'],
-    any
-  >
+  communities: ReturnType<typeof useCommunity>
   wildcard: string
 }
 
 const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
-  const { data, isValidating } = communities
+  const {
+    communities: { data, isValidating },
+    ref,
+  } = communities
 
-  const filteredCollecitons = data?.collections?.filter((collection) => {
+  const mappedCollections = data
+    ? data.map(({ collections }) => collections).flat()
+    : []
+  const didReactEnd = data && data[data.length - 1].collections?.length === 0
+
+  const filteredCollecitons = mappedCollections.filter((collection) => {
     if (collection?.collection?.id === 'bored-ape-chemistry-club') return true
 
-    return !!collection.collection?.tokenSetId
+    return !!collection?.collection?.tokenSetId
   })
 
   return (
     <>
-      <div className="mx-auto mb-5 flex max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center">
+      <div className="mx-auto mb-5 grid max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {!data && isValidating
           ? Array(20)
               .fill(null)
               .map((_, index) => (
                 <div
                   key={`loading-card-${index}`}
-                  className="h-[130px] w-[130px] animate-pulse rounded-md bg-white shadow-md"
+                  className="h-[310px] w-full animate-pulse bg-white shadow-md"
                 ></div>
               ))
           : filteredCollecitons?.map((community, idx) => {
@@ -40,17 +46,34 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
                   key={`${community?.collection?.name}${idx}`}
                   href={`/collections/${community?.collection?.id}`}
                 >
-                  <a className="group overflow-hidden rounded-full bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg">
-                    <img
-                      src={optimizeImage(community?.collection?.image, 250)}
-                      alt={`${community?.collection?.name}`}
-                      className="h-[130px] w-[130px] object-cover"
-                      width="130"
-                      height="130"
+                  <a className="group overflow-hidden rounded-md bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                    <ImagesGrid
+                      sample_images={community?.set?.sampleImages}
+                      value={community?.collection?.name}
                     />
+                    <div className="mt-3 flex items-center gap-2">
+                      <img
+                        src={optimizeImage(community?.collection?.image, 40)}
+                        className="h-[40px] w-[40px] rounded-full"
+                      />
+                      <div className="font-semibold">
+                        {community?.collection?.name}
+                      </div>
+                    </div>
                   </a>
                 </Link>
               )
+            })}{' '}
+        {!didReactEnd &&
+          Array(20)
+            .fill(null)
+            .map((_, index) => {
+              if (index === 0) {
+                return (
+                  <LoadingCard viewRef={ref} key={`loading-card-${index}`} />
+                )
+              }
+              return <LoadingCard key={`loading-card-${index}`} />
             })}
       </div>
     </>

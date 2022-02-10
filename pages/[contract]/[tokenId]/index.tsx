@@ -21,6 +21,7 @@ import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
+import useSearchCollections from 'hooks/useSearch'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -60,6 +61,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
+  const search = useSearchCollections(apiBase)
 
   const token = details.data?.tokens?.[0]
   const isOwner =
@@ -74,7 +76,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
     <Layout
       navbar={{
         isHome,
-        collections,
+        collections: search,
       }}
     >
       <Head>

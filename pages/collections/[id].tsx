@@ -13,6 +13,7 @@ import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import useSearchCollections from 'hooks/useSearch'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -26,6 +27,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
   useDataDog(accountData)
   const collections = useCollections(apiBase)
 
+  const search = useSearchCollections(apiBase)
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
@@ -46,7 +48,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       // title={router.query.id?.toString() || ''}
       navbar={{
         isHome,
-        collections,
+        collections: search,
       }}
     >
       <TokensMain

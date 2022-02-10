@@ -5,12 +5,12 @@ import { useRouter } from 'next/router'
 import { paths } from 'interfaces/apiTypes'
 import { RiLoader2Fill } from 'react-icons/ri'
 import setParams from 'lib/params'
-import useCollections from 'hooks/useCollections'
 import debounce from 'lodash.debounce'
+import useSearchCollections from 'hooks/useSearch'
 
 type Props = {
   apiBase: string
-  fallback: ReturnType<typeof useCollections>
+  fallback: ReturnType<typeof useSearchCollections>
 }
 
 const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {

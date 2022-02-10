@@ -13,6 +13,7 @@ import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import useSearchCollections from 'hooks/useSearch'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
@@ -61,6 +62,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   const collections = useCollections(apiBase)
 
   const { ref, inView } = useInView()
+  const search = useSearchCollections(apiBase)
 
   const url = new URL(`/users/${router.query?.address}/tokens`, apiBase)
 
@@ -93,7 +95,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
     <Layout
       navbar={{
         isHome,
-        collections,
+        collections: search,
       }}
     >
       <div className="mt-4 mb-10 flex items-center justify-center">
