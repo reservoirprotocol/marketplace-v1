@@ -75,6 +75,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
       navbar={{
         isHome,
         collections,
+        collectionId,
       }}
     >
       <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
