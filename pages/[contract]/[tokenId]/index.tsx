@@ -89,9 +89,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
             className="h-[50px] w-[50px] rounded-full"
           />
           <div>
-            <div className="mb-1 text-2xl font-bold">
-              {token?.token?.collection?.name}
-            </div>
+            <Link href={`/collections/${collectionId}`}>
+              <a className="mb-1 block  text-2xl font-bold">
+                {token?.token?.collection?.name}
+              </a>
+            </Link>
             <div className="mb-4 text-lg font-medium uppercase opacity-80">
               {token?.token?.name || `#${token?.token?.tokenId}`}
             </div>
@@ -124,9 +126,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               className="h-[50px] w-[50px] rounded-full"
             />
             <div>
-              <div className="mb-1 text-2xl font-bold">
-                {token?.token?.collection?.name}
-              </div>
+              <Link href={`/collections/${collectionId}`}>
+                <a className="mb-1 block text-2xl font-bold">
+                  {token?.token?.collection?.name}
+                </a>
+              </Link>
               <div className="mb-4 text-lg font-medium opacity-80">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
