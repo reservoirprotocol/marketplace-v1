@@ -8,24 +8,17 @@ import { useRouter } from 'next/router'
 type Props = {
   isHome: boolean
   collections: ComponentProps<typeof SearchCollections>['fallback']
-  collectionId?: string
 }
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const title = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const logo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 
-const Navbar: FC<Props> = ({ isHome, collections, collectionId }) => {
+const Navbar: FC<Props> = ({ isHome, collections }) => {
   const router = useRouter()
   return (
     <nav className="flex items-center justify-between py-3 px-3 sm:py-4">
-      <Link
-        href={
-          isHome && router.pathname === '/[contract]/[tokenId]'
-            ? `/collections/${collectionId}`
-            : '/'
-        }
-      >
+      <Link href="/">
         <a className="flex items-center justify-between gap-3">
           <img
             src={logo || '/reservoir.svg'}

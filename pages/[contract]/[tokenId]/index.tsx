@@ -20,6 +20,7 @@ import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -71,13 +72,31 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
 
   return (
     <Layout
-      title={token?.token?.name || ''}
       navbar={{
         isHome,
         collections,
-        collectionId,
       }}
     >
+      <Head>
+        {isHome ? (
+          <title>
+            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+            {collection.data?.collection?.collection?.name} | Reservoir Market
+          </title>
+        ) : (
+          <title>
+            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+            {collection.data?.collection?.collection?.name} Marketplace |
+            Powered by Reservoir
+          </title>
+        )}
+        <meta
+          name="description"
+          content={collection.data?.collection?.collection?.description}
+        />
+        <meta name="twitter:image" content={token?.token?.image} />
+        <meta property="og:image" content={token?.token?.image} />
+      </Head>
       <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img

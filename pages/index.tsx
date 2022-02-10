@@ -14,6 +14,7 @@ import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -34,19 +35,6 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   const collection = useCollection(apiBase, fallback.collection, wildcard)
 
-  const layoutData = {
-    title: isCommunity
-      ? `${wildcard} Community`.toUpperCase()
-      : isHome
-      ? undefined
-      : collection.data?.collection?.collection?.name,
-    image: isCommunity
-      ? undefined
-      : isHome
-      ? undefined
-      : collection.data?.collection?.collection?.image,
-  }
-
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
@@ -54,11 +42,11 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
 
   return (
     <Layout
-      title={
-        collection.data?.collection?.collection?.name ||
-        layoutData?.title ||
-        'reservoir.market'
-      }
+      // title={
+      //   collection.data?.collection?.collection?.name ||
+      //   layoutData?.title ||
+      //   'reservoir.market'
+      // }
       navbar={{
         isHome,
         collections,

@@ -41,14 +41,9 @@ const Home: NextPage<Props> = ({ fallback }) => {
     } Community`.toUpperCase()
   }
 
-  const layoutData = {
-    title: isHome ? undefined : communityId,
-    image: undefined,
-  }
-
   return (
     <Layout
-      title={router.query.id?.toString() || ''}
+      // title={router.query.id?.toString() || ''}
       navbar={{
         isHome,
         collections,

@@ -1,4 +1,5 @@
 import useCommunity from 'hooks/useCommunity'
+import Head from 'next/head'
 import React, { FC } from 'react'
 import CommunityGrid from './CommunityGrid'
 
@@ -11,6 +12,22 @@ const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
   const communities = useCommunity(apiBase, wildcard)
   return (
     <>
+      <Head>
+        {wildcard === 'www' ? (
+          <title>
+            {wildcard.toUpperCase()} Community Marketplace | Reservoir Market
+          </title>
+        ) : (
+          <title>
+            {wildcard.toUpperCase()} Community Marketplace | Powered by
+            Reservoir
+          </title>
+        )}
+        <meta
+          name="description"
+          content={communities.data?.collections?.[0].collection?.description}
+        />
+      </Head>
       <header className="mt-8 mb-14 flex items-center justify-center gap-5">
         <img
           className="h-[50px] w-[50px] rounded-full"

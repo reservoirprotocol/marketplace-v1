@@ -4,16 +4,12 @@ import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
 type Props = {
-  title: string
   navbar: ComponentProps<typeof Navbar>
 }
 
-const Layout: FC<Props> = ({ title, children, navbar }) => {
+const Layout: FC<Props> = ({ children, navbar }) => {
   return (
     <>
-      <Head>
-        <title>{title}</title>
-      </Head>
       <NetworkWarning />
       <main className="container mx-auto px-3">
         <Navbar {...navbar} />

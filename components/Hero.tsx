@@ -1,4 +1,5 @@
 import { formatNumber } from 'lib/numbers'
+import { optimizeImage } from 'lib/optmizeImage'
 import { FC, useEffect, useState } from 'react'
 import FormatEth from './FormatEth'
 
@@ -26,7 +27,7 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
     <div>
       {header.banner ? (
         <img
-          src={header.banner}
+          src={optimizeImage(header.banner, 1000)}
           alt={`${header.name} banner image`}
           height="200px"
           className="h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"

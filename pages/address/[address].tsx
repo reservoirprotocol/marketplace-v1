@@ -91,7 +91,6 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
 
   return (
     <Layout
-      title="Address Tokens"
       navbar={{
         isHome,
         collections,
