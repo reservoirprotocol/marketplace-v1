@@ -6,7 +6,7 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
@@ -37,6 +37,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const router = useRouter()
   useDataDog(accountData)
   const collections = useCollections(apiBase)
+  const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
 
@@ -185,6 +186,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                     details={details}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
+                    setError={setError}
                   />
                 )}
               </Price>
@@ -237,6 +239,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                 )}
               </Price>
             </div>
+            {error && (
+              <div className="mx-auto mt-4 rounded border border-red-400 bg-red-100 py-1 px-2 text-red-900">
+                You have insufficient funds to buy this token.
+              </div>
+            )}
             {isTopBidder && (
               <CancelOffer
                 apiBase={apiBase}
