@@ -209,7 +209,7 @@ const TokensMain: FC<Props> = ({
               }
               setWaitingTx(true)
               await instantBuy(apiBase, signer, query)
-              await pollSwr(collection.data, collection.mutate)
+              await pollSwr(stats.data, stats.mutate)
               setWaitingTx(false)
             } catch (err) {
               console.error(err)
@@ -253,7 +253,7 @@ const TokensMain: FC<Props> = ({
             signer={signer}
             data={data}
             env={env}
-            collection={collection}
+            stats={stats}
           />
         )}
       </Hero>

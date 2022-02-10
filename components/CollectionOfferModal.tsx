@@ -13,6 +13,7 @@ import { pollSwr } from 'lib/pollApi'
 import useCollection from 'hooks/useCollection'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
+import useCollectionStats from 'hooks/useCollectionStats'
 
 type Props = {
   trigger?: ReactNode
@@ -34,14 +35,14 @@ type Props = {
     recipient: string | undefined
   }
   signer: ethers.Signer | undefined
-  collection: ReturnType<typeof useCollection>
+  stats: ReturnType<typeof useCollectionStats>
 }
 
 const CollectionOfferModal: FC<Props> = ({
   trigger,
   env,
   royalties,
-  collection,
+  stats,
   data,
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
@@ -254,7 +255,7 @@ const CollectionOfferModal: FC<Props> = ({
                         await makeOffer(env.apiBase, signer, query)
                         // Close modal
                         // closeButton.current?.click()
-                        await pollSwr(collection.data, collection.mutate)
+                        await pollSwr(stats.data, stats.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (err) {
