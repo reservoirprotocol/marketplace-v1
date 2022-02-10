@@ -11,9 +11,10 @@ import useSearchCollections from 'hooks/useSearch'
 type Props = {
   apiBase: string
   fallback: ReturnType<typeof useSearchCollections>
+  communityId?: string
 }
 
-const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {
+const SearchCollections: FC<Props> = ({ apiBase, fallback, communityId }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
@@ -40,6 +41,8 @@ const SearchCollections: FC<Props> = ({ apiBase, fallback }) => {
 
       setLoading(true)
       try {
+        if (communityId) setParams(url, { ...query, community: communityId })
+
         setParams(url, { ...query, name: value })
 
         const res = await fetch(url.href)

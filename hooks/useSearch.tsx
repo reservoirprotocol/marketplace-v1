@@ -5,13 +5,18 @@ import useSWR from 'swr'
 
 type Collections = paths['/collections']['get']['responses']['200']['schema']
 
-export default function useSearchCollections(apiBase: string | undefined) {
+export default function useSearchCollections(
+  apiBase: string | undefined,
+  communityId?: string
+) {
   const url = new URL('/collections', apiBase)
 
   const query: paths['/collections']['get']['parameters']['query'] = {
     sortBy: 'floorCap',
     sortDirection: 'desc',
   }
+
+  if (communityId) query['community'] = communityId
 
   setParams(url, query)
 
