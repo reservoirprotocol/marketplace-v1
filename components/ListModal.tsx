@@ -187,7 +187,6 @@ const ListModal: FC<Props> = ({
                       const query: Parameters<typeof listTokenForSale>[2] = {
                         contract,
                         maker,
-                        side: 'sell',
                         price: ethers.utils.parseEther(listingPrice).toString(),
                         fee,
                         feeRecipient:

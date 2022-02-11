@@ -1,16 +1,16 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import checkCompleteness from './checkCompleteness'
+import executeSteps from './executeSteps'
 import setParams from './params'
 
 export default async function instantBuy(
   apiBase: string,
   signer: Signer,
-  query: paths['/execute/fill']['get']['parameters']['query']
+  query: paths['/execute/buy']['get']['parameters']['query']
 ) {
-  const url = new URL('/execute/fill', apiBase)
+  const url = new URL('/execute/buy', apiBase)
 
   setParams(url, query)
 
-  await checkCompleteness(url, signer)
+  await executeSteps(url, signer)
 }

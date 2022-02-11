@@ -44,7 +44,6 @@ const AcceptOffer: FC<Props> = ({
           const query: Parameters<typeof acceptOffer>[2] = {
             tokenId,
             contract,
-            side: 'buy',
             taker: await signer.getAddress(),
           }
 

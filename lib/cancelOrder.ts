@@ -1,6 +1,6 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import checkCompleteness from './checkCompleteness'
+import executeSteps from './executeSteps'
 import setParams from './params'
 
 export default async function cancelOrder(
@@ -12,5 +12,5 @@ export default async function cancelOrder(
 
   setParams(url, query)
 
-  await checkCompleteness(url, signer)
+  await executeSteps(url, signer)
 }

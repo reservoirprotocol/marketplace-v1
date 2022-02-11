@@ -300,7 +300,6 @@ const TokenOfferModal: FC<Props> = ({
 
                         let query: Parameters<typeof makeOffer>[2] = {
                           maker,
-                          side: 'buy',
                           price: calculations.total.toString(),
                           fee,
                           feeRecipient,

@@ -1,20 +1,20 @@
 import { BigNumber, Signer } from 'ethers'
 import { arrayify, randomBytes, splitSignature } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
-import checkCompleteness from './checkCompleteness'
+import executeSteps from './executeSteps'
 import setParams from './params'
 import { WyvernV2 } from '@reservoir0x/sdk'
 
 async function makeOffer(
   apiBase: string,
   signer: Signer,
-  query: paths['/execute/build']['get']['parameters']['query']
+  query: paths['/execute/bid']['get']['parameters']['query']
 ) {
-  const url = new URL('/execute/build', apiBase)
+  const url = new URL('/execute/bid', apiBase)
 
   setParams(url, query)
 
-  const data = await checkCompleteness(url, signer)
+  const data = await executeSteps(url, signer)
 
   const signature = await signer.signMessage(arrayify(data.message.value))
 

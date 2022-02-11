@@ -1,19 +1,19 @@
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
-import checkCompleteness from './checkCompleteness'
+import executeSteps from './executeSteps'
 import setParams from './params'
 
 export default async function listTokenForSale(
   apiBase: string,
   signer: Signer,
-  query: paths['/execute/build']['get']['parameters']['query']
+  query: paths['/execute/list']['get']['parameters']['query']
 ) {
-  const url = new URL('/execute/build', apiBase)
+  const url = new URL('/execute/list', apiBase)
 
   setParams(url, query)
 
-  const data = await checkCompleteness(url, signer)
+  const data = await executeSteps(url, signer)
 
   const signature = await signer.signMessage(arrayify(data.message.value))
 

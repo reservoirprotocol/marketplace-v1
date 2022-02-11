@@ -48,7 +48,6 @@ const BuyNow: FC<Props> = ({
           const query: Parameters<typeof instantBuy>[2] = {
             contract,
             tokenId,
-            side: 'sell',
             taker: await signer.getAddress(),
           }
           setWaitingTx(true)

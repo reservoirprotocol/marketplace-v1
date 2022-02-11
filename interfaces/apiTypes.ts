@@ -35,14 +35,26 @@ export interface paths {
   '/collections/{collection}': {
     get: operations['getCollectionsCollection']
   }
+  '/execute/bid': {
+    get: operations['getExecuteBid']
+  }
   '/execute/build': {
     get: operations['getExecuteBuild']
+  }
+  '/execute/buy': {
+    get: operations['getExecuteBuy']
   }
   '/execute/cancel': {
     get: operations['getExecuteCancel']
   }
   '/execute/fill': {
     get: operations['getExecuteFill']
+  }
+  '/execute/list': {
+    get: operations['getExecuteList']
+  }
+  '/execute/sell': {
+    get: operations['getExecuteSell']
   }
   '/liquidity/collections': {
     get: operations['getLiquidityCollections']
@@ -79,6 +91,10 @@ export interface paths {
   }
   '/users/{user}/collections': {
     get: operations['getUsersUserCollections']
+  }
+  '/apikey': {
+    /** The API key can be used optionally in every route, set it as a request header **x-api-key** */
+    post: operations['postApikey']
   }
   '/admin/contracts': {
     post: operations['postAdminContracts']
@@ -330,7 +346,7 @@ export interface definitions {
     data?: string
   }
   steps: definitions['Model17'][]
-  getExecuteBuildResponse: {
+  getExecuteBidResponse: {
     steps?: definitions['steps']
     error?: string
   }
@@ -342,7 +358,7 @@ export interface definitions {
     data?: string
   }
   Model19: definitions['Model18'][]
-  getExecuteCancelResponse: {
+  getExecuteBuyResponse: {
     steps?: definitions['Model19']
     error?: string
   }
@@ -561,6 +577,9 @@ export interface definitions {
   Model45: definitions['Model44'][]
   getUserCollectionsResponse: {
     collections?: definitions['Model45']
+  }
+  getNewApiKeyResponse: {
+    key: string
   }
   attribute: {
     collection: string
@@ -814,6 +833,30 @@ export interface operations {
       }
     }
   }
+  getExecuteBid: {
+    parameters: {
+      query: {
+        contract?: string
+        tokenId?: string
+        collection?: string
+        attributeKey?: string
+        attributeValue?: string
+        maker: string
+        price: string
+        fee: string
+        feeRecipient: string
+        listingTime?: string
+        expirationTime?: string
+        salt?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteBidResponse']
+      }
+    }
+  }
   getExecuteBuild: {
     parameters: {
       query: {
@@ -835,7 +878,22 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions['getExecuteBuildResponse']
+        schema: definitions['getExecuteBidResponse']
+      }
+    }
+  }
+  getExecuteBuy: {
+    parameters: {
+      query: {
+        contract: string
+        tokenId: string
+        taker: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteBuyResponse']
       }
     }
   }
@@ -849,7 +907,7 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions['getExecuteCancelResponse']
+        schema: definitions['getExecuteBuyResponse']
       }
     }
   }
@@ -865,7 +923,43 @@ export interface operations {
     responses: {
       /** Successful */
       200: {
-        schema: definitions['getExecuteCancelResponse']
+        schema: definitions['getExecuteBuyResponse']
+      }
+    }
+  }
+  getExecuteList: {
+    parameters: {
+      query: {
+        contract?: string
+        tokenId?: string
+        maker: string
+        price: string
+        fee: string
+        feeRecipient: string
+        listingTime?: string
+        expirationTime?: string
+        salt?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteBidResponse']
+      }
+    }
+  }
+  getExecuteSell: {
+    parameters: {
+      query: {
+        contract: string
+        tokenId: string
+        taker: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getExecuteBuyResponse']
       }
     }
   }
@@ -1084,6 +1178,25 @@ export interface operations {
       /** Successful */
       200: {
         schema: definitions['getUserCollectionsResponse']
+      }
+    }
+  }
+  /** The API key can be used optionally in every route, set it as a request header **x-api-key** */
+  postApikey: {
+    parameters: {
+      formData: {
+        /** The name of the app */
+        appName: string
+        /** Your e-mail address so we can reach you */
+        email: string
+        /** The website of your project */
+        website: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getNewApiKeyResponse']
       }
     }
   }

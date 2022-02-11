@@ -14,6 +14,7 @@ import useCollection from 'hooks/useCollection'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useCollectionStats from 'hooks/useCollectionStats'
+import useTokens from 'hooks/useTokens'
 
 type Props = {
   trigger?: ReactNode
@@ -36,6 +37,7 @@ type Props = {
   }
   signer: ethers.Signer | undefined
   stats: ReturnType<typeof useCollectionStats>
+  tokens: ReturnType<typeof useTokens>['tokens']
 }
 
 const CollectionOfferModal: FC<Props> = ({
@@ -44,6 +46,7 @@ const CollectionOfferModal: FC<Props> = ({
   royalties,
   stats,
   data,
+  tokens,
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -240,7 +243,6 @@ const CollectionOfferModal: FC<Props> = ({
 
                         let query: Parameters<typeof makeOffer>[2] = {
                           maker,
-                          side: 'buy',
                           price: calculations.total.toString(),
                           fee,
                           feeRecipient,
@@ -256,6 +258,7 @@ const CollectionOfferModal: FC<Props> = ({
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(stats.data, stats.mutate)
+                        await pollSwr(tokens.data, tokens.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
                       } catch (err) {

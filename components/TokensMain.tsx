@@ -204,7 +204,6 @@ const TokensMain: FC<Props> = ({
               const query: Parameters<typeof instantBuy>[2] = {
                 contract,
                 tokenId,
-                side: 'sell',
                 taker: await signer.getAddress(),
               }
               setWaitingTx(true)
@@ -238,6 +237,7 @@ const TokensMain: FC<Props> = ({
             data={attributeData}
             env={env}
             stats={stats}
+            tokens={tokens}
           />
         ) : (
           <CollectionOfferModal
@@ -254,6 +254,7 @@ const TokensMain: FC<Props> = ({
             data={data}
             env={env}
             stats={stats}
+            tokens={tokens}
           />
         )}
       </Hero>
