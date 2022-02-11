@@ -4,6 +4,7 @@ import { paths } from 'interfaces/apiTypes'
 import executeSteps from './executeSteps'
 import setParams from './params'
 import { WyvernV2 } from '@reservoir0x/sdk'
+import getOrderSignature from './getOrderSignature'
 
 async function makeOffer(
   apiBase: string,
@@ -14,7 +15,9 @@ async function makeOffer(
 
   setParams(url, query)
 
-  const data = await executeSteps(url, signer)
+  await executeSteps(url, signer)
+
+  const data = await getOrderSignature(url)
 
   const signature = await signer.signMessage(arrayify(data.message.value))
 

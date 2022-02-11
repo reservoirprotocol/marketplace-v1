@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { pollApi } from './pollApi'
 
-type Execute = {
+export type Execute = {
   steps?:
     | {
         action: string
@@ -23,17 +23,9 @@ type Execute = {
  * action.
  * @param url URL object with the endpoint to be called. Example: `/execute/buy`
  * @param signer Ethereum signer object provided by the browser
- * @param index The index in the steps array this function will check
  * @returns The data field of the last element in the steps array
  */
-export default async function executeSteps(
-  url: URL,
-  signer: Signer,
-  index?: number
-) {
-  // Start executing steps on the first index
-  if (!index) index = 0
-
+export default async function executeSteps(url: URL, signer: Signer) {
   const res = await fetch(url.href)
 
   const json = (await res.json()) as Execute
@@ -42,27 +34,22 @@ export default async function executeSteps(
 
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
-  const { status, kind, data } = json.steps[index]
+  for (let index = 0; index < json.steps.length; index++) {
+    const { status, kind, data } = json.steps[index]
 
-  // Execute all incomplete steps
-  if (status === 'incomplete' && kind === 'transaction') {
-    let transactionRequest = data
+    // Execute all incomplete steps
+    if (status === 'incomplete' && kind === 'transaction') {
+      let transactionRequest = data
 
-    // If the step is incomplete and there is no data, the API is
-    // waiting for data from the previous step. Poll the same
-    // endpoint with the same query and procced once the data is
-    // returned
-    if (!data) transactionRequest = await pollApi(url, index)
+      // If the step is incomplete and there is no data, the API is
+      // waiting for data from the previous step. Poll the same
+      // endpoint with the same query and procced once the data is
+      // returned
+      if (!data) transactionRequest = await pollApi(url, index)
 
-    const tx = await signer.sendTransaction(transactionRequest)
+      const tx = await signer.sendTransaction(transactionRequest)
 
-    await tx.wait()
+      await tx.wait()
+    }
   }
-
-  // Ensure this function won't attempt to execute a step that doesn't exist
-  if (json.steps.length - 1 > index) {
-    await executeSteps(url, signer, index + 1)
-  }
-
-  return json.steps[json.steps.length - 1]?.data
 }

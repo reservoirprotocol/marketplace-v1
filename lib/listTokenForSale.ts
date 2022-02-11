@@ -2,6 +2,7 @@ import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
 import executeSteps from './executeSteps'
+import getOrderSignature from './getOrderSignature'
 import setParams from './params'
 
 export default async function listTokenForSale(
@@ -13,7 +14,9 @@ export default async function listTokenForSale(
 
   setParams(url, query)
 
-  const data = await executeSteps(url, signer)
+  await executeSteps(url, signer)
+
+  const data = await getOrderSignature(url)
 
   const signature = await signer.signMessage(arrayify(data.message.value))
 
