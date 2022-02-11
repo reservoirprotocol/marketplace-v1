@@ -162,7 +162,7 @@ const TokensMain: FC<Props> = ({
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
-  const hasTokenSetId = !collection.data?.collection?.collection?.tokenSetId
+  const hasTokenSetId = !!collection.data?.collection?.collection?.tokenSetId
 
   return (
     <>
@@ -224,41 +224,42 @@ const TokensMain: FC<Props> = ({
             ? 'Waiting...'
             : `Buy for ${formatBN(floor?.value, 4)} ETH`}
         </button>
-        {isAttributeModal ? (
-          <AttributeOfferModal
-            trigger={
-              <button
-                className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork || hasTokenSetId}
-              >
-                Make an attribute offer
-              </button>
-            }
-            royalties={royalties}
-            signer={signer}
-            data={attributeData}
-            env={env}
-            stats={stats}
-            tokens={tokens}
-          />
-        ) : (
-          <CollectionOfferModal
-            trigger={
-              <button
-                className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork || hasTokenSetId}
-              >
-                Make a collection offer
-              </button>
-            }
-            royalties={royalties}
-            signer={signer}
-            data={data}
-            env={env}
-            stats={stats}
-            tokens={tokens}
-          />
-        )}
+        {hasTokenSetId &&
+          (isAttributeModal ? (
+            <AttributeOfferModal
+              trigger={
+                <button
+                  className="btn-neutral-outline border-black py-2"
+                  disabled={!signer || isInTheWrongNetwork}
+                >
+                  Make an attribute offer
+                </button>
+              }
+              royalties={royalties}
+              signer={signer}
+              data={attributeData}
+              env={env}
+              stats={stats}
+              tokens={tokens}
+            />
+          ) : (
+            <CollectionOfferModal
+              trigger={
+                <button
+                  className="btn-neutral-outline border-black py-2"
+                  disabled={!signer || isInTheWrongNetwork}
+                >
+                  Make a collection offer
+                </button>
+              }
+              royalties={royalties}
+              signer={signer}
+              data={data}
+              env={env}
+              stats={stats}
+              tokens={tokens}
+            />
+          ))}
       </Hero>
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
