@@ -29,13 +29,13 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, isHome }) => {
+const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
   const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
@@ -141,7 +141,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               className="h-[50px] w-[50px] rounded-full"
             />
             <div>
-              <Link href={`/collections/${collectionId}`}>
+              <Link
+                href={
+                  isCommunity || isHome ? `/collections/${collectionId}` : '/'
+                }
+              >
                 <a className="mb-1 block text-2xl font-bold">
                   {token?.token?.collection?.name}
                 </a>
@@ -280,6 +284,7 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 export const getServerSideProps: GetServerSideProps<{
   isHome: boolean
   collectionId: string
+  isCommunity?: boolean
 }> = async ({ req, params }) => {
   if (collectionEnv) {
     return {
@@ -325,6 +330,30 @@ export const getServerSideProps: GetServerSideProps<{
     (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
+  // Check the wildcard corresponds to a community
+  const url2 = new URL('/collections', apiBase)
 
-  return { props: { isHome, collectionId } }
+  const query2: paths['/collections']['get']['parameters']['query'] = {
+    community: wildcard,
+  }
+
+  setParams(url2, query2)
+
+  let isCommunity: boolean = false
+
+  try {
+    const res = await fetch(url2.href)
+    const collections =
+      (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
+    if (collections.collections) {
+      isCommunity = collections.collections.length > 0
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      notFound: true,
+    }
+  }
+
+  return { props: { isHome, collectionId, isCommunity } }
 }
