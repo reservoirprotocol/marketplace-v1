@@ -10,7 +10,6 @@ import { useEffect } from 'react'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
 import useSWR from 'swr'
-import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
@@ -59,7 +58,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
 
   const { ref, inView } = useInView()
 
@@ -90,23 +89,8 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
     paths['/collections/{collection}']['get']['responses']['200']['schema']
   >(collectionUrl.href, fetcher)
 
-  const layoutData = {
-    title: isHome ? undefined : collection.data?.collection?.collection?.name,
-    image: isHome ? undefined : collection.data?.collection?.collection?.image,
-  }
-
   return (
-    <Layout
-      navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
-        isHome,
-        collections,
-      }}
-    >
-      <Head>
-        <title>Address Tokens</title>
-      </Head>
+    <Layout>
       <div className="mt-4 mb-10 flex items-center justify-center">
         <EthAccount address={router.query?.address?.toString()} />
       </div>

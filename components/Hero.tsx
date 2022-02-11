@@ -1,5 +1,6 @@
 import { formatNumber } from 'lib/numbers'
-import { FC } from 'react'
+import { optimizeImage } from 'lib/optmizeImage'
+import { FC, useEffect, useState } from 'react'
 import FormatEth from './FormatEth'
 
 type Props = {
@@ -17,14 +18,26 @@ type Props = {
 }
 
 const Hero: FC<Props> = ({ stats, header, children }) => {
+  const [delay, setDelay] = useState(true)
+  useEffect(() => {
+    setTimeout(() => setDelay(false), 1500)
+  }, [])
+
   return (
     <div>
-      {header?.banner && (
+      {header.banner ? (
         <img
-          src={header?.banner}
+          src={optimizeImage(header.banner, 1000)}
           alt={`${header.name} banner image`}
+          height="200px"
           className="h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
         />
+      ) : (
+        <div
+          className={`h-[100px] ${
+            delay ? '' : 'bg-gradient-to-r from-violet-500 to-fuchsia-500'
+          } sm:h-[200px] sm:rounded-xl`}
+        ></div>
       )}
       <div className="grid w-full place-items-center gap-5 px-2 pt-4 pb-8 sm:pb-6 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">

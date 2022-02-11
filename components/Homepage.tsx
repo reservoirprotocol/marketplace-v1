@@ -17,7 +17,7 @@ const Homepage: FC<Props> = ({ apiBase }) => {
         </h1>
       </header>
       <div className="mb-12 grid justify-center">
-        <SearchCollection apiBase={apiBase} fallback={collections} />
+        <SearchCollection />
       </div>
       <CollectionsGrid collections={collections} />
     </>

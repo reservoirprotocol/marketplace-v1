@@ -6,13 +6,12 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
 import TokenAttributes from 'components/TokenAttributes'
 import TokenOfferModal from 'components/TokenOfferModal'
-import Head from 'next/head'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import AcceptOffer from 'components/AcceptOffer'
@@ -21,6 +20,7 @@ import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -36,6 +36,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const router = useRouter()
   useDataDog(accountData)
   const collections = useCollections(apiBase)
+  const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
 
@@ -70,22 +71,27 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
-  const layoutData = {
-    title: isHome ? undefined : collection.data?.collection?.collection?.name,
-    image: isHome ? undefined : collection.data?.collection?.collection?.image,
-  }
-
   return (
-    <Layout
-      navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
-        isHome,
-        collections,
-      }}
-    >
+    <Layout>
       <Head>
-        <title>{token?.token?.name || ''}</title>
+        {isHome ? (
+          <title>
+            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+            {collection.data?.collection?.collection?.name} | Reservoir Market
+          </title>
+        ) : (
+          <title>
+            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+            {collection.data?.collection?.collection?.name} Marketplace |
+            Powered by Reservoir
+          </title>
+        )}
+        <meta
+          name="description"
+          content={collection.data?.collection?.collection?.description}
+        />
+        <meta name="twitter:image" content={token?.token?.image} />
+        <meta property="og:image" content={token?.token?.image} />
       </Head>
       <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
@@ -98,9 +104,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
             className="h-[50px] w-[50px] rounded-full"
           />
           <div>
-            <div className="mb-1 text-2xl font-bold">
-              {token?.token?.collection?.name}
-            </div>
+            <Link href={`/collections/${collectionId}`}>
+              <a className="mb-1 block  text-2xl font-bold">
+                {token?.token?.collection?.name}
+              </a>
+            </Link>
             <div className="mb-4 text-lg font-medium uppercase opacity-80">
               {token?.token?.name || `#${token?.token?.tokenId}`}
             </div>
@@ -133,9 +141,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               className="h-[50px] w-[50px] rounded-full"
             />
             <div>
-              <div className="mb-1 text-2xl font-bold">
-                {token?.token?.collection?.name}
-              </div>
+              <Link href={`/collections/${collectionId}`}>
+                <a className="mb-1 block text-2xl font-bold">
+                  {token?.token?.collection?.name}
+                </a>
+              </Link>
               <div className="mb-4 text-lg font-medium opacity-80">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
@@ -169,6 +179,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                     details={details}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
+                    setError={setError}
                   />
                 )}
               </Price>
@@ -221,6 +232,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                 )}
               </Price>
             </div>
+            {error && (
+              <div className="mx-auto mt-4 rounded border border-red-400 bg-red-100 py-1 px-2 text-red-900">
+                You have insufficient funds to buy this token.
+              </div>
+            )}
             {isTopBidder && (
               <CancelOffer
                 apiBase={apiBase}

@@ -14,6 +14,7 @@ type Props = {
   apiBase: string
   chainId: string
   signer: Signer | undefined
+  setError: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BuyNow: FC<Props> = ({
@@ -22,6 +23,7 @@ const BuyNow: FC<Props> = ({
   apiBase,
   chainId,
   signer,
+  setError,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const token = details.data?.tokens?.[0]
@@ -53,8 +55,9 @@ const BuyNow: FC<Props> = ({
           await instantBuy(apiBase, signer, query)
           await pollSwr(details.data, details.mutate)
           setWaitingTx(false)
-        } catch (err) {
+        } catch (err: any) {
           console.error(err)
+          if (err?.message === 'Not enough ETH balance') setError(true)
           setWaitingTx(false)
         }
       }}

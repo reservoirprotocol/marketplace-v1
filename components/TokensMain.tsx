@@ -9,6 +9,7 @@ import { paths } from 'interfaces/apiTypes'
 import instantBuy from 'lib/buyToken'
 import { formatBN } from 'lib/numbers'
 import { pollSwr } from 'lib/pollApi'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -163,6 +164,24 @@ const TokensMain: FC<Props> = ({
 
   return (
     <>
+      <Head>
+        {collectionId === 'www' ? (
+          <title>
+            {collection.data?.collection?.collection?.name} | Reservoir Market
+          </title>
+        ) : (
+          <title>
+            {collection.data?.collection?.collection?.name} Marketplace |
+            Powered by Reservoir
+          </title>
+        )}
+        <meta
+          name="description"
+          content={collection.data?.collection?.collection?.description}
+        />
+        <meta name="twitter:image" content={header.banner} />
+        <meta property="og:image" content={header.banner} />
+      </Head>
       <Hero stats={statsObj} header={header}>
         <button
           disabled={
@@ -190,7 +209,7 @@ const TokensMain: FC<Props> = ({
               }
               setWaitingTx(true)
               await instantBuy(apiBase, signer, query)
-              await pollSwr(collection.data, collection.mutate)
+              await pollSwr(stats.data, stats.mutate)
               setWaitingTx(false)
             } catch (err) {
               console.error(err)
@@ -234,7 +253,7 @@ const TokensMain: FC<Props> = ({
             signer={signer}
             data={data}
             env={env}
-            collection={collection}
+            stats={stats}
           />
         )}
       </Hero>

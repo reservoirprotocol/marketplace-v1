@@ -52,7 +52,7 @@ const CancelOffer: FC<Props> = ({
           setWaitingTx(false)
         }
       }}
-      className="btn-red-ghost col-span-2 mx-auto mt-8"
+      className="btn-red-ghost col-span-2 mx-auto mt-6"
     >
       {waitingTx ? 'Waiting...' : 'Cancel your offer'}
     </button>

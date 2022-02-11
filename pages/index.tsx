@@ -7,7 +7,6 @@ import type {
   NextPage,
 } from 'next'
 import useCollection from 'hooks/useCollection'
-import Head from 'next/head'
 import Homepage from 'components/Homepage'
 import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
@@ -15,6 +14,7 @@ import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
+import Head from 'next/head'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -31,22 +31,9 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
 
-  const collection = useCollection(apiBase, fallback.collection, wildcard)
-
-  const layoutData = {
-    title: isCommunity
-      ? `${wildcard} Community`.toUpperCase()
-      : isHome
-      ? undefined
-      : collection.data?.collection?.collection?.name,
-    image: isCommunity
-      ? undefined
-      : isHome
-      ? undefined
-      : collection.data?.collection?.collection?.image,
-  }
+  // const collection = useCollection(apiBase, fallback.collection, wildcard)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -54,21 +41,7 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity, isHome }) => {
   }
 
   return (
-    <Layout
-      navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
-        isHome,
-        collections,
-      }}
-    >
-      <Head>
-        <title>
-          {collection.data?.collection?.collection?.name ||
-            layoutData?.title ||
-            'reservoir.market'}
-        </title>
-      </Head>
+    <Layout>
       {isHome ? (
         <Homepage apiBase={apiBase} />
       ) : isCommunity ? (

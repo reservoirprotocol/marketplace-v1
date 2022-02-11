@@ -24,40 +24,25 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const router = useRouter()
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
 
-  let isHome = true
   let communityId = ''
 
   if (typeof window !== 'undefined') {
-    isHome = window?.location?.hostname.includes('www.')
-    communityId = `${
-      window.location.hostname.split('.')[0]
-    } Community`.toUpperCase()
-  }
-
-  const layoutData = {
-    title: isHome ? undefined : communityId,
-    image: undefined,
+    communityId = window.location.hostname.split('.')[0]
   }
 
   return (
     <Layout
       navbar={{
-        title: layoutData.title,
-        image: layoutData.image,
-        isHome,
-        collections,
+        communityId,
       }}
     >
-      <Head>
-        <title>{router.query.id?.toString() || ''}</title>
-      </Head>
       <TokensMain
         collectionId={router.query.id?.toString() || ''}
         apiBase={apiBase}
