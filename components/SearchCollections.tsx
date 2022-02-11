@@ -42,14 +42,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       const json =
         (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
 
-      const collections = json.collections?.filter((collection) => {
-        if (collection?.collection?.id === 'bored-ape-chemistry-club')
-          return true
-
-        return !!collection.collection?.tokenSetId
-      })
-
-      setResults({ collections })
+      setResults({ collections: json.collections })
     }
 
     initialData(url)
@@ -80,14 +73,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
-        const collections = data.collections?.filter((collection) => {
-          if (collection?.collection?.id === 'bored-ape-chemistry-club')
-            return true
-
-          return !!collection.collection?.tokenSetId
-        })
-
-        setResults({ collections })
+        setResults({ collections: data.collections })
       } catch (err) {
         console.error(err)
       }

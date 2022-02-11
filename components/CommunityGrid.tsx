@@ -22,12 +22,6 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
     : []
   const didReactEnd = data && data[data.length - 1].collections?.length === 0
 
-  const filteredCollecitons = mappedCollections.filter((collection) => {
-    if (collection?.collection?.id === 'bored-ape-chemistry-club') return true
-
-    return !!collection?.collection?.tokenSetId
-  })
-
   return (
     <>
       <div className="mx-auto mb-5 grid max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -40,7 +34,7 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
                   className="h-[310px] w-full animate-pulse bg-white shadow-md"
                 ></div>
               ))
-          : filteredCollecitons?.map((community, idx) => {
+          : mappedCollections?.map((community, idx) => {
               return (
                 <Link
                   key={`${community?.collection?.name}${idx}`}

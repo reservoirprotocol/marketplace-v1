@@ -162,6 +162,8 @@ const TokensMain: FC<Props> = ({
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
+  const hasTokenSetId = !collection.data?.collection?.collection?.tokenSetId
+
   return (
     <>
       <Head>
@@ -227,7 +229,7 @@ const TokensMain: FC<Props> = ({
             trigger={
               <button
                 className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork}
+                disabled={!signer || isInTheWrongNetwork || hasTokenSetId}
               >
                 Make an attribute offer
               </button>
@@ -244,7 +246,7 @@ const TokensMain: FC<Props> = ({
             trigger={
               <button
                 className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork}
+                disabled={!signer || isInTheWrongNetwork || hasTokenSetId}
               >
                 Make a collection offer
               </button>
