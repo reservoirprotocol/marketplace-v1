@@ -221,6 +221,7 @@ const ListModal: FC<Props> = ({
                       }
 
                       setWaitingTx(false)
+                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

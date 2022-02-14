@@ -49,7 +49,7 @@ async function pollUntilMsgSuccess(url: URL) {
   const json = await res.json()
 
   // Check that the response from an endpoint updated
-  if (json?.message === 'success') {
+  if (json?.message.toLowerCase() === 'Success'.toLowerCase()) {
     return
   } else {
     // The response is still unchanged. Check again in five seconds

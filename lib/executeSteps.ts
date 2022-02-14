@@ -44,6 +44,9 @@ export default async function executeSteps(
 
   if (callback) callback(json)
 
+  // @ts-ignore
+  // console.log('outside loop', [...url.searchParams.entries()])
+
   for (let index = 0; index < json.steps.length; index++) {
     let { status, kind, data } = json.steps[index]
     if (status === 'incomplete') {
@@ -80,7 +83,12 @@ export default async function executeSteps(
 
           setParams(url, { ...json.query, r, s, v })
 
-          await fetch(url.href)
+          // @ts-ignore
+          // console.log([...url.searchParams.entries()])
+
+          // await fetch(url.href)
+          executeSteps(url, signer)
+          break
         }
 
         case 'transaction': {
@@ -92,10 +100,6 @@ export default async function executeSteps(
         default:
           break
       }
-
-      json.steps[index].status = 'complete'
-
-      if (callback) callback(json)
     }
   }
 }

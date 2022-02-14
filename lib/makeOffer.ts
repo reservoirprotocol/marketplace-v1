@@ -47,13 +47,13 @@ async function makeOffer(
     }
   }
 
-  await fetch(url2.href, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ orders }),
-  })
+  // await fetch(url2.href, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({ orders }),
+  // })
 
   // return data.order.data
 }
