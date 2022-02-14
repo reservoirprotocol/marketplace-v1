@@ -14,6 +14,8 @@ import { pollSwr } from 'lib/pollApi'
 import { paths } from 'interfaces/apiTypes'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
+import { Execute } from 'lib/executeSteps'
+import Steps from './Steps'
 
 type Props = {
   trigger?: ReactNode
@@ -56,6 +58,7 @@ const TokenOfferModal: FC<Props> = ({
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [success, setSuccess] = useState<boolean>(false)
   const [{ data: network }] = useNetwork()
   const [calculations, setCalculations] = useState<
@@ -175,79 +178,82 @@ const TokenOfferModal: FC<Props> = ({
                   </div>
                 )}
               </div>
-              <div className="mb-8 space-y-5">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="price"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Price (wETH)
-                  </label>
-                  <input
-                    placeholder="Insert price"
-                    id="price"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    value={offerPrice}
-                    onChange={(e) => setOfferPrice(e.target.value)}
-                    className="input-blue-outline w-[120px]"
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <label
-                    htmlFor="postOpenSea"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Also post to Open Sea
-                  </label>
-                  <input
-                    type="checkbox"
-                    name="postOpenSea"
-                    id="postOpenSea"
-                    className="scale-125 transform"
-                    checked={postOnOpenSea}
-                    onChange={(e) => setPostOnOpenSea(e.target.checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <ExpirationSelector
-                    presets={expirationPresets}
-                    setExpiration={setExpiration}
-                    expiration={expiration}
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">Fees</div>
-                  <div className="text-right">
-                    <div>Royalty {royaltyPercentage}</div>
-                    <div>Marketplace 0%</div>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">
-                    Total Cost
-                  </div>
-                  <div className="text-2xl font-bold">
-                    <FormatEth
-                      amount={calculations.total}
-                      maximumFractionDigits={4}
-                      logoWidth={10}
+              {steps ? (
+                <Steps steps={steps} />
+              ) : (
+                <div className="mb-8 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="price"
+                      className="font-medium uppercase opacity-75"
+                    >
+                      Price (wETH)
+                    </label>
+                    <input
+                      placeholder="Insert price"
+                      id="price"
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={offerPrice}
+                      onChange={(e) => setOfferPrice(e.target.value)}
+                      className="input-blue-outline w-[120px]"
                     />
                   </div>
+                  <div className="flex items-center gap-3">
+                    <label
+                      htmlFor="postOpenSea"
+                      className="font-medium uppercase opacity-75"
+                    >
+                      Also post to Open Sea
+                    </label>
+                    <input
+                      type="checkbox"
+                      name="postOpenSea"
+                      id="postOpenSea"
+                      className="scale-125 transform"
+                      checked={postOnOpenSea}
+                      onChange={(e) => setPostOnOpenSea(e.target.checked)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <ExpirationSelector
+                      presets={expirationPresets}
+                      setExpiration={setExpiration}
+                      expiration={expiration}
+                    />
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">Fees</div>
+                    <div className="text-right">
+                      <div>Royalty {royaltyPercentage}</div>
+                      <div>Marketplace 0%</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">
+                      Total Cost
+                    </div>
+                    <div className="text-2xl font-bold">
+                      <FormatEth
+                        amount={calculations.total}
+                        maximumFractionDigits={4}
+                        logoWidth={10}
+                      />
+                    </div>
+                  </div>
+                  {calculations.error && (
+                    <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
+                      {calculations.error}
+                    </div>
+                  )}
+                  {calculations.warning && (
+                    <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
+                      {calculations.warning}
+                    </div>
+                  )}
                 </div>
-                {calculations.error && (
-                  <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
-                    {calculations.error}
-                  </div>
-                )}
-                {calculations.warning && (
-                  <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
-                    {calculations.warning}
-                  </div>
-                )}
-              </div>
+              )}
               {success ? (
                 <Dialog.Close asChild>
                   <button className="btn-green-fill w-full">
@@ -296,13 +302,9 @@ const TokenOfferModal: FC<Props> = ({
                       try {
                         const maker = await signer.getAddress()
 
-                        const feeRecipient = royalties?.recipient || maker
-
                         let query: Parameters<typeof makeOffer>[2] = {
                           maker,
                           price: calculations.total.toString(),
-                          fee,
-                          feeRecipient,
                           expirationTime: expirationValue,
                           contract,
                           tokenId,
@@ -311,26 +313,29 @@ const TokenOfferModal: FC<Props> = ({
                         // Set loading state for UI
                         setWaitingTx(true)
 
-                        const data = await makeOffer(env.apiBase, signer, query)
+                        await makeOffer(env.apiBase, signer, query, setSteps)
 
-                        if (postOnOpenSea) {
-                          await postBuyOrderToOpenSea(
-                            env.chainId,
-                            env.openSeaApiKey,
-                            data,
-                            tokenId,
-                            contract,
-                            signer
-                          )
-                        }
+                        // if (postOnOpenSea) {
+                        //   await postBuyOrderToOpenSea(
+                        //     env.chainId,
+                        //     env.openSeaApiKey,
+                        //     data,
+                        //     tokenId,
+                        //     contract,
+                        //     signer
+                        //   )
+                        // }
+
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       } catch (err) {
                         console.error(err)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       }
                     }}
                     className="btn-blue-fill w-full"

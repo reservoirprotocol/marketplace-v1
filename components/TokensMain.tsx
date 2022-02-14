@@ -7,6 +7,7 @@ import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
 import instantBuy from 'lib/buyToken'
+import { Execute } from 'lib/executeSteps'
 import { formatBN } from 'lib/numbers'
 import { pollSwr } from 'lib/pollApi'
 import Head from 'next/head'
@@ -22,6 +23,7 @@ import Hero from './Hero'
 import Sidebar from './Sidebar'
 import SortMenu from './SortMenu'
 import SortMenuExplore from './SortMenuExplore'
+import StepsModal from './StepsModal'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 
@@ -48,6 +50,7 @@ const TokensMain: FC<Props> = ({
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
   >({
@@ -166,6 +169,7 @@ const TokensMain: FC<Props> = ({
 
   return (
     <>
+      {steps && <StepsModal steps={steps} />}
       <Head>
         {collectionId === 'www' ? (
           <title>
@@ -209,12 +213,14 @@ const TokensMain: FC<Props> = ({
                 taker: await signer.getAddress(),
               }
               setWaitingTx(true)
-              await instantBuy(apiBase, signer, query)
+              await instantBuy(apiBase, signer, query, setSteps)
               await pollSwr(stats.data, stats.mutate)
               setWaitingTx(false)
+              setSteps(undefined)
             } catch (err) {
               console.error(err)
               setWaitingTx(false)
+              setSteps(undefined)
               return
             }
           }}

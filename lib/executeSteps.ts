@@ -1,5 +1,7 @@
 import { Signer } from 'ethers'
-import { pollApi } from './pollApi'
+import { splitSignature } from 'ethers/lib/utils'
+import setParams from './params'
+import { pollApi, pollUntilComplete } from './pollApi'
 
 export type Execute = {
   steps?:
@@ -7,8 +9,9 @@ export type Execute = {
         action: string
         description: string
         status: 'complete' | 'incomplete'
-        kind: 'transaction' | 'order-signature'
+        kind: 'transaction' | 'signature' | 'request'
         data?: any
+        loading?: boolean
       }[]
     | undefined
   error?: string | undefined
@@ -25,31 +28,71 @@ export type Execute = {
  * @param signer Ethereum signer object provided by the browser
  * @returns The data field of the last element in the steps array
  */
-export default async function executeSteps(url: URL, signer: Signer) {
-  const res = await fetch(url.href)
+export default async function executeSteps(
+  url: URL,
+  signer: Signer,
+  callback?: (steps: Execute) => any,
+  newJson?: Execute
+) {
+  let json = newJson || {}
 
-  const json = (await res.json()) as Execute
+  if (!newJson) {
+    const res = await fetch(url.href)
+
+    json = await res.json()
+  }
 
   if (json.error) throw new Error(json.error)
 
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
-  for (let index = 0; index < json.steps.length; index++) {
-    const { status, kind, data } = json.steps[index]
+  if (callback) callback(json)
 
-    // Execute all incomplete steps
-    if (status === 'incomplete' && kind === 'transaction') {
-      let transactionRequest = data
+  const firstIncomplete = json.steps.findIndex(
+    ({ status }) => status === 'incomplete'
+  )
 
-      // If the step is incomplete and there is no data, the API is
-      // waiting for data from the previous step. Poll the same
-      // endpoint with the same query and procced once the data is
-      // returned
-      if (!data) transactionRequest = await pollApi(url, index)
+  if (firstIncomplete === -1) return
 
-      const tx = await signer.sendTransaction(transactionRequest)
+  const { status, kind, data } = json.steps[firstIncomplete]
 
-      await tx.wait()
-    }
+  // Execute all incomplete steps
+  if (status === 'incomplete' && kind === 'transaction') {
+    let transactionRequest = data
+
+    // If the step is incomplete and there is no data, the API is
+    // waiting for data from the previous step. Poll the same
+    // endpoint with the same query and procced once the data is
+    // returned
+    if (!data) transactionRequest = await pollApi(url, firstIncomplete)
+
+    const tx = await signer.sendTransaction(transactionRequest)
+
+    await tx.wait()
   }
+
+  if (status === 'incomplete' && kind === 'signature') {
+    const signature = await signer.signMessage(data.message)
+
+    const { r, s, v } = splitSignature(signature)
+
+    setParams(url, { ...data.query, r, s, v })
+
+    await fetch(url.href)
+  }
+
+  if (status === 'incomplete' && kind === 'request') {
+    const postOrderUrl = new URL(data.endpoint, url.origin)
+    await fetch(postOrderUrl.href, {
+      method: data.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data.body),
+    })
+  }
+
+  const completed = await pollUntilComplete(url, firstIncomplete)
+
+  executeSteps(url, signer, callback, completed)
 }

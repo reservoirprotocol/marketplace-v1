@@ -14,6 +14,8 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useTokens from 'hooks/useTokens'
+import { Execute } from 'lib/executeSteps'
+import Steps from './Steps'
 
 type Props = {
   trigger?: ReactNode
@@ -54,6 +56,7 @@ const AttributeOfferModal: FC<Props> = ({
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [{ data: network }] = useNetwork()
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
@@ -151,64 +154,71 @@ const AttributeOfferModal: FC<Props> = ({
                   </div>
                 </div>
               </div>
+              {steps ? (
+                <Steps steps={steps} />
+              ) : (
+                <>
+                  <div className="mb-8 space-y-5">
+                    <div className="flex items-center justify-between">
+                      <label
+                        htmlFor="price"
+                        className="font-medium uppercase opacity-75"
+                      >
+                        Price (wETH)
+                      </label>
+                      <input
+                        placeholder="Insert price"
+                        id="price"
+                        type="number"
+                        min={0}
+                        step={0.01}
+                        value={offerPrice}
+                        onChange={(e) => setOfferPrice(e.target.value)}
+                        className="input-blue-outline w-[120px]"
+                      />
+                    </div>
 
-              <div className="mb-8 space-y-5">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="price"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Price (wETH)
-                  </label>
-                  <input
-                    placeholder="Insert price"
-                    id="price"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    value={offerPrice}
-                    onChange={(e) => setOfferPrice(e.target.value)}
-                    className="input-blue-outline w-[120px]"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <ExpirationSelector
-                    presets={expirationPresets}
-                    setExpiration={setExpiration}
-                    expiration={expiration}
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">Fees</div>
-                  <div className="text-right">
-                    <div>Royalty {royaltyPercentage}</div>
-                    <div>Marketplace 0%</div>
+                    <div className="flex items-center justify-between">
+                      <ExpirationSelector
+                        presets={expirationPresets}
+                        setExpiration={setExpiration}
+                        expiration={expiration}
+                      />
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="font-medium uppercase opacity-75">
+                        Fees
+                      </div>
+                      <div className="text-right">
+                        <div>Royalty {royaltyPercentage}</div>
+                        <div>Marketplace 0%</div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="font-medium uppercase opacity-75">
+                        Total Cost
+                      </div>
+                      <div className="text-2xl font-bold">
+                        <FormatEth
+                          amount={calculations.total}
+                          maximumFractionDigits={4}
+                          logoWidth={10}
+                        />
+                      </div>
+                    </div>
+                    {calculations.error && (
+                      <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
+                        {calculations.error}
+                      </div>
+                    )}
+                    {calculations.warning && (
+                      <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
+                        {calculations.warning}
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">
-                    Total Cost
-                  </div>
-                  <div className="text-2xl font-bold">
-                    <FormatEth
-                      amount={calculations.total}
-                      maximumFractionDigits={4}
-                      logoWidth={10}
-                    />
-                  </div>
-                </div>
-                {calculations.error && (
-                  <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
-                    {calculations.error}
-                  </div>
-                )}
-                {calculations.warning && (
-                  <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
-                    {calculations.warning}
-                  </div>
-                )}
-              </div>
+                </>
+              )}
               {success ? (
                 <Dialog.Close asChild>
                   <button className="btn-green-fill w-full">
@@ -247,13 +257,9 @@ const AttributeOfferModal: FC<Props> = ({
                       try {
                         const maker = await signer.getAddress()
 
-                        const feeRecipient = royalties?.recipient || maker
-
                         let query: Parameters<typeof makeOffer>[2] = {
                           maker,
                           price: calculations.total.toString(),
-                          fee,
-                          feeRecipient,
                           expirationTime: expirationValue,
                         }
 
@@ -264,16 +270,18 @@ const AttributeOfferModal: FC<Props> = ({
                         // Set loading state for UI
                         setWaitingTx(true)
 
-                        await makeOffer(env.apiBase, signer, query)
+                        await makeOffer(env.apiBase, signer, query, setSteps)
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(stats.data, stats.mutate)
                         await pollSwr(tokens.data, tokens.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       } catch (err) {
                         console.error(err)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       }
                     }}
                     className="btn-blue-fill w-full"

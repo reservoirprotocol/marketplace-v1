@@ -1,38 +1,38 @@
 import { BigNumber, Signer } from 'ethers'
-import { arrayify, randomBytes, splitSignature } from 'ethers/lib/utils'
+import { randomBytes } from 'ethers/lib/utils'
 import { paths } from 'interfaces/apiTypes'
-import executeSteps from './executeSteps'
+import executeSteps, { Execute } from './executeSteps'
 import setParams from './params'
 import { WyvernV2 } from '@reservoir0x/sdk'
 import getOrderSignature from './getOrderSignature'
+import { Dispatch, SetStateAction } from 'react'
 
 async function makeOffer(
   apiBase: string,
   signer: Signer,
-  query: paths['/execute/bid']['get']['parameters']['query']
+  query: paths['/execute/bid']['get']['parameters']['query'],
+  setSteps: Dispatch<SetStateAction<Execute['steps']>>
 ) {
   const url = new URL('/execute/bid', apiBase)
 
   setParams(url, query)
 
-  await executeSteps(url, signer)
+  await executeSteps(url, signer, (execute) => setSteps(execute.steps))
 
-  const data = await getOrderSignature(url)
-
-  const signature = await signer.signMessage(arrayify(data.message.value))
-
-  const { r, s, v } = splitSignature(signature)
+  // const { r, s, v } = splitSignature(signature)
 
   // Post order to the database
   let url2 = new URL('/orders', apiBase)
 
   let orders: NonNullable<
-    paths['/orders']['post']['parameters']['body']['body']
-  >['orders'] = [
+    NonNullable<
+      paths['/orders']['post']['parameters']['body']['body']
+    >['orders']
+  > = [
     {
       kind: 'wyvern-v2',
-      data: data.order.data,
-      signature: { r, s, v },
+      // data: data.order.data,
+      // signature: { r, s, v },
     },
   ]
 
@@ -57,7 +57,7 @@ async function makeOffer(
     body: JSON.stringify({ orders }),
   })
 
-  return data.order.data
+  // return data.order.data
 }
 
 /**

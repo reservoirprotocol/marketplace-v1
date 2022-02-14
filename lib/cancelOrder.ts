@@ -1,16 +1,18 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import executeSteps from './executeSteps'
+import { Dispatch, SetStateAction } from 'react'
+import executeSteps, { Execute } from './executeSteps'
 import setParams from './params'
 
 export default async function cancelOrder(
   apiBase: string,
   signer: Signer,
-  query: paths['/execute/cancel']['get']['parameters']['query']
+  query: paths['/execute/cancel']['get']['parameters']['query'],
+  setSteps: Dispatch<SetStateAction<Execute['steps']>>
 ) {
   const url = new URL('/execute/cancel', apiBase)
 
   setParams(url, query)
 
-  await executeSteps(url, signer)
+  await executeSteps(url, signer, (execute) => setSteps(execute.steps))
 }

@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HiX } from 'react-icons/hi'
+import { HiCheckCircle, HiMinusCircle, HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
@@ -11,6 +11,8 @@ import FormatEth from './FormatEth'
 import { pollSwr } from 'lib/pollApi'
 import { SWRResponse } from 'swr'
 import listTokenForSale from 'lib/listTokenForSale'
+import { Execute } from 'lib/executeSteps'
+import Steps from './Steps'
 
 type Props = {
   apiBase: string
@@ -36,6 +38,7 @@ const ListModal: FC<Props> = ({
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('')
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [youGet, setYouGet] = useState(constants.Zero)
   const [success, setSuccess] = useState<boolean>(false)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -95,52 +98,56 @@ const ListModal: FC<Props> = ({
                   </div>
                 </div>
               </div>
-              <div className="mb-8 space-y-5">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="price"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Price (ETH)
-                  </label>
-                  <input
-                    placeholder="Choose a price"
-                    id="price"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    value={listingPrice}
-                    onChange={(e) => setListingPrice(e.target.value)}
-                    className="input-blue-outline w-[140px]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <ExpirationSelector
-                    presets={expirationPresets}
-                    setExpiration={setExpiration}
-                    expiration={expiration}
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">Fees</div>
-                  <div className="text-right">
-                    <div>Royalty {royaltyPercentage}</div>
-                    <div>Marketplace 0%</div>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">
-                    You get
-                  </div>
-                  <div className="text-2xl font-bold">
-                    <FormatEth
-                      amount={youGet}
-                      maximumFractionDigits={4}
-                      logoWidth={10}
+              {steps ? (
+                <Steps steps={steps} />
+              ) : (
+                <div className="mb-8 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="price"
+                      className="font-medium uppercase opacity-75"
+                    >
+                      Price (ETH)
+                    </label>
+                    <input
+                      placeholder="Choose a price"
+                      id="price"
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={listingPrice}
+                      onChange={(e) => setListingPrice(e.target.value)}
+                      className="input-blue-outline w-[140px]"
                     />
                   </div>
+                  <div className="flex items-center justify-between">
+                    <ExpirationSelector
+                      presets={expirationPresets}
+                      setExpiration={setExpiration}
+                      expiration={expiration}
+                    />
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">Fees</div>
+                    <div className="text-right">
+                      <div>Royalty {royaltyPercentage}</div>
+                      <div>Marketplace 0%</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">
+                      You get
+                    </div>
+                    <div className="text-2xl font-bold">
+                      <FormatEth
+                        amount={youGet}
+                        maximumFractionDigits={4}
+                        logoWidth={10}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
               {success ? (
                 <Dialog.Close asChild>
                   <button className="btn-green-fill w-full">
@@ -197,15 +204,17 @@ const ListModal: FC<Props> = ({
 
                       setWaitingTx(true)
                       try {
-                        await listTokenForSale(apiBase, signer, query)
+                        await listTokenForSale(apiBase, signer, query, setSteps)
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       } catch (err) {
                         console.error(err)
                         setWaitingTx(false)
+                        setSteps(undefined)
                       }
                     }}
                     className="btn-blue-fill w-full"

@@ -179,7 +179,6 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                 ) : (
                   <BuyNow
                     apiBase={apiBase}
-                    chainId={chainId}
                     details={details}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
@@ -200,7 +199,6 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                 {isOwner ? (
                   <AcceptOffer
                     apiBase={apiBase}
-                    chainId={chainId}
                     details={details}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
@@ -244,7 +242,6 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
             {isTopBidder && (
               <CancelOffer
                 apiBase={apiBase}
-                chainId={chainId}
                 details={details}
                 signer={signer}
                 isInTheWrongNetwork={isInTheWrongNetwork}
@@ -254,7 +251,6 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
               <CancelListing
                 apiBase={apiBase}
                 signer={signer}
-                chainId={chainId}
                 details={details}
                 isInTheWrongNetwork={isInTheWrongNetwork}
               />
