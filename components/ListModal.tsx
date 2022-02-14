@@ -10,9 +10,9 @@ import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
 import { pollSwr } from 'lib/pollApi'
 import { SWRResponse } from 'swr'
-import listTokenForSale from 'lib/listTokenForSale'
-import { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
+import setParams from 'lib/params'
 
 type Props = {
   apiBase: string
@@ -191,31 +191,34 @@ const ListModal: FC<Props> = ({
                         return
                       }
 
-                      const query: Parameters<typeof listTokenForSale>[2] = {
-                        contract,
-                        maker,
-                        price: ethers.utils.parseEther(listingPrice).toString(),
-                        fee,
-                        feeRecipient:
-                          collection?.collection?.royalties?.recipient || maker,
-                        tokenId,
-                        expirationTime: expirationValue,
-                      }
+                      const url = new URL('/execute/list', apiBase)
+
+                      const query: paths['/execute/list']['get']['parameters']['query'] =
+                        {
+                          contract,
+                          maker,
+                          price: ethers.utils
+                            .parseEther(listingPrice)
+                            .toString(),
+                          tokenId,
+                          expirationTime: expirationValue,
+                        }
+
+                      setParams(url, query)
 
                       setWaitingTx(true)
                       try {
-                        await listTokenForSale(apiBase, signer, query, setSteps)
+                        await executeSteps(url, signer, (execute) =>
+                          setSteps(execute.steps)
+                        )
                         // Close modal
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
-                        setWaitingTx(false)
-                        setSteps(undefined)
                       } catch (err) {
                         console.error(err)
-                        setWaitingTx(false)
-                        setSteps(undefined)
                       }
+                      setWaitingTx(false)
                     }}
                     className="btn-blue-fill w-full"
                   >

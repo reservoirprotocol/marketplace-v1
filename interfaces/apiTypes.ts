@@ -948,8 +948,6 @@ export interface operations {
         tokenId?: string
         maker: string
         price: string
-        fee: string
-        feeRecipient: string
         orderbook?: 'reservoir' | 'opensea'
         v?: number
         r?: string

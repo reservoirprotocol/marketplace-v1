@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import acceptOffer from 'lib/acceptOffer'
-import { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import setParams from 'lib/params'
 import { pollSwr } from 'lib/pollApi'
 import React, { FC, useState } from 'react'
 import { SWRResponse } from 'swr'
@@ -44,14 +44,21 @@ const AcceptOffer: FC<Props> = ({
           }
 
           try {
-            const query: Parameters<typeof acceptOffer>[2] = {
-              tokenId,
-              contract,
-              taker: await signer.getAddress(),
-            }
+            const url = new URL('/execute/sell', apiBase)
+            const query: paths['/execute/sell']['get']['parameters']['query'] =
+              {
+                tokenId,
+                contract,
+                taker: await signer.getAddress(),
+              }
+
+            setParams(url, query)
 
             setWaitingTx(true)
-            await acceptOffer(apiBase, signer, query, setSteps)
+
+            await executeSteps(url, signer, (execute) =>
+              setSteps(execute.steps)
+            )
             await pollSwr(details.data, details.mutate)
           } catch (err) {
             console.error(err)

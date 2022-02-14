@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import cancelOrder from 'lib/cancelOrder'
-import { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import setParams from 'lib/params'
 import { pollSwr } from 'lib/pollApi'
 import React, { FC, useState } from 'react'
 import { SWRResponse } from 'swr'
@@ -41,14 +41,20 @@ const CancelListing: FC<Props> = ({
             return
           }
 
-          const query: Parameters<typeof cancelOrder>[2] = {
-            hash,
-            maker,
-          }
+          const url = new URL('/execute/cancel', apiBase)
 
+          const query: paths['/execute/cancel']['get']['parameters']['query'] =
+            {
+              hash,
+              maker,
+            }
+
+          setParams(url, query)
           try {
             setWaitingTx(true)
-            await cancelOrder(apiBase, signer, query, setSteps)
+            await executeSteps(url, signer, (execute) =>
+              setSteps(execute.steps)
+            )
             await pollSwr(details.data, details.mutate)
             setWaitingTx(false)
             setSteps(undefined)

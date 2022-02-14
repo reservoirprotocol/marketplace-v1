@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { splitSignature } from 'ethers/lib/utils'
+import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
 import { pollApi, pollUntilComplete } from './pollApi'
 
@@ -9,11 +9,12 @@ export type Execute = {
         action: string
         description: string
         status: 'complete' | 'incomplete'
-        kind: 'transaction' | 'signature' | 'request'
+        kind: 'transaction' | 'signature' | 'request' | 'confirmation'
         data?: any
         loading?: boolean
       }[]
     | undefined
+  query?: { [x: string]: any }
   error?: string | undefined
 }
 
@@ -72,25 +73,29 @@ export default async function executeSteps(
   }
 
   if (status === 'incomplete' && kind === 'signature') {
-    const signature = await signer.signMessage(data.message)
+    const signature = await signer.signMessage(arrayify(data.message))
 
     const { r, s, v } = splitSignature(signature)
 
-    setParams(url, { ...data.query, r, s, v })
+    setParams(url, { ...json.query, r, s, v })
 
     await fetch(url.href)
   }
 
   if (status === 'incomplete' && kind === 'request') {
     const postOrderUrl = new URL(data.endpoint, url.origin)
-    await fetch(postOrderUrl.href, {
+    const order = await fetch(postOrderUrl.href, {
       method: data.method,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data.body),
     })
+
+    return order
   }
+
+  if (kind === 'confirmation') return
 
   const completed = await pollUntilComplete(url, firstIncomplete)
 

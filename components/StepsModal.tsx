@@ -24,7 +24,7 @@ const StepsModal: FC<Props> = ({ steps }) => {
 
   return (
     <Dialog.Root onOpenChange={(open) => setIsOpen(open)}>
-      <Dialog.Trigger ref={trigger} />
+      <Dialog.Trigger className="hidden" ref={trigger} />
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">

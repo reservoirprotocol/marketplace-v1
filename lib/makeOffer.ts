@@ -19,8 +19,6 @@ async function makeOffer(
 
   await executeSteps(url, signer, (execute) => setSteps(execute.steps))
 
-  // const { r, s, v } = splitSignature(signature)
-
   // Post order to the database
   let url2 = new URL('/orders', apiBase)
 
