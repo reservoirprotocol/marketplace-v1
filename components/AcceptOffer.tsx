@@ -45,6 +45,7 @@ const AcceptOffer: FC<Props> = ({
 
           try {
             const url = new URL('/execute/sell', apiBase)
+
             const query: paths['/execute/sell']['get']['parameters']['query'] =
               {
                 tokenId,
@@ -53,7 +54,6 @@ const AcceptOffer: FC<Props> = ({
               }
 
             setParams(url, query)
-
             setWaitingTx(true)
 
             await executeSteps(url, signer, (execute) =>

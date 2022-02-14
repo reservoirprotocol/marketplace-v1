@@ -43,4 +43,19 @@ async function pollUntilComplete(url: URL, index: number) {
   }
 }
 
-export { pollSwr, pollApi, pollUntilComplete }
+async function pollUntilMsgSuccess(url: URL) {
+  const res = await fetch(url.href)
+
+  const json = await res.json()
+
+  // Check that the response from an endpoint updated
+  if (json?.message === 'success') {
+    return
+  } else {
+    // The response is still unchanged. Check again in five seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await pollUntilMsgSuccess(url)
+  }
+}
+
+export { pollSwr, pollApi, pollUntilComplete, pollUntilMsgSuccess }

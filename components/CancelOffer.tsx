@@ -47,21 +47,21 @@ const CancelOffer: FC<Props> = ({
               maker,
               hash,
             }
+
           setParams(url, query)
+          setWaitingTx(true)
 
           try {
-            setWaitingTx(true)
             await executeSteps(url, signer, (execute) =>
               setSteps(execute.steps)
             )
             await pollSwr(details.data, details.mutate)
-            setWaitingTx(false)
-            setSteps(undefined)
           } catch (err) {
             console.error(err)
-            setSteps(undefined)
-            setWaitingTx(false)
           }
+
+          setWaitingTx(false)
+          setSteps(undefined)
         }}
         className="btn-red-ghost col-span-2 mx-auto mt-6"
       >

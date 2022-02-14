@@ -300,10 +300,8 @@ const TokenOfferModal: FC<Props> = ({
 
                       // Wait for transactions to complete
                       try {
-                        const maker = await signer.getAddress()
-
                         let query: Parameters<typeof makeOffer>[2] = {
-                          maker,
+                          maker: await signer.getAddress(),
                           price: calculations.total.toString(),
                           expirationTime: expirationValue,
                           contract,
@@ -330,13 +328,12 @@ const TokenOfferModal: FC<Props> = ({
                         // closeButton.current?.click()
                         await pollSwr(details.data, details.mutate)
                         setSuccess(true)
-                        setWaitingTx(false)
-                        setSteps(undefined)
                       } catch (err) {
                         console.error(err)
-                        setWaitingTx(false)
-                        setSteps(undefined)
                       }
+
+                      setWaitingTx(false)
+                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

@@ -215,9 +215,10 @@ const TokensMain: FC<Props> = ({
                   tokenId,
                   taker: await signer.getAddress(),
                 }
-              setParams(url, query)
 
+              setParams(url, query)
               setWaitingTx(true)
+
               await executeSteps(url, signer, (execute) =>
                 setSteps(execute.steps)
               )
@@ -225,6 +226,7 @@ const TokensMain: FC<Props> = ({
             } catch (err) {
               console.error(err)
             }
+
             setWaitingTx(false)
             setSteps(undefined)
             return

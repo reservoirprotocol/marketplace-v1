@@ -207,6 +207,7 @@ const ListModal: FC<Props> = ({
                       setParams(url, query)
 
                       setWaitingTx(true)
+
                       try {
                         await executeSteps(url, signer, (execute) =>
                           setSteps(execute.steps)
@@ -218,6 +219,7 @@ const ListModal: FC<Props> = ({
                       } catch (err) {
                         console.error(err)
                       }
+
                       setWaitingTx(false)
                     }}
                     className="btn-blue-fill w-full"
