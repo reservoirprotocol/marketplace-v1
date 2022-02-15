@@ -182,9 +182,7 @@ const TokensMain: FC<Props> = ({
 
   return (
     <>
-      {steps && (
-        <StepsModal title="Complete steps" data={dataSteps} steps={steps} />
-      )}
+      {steps && <StepsModal title="Buy token" data={dataSteps} steps={steps} />}
       <Head>
         {collectionId === 'www' ? (
           <title>
