@@ -36,7 +36,7 @@ export default async function executeSteps(
 ) {
   // Fetch the steps
   const res = await fetch(url.href)
-  const json = (await res.json()) as Execute
+  let json = (await res.json()) as Execute
 
   // Handle errors
   if (json.error) throw new Error(json.error)
@@ -53,7 +53,11 @@ export default async function executeSteps(
       if(json.query) setParams(url, json.query )
 
       // If step is missing data, poll until it is ready
-      if (!data) data = await pollApi(url, index)
+      if (!data) {
+        json = await pollApi(url, index) as Execute
+        if (!json.steps) throw new ReferenceError('There are no steps.')
+        data = json.steps[index].data
+      }
 
       // Handle each step based on it's kind
       switch (kind) {

@@ -21,7 +21,7 @@ async function pollApi(url: URL, index: number) {
   const json = await res.json()
 
   // Check if the data exists
-  if (json?.steps?.[index]?.data) return json.steps[index].data
+  if (json?.steps?.[index]?.data) return json
 
   // The response is still unchanged. Check again in five seconds
   await new Promise((resolve) => setTimeout(resolve, 5000))
