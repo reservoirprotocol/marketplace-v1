@@ -2,7 +2,6 @@ import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
-import { pollSwr } from 'lib/pollApi'
 import React, { FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import StepsModal from './StepsModal'
@@ -60,7 +59,7 @@ const BuyNow: FC<Props> = ({
             await executeSteps(url, signer, (execute) =>
               setSteps(execute.steps)
             )
-            await pollSwr(details.data, details.mutate)
+            details.mutate()
           } catch (err: any) {
             console.error(err)
             if (err?.message === 'Not enough ETH balance') setError(true)

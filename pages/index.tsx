@@ -78,22 +78,10 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const hostParts = req.headers.host?.split('.').reverse()
-  // Make sure that the host contains at least one subdomain
-  // ['subdomain', 'domain', 'TLD']
-  // Reverse the host parts to make sure that the third element always
-  // corresponds to the first subdomain
   // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  if (!hostParts || hostParts.length < 2) {
-    return {
-      notFound: true,
-    }
-  }
+  const hostParts = req.headers.host?.split('.').reverse()
 
-  if (!apiBase) {
-    console.debug('There are missing environment variables', {
-      apiBase,
-    })
+  if (!hostParts) {
     return {
       notFound: true,
     }
@@ -101,8 +89,23 @@ export const getServerSideProps: GetServerSideProps<{
 
   // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
   // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard =
-    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
+
+  // Possible cases
+  // ['localhost:3000']
+  // ['localhost:3000', 'www']
+  // ['market', 'reservoir']
+  // ['market', 'reservoir', 'www']
+  let wildcard = 'www'
+
+  // For cases: ['localhost:3000', 'www', ...]
+  if (hostParts.length > 1 && hostParts[0] === 'localhost:3000')
+    wildcard = hostParts[1]
+
+  // For cases: ['market', 'reservoir', 'www', ...]
+  if (hostParts.length > 2 && hostParts[0] !== 'localhost:3000')
+    wildcard = hostParts[2]
+
+  const isHome: boolean = wildcard === 'www'
 
   // Check the wildcard corresponds to a community
   const url = new URL('/collections', apiBase)
@@ -124,12 +127,7 @@ export const getServerSideProps: GetServerSideProps<{
     }
   } catch (err) {
     console.log(err)
-    return {
-      notFound: true,
-    }
   }
-
-  const isHome: boolean = wildcard === 'www'
 
   return { props: { wildcard, isCommunity, isHome } }
 }

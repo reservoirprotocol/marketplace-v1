@@ -7,19 +7,9 @@ type Props = {
 }
 
 const Steps: FC<Props> = ({ steps }) => {
-  const [loadingSteps, setloadingSteps] = useState<Execute['steps']>()
+  const [loadingSteps, setloadingSteps] = useState<Execute['steps']>(steps)
 
-  useEffect(() => {
-    if (steps) {
-      const firstIncomplete = steps.findIndex(
-        ({ status }) => status === 'incomplete'
-      )
-      if(firstIncomplete>-1) {
-        steps[firstIncomplete].loading = true
-      }
-      setloadingSteps(steps)
-    }
-  }, [steps])
+  useEffect(() => setloadingSteps(steps), [steps])
 
   return (
     <div className="my-4">
@@ -30,10 +20,10 @@ const Steps: FC<Props> = ({ steps }) => {
             {status === 'complete' && (
               <HiCheckCircle className="mt-0.5 h-6 w-6 text-green-600" />
             )}
-            {status === 'incomplete' && !loading && (
+            {/* {status === 'incomplete' && !loading && (
               <HiMinusCircle className="mt-0.5 h-6 w-6 text-neutral-600" />
-            )}
-            {loading && (
+            )} */}
+            {status === 'incomplete' && (
               <svg
                 className="mt-1 mr-1 h-5 w-5 animate-spin text-black"
                 xmlns="http://www.w3.org/2000/svg"

@@ -4,7 +4,6 @@ import { paths } from 'interfaces/apiTypes'
 import executeSteps, { Execute } from './executeSteps'
 import setParams from './params'
 import { WyvernV2 } from '@reservoir0x/sdk'
-import getOrderSignature from './getOrderSignature'
 import { Dispatch, SetStateAction } from 'react'
 
 async function makeOffer(

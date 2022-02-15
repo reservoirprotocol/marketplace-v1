@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
-import { pollApi, pollUntilMsgSuccess } from './pollApi'
+import { pollUntilHasData, pollUntilOk } from './pollApi'
 
 export type Execute = {
   steps?:
@@ -46,22 +46,24 @@ export default async function executeSteps(
   if (callback) callback(json)
 
   for (let index = 0; index < json.steps.length; index++) {
+    // Update UI for loading state
+    json.steps[index].loading = true
+    if (callback) callback(json)
+
     let { status, kind, data } = json.steps[index]
     if (status === 'incomplete') {
-
       // Append any extra params provided by API
-      if(json.query) setParams(url, json.query )
+      if (json.query) setParams(url, json.query)
 
       // If step is missing data, poll until it is ready
       if (!data) {
-        json = await pollApi(url, index) as Execute
+        json = (await pollUntilHasData(url, index)) as Execute
         if (!json.steps) throw new ReferenceError('There are no steps.')
         data = json.steps[index].data
       }
 
       // Handle each step based on it's kind
       switch (kind) {
-
         // Make an on-chain transaction
         case 'transaction': {
           const tx = await signer.sendTransaction(data)
@@ -83,7 +85,7 @@ export default async function executeSteps(
         // Post a signed order object to order book
         case 'request': {
           const postOrderUrl = new URL(data.endpoint, url.origin)
-          const order = await fetch(postOrderUrl.href, {
+          await fetch(postOrderUrl.href, {
             method: data.method,
             headers: {
               'Content-Type': 'application/json',
@@ -96,16 +98,16 @@ export default async function executeSteps(
         // Confirm that an on-chain tx has been picked up by indexer
         case 'confirmation': {
           const confirmationUrl = new URL(data.endpoint, url.origin)
-          await pollUntilMsgSuccess(confirmationUrl)
+          await pollUntilOk(confirmationUrl)
           break
         }
-
       }
 
       // Mark the step as complete
       json.steps[index].status = 'complete'
-      if (callback) callback(json)
+      json.steps[index].loading = false
 
+      if (callback) callback(json)
     }
   }
   return true

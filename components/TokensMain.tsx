@@ -9,7 +9,6 @@ import { paths } from 'interfaces/apiTypes'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import { formatBN } from 'lib/numbers'
 import setParams from 'lib/params'
-import { pollSwr } from 'lib/pollApi'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
@@ -222,14 +221,13 @@ const TokensMain: FC<Props> = ({
               await executeSteps(url, signer, (execute) =>
                 setSteps(execute.steps)
               )
-              await pollSwr(stats.data, stats.mutate)
+              stats.mutate()
             } catch (err) {
               console.error(err)
             }
 
             setWaitingTx(false)
             setSteps(undefined)
-            return
           }}
           className="btn-neutral-fill-dark"
         >

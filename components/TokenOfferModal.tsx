@@ -10,7 +10,6 @@ import calculateOffer from 'lib/calculateOffer'
 import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { pollSwr } from 'lib/pollApi'
 import { paths } from 'interfaces/apiTypes'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
@@ -326,7 +325,7 @@ const TokenOfferModal: FC<Props> = ({
 
                         // Close modal
                         // closeButton.current?.click()
-                        await pollSwr(details.data, details.mutate)
+                        details.mutate()
                         setSuccess(true)
                       } catch (err) {
                         console.error(err)

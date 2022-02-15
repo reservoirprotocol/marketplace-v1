@@ -8,7 +8,6 @@ import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
-import { pollSwr } from 'lib/pollApi'
 import { SWRResponse } from 'swr'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
@@ -214,7 +213,7 @@ const ListModal: FC<Props> = ({
                         )
                         // Close modal
                         // closeButton.current?.click()
-                        await pollSwr(details.data, details.mutate)
+                        details.mutate()
                         setSuccess(true)
                       } catch (err) {
                         console.error(err)

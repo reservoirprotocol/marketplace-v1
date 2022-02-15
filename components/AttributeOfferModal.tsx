@@ -9,7 +9,6 @@ import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { pollSwr } from 'lib/pollApi'
 import useCollectionStats from 'hooks/useCollectionStats'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
@@ -271,8 +270,8 @@ const AttributeOfferModal: FC<Props> = ({
                         await makeOffer(env.apiBase, signer, query, setSteps)
                         // Close modal
                         // closeButton.current?.click()
-                        await pollSwr(stats.data, stats.mutate)
-                        await pollSwr(tokens.data, tokens.mutate)
+                        stats.mutate()
+                        tokens.mutate()
                         setSuccess(true)
                       } catch (err) {
                         console.error(err)
