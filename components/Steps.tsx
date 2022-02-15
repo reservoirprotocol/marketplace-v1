@@ -11,10 +11,12 @@ const Steps: FC<Props> = ({ steps }) => {
 
   useEffect(() => {
     if (steps) {
-      const firstIcomplete = steps.findIndex(
+      const firstIncomplete = steps.findIndex(
         ({ status }) => status === 'incomplete'
       )
-      steps[firstIcomplete].loading = true
+      if(firstIncomplete>-1) {
+        steps[firstIncomplete].loading = true
+      }
       setloadingSteps(steps)
     }
   }, [steps])

@@ -90,7 +90,7 @@ export default async function executeSteps(
             },
             body: JSON.stringify(data.body),
           })
-          return order
+          break
         }
 
         // Confirm that an on-chain tx has been picked up by indexer
@@ -108,4 +108,5 @@ export default async function executeSteps(
 
     }
   }
+  return true
 }
