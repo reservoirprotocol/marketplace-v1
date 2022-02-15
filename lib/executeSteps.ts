@@ -34,35 +34,49 @@ export default async function executeSteps(
   signer: Signer,
   callback?: (steps: Execute) => any
 ) {
+  // Fetch the steps
   const res = await fetch(url.href)
-
   const json = (await res.json()) as Execute
 
+  // Handle errors
   if (json.error) throw new Error(json.error)
-
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
+  // Return steps in callback, so progress can be displayed in UI
   if (callback) callback(json)
-
-  // @ts-ignore
-  // console.log('outside loop', [...url.searchParams.entries()])
 
   for (let index = 0; index < json.steps.length; index++) {
     let { status, kind, data } = json.steps[index]
     if (status === 'incomplete') {
-      // If the step is incomplete and there is no data, the API is
-      // waiting for data from the previous step. Poll the same
-      // endpoint with the same query and procced once the data is
-      // returned
+
+      // Append any extra params provided by API
+      if(json.query) setParams(url, json.query )
+
+      // If step is missing data, poll until it is ready
       if (!data) data = await pollApi(url, index)
 
+      // Handle each step based on it's kind
       switch (kind) {
-        case 'confirmation': {
-          const confirmationUrl = new URL(data.endpoint, url.origin)
 
-          await pollUntilMsgSuccess(confirmationUrl)
+        // Make an on-chain transaction
+        case 'transaction': {
+          const tx = await signer.sendTransaction(data)
+          await tx.wait()
+          break
         }
 
+        // Sign a message
+        case 'signature': {
+          // Request user signature
+          const signature = await signer.signMessage(arrayify(data.message))
+          // Split signature into r,s,v components
+          const { r, s, v } = splitSignature(signature)
+          // Include signature params in any future requests
+          setParams(url, { r, s, v })
+          break
+        }
+
+        // Post a signed order object to order book
         case 'request': {
           const postOrderUrl = new URL(data.endpoint, url.origin)
           const order = await fetch(postOrderUrl.href, {
@@ -72,34 +86,22 @@ export default async function executeSteps(
             },
             body: JSON.stringify(data.body),
           })
-
           return order
         }
 
-        case 'signature': {
-          const signature = await signer.signMessage(arrayify(data.message))
-
-          const { r, s, v } = splitSignature(signature)
-
-          setParams(url, { ...json.query, r, s, v })
-
-          // @ts-ignore
-          // console.log([...url.searchParams.entries()])
-
-          // await fetch(url.href)
-          executeSteps(url, signer)
+        // Confirm that an on-chain tx has been picked up by indexer
+        case 'confirmation': {
+          const confirmationUrl = new URL(data.endpoint, url.origin)
+          await pollUntilMsgSuccess(confirmationUrl)
           break
         }
 
-        case 'transaction': {
-          const tx = await signer.sendTransaction(data)
-
-          await tx.wait()
-        }
-
-        default:
-          break
       }
+
+      // Mark the step as complete
+      json.steps[index].status = 'complete'
+      if (callback) callback(json)
+
     }
   }
 }
