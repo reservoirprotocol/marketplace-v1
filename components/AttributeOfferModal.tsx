@@ -4,7 +4,6 @@ import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import FormatEth from './FormatEth'
@@ -13,8 +12,10 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useTokens from 'hooks/useTokens'
-import { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
+import { paths } from 'interfaces/apiTypes'
+import setParams from 'lib/params'
 
 type Props = {
   trigger?: ReactNode
@@ -254,20 +255,24 @@ const AttributeOfferModal: FC<Props> = ({
 
                       // Wait for transactions to complete
                       try {
-                        let query: Parameters<typeof makeOffer>[2] = {
-                          maker: await signer.getAddress(),
-                          price: calculations.total.toString(),
-                          expirationTime: expirationValue,
-                        }
+                        const url = new URL('/execute/bid', env.apiBase)
 
-                        query.attributeKey = data.attribute.key
-                        query.attributeValue = data.attribute.value
-                        query.collection = data.collection.id
+                        let query: paths['/execute/bid']['get']['parameters']['query'] =
+                          {
+                            maker: await signer.getAddress(),
+                            price: calculations.total.toString(),
+                            expirationTime: expirationValue,
+                            attributeKey: data.attribute.key,
+                            attributeValue: data.attribute.value,
+                            collection: data.collection.id,
+                          }
 
-                        // Set loading state for UI
+                        setParams(url, query)
                         setWaitingTx(true)
 
-                        await makeOffer(env.apiBase, signer, query, setSteps)
+                        await executeSteps(url, signer, (execute) =>
+                          setSteps(execute.steps)
+                        )
                         // Close modal
                         // closeButton.current?.click()
                         stats.mutate()

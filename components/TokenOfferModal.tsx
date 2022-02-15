@@ -4,7 +4,6 @@ import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { makeOffer, postBuyOrderToOpenSea } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { SWRResponse } from 'swr'
@@ -312,26 +311,11 @@ const TokenOfferModal: FC<Props> = ({
                           }
 
                         setParams(url, query)
+                        setWaitingTx(true)
 
                         await executeSteps(url, signer, (execute) =>
                           setSteps(execute.steps)
                         )
-
-                        // Set loading state for UI
-                        setWaitingTx(true)
-
-                        await makeOffer(env.apiBase, signer, query, setSteps)
-
-                        // if (postOnOpenSea) {
-                        //   await postBuyOrderToOpenSea(
-                        //     env.chainId,
-                        //     env.openSeaApiKey,
-                        //     data,
-                        //     tokenId,
-                        //     contract,
-                        //     signer
-                        //   )
-                        // }
 
                         // Close modal
                         // closeButton.current?.click()

@@ -21,6 +21,8 @@ import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
+import getWildcard from 'lib/getWildcard'
+import getIsCommunity from 'lib/getIsCommunity'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -291,34 +293,10 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const hostParts = req.headers.host?.split('.').reverse()
-
-  if (!hostParts) {
-    return {
-      notFound: true,
-    }
-  }
-
-  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
-  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-
-  // Possible cases
-  // ['localhost:3000']
-  // ['localhost:3000', 'www']
-  // ['market', 'reservoir']
-  // ['market', 'reservoir', 'www']
-  let wildcard = 'www'
-
-  // For cases: ['localhost:3000', 'www', ...]
-  if (hostParts.length > 1 && hostParts[0] === 'localhost:3000')
-    wildcard = hostParts[1]
-
-  // For cases: ['market', 'reservoir', 'www', ...]
-  if (hostParts.length > 2 && hostParts[0] !== 'localhost:3000')
-    wildcard = hostParts[2]
-
-  const isHome: boolean = wildcard === 'www'
+  // Handle wildcard
+  const wildcard = getWildcard(req)
+  const isHome = wildcard === 'www'
+  const isCommunity = getIsCommunity(wildcard)
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -336,28 +314,6 @@ export const getServerSideProps: GetServerSideProps<{
     (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
-
-  // Check the wildcard corresponds to a community
-  const url2 = new URL('/collections', apiBase)
-
-  const query2: paths['/collections']['get']['parameters']['query'] = {
-    community: wildcard,
-  }
-
-  setParams(url2, query2)
-
-  let isCommunity: boolean = false
-
-  try {
-    const res = await fetch(url2.href)
-    const collections =
-      (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
-    if (collections.collections) {
-      isCommunity = collections.collections.length > 0
-    }
-  } catch (err) {
-    console.log(err)
-  }
 
   return { props: { isHome, collectionId, isCommunity } }
 }
