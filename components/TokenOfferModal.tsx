@@ -13,8 +13,9 @@ import expirationPresets from 'lib/offerExpirationPresets'
 import { paths } from 'interfaces/apiTypes'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
-import { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
+import setParams from 'lib/params'
 
 type Props = {
   trigger?: ReactNode
@@ -299,13 +300,22 @@ const TokenOfferModal: FC<Props> = ({
 
                       // Wait for transactions to complete
                       try {
-                        let query: Parameters<typeof makeOffer>[2] = {
-                          maker: await signer.getAddress(),
-                          price: calculations.total.toString(),
-                          expirationTime: expirationValue,
-                          contract,
-                          tokenId,
-                        }
+                        const url = new URL('/execute/bid', env.apiBase)
+
+                        let query: paths['/execute/bid']['get']['parameters']['query'] =
+                          {
+                            maker: await signer.getAddress(),
+                            price: calculations.total.toString(),
+                            expirationTime: expirationValue,
+                            contract,
+                            tokenId,
+                          }
+
+                        setParams(url, query)
+
+                        await executeSteps(url, signer, (execute) =>
+                          setSteps(execute.steps)
+                        )
 
                         // Set loading state for UI
                         setWaitingTx(true)

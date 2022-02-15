@@ -15,13 +15,13 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
   return (
     <>
       {!!sample_images && sample_images.length > 0 ? (
-        <div className="flex gap-2">
+        <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-1.5">
           {sample_images.length > 1 ? (
             // SMALLER IMAGE, HAS SIDE IMAGES
             <img
               alt={`${value}`}
               src={optimizeImage(sample_images[0], 250)}
-              className={`h-[224px] w-[224px] rounded`}
+              className="col-span-2 h-full rounded object-cover"
               width="224"
               height="224"
             />
@@ -30,13 +30,13 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
             <img
               alt={`${value}`}
               src={optimizeImage(sample_images[0], 300)}
-              className={`h-[300px] w-full rounded`}
+              className="col-span-2 rounded object-contain"
               width="300"
               height="300"
             />
           )}
           {sample_images.length > 1 && (
-            <div className="w-[70px] space-y-2">
+            <div className="flex h-full flex-col justify-between gap-1">
               {sample_images.slice(1).map((image) => (
                 <img
                   key={image}
@@ -44,7 +44,7 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
                   alt={`${value}`}
                   width="70"
                   height="70"
-                  className="h-[70px] w-[70px] rounded object-cover"
+                  className="w-[70px] rounded"
                 />
               ))}
             </div>
