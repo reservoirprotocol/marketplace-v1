@@ -199,7 +199,7 @@ const TokenOfferModal: FC<Props> = ({
                       className="input-blue-outline w-[120px]"
                     />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="hidden items-center gap-3">
                     <label
                       htmlFor="postOpenSea"
                       className="font-medium uppercase opacity-75"
