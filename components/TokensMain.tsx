@@ -166,9 +166,25 @@ const TokensMain: FC<Props> = ({
 
   const hasTokenSetId = !!collection.data?.collection?.collection?.tokenSetId
 
+  const dataSteps = {
+    token: {
+      image: stats.data?.stats?.market?.floorSell?.token?.image,
+      name: stats.data?.stats?.market?.floorSell?.token?.name,
+      id: stats.data?.stats?.market?.floorSell?.token?.tokenId,
+      contract: stats.data?.stats?.market?.floorSell?.token?.contract,
+      topBuyValue: undefined,
+      floorSellValue: stats.data?.stats?.market?.floorSell?.value,
+    },
+    collection: {
+      name: collection?.data?.collection?.collection?.name,
+    },
+  }
+
   return (
     <>
-      {steps && <StepsModal steps={steps} />}
+      {steps && (
+        <StepsModal title="Complete steps" data={dataSteps} steps={steps} />
+      )}
       <Head>
         {collectionId === 'www' ? (
           <title>

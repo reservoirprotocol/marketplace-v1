@@ -2,7 +2,7 @@ import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
-import React, { FC, useState } from 'react'
+import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import StepsModal from './StepsModal'
 
@@ -12,6 +12,7 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
   signer: Signer | undefined
 }
@@ -19,6 +20,7 @@ type Props = {
 const CancelListing: FC<Props> = ({
   isInTheWrongNetwork,
   details,
+  data,
   apiBase,
   signer,
 }) => {
@@ -28,7 +30,9 @@ const CancelListing: FC<Props> = ({
   const token = details.data?.tokens?.[0]
   return (
     <>
-      {steps && <StepsModal steps={steps} />}
+      {steps && (
+        <StepsModal title="Cancel your listing" data={data} steps={steps} />
+      )}
       <button
         disabled={waitingTx || isInTheWrongNetwork}
         onClick={async () => {

@@ -2,7 +2,7 @@ import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
-import React, { FC, useState } from 'react'
+import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import StepsModal from './StepsModal'
 
@@ -12,6 +12,7 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
   signer: Signer | undefined
 }
@@ -20,6 +21,7 @@ const AcceptOffer: FC<Props> = ({
   isInTheWrongNetwork,
   details,
   apiBase,
+  data,
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -28,7 +30,7 @@ const AcceptOffer: FC<Props> = ({
   const token = details.data?.tokens?.[0]
   return (
     <>
-      <StepsModal steps={steps} />
+      <StepsModal title="Accept offer" data={data} steps={steps} />
       <button
         disabled={
           waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork

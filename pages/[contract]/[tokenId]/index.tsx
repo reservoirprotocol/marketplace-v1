@@ -73,6 +73,20 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
+  const data = {
+    collection: {
+      name: collection.data?.collection?.collection?.name,
+    },
+    token: {
+      contract: token?.token?.contract,
+      id: token?.token?.tokenId,
+      image: token?.token?.image,
+      name: token?.token?.name,
+      topBuyValue: token?.market?.topBuy?.value,
+      floorSellValue: token?.market?.floorSell?.value,
+    },
+  }
+
   return (
     <Layout>
       <Head>
@@ -182,6 +196,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                   <BuyNow
                     apiBase={apiBase}
                     details={details}
+                    data={data}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
                     setError={setError}
@@ -202,25 +217,14 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                   <AcceptOffer
                     apiBase={apiBase}
                     details={details}
+                    data={data}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
                   />
                 ) : (
                   <TokenOfferModal
                     signer={signer}
-                    data={{
-                      collection: {
-                        name: collection.data?.collection?.collection?.name,
-                      },
-                      token: {
-                        contract: token?.token?.contract,
-                        id: token?.token?.tokenId,
-                        image: token?.token?.image,
-                        name: token?.token?.name,
-                        topBuyValue: token?.market?.topBuy?.value,
-                        floorSellValue: token?.market?.floorSell?.value,
-                      },
-                    }}
+                    data={data}
                     royalties={{
                       bps: collection.data?.collection?.royalties?.bps,
                       recipient:
@@ -245,6 +249,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
               <CancelOffer
                 apiBase={apiBase}
                 details={details}
+                data={data}
                 signer={signer}
                 isInTheWrongNetwork={isInTheWrongNetwork}
               />
@@ -252,6 +257,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
             {isOwner && isListed && (
               <CancelListing
                 apiBase={apiBase}
+                data={data}
                 signer={signer}
                 details={details}
                 isInTheWrongNetwork={isInTheWrongNetwork}
