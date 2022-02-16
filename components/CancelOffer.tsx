@@ -1,9 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import cancelOrder from 'lib/cancelOrder'
-import { pollSwr } from 'lib/pollApi'
-import React, { FC, useState } from 'react'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import setParams from 'lib/params'
+import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
+import StepsModal from './StepsModal'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -11,51 +12,64 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
-  chainId: string
   signer: Signer | undefined
 }
 
 const CancelOffer: FC<Props> = ({
   isInTheWrongNetwork,
+  data,
   details,
   apiBase,
-  chainId,
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const token = details.data?.tokens?.[0]
   return (
-    <button
-      disabled={waitingTx || isInTheWrongNetwork}
-      onClick={async () => {
-        const hash = token?.market?.topBuy?.hash
-        const maker = token?.market?.topBuy?.maker
+    <>
+      {steps && (
+        <StepsModal title="Cancel your offer" data={data} steps={steps} />
+      )}
+      <button
+        disabled={waitingTx || isInTheWrongNetwork}
+        onClick={async () => {
+          const hash = token?.market?.topBuy?.hash
+          const maker = token?.market?.topBuy?.maker
 
-        if (!signer || !hash || !maker) {
-          console.debug({ hash, signer, maker })
-          return
-        }
+          if (!signer || !hash || !maker) {
+            console.debug({ hash, signer, maker })
+            return
+          }
 
-        const query: Parameters<typeof cancelOrder>[2] = {
-          maker,
-          hash,
-        }
+          const url = new URL('/execute/cancel', apiBase)
 
-        try {
+          const query: paths['/execute/cancel']['get']['parameters']['query'] =
+            {
+              maker,
+              hash,
+            }
+
+          setParams(url, query)
           setWaitingTx(true)
-          await cancelOrder(apiBase, signer, query)
-          await pollSwr(details.data, details.mutate)
+
+          try {
+            await executeSteps(url, signer, setSteps)
+
+            details.mutate()
+          } catch (err) {
+            console.error(err)
+          }
+
           setWaitingTx(false)
-        } catch (err) {
-          console.error(err)
-          setWaitingTx(false)
-        }
-      }}
-      className="btn-red-ghost col-span-2 mx-auto mt-6"
-    >
-      {waitingTx ? 'Waiting...' : 'Cancel your offer'}
-    </button>
+          setSteps(undefined)
+        }}
+        className="btn-red-ghost col-span-2 mx-auto mt-6"
+      >
+        {waitingTx ? 'Waiting...' : 'Cancel your offer'}
+      </button>
+    </>
   )
 }
 

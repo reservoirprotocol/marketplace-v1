@@ -20,14 +20,8 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
     : []
   const didReactEnd = data && data[data.length - 1].collections?.length === 0
 
-  const filteredCollecitons = mappedCollections.filter((collection) => {
-    if (collection?.collection?.id === 'bored-ape-chemistry-club') return true
-
-    return !!collection?.collection?.tokenSetId
-  })
-
   return (
-    <div className="mx-auto mb-5 grid max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="mx-auto mb-5 grid flex-wrap place-items-center justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       {!data && isValidating
         ? Array(16)
             .fill(null)
@@ -37,7 +31,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                 className="h-[310px] w-full animate-pulse bg-white shadow-md"
               ></div>
             ))
-        : filteredCollecitons?.map((collection, idx) => (
+        : mappedCollections?.map((collection, idx) => (
             <Link
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}

@@ -1,0 +1,115 @@
+import { Signer } from 'ethers'
+import { arrayify, splitSignature } from 'ethers/lib/utils'
+import setParams from './params'
+import { pollUntilHasData, pollUntilOk } from './pollApi'
+
+export type Execute = {
+  steps?:
+    | {
+        action: string
+        description: string
+        status: 'complete' | 'incomplete'
+        kind: 'transaction' | 'signature' | 'request' | 'confirmation'
+        data?: any
+        loading?: boolean
+      }[]
+    | undefined
+  query?: { [x: string]: any }
+  error?: string | undefined
+}
+
+/**
+ * When attempting to perform actions, such as, selling a token or
+ * buying a token, the user's account needs to meet certain requirements. For
+ * example, if the user attempts to buy a token the Reservoir API checks if the
+ * user has enough balance, before providing the transaction to be signed by
+ * the user. This function executes all transactions, in order, to complete the
+ * action.
+ * @param url URL object with the endpoint to be called. Example: `/execute/buy`
+ * @param signer Ethereum signer object provided by the browser
+ * @param setState Callback to update UI state has execution progresses
+ * @returns The data field of the last element in the steps array
+ */
+export default async function executeSteps(
+  url: URL,
+  signer: Signer,
+  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>
+) {
+  // Fetch the steps
+  const res = await fetch(url.href)
+  let json = (await res.json()) as Execute
+
+  // Handle errors
+  if (json.error) throw new Error(json.error)
+  if (!json.steps) throw new ReferenceError('There are no steps.')
+
+  // Return steps in callback, so progress can be displayed in UI
+  if (setState) setState(json.steps)
+
+  for (let index = 0; index < json.steps.length; index++) {
+    let { status, kind, data } = json.steps[index]
+    if (status === 'incomplete') {
+      // Update UI for loading state
+      json.steps[index].loading = true
+      if (setState) setState(json.steps)
+
+      // Append any extra params provided by API
+      if (json.query) setParams(url, json.query)
+
+      // If step is missing data, poll until it is ready
+      if (!data) {
+        json = (await pollUntilHasData(url, index)) as Execute
+        if (!json.steps) throw new ReferenceError('There are no steps.')
+        data = json.steps[index].data
+      }
+
+      // Handle each step based on it's kind
+      switch (kind) {
+        // Make an on-chain transaction
+        case 'transaction': {
+          const tx = await signer.sendTransaction(data)
+          await tx.wait()
+          break
+        }
+
+        // Sign a message
+        case 'signature': {
+          // Request user signature
+          const signature = await signer.signMessage(arrayify(data.message))
+          // Split signature into r,s,v components
+          const { r, s, v } = splitSignature(signature)
+          // Include signature params in any future requests
+          setParams(url, { r, s, v })
+          break
+        }
+
+        // Post a signed order object to order book
+        case 'request': {
+          const postOrderUrl = new URL(data.endpoint, url.origin)
+          await fetch(postOrderUrl.href, {
+            method: data.method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data.body),
+          })
+          break
+        }
+
+        // Confirm that an on-chain tx has been picked up by indexer
+        case 'confirmation': {
+          const confirmationUrl = new URL(data.endpoint, url.origin)
+          await pollUntilOk(confirmationUrl)
+          break
+        }
+      }
+
+      // Mark the step as complete
+      json.steps[index].status = 'complete'
+      json.steps[index].loading = false
+
+      if (setState) setState(json.steps)
+    }
+  }
+  return true
+}

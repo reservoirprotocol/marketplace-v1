@@ -1,9 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import instantBuy from 'lib/buyToken'
-import { pollSwr } from 'lib/pollApi'
-import React, { FC, useState } from 'react'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import setParams from 'lib/params'
+import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
+import StepsModal from './StepsModal'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -11,8 +12,8 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
-  chainId: string
   signer: Signer | undefined
   setError: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -21,50 +22,56 @@ const BuyNow: FC<Props> = ({
   isInTheWrongNetwork,
   details,
   apiBase,
-  chainId,
+  data,
   signer,
   setError,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const token = details.data?.tokens?.[0]
   return (
-    <button
-      disabled={
-        !signer ||
-        token?.market?.floorSell?.value === null ||
-        waitingTx ||
-        isInTheWrongNetwork
-      }
-      onClick={async () => {
-        const tokenId = token?.token?.tokenId
-        const contract = token?.token?.contract
-
-        if (!signer || !tokenId || !contract) {
-          console.debug({ tokenId, signer, contract })
-          return
+    <>
+      <StepsModal title="Buy now" data={data} steps={steps} />
+      <button
+        disabled={
+          !signer ||
+          token?.market?.floorSell?.value === null ||
+          waitingTx ||
+          isInTheWrongNetwork
         }
+        onClick={async () => {
+          const tokenId = token?.token?.tokenId
+          const contract = token?.token?.contract
 
-        try {
-          const query: Parameters<typeof instantBuy>[2] = {
-            contract,
-            tokenId,
-            side: 'sell',
-            taker: await signer.getAddress(),
+          if (!signer || !tokenId || !contract) {
+            console.debug({ tokenId, signer, contract })
+            return
           }
-          setWaitingTx(true)
-          await instantBuy(apiBase, signer, query)
-          await pollSwr(details.data, details.mutate)
+
+          try {
+            const url = new URL('/execute/buy', apiBase)
+
+            const query: paths['/execute/buy']['get']['parameters']['query'] = {
+              contract,
+              tokenId,
+              taker: await signer.getAddress(),
+            }
+            setParams(url, query)
+            setWaitingTx(true)
+            await executeSteps(url, signer, setSteps)
+            details.mutate()
+          } catch (err: any) {
+            console.error(err)
+            if (err?.message === 'Not enough ETH balance') setError(true)
+          }
           setWaitingTx(false)
-        } catch (err: any) {
-          console.error(err)
-          if (err?.message === 'Not enough ETH balance') setError(true)
-          setWaitingTx(false)
-        }
-      }}
-      className="btn-neutral-fill-dark w-full"
-    >
-      {waitingTx ? 'Waiting...' : 'Buy Now'}
-    </button>
+          setSteps(undefined)
+        }}
+        className="btn-neutral-fill-dark w-full"
+      >
+        {waitingTx ? 'Waiting...' : 'Buy Now'}
+      </button>
+    </>
   )
 }
 

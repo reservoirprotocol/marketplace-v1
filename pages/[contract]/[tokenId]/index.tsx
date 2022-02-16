@@ -21,6 +21,8 @@ import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
+import getWildcard from 'lib/getWildcard'
+import getIsCommunity from 'lib/getIsCommunity'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -29,13 +31,13 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, isHome }) => {
+const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
-  const collections = useCollections(apiBase)
+  // const collections = useCollections(apiBase)
   const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
@@ -70,6 +72,20 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
     accountData?.address.toLowerCase()
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
+
+  const data = {
+    collection: {
+      name: collection.data?.collection?.collection?.name,
+    },
+    token: {
+      contract: token?.token?.contract,
+      id: token?.token?.tokenId,
+      image: token?.token?.image,
+      name: token?.token?.name,
+      topBuyValue: token?.market?.topBuy?.value,
+      floorSellValue: token?.market?.floorSell?.value,
+    },
+  }
 
   return (
     <Layout>
@@ -141,7 +157,11 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
               className="h-[50px] w-[50px] rounded-full"
             />
             <div>
-              <Link href={`/collections/${collectionId}`}>
+              <Link
+                href={
+                  isCommunity || isHome ? `/collections/${collectionId}` : '/'
+                }
+              >
                 <a className="mb-1 block text-2xl font-bold">
                   {token?.token?.collection?.name}
                 </a>
@@ -175,8 +195,8 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                 ) : (
                   <BuyNow
                     apiBase={apiBase}
-                    chainId={chainId}
                     details={details}
+                    data={data}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
                     setError={setError}
@@ -196,27 +216,15 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
                 {isOwner ? (
                   <AcceptOffer
                     apiBase={apiBase}
-                    chainId={chainId}
                     details={details}
+                    data={data}
                     signer={signer}
                     isInTheWrongNetwork={isInTheWrongNetwork}
                   />
                 ) : (
                   <TokenOfferModal
                     signer={signer}
-                    data={{
-                      collection: {
-                        name: collection.data?.collection?.collection?.name,
-                      },
-                      token: {
-                        contract: token?.token?.contract,
-                        id: token?.token?.tokenId,
-                        image: token?.token?.image,
-                        name: token?.token?.name,
-                        topBuyValue: token?.market?.topBuy?.value,
-                        floorSellValue: token?.market?.floorSell?.value,
-                      },
-                    }}
+                    data={data}
                     royalties={{
                       bps: collection.data?.collection?.royalties?.bps,
                       recipient:
@@ -240,8 +248,8 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
             {isTopBidder && (
               <CancelOffer
                 apiBase={apiBase}
-                chainId={chainId}
                 details={details}
+                data={data}
                 signer={signer}
                 isInTheWrongNetwork={isInTheWrongNetwork}
               />
@@ -249,8 +257,8 @@ const Index: NextPage<Props> = ({ collectionId, isHome }) => {
             {isOwner && isListed && (
               <CancelListing
                 apiBase={apiBase}
+                data={data}
                 signer={signer}
-                chainId={chainId}
                 details={details}
                 isInTheWrongNetwork={isInTheWrongNetwork}
               />
@@ -280,6 +288,7 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 export const getServerSideProps: GetServerSideProps<{
   isHome: boolean
   collectionId: string
+  isCommunity?: boolean
 }> = async ({ req, params }) => {
   if (collectionEnv) {
     return {
@@ -290,24 +299,10 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const hostParts = req.headers.host?.split('.').reverse()
-  // Make sure that the host contains at least one subdomain
-  // ['subdomain', 'domain', 'TLD']
-  // Reverse the host parts to make sure that the third element always
-  // corresponds to the first subdomain
-  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  if (!hostParts) {
-    return {
-      notFound: true,
-    }
-  }
-
-  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
-  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard =
-    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
-
-  const isHome: boolean = wildcard === 'www'
+  // Handle wildcard
+  const wildcard = getWildcard(req)
+  const isHome = wildcard === 'www'
+  const isCommunity = getIsCommunity(wildcard)
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -326,5 +321,5 @@ export const getServerSideProps: GetServerSideProps<{
 
   const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
 
-  return { props: { isHome, collectionId } }
+  return { props: { isHome, collectionId, isCommunity } }
 }

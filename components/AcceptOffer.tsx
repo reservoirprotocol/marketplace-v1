@@ -1,9 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import acceptOffer from 'lib/acceptOffer'
-import { pollSwr } from 'lib/pollApi'
-import React, { FC, useState } from 'react'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import setParams from 'lib/params'
+import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
+import StepsModal from './StepsModal'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -11,8 +12,8 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
-  chainId: string
   signer: Signer | undefined
 }
 
@@ -20,47 +21,56 @@ const AcceptOffer: FC<Props> = ({
   isInTheWrongNetwork,
   details,
   apiBase,
-  chainId,
+  data,
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
 
   const token = details.data?.tokens?.[0]
   return (
-    <button
-      disabled={
-        waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
-      }
-      onClick={async () => {
-        const tokenId = token?.token?.tokenId
-        const contract = token?.token?.contract
-
-        if (!tokenId || !contract || !signer) {
-          console.debug({ tokenId, contract, signer })
-          return
+    <>
+      <StepsModal title="Accept offer" data={data} steps={steps} />
+      <button
+        disabled={
+          waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
         }
+        onClick={async () => {
+          const tokenId = token?.token?.tokenId
+          const contract = token?.token?.contract
 
-        try {
-          const query: Parameters<typeof acceptOffer>[2] = {
-            tokenId,
-            contract,
-            side: 'buy',
-            taker: await signer.getAddress(),
+          if (!tokenId || !contract || !signer) {
+            console.debug({ tokenId, contract, signer })
+            return
           }
 
-          setWaitingTx(true)
-          await acceptOffer(apiBase, signer, query)
-          await pollSwr(details.data, details.mutate)
+          try {
+            const url = new URL('/execute/sell', apiBase)
+
+            const query: paths['/execute/sell']['get']['parameters']['query'] =
+              {
+                tokenId,
+                contract,
+                taker: await signer.getAddress(),
+              }
+
+            setParams(url, query)
+            setWaitingTx(true)
+
+            await executeSteps(url, signer, setSteps)
+            details.mutate()
+          } catch (err) {
+            console.error(err)
+          }
+
           setWaitingTx(false)
-        } catch (err) {
-          console.error(err)
-          setWaitingTx(false)
-        }
-      }}
-      className="btn-neutral-outline w-full border-neutral-900"
-    >
-      {waitingTx ? 'Waiting...' : 'Accept Offer'}
-    </button>
+          setSteps(undefined)
+        }}
+        className="btn-neutral-outline w-full border-neutral-900"
+      >
+        {waitingTx ? 'Waiting...' : 'Accept Offer'}
+      </button>
+    </>
   )
 }
 

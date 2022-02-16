@@ -4,16 +4,18 @@ import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { makeOffer } from 'lib/makeOffer'
 import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { pollSwr } from 'lib/pollApi'
-import useCollection from 'hooks/useCollection'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useCollectionStats from 'hooks/useCollectionStats'
+import useTokens from 'hooks/useTokens'
+import executeSteps, { Execute } from 'lib/executeSteps'
+import Steps from './Steps'
+import { paths } from 'interfaces/apiTypes'
+import setParams from 'lib/params'
 
 type Props = {
   trigger?: ReactNode
@@ -36,6 +38,7 @@ type Props = {
   }
   signer: ethers.Signer | undefined
   stats: ReturnType<typeof useCollectionStats>
+  tokens: ReturnType<typeof useTokens>['tokens']
 }
 
 const CollectionOfferModal: FC<Props> = ({
@@ -44,10 +47,12 @@ const CollectionOfferModal: FC<Props> = ({
   royalties,
   stats,
   data,
+  tokens,
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [{ data: network }] = useNetwork()
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
@@ -142,62 +147,66 @@ const CollectionOfferModal: FC<Props> = ({
                   </div>
                 </div>
               </div>
-              <div className="mb-8 space-y-5">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="price"
-                    className="font-medium uppercase opacity-75"
-                  >
-                    Price (wETH)
-                  </label>
-                  <input
-                    placeholder="Insert price"
-                    id="price"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    value={offerPrice}
-                    onChange={(e) => setOfferPrice(e.target.value)}
-                    className="input-blue-outline w-[120px]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <ExpirationSelector
-                    presets={expirationPresets}
-                    setExpiration={setExpiration}
-                    expiration={expiration}
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">Fees</div>
-                  <div className="text-right">
-                    <div>Royalty {royaltyPercentage}</div>
-                    <div>Marketplace 0%</div>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <div className="font-medium uppercase opacity-75">
-                    Total Cost
-                  </div>
-                  <div className="text-2xl font-bold">
-                    <FormatEth
-                      amount={calculations.total}
-                      maximumFractionDigits={4}
-                      logoWidth={10}
+              {steps ? (
+                <Steps steps={steps} />
+              ) : (
+                <div className="mb-8 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="price"
+                      className="font-medium uppercase opacity-75"
+                    >
+                      Price (wETH)
+                    </label>
+                    <input
+                      placeholder="Insert price"
+                      id="price"
+                      type="number"
+                      min={0}
+                      step={0.01}
+                      value={offerPrice}
+                      onChange={(e) => setOfferPrice(e.target.value)}
+                      className="input-blue-outline w-[120px]"
                     />
                   </div>
+                  <div className="flex items-center justify-between">
+                    <ExpirationSelector
+                      presets={expirationPresets}
+                      setExpiration={setExpiration}
+                      expiration={expiration}
+                    />
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">Fees</div>
+                    <div className="text-right">
+                      <div>Royalty {royaltyPercentage}</div>
+                      <div>Marketplace 0%</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-medium uppercase opacity-75">
+                      Total Cost
+                    </div>
+                    <div className="text-2xl font-bold">
+                      <FormatEth
+                        amount={calculations.total}
+                        maximumFractionDigits={4}
+                        logoWidth={10}
+                      />
+                    </div>
+                  </div>
+                  {calculations.error && (
+                    <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
+                      {calculations.error}
+                    </div>
+                  )}
+                  {calculations.warning && (
+                    <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
+                      {calculations.warning}
+                    </div>
+                  )}
                 </div>
-                {calculations.error && (
-                  <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
-                    {calculations.error}
-                  </div>
-                )}
-                {calculations.warning && (
-                  <div className="rounded-md bg-yellow-100 px-2 py-1 text-yellow-900">
-                    {calculations.warning}
-                  </div>
-                )}
-              </div>
+              )}
               {success ? (
                 <Dialog.Close asChild>
                   <button className="btn-green-fill w-full">
@@ -234,34 +243,30 @@ const CollectionOfferModal: FC<Props> = ({
 
                       // Wait for transactions to complete
                       try {
-                        const maker = await signer.getAddress()
+                        const url = new URL('/execute/bid', env.apiBase)
 
-                        const feeRecipient = royalties?.recipient || maker
+                        let query: paths['/execute/bid']['get']['parameters']['query'] =
+                          {
+                            maker: await signer.getAddress(),
+                            price: calculations.total.toString(),
+                            expirationTime: expirationValue,
+                            collection: data.collection.id,
+                          }
 
-                        let query: Parameters<typeof makeOffer>[2] = {
-                          maker,
-                          side: 'buy',
-                          price: calculations.total.toString(),
-                          fee,
-                          feeRecipient,
-                          expirationTime: expirationValue,
-                        }
-
-                        query.collection = data.collection.id
-
-                        // Set loading state for UI
+                        setParams(url, query)
                         setWaitingTx(true)
 
-                        await makeOffer(env.apiBase, signer, query)
+                        await executeSteps(url, signer, setSteps)
                         // Close modal
                         // closeButton.current?.click()
-                        await pollSwr(stats.data, stats.mutate)
+                        stats.mutate()
+                        tokens.mutate()
                         setSuccess(true)
-                        setWaitingTx(false)
                       } catch (err) {
                         console.error(err)
-                        setWaitingTx(false)
                       }
+                      setWaitingTx(false)
+                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

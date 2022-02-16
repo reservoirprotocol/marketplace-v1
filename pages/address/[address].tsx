@@ -4,32 +4,29 @@ import UserTokensGrid from 'components/UserTokensGrid'
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
-import { GetServerSideProps, InferGetStaticPropsType, NextPage } from 'next'
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
-import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import useCollections from 'hooks/useCollections'
+import getWildcard from 'lib/getWildcard'
+import getIsCommunity from 'lib/getIsCommunity'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
 type InfiniteKeyLoader = (
-  url: URL,
-  wildcard: string,
-  isHome: boolean,
+  custom: { url: URL; wildcard: string; isCommunity: boolean; isHome: boolean },
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
-  url: URL,
-  wildcard: string,
-  isHome: boolean,
+  custom: { url: URL; wildcard: string; isCommunity: boolean; isHome: boolean },
   index: number,
   previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
 ) => {
+  const { url, wildcard, isCommunity, isHome } = custom
   if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
@@ -43,7 +40,11 @@ const getKey: InfiniteKeyLoader = (
     offset: index * 20,
   }
 
-  if (!isHome) {
+  if (isCommunity) {
+    query.community = wildcard
+  }
+
+  if (!isHome && !isCommunity) {
     query.collection = wildcard
   }
 
@@ -52,9 +53,9 @@ const getKey: InfiniteKeyLoader = (
   return url.href
 }
 
-type Props = InferGetStaticPropsType<typeof getServerSideProps>
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Address: NextPage<Props> = ({ wildcard, isHome }) => {
+const Address: NextPage<Props> = ({ wildcard, isHome, isCommunity }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
@@ -68,7 +69,7 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
     paths['/users/{user}/tokens']['get']['responses']['200']['schema']
   >(
     (index, previousPageData) =>
-      getKey(url, wildcard, isHome, index, previousPageData),
+      getKey({ url, wildcard, isCommunity, isHome }, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -83,11 +84,11 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
     }
   }, [inView])
 
-  let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
+  // let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
 
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(collectionUrl.href, fetcher)
+  // const collection = useSWR<
+  //   paths['/collections/{collection}']['get']['responses']['200']['schema']
+  // >(collectionUrl.href, fetcher)
 
   return (
     <Layout>
@@ -101,25 +102,15 @@ const Address: NextPage<Props> = ({ wildcard, isHome }) => {
 
 export default Address
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const hostParts = req.headers.host?.split('.').reverse()
-  // Make sure that the host contains at least one subdomain
-  // ['subdomain', 'domain', 'TLD']
-  // Reverse the host parts to make sure that the third element always
-  // corresponds to the first subdomain
-  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  if (!hostParts) {
-    return {
-      notFound: true,
-    }
-  }
+export const getServerSideProps: GetServerSideProps<{
+  wildcard: string
+  isCommunity: boolean
+  isHome: boolean
+}> = async ({ req }) => {
+  // Handle wildcard
+  const wildcard = getWildcard(req)
+  const isHome = wildcard === 'www'
+  const isCommunity = getIsCommunity(wildcard)
 
-  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
-  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard =
-    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
-
-  const isHome: boolean = wildcard === 'www'
-
-  return { props: { wildcard, isHome } }
+  return { props: { wildcard, isHome, isCommunity } }
 }

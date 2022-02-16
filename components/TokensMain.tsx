@@ -6,9 +6,9 @@ import useFiltersApplied from 'hooks/useFiltersApplied'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
-import instantBuy from 'lib/buyToken'
+import executeSteps, { Execute } from 'lib/executeSteps'
 import { formatBN } from 'lib/numbers'
-import { pollSwr } from 'lib/pollApi'
+import setParams from 'lib/params'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
@@ -22,6 +22,7 @@ import Hero from './Hero'
 import Sidebar from './Sidebar'
 import SortMenu from './SortMenu'
 import SortMenuExplore from './SortMenuExplore'
+import StepsModal from './StepsModal'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 
@@ -48,6 +49,7 @@ const TokensMain: FC<Props> = ({
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
   >({
@@ -162,8 +164,25 @@ const TokensMain: FC<Props> = ({
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
+  const hasTokenSetId = !!collection.data?.collection?.collection?.tokenSetId
+
+  const dataSteps = {
+    token: {
+      image: stats.data?.stats?.market?.floorSell?.token?.image,
+      name: stats.data?.stats?.market?.floorSell?.token?.name,
+      id: stats.data?.stats?.market?.floorSell?.token?.tokenId,
+      contract: stats.data?.stats?.market?.floorSell?.token?.contract,
+      topBuyValue: undefined,
+      floorSellValue: stats.data?.stats?.market?.floorSell?.value,
+    },
+    collection: {
+      name: collection?.data?.collection?.collection?.name,
+    },
+  }
+
   return (
     <>
+      {steps && <StepsModal title="Buy token" data={dataSteps} steps={steps} />}
       <Head>
         {collectionId === 'www' ? (
           <title>
@@ -201,21 +220,26 @@ const TokensMain: FC<Props> = ({
             }
 
             try {
-              const query: Parameters<typeof instantBuy>[2] = {
-                contract,
-                tokenId,
-                side: 'sell',
-                taker: await signer.getAddress(),
-              }
+              const url = new URL('/execute/buy', apiBase)
+
+              const query: paths['/execute/buy']['get']['parameters']['query'] =
+                {
+                  contract,
+                  tokenId,
+                  taker: await signer.getAddress(),
+                }
+
+              setParams(url, query)
               setWaitingTx(true)
-              await instantBuy(apiBase, signer, query)
-              await pollSwr(stats.data, stats.mutate)
-              setWaitingTx(false)
+
+              await executeSteps(url, signer, setSteps)
+              stats.mutate()
             } catch (err) {
               console.error(err)
-              setWaitingTx(false)
-              return
             }
+
+            setWaitingTx(false)
+            setSteps(undefined)
           }}
           className="btn-neutral-fill-dark"
         >
@@ -223,39 +247,42 @@ const TokensMain: FC<Props> = ({
             ? 'Waiting...'
             : `Buy for ${formatBN(floor?.value, 4)} ETH`}
         </button>
-        {isAttributeModal ? (
-          <AttributeOfferModal
-            trigger={
-              <button
-                className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork}
-              >
-                Make an attribute offer
-              </button>
-            }
-            royalties={royalties}
-            signer={signer}
-            data={attributeData}
-            env={env}
-            stats={stats}
-          />
-        ) : (
-          <CollectionOfferModal
-            trigger={
-              <button
-                className="btn-neutral-outline border-black py-2"
-                disabled={!signer || isInTheWrongNetwork}
-              >
-                Make a collection offer
-              </button>
-            }
-            royalties={royalties}
-            signer={signer}
-            data={data}
-            env={env}
-            stats={stats}
-          />
-        )}
+        {hasTokenSetId &&
+          (isAttributeModal ? (
+            <AttributeOfferModal
+              trigger={
+                <button
+                  className="btn-neutral-outline border-black py-2"
+                  disabled={!signer || isInTheWrongNetwork}
+                >
+                  Make an attribute offer
+                </button>
+              }
+              royalties={royalties}
+              signer={signer}
+              data={attributeData}
+              env={env}
+              stats={stats}
+              tokens={tokens}
+            />
+          ) : (
+            <CollectionOfferModal
+              trigger={
+                <button
+                  className="btn-neutral-outline border-black py-2"
+                  disabled={!signer || isInTheWrongNetwork}
+                >
+                  Make a collection offer
+                </button>
+              }
+              royalties={royalties}
+              signer={signer}
+              data={data}
+              env={env}
+              stats={stats}
+              tokens={tokens}
+            />
+          ))}
       </Hero>
       <div className="flex gap-5">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />

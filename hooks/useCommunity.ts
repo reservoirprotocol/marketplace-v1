@@ -51,6 +51,8 @@ const getKey: (
     limit: 20,
     offset: index * 20,
     community: wildcard,
+    sortBy: 'floorCap',
+    sortDirection: 'desc',
   }
 
   setParams(url, query)

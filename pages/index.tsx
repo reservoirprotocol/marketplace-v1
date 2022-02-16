@@ -15,6 +15,8 @@ import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
+import getWildcard from 'lib/getWildcard'
+import getIsCommunity from 'lib/getIsCommunity'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -78,58 +80,10 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const hostParts = req.headers.host?.split('.').reverse()
-  // Make sure that the host contains at least one subdomain
-  // ['subdomain', 'domain', 'TLD']
-  // Reverse the host parts to make sure that the third element always
-  // corresponds to the first subdomain
-  // ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  if (!hostParts || hostParts.length < 2) {
-    return {
-      notFound: true,
-    }
-  }
-
-  if (!apiBase) {
-    console.debug('There are missing environment variables', {
-      apiBase,
-    })
-    return {
-      notFound: true,
-    }
-  }
-
-  // In development: hostParts = ['localhost:3000', 'subdomain1', 'subdomain2']
-  // In production: hostParts = ['TLD', 'domain', 'subdomain1', 'subdomain2']
-  const wildcard =
-    hostParts[0] === 'localhost:3000' ? hostParts[1] : hostParts[2]
-
-  // Check the wildcard corresponds to a community
-  const url = new URL('/collections', apiBase)
-
-  const query: paths['/collections']['get']['parameters']['query'] = {
-    community: wildcard,
-  }
-
-  setParams(url, query)
-
-  let isCommunity: boolean = false
-
-  try {
-    const res = await fetch(url.href)
-    const collections =
-      (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
-    if (collections.collections) {
-      isCommunity = collections.collections.length > 0
-    }
-  } catch (err) {
-    console.log(err)
-    return {
-      notFound: true,
-    }
-  }
-
-  const isHome: boolean = wildcard === 'www'
+  // Handle wildcard
+  const wildcard = getWildcard(req)
+  const isHome = wildcard === 'www'
+  const isCommunity = getIsCommunity(wildcard)
 
   return { props: { wildcard, isCommunity, isHome } }
 }
