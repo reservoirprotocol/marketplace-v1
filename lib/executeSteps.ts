@@ -1,7 +1,7 @@
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
-import { pollUntilHasData, pollUntilOk } from './pollApi'
+import { pollUntilChange, pollUntilHasData, pollUntilOk } from './pollApi'
 
 export type Execute = {
   steps?:
@@ -43,73 +43,75 @@ export default async function executeSteps(
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
-  // Return steps in callback, so progress can be displayed in UI
+  const incompleteIndex = json.steps.findIndex(
+    ({ status }) => status === 'incomplete'
+  )
+
+  // There are no more incomplete steps
+  if (incompleteIndex === -1) return json
+
+  json.steps[incompleteIndex].loading = true
   if (setState) setState(json.steps)
 
-  for (let index = 0; index < json.steps.length; index++) {
-    let { status, kind, data } = json.steps[index]
-    if (status === 'incomplete') {
-      // Update UI for loading state
-      json.steps[index].loading = true
-      if (setState) setState(json.steps)
+  let { kind, data } = json.steps[incompleteIndex]
 
-      // Append any extra params provided by API
-      if (json.query) setParams(url, json.query)
+  // Append any extra params provided by API
+  if (json.query) setParams(url, json.query)
 
-      // If step is missing data, poll until it is ready
-      if (!data) {
-        json = (await pollUntilHasData(url, index)) as Execute
-        if (!json.steps) throw new ReferenceError('There are no steps.')
-        data = json.steps[index].data
-      }
-
-      // Handle each step based on it's kind
-      switch (kind) {
-        // Make an on-chain transaction
-        case 'transaction': {
-          const tx = await signer.sendTransaction(data)
-          await tx.wait()
-          break
-        }
-
-        // Sign a message
-        case 'signature': {
-          // Request user signature
-          const signature = await signer.signMessage(arrayify(data.message))
-          // Split signature into r,s,v components
-          const { r, s, v } = splitSignature(signature)
-          // Include signature params in any future requests
-          setParams(url, { r, s, v })
-          break
-        }
-
-        // Post a signed order object to order book
-        case 'request': {
-          const postOrderUrl = new URL(data.endpoint, url.origin)
-          await fetch(postOrderUrl.href, {
-            method: data.method,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data.body),
-          })
-          break
-        }
-
-        // Confirm that an on-chain tx has been picked up by indexer
-        case 'confirmation': {
-          const confirmationUrl = new URL(data.endpoint, url.origin)
-          await pollUntilOk(confirmationUrl)
-          break
-        }
-      }
-
-      // Mark the step as complete
-      json.steps[index].status = 'complete'
-      json.steps[index].loading = false
-
-      if (setState) setState(json.steps)
-    }
+  // If step is missing data, poll until it is ready
+  if (!data) {
+    json = (await pollUntilHasData(url, incompleteIndex)) as Execute
+    if (!json.steps) throw new ReferenceError('There are no steps.')
+    data = json.steps[incompleteIndex].data
   }
-  return true
+
+  // Handle each step based on it's kind
+  switch (kind) {
+    // Make an on-chain transaction
+    case 'transaction': {
+      const tx = await signer.sendTransaction(data)
+      await tx.wait()
+      break
+    }
+
+    // Sign a message
+    case 'signature': {
+      // Request user signature
+      const signature = await signer.signMessage(arrayify(data.message))
+      // Split signature into r,s,v components
+      const { r, s, v } = splitSignature(signature)
+      // Include signature params in any future requests
+      setParams(url, { r, s, v })
+      break
+    }
+
+    // Post a signed order object to order book
+    case 'request': {
+      const postOrderUrl = new URL(data.endpoint, url.origin)
+      await fetch(postOrderUrl.href, {
+        method: data.method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data.body),
+      })
+      break
+    }
+
+    // Confirm that an on-chain tx has been picked up by indexer
+    case 'confirmation': {
+      const confirmationUrl = new URL(data.endpoint, url.origin)
+      await pollUntilOk(confirmationUrl)
+      return json
+    }
+
+    default:
+      break
+  }
+
+  // delete json.steps[incompleteIndex].loading
+
+  await executeSteps(url, signer, setState)
+
+  return json
 }

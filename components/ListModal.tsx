@@ -209,6 +209,7 @@ const ListModal: FC<Props> = ({
 
                       try {
                         await executeSteps(url, signer, setSteps)
+
                         // Close modal
                         // closeButton.current?.click()
                         details.mutate()
