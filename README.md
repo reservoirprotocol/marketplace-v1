@@ -77,8 +77,6 @@ With npm:
 $ npm run dev
 ```
 
-Then navigate to http://www.localhost:3000 in your browser.
-
 ### Deploy
 
 This is a Next.js app that can be easily deployed using [Vercel](https://vercel.com/)
