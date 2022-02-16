@@ -29,9 +29,7 @@ const CancelOffer: FC<Props> = ({
   const token = details.data?.tokens?.[0]
   return (
     <>
-      {steps && (
-        <StepsModal title="Cancel your offer" data={data} steps={steps} />
-      )}
+      <StepsModal title="Cancel your offer" data={data} steps={steps} />
       <button
         disabled={waitingTx || isInTheWrongNetwork}
         onClick={async () => {
