@@ -27,12 +27,13 @@ export type Execute = {
  * action.
  * @param url URL object with the endpoint to be called. Example: `/execute/buy`
  * @param signer Ethereum signer object provided by the browser
+ * @param setState Callback to update UI state has execution progresses
  * @returns The data field of the last element in the steps array
  */
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  callback?: (steps: Execute) => any
+  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>
 ) {
   // Fetch the steps
   const res = await fetch(url.href)
@@ -43,15 +44,15 @@ export default async function executeSteps(
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
   // Return steps in callback, so progress can be displayed in UI
-  if (callback) callback(json)
+  if (setState) setState(json.steps)
 
   for (let index = 0; index < json.steps.length; index++) {
-    // Update UI for loading state
-    json.steps[index].loading = true
-    if (callback) callback(json)
-
     let { status, kind, data } = json.steps[index]
     if (status === 'incomplete') {
+      // Update UI for loading state
+      json.steps[index].loading = true
+      if (setState) setState(json.steps)
+
       // Append any extra params provided by API
       if (json.query) setParams(url, json.query)
 
@@ -107,7 +108,7 @@ export default async function executeSteps(
       json.steps[index].status = 'complete'
       json.steps[index].loading = false
 
-      if (callback) callback(json)
+      if (setState) setState(json.steps)
     }
   }
   return true

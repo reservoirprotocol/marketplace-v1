@@ -270,9 +270,7 @@ const AttributeOfferModal: FC<Props> = ({
                         setParams(url, query)
                         setWaitingTx(true)
 
-                        await executeSteps(url, signer, (execute) =>
-                          setSteps(execute.steps)
-                        )
+                        await executeSteps(url, signer, setSteps)
                         // Close modal
                         // closeButton.current?.click()
                         stats.mutate()

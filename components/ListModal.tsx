@@ -208,9 +208,7 @@ const ListModal: FC<Props> = ({
                       setWaitingTx(true)
 
                       try {
-                        await executeSteps(url, signer, (execute) =>
-                          setSteps(execute.steps)
-                        )
+                        await executeSteps(url, signer, setSteps)
                         // Close modal
                         // closeButton.current?.click()
                         details.mutate()

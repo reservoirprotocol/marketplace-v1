@@ -57,9 +57,7 @@ const AcceptOffer: FC<Props> = ({
             setParams(url, query)
             setWaitingTx(true)
 
-            await executeSteps(url, signer, (execute) =>
-              setSteps(execute.steps)
-            )
+            await executeSteps(url, signer, setSteps)
             details.mutate()
           } catch (err) {
             console.error(err)

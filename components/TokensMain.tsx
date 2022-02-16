@@ -232,9 +232,7 @@ const TokensMain: FC<Props> = ({
               setParams(url, query)
               setWaitingTx(true)
 
-              await executeSteps(url, signer, (execute) =>
-                setSteps(execute.steps)
-              )
+              await executeSteps(url, signer, setSteps)
               stats.mutate()
             } catch (err) {
               console.error(err)

@@ -58,9 +58,7 @@ const BuyNow: FC<Props> = ({
             }
             setParams(url, query)
             setWaitingTx(true)
-            await executeSteps(url, signer, (execute) =>
-              setSteps(execute.steps)
-            )
+            await executeSteps(url, signer, setSteps)
             details.mutate()
           } catch (err: any) {
             console.error(err)

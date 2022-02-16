@@ -56,9 +56,7 @@ const CancelListing: FC<Props> = ({
           setWaitingTx(true)
 
           try {
-            await executeSteps(url, signer, (execute) =>
-              setSteps(execute.steps)
-            )
+            await executeSteps(url, signer, setSteps)
 
             details.mutate()
           } catch (err) {
