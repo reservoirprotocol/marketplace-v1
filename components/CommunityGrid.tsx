@@ -24,7 +24,7 @@ const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
 
   return (
     <>
-      <div className="mx-auto mb-5 grid max-w-screen-xl flex-wrap justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mx-auto mb-5 grid flex-wrap place-items-center justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {!data && isValidating
           ? Array(20)
               .fill(null)

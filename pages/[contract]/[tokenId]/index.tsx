@@ -68,8 +68,9 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
   const isOwner =
     token?.token?.owner?.toLowerCase() === accountData?.address.toLowerCase()
   const isTopBidder =
+    !!accountData &&
     token?.market?.topBuy?.maker?.toLowerCase() ===
-    accountData?.address.toLowerCase()
+      accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
