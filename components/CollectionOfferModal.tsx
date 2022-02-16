@@ -209,7 +209,10 @@ const CollectionOfferModal: FC<Props> = ({
               )}
               {success ? (
                 <Dialog.Close asChild>
-                  <button className="btn-green-fill w-full">
+                  <button
+                    onClick={() => setSteps(undefined)}
+                    className="btn-green-fill w-full"
+                  >
                     Success, Close this menu
                   </button>
                 </Dialog.Close>
@@ -266,7 +269,6 @@ const CollectionOfferModal: FC<Props> = ({
                         console.error(err)
                       }
                       setWaitingTx(false)
-                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

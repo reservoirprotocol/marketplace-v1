@@ -16,6 +16,7 @@ type Props = {
   apiBase: string
   signer: Signer | undefined
   setError: React.Dispatch<React.SetStateAction<boolean>>
+  hide: boolean
 }
 
 const BuyNow: FC<Props> = ({
@@ -25,6 +26,7 @@ const BuyNow: FC<Props> = ({
   data,
   signer,
   setError,
+  hide,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -32,45 +34,47 @@ const BuyNow: FC<Props> = ({
   return (
     <>
       <StepsModal title="Buy now" data={data} steps={steps} />
-      <button
-        disabled={
-          !signer ||
-          token?.market?.floorSell?.value === null ||
-          waitingTx ||
-          isInTheWrongNetwork
-        }
-        onClick={async () => {
-          const tokenId = token?.token?.tokenId
-          const contract = token?.token?.contract
-
-          if (!signer || !tokenId || !contract) {
-            console.debug({ tokenId, signer, contract })
-            return
+      {hide && (
+        <button
+          disabled={
+            !signer ||
+            token?.market?.floorSell?.value === null ||
+            waitingTx ||
+            isInTheWrongNetwork
           }
+          onClick={async () => {
+            const tokenId = token?.token?.tokenId
+            const contract = token?.token?.contract
 
-          try {
-            const url = new URL('/execute/buy', apiBase)
-
-            const query: paths['/execute/buy']['get']['parameters']['query'] = {
-              contract,
-              tokenId,
-              taker: await signer.getAddress(),
+            if (!signer || !tokenId || !contract) {
+              console.debug({ tokenId, signer, contract })
+              return
             }
-            setParams(url, query)
-            setWaitingTx(true)
-            await executeSteps(url, signer, setSteps)
-            details.mutate()
-          } catch (err: any) {
-            console.error(err)
-            if (err?.message === 'Not enough ETH balance') setError(true)
-          }
-          setWaitingTx(false)
-          setSteps(undefined)
-        }}
-        className="btn-neutral-fill-dark w-full"
-      >
-        {waitingTx ? 'Waiting...' : 'Buy Now'}
-      </button>
+
+            try {
+              const url = new URL('/execute/buy', apiBase)
+
+              const query: paths['/execute/buy']['get']['parameters']['query'] =
+                {
+                  contract,
+                  tokenId,
+                  taker: await signer.getAddress(),
+                }
+              setParams(url, query)
+              setWaitingTx(true)
+              await executeSteps(url, signer, setSteps)
+              details.mutate()
+            } catch (err: any) {
+              console.error(err)
+              if (err?.message === 'Not enough ETH balance') setError(true)
+            }
+            setWaitingTx(false)
+          }}
+          className="btn-neutral-fill-dark w-full"
+        >
+          {waitingTx ? 'Waiting...' : 'Buy Now'}
+        </button>
+      )}
     </>
   )
 }

@@ -1,5 +1,6 @@
 import { KeyedMutator } from 'swr'
 import { URL } from 'url'
+import { Execute } from './executeSteps'
 
 async function pollSwr(previousJson: any, mutate: KeyedMutator<any>) {
   const json = await mutate()
@@ -40,4 +41,19 @@ async function pollUntilOk(url: URL) {
   }
 }
 
-export { pollSwr, pollUntilHasData, pollUntilOk }
+async function pollUntilChange(url: URL, oldJson: any) {
+  const res = await fetch(url.href)
+
+  const json = (await res.json()) as Execute
+
+  // Check that the response from an endpoint updated
+  if (JSON.stringify(json) !== JSON.stringify(oldJson)) {
+    return json
+  } else {
+    // The response is still unchanged. Check again in five seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await pollUntilChange(url, json)
+  }
+}
+
+export { pollSwr, pollUntilHasData, pollUntilOk, pollUntilChange }

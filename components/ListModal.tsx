@@ -149,7 +149,10 @@ const ListModal: FC<Props> = ({
               )}
               {success ? (
                 <Dialog.Close asChild>
-                  <button className="btn-green-fill w-full">
+                  <button
+                    onClick={() => setSteps(undefined)}
+                    className="btn-green-fill w-full"
+                  >
                     Success, Close this menu
                   </button>
                 </Dialog.Close>
@@ -209,6 +212,7 @@ const ListModal: FC<Props> = ({
 
                       try {
                         await executeSteps(url, signer, setSteps)
+
                         // Close modal
                         // closeButton.current?.click()
                         details.mutate()
@@ -218,7 +222,6 @@ const ListModal: FC<Props> = ({
                       }
 
                       setWaitingTx(false)
-                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

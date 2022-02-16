@@ -15,6 +15,7 @@ type Props = {
   data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
   signer: Signer | undefined
+  hide: boolean
 }
 
 const AcceptOffer: FC<Props> = ({
@@ -23,6 +24,7 @@ const AcceptOffer: FC<Props> = ({
   apiBase,
   data,
   signer,
+  hide,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -31,45 +33,46 @@ const AcceptOffer: FC<Props> = ({
   return (
     <>
       <StepsModal title="Accept offer" data={data} steps={steps} />
-      <button
-        disabled={
-          waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
-        }
-        onClick={async () => {
-          const tokenId = token?.token?.tokenId
-          const contract = token?.token?.contract
-
-          if (!tokenId || !contract || !signer) {
-            console.debug({ tokenId, contract, signer })
-            return
+      {hide && (
+        <button
+          disabled={
+            waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
           }
+          onClick={async () => {
+            const tokenId = token?.token?.tokenId
+            const contract = token?.token?.contract
 
-          try {
-            const url = new URL('/execute/sell', apiBase)
+            if (!tokenId || !contract || !signer) {
+              console.debug({ tokenId, contract, signer })
+              return
+            }
 
-            const query: paths['/execute/sell']['get']['parameters']['query'] =
-              {
-                tokenId,
-                contract,
-                taker: await signer.getAddress(),
-              }
+            try {
+              const url = new URL('/execute/sell', apiBase)
 
-            setParams(url, query)
-            setWaitingTx(true)
+              const query: paths['/execute/sell']['get']['parameters']['query'] =
+                {
+                  tokenId,
+                  contract,
+                  taker: await signer.getAddress(),
+                }
 
-            await executeSteps(url, signer, setSteps)
-            details.mutate()
-          } catch (err) {
-            console.error(err)
-          }
+              setParams(url, query)
+              setWaitingTx(true)
 
-          setWaitingTx(false)
-          setSteps(undefined)
-        }}
-        className="btn-neutral-outline w-full border-neutral-900"
-      >
-        {waitingTx ? 'Waiting...' : 'Accept Offer'}
-      </button>
+              await executeSteps(url, signer, setSteps)
+              details.mutate()
+            } catch (err) {
+              console.error(err)
+            }
+
+            setWaitingTx(false)
+          }}
+          className="btn-neutral-outline w-full border-neutral-900"
+        >
+          {waitingTx ? 'Waiting...' : 'Accept Offer'}
+        </button>
+      )}
     </>
   )
 }
