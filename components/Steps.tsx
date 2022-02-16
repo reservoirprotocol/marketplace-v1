@@ -12,14 +12,14 @@ const Steps: FC<Props> = ({ steps }) => {
       {steps?.map(({ action, description, status, loading }, index) => (
         <div className="mb-3 flex gap-2" key={action + index}>
           {status === 'complete' && (
-            <HiCheckCircle className="mt-0.5 h-6 w-6 text-green-600" />
+            <HiCheckCircle className="mt-0.5 h-6 w-6 flex-none text-green-600" />
           )}
-          {status === 'incomplete' && !loading && (
-            <HiMinusCircle className="mt-0.5 h-6 w-6 text-neutral-600" />
-          )}
-          {status === 'incomplete' && loading && (
+          {/* {status === 'incomplete' && !loading && (
+            <HiMinusCircle className="mt-0.5 h-6 w-6 flex-none text-neutral-600" />
+          )} */}
+          {status === 'incomplete' && (
             <svg
-              className="mt-1 mr-1 h-5 w-5 animate-spin text-black"
+              className="mt-1 mr-1 h-5 w-5 flex-none animate-spin text-black"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
