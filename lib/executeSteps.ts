@@ -33,11 +33,16 @@ export type Execute = {
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>
+  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>,
+  newJson?: Execute
 ) {
-  // Fetch the steps
-  const res = await fetch(url.href)
-  let json = (await res.json()) as Execute
+  let json = newJson
+
+  if (!json) {
+    // Fetch the steps
+    const res = await fetch(url.href)
+    json = (await res.json()) as Execute
+  }
 
   // Handle errors
   if (json.error) throw new Error(json.error)
@@ -102,16 +107,17 @@ export default async function executeSteps(
     case 'confirmation': {
       const confirmationUrl = new URL(data.endpoint, url.origin)
       await pollUntilOk(confirmationUrl)
-      return json
+      break
     }
 
     default:
       break
   }
 
-  // delete json.steps[incompleteIndex].loading
+  delete json.steps[incompleteIndex].loading
+  json.steps[incompleteIndex].status = 'complete'
 
-  await executeSteps(url, signer, setState)
+  await executeSteps(url, signer, setState, json)
 
   return json
 }
