@@ -221,7 +221,10 @@ const AttributeOfferModal: FC<Props> = ({
               )}
               {success ? (
                 <Dialog.Close asChild>
-                  <button className="btn-green-fill w-full">
+                  <button
+                    onClick={() => setSteps(undefined)}
+                    className="btn-green-fill w-full"
+                  >
                     Success, Close this menu
                   </button>
                 </Dialog.Close>
@@ -281,7 +284,6 @@ const AttributeOfferModal: FC<Props> = ({
                       }
 
                       setWaitingTx(false)
-                      setSteps(undefined)
                     }}
                     className="btn-blue-fill w-full"
                   >

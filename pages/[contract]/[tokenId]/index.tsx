@@ -183,7 +183,7 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                   />
                 }
               >
-                {isOwner ? (
+                {isOwner && (
                   <ListModal
                     signer={signer}
                     apiBase={apiBase}
@@ -192,16 +192,16 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                     collection={collection.data}
                     details={details}
                   />
-                ) : (
-                  <BuyNow
-                    apiBase={apiBase}
-                    details={details}
-                    data={data}
-                    signer={signer}
-                    isInTheWrongNetwork={isInTheWrongNetwork}
-                    setError={setError}
-                  />
                 )}
+                <BuyNow
+                  apiBase={apiBase}
+                  details={details}
+                  data={data}
+                  signer={signer}
+                  isInTheWrongNetwork={isInTheWrongNetwork}
+                  setError={setError}
+                  hide={!isOwner}
+                />
               </Price>
               <Price
                 title="top offer"
@@ -213,15 +213,15 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                   />
                 }
               >
-                {isOwner ? (
-                  <AcceptOffer
-                    apiBase={apiBase}
-                    details={details}
-                    data={data}
-                    signer={signer}
-                    isInTheWrongNetwork={isInTheWrongNetwork}
-                  />
-                ) : (
+                <AcceptOffer
+                  apiBase={apiBase}
+                  details={details}
+                  data={data}
+                  signer={signer}
+                  hide={isOwner}
+                  isInTheWrongNetwork={isInTheWrongNetwork}
+                />
+                {!isOwner && (
                   <TokenOfferModal
                     signer={signer}
                     data={data}
@@ -245,24 +245,22 @@ const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
                 You have insufficient funds to buy this token.
               </div>
             )}
-            {isTopBidder && (
-              <CancelOffer
-                apiBase={apiBase}
-                details={details}
-                data={data}
-                signer={signer}
-                isInTheWrongNetwork={isInTheWrongNetwork}
-              />
-            )}
-            {isOwner && isListed && (
-              <CancelListing
-                apiBase={apiBase}
-                data={data}
-                signer={signer}
-                details={details}
-                isInTheWrongNetwork={isInTheWrongNetwork}
-              />
-            )}
+            <CancelOffer
+              apiBase={apiBase}
+              details={details}
+              data={data}
+              signer={signer}
+              hide={isTopBidder}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+            />
+            <CancelListing
+              apiBase={apiBase}
+              data={data}
+              signer={signer}
+              details={details}
+              hide={isOwner && isListed}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+            />
           </div>
           <TokenAttributes token={token?.token} />
         </div>

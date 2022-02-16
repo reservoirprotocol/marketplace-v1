@@ -15,7 +15,9 @@ const Steps: FC<Props> = ({ steps }) => {
             <HiCheckCircle className="mt-0.5 h-6 w-6 flex-none text-green-600" />
           )}
           {status === 'incomplete' && loading !== true && (
-            <HiMinusCircle className="mt-0.5 h-6 w-6 flex-none text-neutral-600" />
+            <div className="w-6 text-center text-lg font-semibold">
+              {index + 1}
+            </div>
           )}
           {status === 'incomplete' && loading === true && (
             <svg

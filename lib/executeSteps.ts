@@ -117,6 +117,8 @@ export default async function executeSteps(
   delete json.steps[incompleteIndex].loading
   json.steps[incompleteIndex].status = 'complete'
 
+  if (setState) setState(json.steps)
+
   await executeSteps(url, signer, setState, json)
 
   return json

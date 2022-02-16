@@ -15,6 +15,7 @@ type Props = {
   data: ComponentProps<typeof StepsModal>['data']
   apiBase: string
   signer: Signer | undefined
+  hide: boolean
 }
 
 const CancelListing: FC<Props> = ({
@@ -23,6 +24,7 @@ const CancelListing: FC<Props> = ({
   data,
   apiBase,
   signer,
+  hide,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -31,43 +33,44 @@ const CancelListing: FC<Props> = ({
   return (
     <>
       <StepsModal title="Cancel your listing" data={data} steps={steps} />
-      <button
-        disabled={waitingTx || isInTheWrongNetwork}
-        onClick={async () => {
-          const hash = token?.market?.floorSell?.hash
-          const maker = token?.market?.floorSell?.maker
+      {hide && (
+        <button
+          disabled={waitingTx || isInTheWrongNetwork}
+          onClick={async () => {
+            const hash = token?.market?.floorSell?.hash
+            const maker = token?.market?.floorSell?.maker
 
-          if (!signer || !hash || !maker) {
-            console.debug({ hash, signer, maker })
-            return
-          }
-
-          const url = new URL('/execute/cancel', apiBase)
-
-          const query: paths['/execute/cancel']['get']['parameters']['query'] =
-            {
-              hash,
-              maker,
+            if (!signer || !hash || !maker) {
+              console.debug({ hash, signer, maker })
+              return
             }
 
-          setParams(url, query)
-          setWaitingTx(true)
+            const url = new URL('/execute/cancel', apiBase)
 
-          try {
-            await executeSteps(url, signer, setSteps)
+            const query: paths['/execute/cancel']['get']['parameters']['query'] =
+              {
+                hash,
+                maker,
+              }
 
-            details.mutate()
-          } catch (err) {
-            console.error(err)
-          }
+            setParams(url, query)
+            setWaitingTx(true)
 
-          setWaitingTx(false)
-          setSteps(undefined)
-        }}
-        className="btn-red-ghost col-span-2 mx-auto mt-6"
-      >
-        {waitingTx ? 'Waiting...' : 'Cancel listing'}
-      </button>
+            try {
+              await executeSteps(url, signer, setSteps)
+
+              details.mutate()
+            } catch (err) {
+              console.error(err)
+            }
+
+            setWaitingTx(false)
+          }}
+          className="btn-red-ghost col-span-2 mx-auto mt-6"
+        >
+          {waitingTx ? 'Waiting...' : 'Cancel listing'}
+        </button>
+      )}
     </>
   )
 }

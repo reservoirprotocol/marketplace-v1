@@ -239,7 +239,6 @@ const TokensMain: FC<Props> = ({
             }
 
             setWaitingTx(false)
-            setSteps(undefined)
           }}
           className="btn-neutral-fill-dark"
         >
