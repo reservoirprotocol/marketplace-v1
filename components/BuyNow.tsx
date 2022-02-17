@@ -5,6 +5,7 @@ import setParams from 'lib/params'
 import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import StepsModal from './StepsModal'
+import { Subject } from 'rxjs'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -62,9 +63,25 @@ const BuyNow: FC<Props> = ({
                 }
               setParams(url, query)
               setWaitingTx(true)
-              await executeSteps(url, signer, setSteps)
+
+              // Fetch the steps
+              const res = await fetch(url.href)
+              const json = (await res.json()) as Execute
+              setSteps(json.steps)
+
+              const observer = new Subject<Execute['steps']>()
+
+              observer.subscribe({
+                next: setSteps,
+              })
+
+              await executeSteps(url, signer, json, observer)
               details.mutate()
             } catch (err: any) {
+              // Handle user rejection
+              if (err?.code === 4001) {
+                setSteps(undefined)
+              }
               console.error(err)
               if (err?.message === 'Not enough ETH balance') setError(true)
             }

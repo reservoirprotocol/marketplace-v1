@@ -12,6 +12,7 @@ import { SWRResponse } from 'swr'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
 import setParams from 'lib/params'
+import { Subject } from 'rxjs'
 
 type Props = {
   apiBase: string
@@ -220,13 +221,27 @@ const ListModal: FC<Props> = ({
                       setWaitingTx(true)
 
                       try {
-                        await executeSteps(url, signer, setSteps)
+                        // Fetch the steps
+                        const res = await fetch(url.href)
+                        const json = (await res.json()) as Execute
+
+                        const observer = new Subject<Execute['steps']>()
+
+                        observer.subscribe({
+                          next: setSteps,
+                        })
+
+                        await executeSteps(url, signer, json, observer)
 
                         // Close modal
                         // closeButton.current?.click()
                         details.mutate()
                         setSuccess(true)
-                      } catch (err) {
+                      } catch (err: any) {
+                        // Handle user rejection
+                        if (err?.code === 4001) {
+                          setSteps(undefined)
+                        }
                         console.error(err)
                       }
 

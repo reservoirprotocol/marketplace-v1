@@ -3,6 +3,7 @@ import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
 import { pollUntilChange, pollUntilHasData, pollUntilOk } from './pollApi'
+import { Subject } from 'rxjs'
 
 export type Execute = {
   steps?:
@@ -12,7 +13,6 @@ export type Execute = {
         status: 'complete' | 'incomplete'
         kind: 'transaction' | 'signature' | 'request' | 'confirmation'
         data?: any
-        loading?: boolean
       }[]
     | undefined
   query?: { [x: string]: any }
@@ -34,21 +34,11 @@ export type Execute = {
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  setState: React.Dispatch<React.SetStateAction<Execute['steps']>>,
-  newJson?: Execute
+  json: Execute,
+  observer: Subject<any>
 ) {
-  let json = newJson
-
-  if (!json) {
-    // Fetch the steps
-    const res = await fetch(url.href)
-    json = (await res.json()) as Execute
-    setState(json.steps)
-    console.debug(
-      'FETCHED',
-      json.steps?.map(({ status }) => status)
-    )
-  }
+  // Update observer on first call or recursion
+  observer.next(json.steps)
 
   // Handle errors
   if (json.error) throw new Error(json.error)
@@ -141,7 +131,5 @@ export default async function executeSteps(
     'BEFORE RECURSION',
     json.steps?.map(({ status }) => status)
   )
-  await executeSteps(url, signer, setState, json)
-
-  return json
+  await executeSteps(url, signer, json, observer)
 }

@@ -16,6 +16,7 @@ import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
 import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
+import { Subject } from 'rxjs'
 
 type Props = {
   trigger?: ReactNode
@@ -268,13 +269,27 @@ const CollectionOfferModal: FC<Props> = ({
                         setParams(url, query)
                         setWaitingTx(true)
 
-                        await executeSteps(url, signer, setSteps)
+                        // Fetch the steps
+                        const res = await fetch(url.href)
+                        const json = (await res.json()) as Execute
+
+                        const observer = new Subject<Execute['steps']>()
+
+                        observer.subscribe({
+                          next: setSteps,
+                        })
+
+                        await executeSteps(url, signer, json, observer)
                         // Close modal
                         // closeButton.current?.click()
                         stats.mutate()
                         tokens.mutate()
                         setSuccess(true)
-                      } catch (err) {
+                      } catch (err: any) {
+                        // Handle user rejection
+                        if (err?.code === 4001) {
+                          setSteps(undefined)
+                        }
                         console.error(err)
                       }
                       setWaitingTx(false)
