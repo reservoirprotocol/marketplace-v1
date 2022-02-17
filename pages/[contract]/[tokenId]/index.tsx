@@ -19,25 +19,24 @@ import BuyNow from 'components/BuyNow'
 import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
-import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
-import getWildcard from 'lib/getWildcard'
-import getIsCommunity from 'lib/getIsCommunity'
+import handleWildcard from 'lib/handleWildcard'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
+const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, isHome, isCommunity }) => {
+const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
-  // const collections = useCollections(apiBase)
+  const isHome = wildcard === 'www'
   const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
@@ -284,23 +283,15 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 )
 
 export const getServerSideProps: GetServerSideProps<{
-  isHome: boolean
   collectionId: string
-  isCommunity?: boolean
+  isCommunity: boolean
+  wildcard: string
 }> = async ({ req, params }) => {
-  if (collectionEnv) {
-    return {
-      props: {
-        isHome: false,
-        collectionId: collectionEnv,
-      },
-    }
-  }
-
-  // Handle wildcard
-  const wildcard = getWildcard(req)
-  const isHome = wildcard === 'www'
-  const isCommunity = getIsCommunity(wildcard)
+  const { wildcard, isCommunity } = handleWildcard(
+    req,
+    communityEnv,
+    collectionEnv
+  )
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -317,7 +308,13 @@ export const getServerSideProps: GetServerSideProps<{
   const tokenDetails =
     (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
 
-  const collectionId = tokenDetails.tokens?.[0].token?.collection?.id || ''
+  const collectionId = tokenDetails.tokens?.[0].token?.collection?.id
 
-  return { props: { isHome, collectionId, isCommunity } }
+  if (!collectionId) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return { props: { collectionId, isCommunity, wildcard } }
 }

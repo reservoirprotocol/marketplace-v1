@@ -9,10 +9,8 @@ import type {
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
 import TokensMain from 'components/TokensMain'
-import Head from 'next/head'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import useCollections from 'hooks/useCollections'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
