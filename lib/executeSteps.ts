@@ -74,9 +74,6 @@ export default async function executeSteps(
     data = json.steps[incompleteIndex].data
   }
 
-  json.steps[incompleteIndex].loading = true
-  setState(json.steps)
-
   // Handle each step based on it's kind
   switch (kind) {
     // Make an on-chain transaction
@@ -114,13 +111,17 @@ export default async function executeSteps(
     // Post a signed order object to order book
     case 'request': {
       const postOrderUrl = new URL(data.endpoint, url.origin)
-      await fetch(postOrderUrl.href, {
-        method: data.method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data.body),
-      })
+      try {
+        await fetch(postOrderUrl.href, {
+          method: data.method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data.body),
+        })
+      } catch (err) {
+        throw err
+      }
       break
     }
 
