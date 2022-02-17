@@ -1,3 +1,4 @@
+import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
@@ -33,7 +34,7 @@ export type Execute = {
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>,
+  setState: React.Dispatch<React.SetStateAction<Execute['steps']>>,
   newJson?: Execute
 ) {
   let json = newJson
@@ -42,11 +43,17 @@ export default async function executeSteps(
     // Fetch the steps
     const res = await fetch(url.href)
     json = (await res.json()) as Execute
+    console.debug(
+      'FETCHED',
+      json.steps?.map(({ status }) => status)
+    )
   }
 
   // Handle errors
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
+
+  setState(json.steps)
 
   const incompleteIndex = json.steps.findIndex(
     ({ status }) => status === 'incomplete'
@@ -54,9 +61,6 @@ export default async function executeSteps(
 
   // There are no more incomplete steps
   if (incompleteIndex === -1) return json
-
-  json.steps[incompleteIndex].loading = true
-  if (setState) setState(json.steps)
 
   let { kind, data } = json.steps[incompleteIndex]
 
@@ -81,25 +85,43 @@ export default async function executeSteps(
 
     // Sign a message
     case 'signature': {
+      let signature: string | undefined
+
       // Request user signature
-      const signature = await signer.signMessage(arrayify(data.message))
-      // Split signature into r,s,v components
-      const { r, s, v } = splitSignature(signature)
-      // Include signature params in any future requests
-      setParams(url, { r, s, v })
+      if (data.kind === 'eip191') {
+        signature = await signer.signMessage(arrayify(data.message))
+      } else if (data.kind === 'eip712') {
+        signature = await (signer as unknown as TypedDataSigner)._signTypedData(
+          data.domain,
+          data.types,
+          data.value
+        )
+      }
+
+      if (signature) {
+        // Split signature into r,s,v components
+        const { r, s, v } = splitSignature(signature)
+        // Include signature params in any future requests
+        setParams(url, { r, s, v })
+      }
+
       break
     }
 
     // Post a signed order object to order book
     case 'request': {
       const postOrderUrl = new URL(data.endpoint, url.origin)
-      await fetch(postOrderUrl.href, {
-        method: data.method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data.body),
-      })
+      try {
+        await fetch(postOrderUrl.href, {
+          method: data.method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data.body),
+        })
+      } catch (err) {
+        throw err
+      }
       break
     }
 
@@ -117,8 +139,10 @@ export default async function executeSteps(
   delete json.steps[incompleteIndex].loading
   json.steps[incompleteIndex].status = 'complete'
 
-  if (setState) setState(json.steps)
-
+  console.debug(
+    'BEFORE RECURSION',
+    json.steps?.map(({ status }) => status)
+  )
   await executeSteps(url, signer, setState, json)
 
   return json
