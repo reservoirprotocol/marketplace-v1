@@ -132,7 +132,11 @@ const TokenOfferModal: FC<Props> = ({
                   Make a token offer
                 </Dialog.Title>
                 <Dialog.Close asChild>
-                  <button ref={closeButton} className="btn-neutral-ghost p-1.5">
+                  <button
+                    onClick={() => setSteps(undefined)}
+                    ref={closeButton}
+                    className="btn-neutral-ghost p-1.5"
+                  >
                     <HiX className="h-5 w-5 " />
                   </button>
                 </Dialog.Close>
@@ -265,7 +269,12 @@ const TokenOfferModal: FC<Props> = ({
               ) : (
                 <div className="flex items-center gap-4">
                   <Dialog.Close asChild>
-                    <button className="btn-neutral-fill w-full">Cancel</button>
+                    <button
+                      onClick={() => setSteps(undefined)}
+                      className="btn-neutral-fill w-full"
+                    >
+                      Cancel
+                    </button>
                   </Dialog.Close>
                   <button
                     disabled={
