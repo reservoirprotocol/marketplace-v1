@@ -1,3 +1,4 @@
+import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
@@ -81,12 +82,26 @@ export default async function executeSteps(
 
     // Sign a message
     case 'signature': {
+      let signature: string | undefined;
+
       // Request user signature
-      const signature = await signer.signMessage(arrayify(data.message))
-      // Split signature into r,s,v components
-      const { r, s, v } = splitSignature(signature)
-      // Include signature params in any future requests
-      setParams(url, { r, s, v })
+      if (data.kind === 'eip191') {
+        signature = await signer.signMessage(arrayify(data.message))
+      } else if (data.kind === 'eip712') {
+        signature = await (signer as unknown as TypedDataSigner)._signTypedData(
+          data.domain,
+          data.types,
+          data.value
+        )
+      }
+
+      if (signature) {
+        // Split signature into r,s,v components
+        const { r, s, v } = splitSignature(signature)
+        // Include signature params in any future requests
+        setParams(url, { r, s, v })
+      }
+
       break
     }
 
