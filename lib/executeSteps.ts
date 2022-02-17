@@ -43,6 +43,7 @@ export default async function executeSteps(
     // Fetch the steps
     const res = await fetch(url.href)
     json = (await res.json()) as Execute
+    setState(json.steps)
     console.debug(
       'FETCHED',
       json.steps?.map(({ status }) => status)
@@ -52,8 +53,6 @@ export default async function executeSteps(
   // Handle errors
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
-
-  setState(json.steps)
 
   const incompleteIndex = json.steps.findIndex(
     ({ status }) => status === 'incomplete'
@@ -136,7 +135,6 @@ export default async function executeSteps(
       break
   }
 
-  delete json.steps[incompleteIndex].loading
   json.steps[incompleteIndex].status = 'complete'
 
   console.debug(
