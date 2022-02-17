@@ -34,7 +34,7 @@ export type Execute = {
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  setState?: React.Dispatch<React.SetStateAction<Execute['steps']>>,
+  setState: React.Dispatch<React.SetStateAction<Execute['steps']>>,
   newJson?: Execute
 ) {
   let json = newJson
@@ -43,11 +43,17 @@ export default async function executeSteps(
     // Fetch the steps
     const res = await fetch(url.href)
     json = (await res.json()) as Execute
+    console.debug(
+      'FETCHED',
+      json.steps?.map(({ status }) => status)
+    )
   }
 
   // Handle errors
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
+
+  setState(json.steps)
 
   const incompleteIndex = json.steps.findIndex(
     ({ status }) => status === 'incomplete'
@@ -55,9 +61,6 @@ export default async function executeSteps(
 
   // There are no more incomplete steps
   if (incompleteIndex === -1) return json
-
-  json.steps[incompleteIndex].loading = true
-  if (setState) setState(json.steps)
 
   let { kind, data } = json.steps[incompleteIndex]
 
@@ -71,6 +74,9 @@ export default async function executeSteps(
     data = json.steps[incompleteIndex].data
   }
 
+  json.steps[incompleteIndex].loading = true
+  setState(json.steps)
+
   // Handle each step based on it's kind
   switch (kind) {
     // Make an on-chain transaction
@@ -82,7 +88,7 @@ export default async function executeSteps(
 
     // Sign a message
     case 'signature': {
-      let signature: string | undefined;
+      let signature: string | undefined
 
       // Request user signature
       if (data.kind === 'eip191') {
@@ -132,8 +138,10 @@ export default async function executeSteps(
   delete json.steps[incompleteIndex].loading
   json.steps[incompleteIndex].status = 'complete'
 
-  if (setState) setState(json.steps)
-
+  console.debug(
+    'BEFORE RECURSION',
+    json.steps?.map(({ status }) => status)
+  )
   await executeSteps(url, signer, setState, json)
 
   return json
