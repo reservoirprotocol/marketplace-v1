@@ -87,9 +87,9 @@ export default async function executeSteps(
       let signature: string | undefined
 
       // Request user signature
-      if (data.kind === 'eip191') {
+      if (data.signatureKind === 'eip191') {
         signature = await signer.signMessage(arrayify(data.message))
-      } else if (data.kind === 'eip712') {
+      } else if (data.signatureKind === 'eip712') {
         signature = await (signer as unknown as TypedDataSigner)._signTypedData(
           data.domain,
           data.types,
