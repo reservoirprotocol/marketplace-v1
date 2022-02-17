@@ -8,19 +8,17 @@ type Props = {
 const Steps: FC<Props> = ({ steps }) => {
   return (
     <div className="my-4">
-      {steps
-        ?.filter(({ status }) => status === 'incomplete')
-        .map(({ action, description }, index) => (
-          <div className="mb-3 flex gap-2" key={action + index}>
-            <div className="w-6 text-center text-lg font-semibold">
-              {index + 1}
-            </div>
-            <div>
-              <div className="font-semibold">{action}</div>
-              <div>{description}</div>
-            </div>
+      {steps?.map(({ action, description }, index) => (
+        <div className="mb-3 flex gap-2" key={action + index}>
+          <div className="w-6 text-center text-lg font-semibold">
+            {index + 1}
           </div>
-        ))}
+          <div>
+            <div className="font-semibold">{action}</div>
+            <div>{description}</div>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
