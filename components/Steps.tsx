@@ -18,12 +18,12 @@ const Steps: FC<Props> = ({ steps }) => {
           {status === 'complete' && (
             <HiCheckCircle className="mt-0.5 h-6 w-6 flex-none text-green-600" />
           )}
-          {firstIncomplete !== index && (
+          {status !== 'complete' && firstIncomplete !== index && (
             <div className="w-6 text-center text-lg font-semibold">
               {index + 1}
             </div>
           )}
-          {firstIncomplete === index && (
+          {status !== 'complete' && firstIncomplete === index && (
             <svg
               className="mt-1 mr-1 h-5 w-5 flex-none animate-spin text-black"
               xmlns="http://www.w3.org/2000/svg"
