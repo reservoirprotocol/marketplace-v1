@@ -45,7 +45,7 @@ export default async function executeSteps(
   }
 
   // Update state on first call or recursion
-  if (setSteps) setSteps(json.steps?.map((step) => step))
+  setSteps(json.steps?.map((step) => step))
 
   // Handle errors
   if (json.error) throw new Error(json.error)
