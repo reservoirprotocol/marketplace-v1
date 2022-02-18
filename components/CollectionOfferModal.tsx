@@ -274,7 +274,11 @@ const CollectionOfferModal: FC<Props> = ({
                         stats.mutate()
                         tokens.mutate()
                         setSuccess(true)
-                      } catch (err) {
+                      } catch (err: any) {
+                        // Handle user rejection
+                        if (err?.code === 4001) {
+                          setSteps(undefined)
+                        }
                         console.error(err)
                       }
                       setWaitingTx(false)

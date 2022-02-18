@@ -11,10 +11,11 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import getWildcard from 'lib/getWildcard'
-import getIsCommunity from 'lib/getIsCommunity'
+import handleWildcard from 'lib/handleWildcard'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
+const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 
 type InfiniteKeyLoader = (
   custom: { url: URL; wildcard: string; isCommunity: boolean; isHome: boolean },
@@ -55,11 +56,11 @@ const getKey: InfiniteKeyLoader = (
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Address: NextPage<Props> = ({ wildcard, isHome, isCommunity }) => {
+const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
-  // const collections = useCollections(apiBase)
+  const isHome = wildcard === 'www'
 
   const { ref, inView } = useInView()
 
@@ -105,12 +106,12 @@ export default Address
 export const getServerSideProps: GetServerSideProps<{
   wildcard: string
   isCommunity: boolean
-  isHome: boolean
 }> = async ({ req }) => {
-  // Handle wildcard
-  const wildcard = getWildcard(req)
-  const isHome = wildcard === 'www'
-  const isCommunity = getIsCommunity(wildcard)
+  const { wildcard, isCommunity } = handleWildcard(
+    req,
+    communityEnv,
+    collectionEnv
+  )
 
-  return { props: { wildcard, isHome, isCommunity } }
+  return { props: { wildcard, isCommunity } }
 }

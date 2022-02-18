@@ -2,7 +2,8 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer'
 import { Signer } from 'ethers'
 import { arrayify, splitSignature } from 'ethers/lib/utils'
 import setParams from './params'
-import { pollUntilChange, pollUntilHasData, pollUntilOk } from './pollApi'
+import { pollUntilHasData, pollUntilOk } from './pollApi'
+import { Dispatch, SetStateAction } from 'react'
 
 export type Execute = {
   steps?:
@@ -12,7 +13,6 @@ export type Execute = {
         status: 'complete' | 'incomplete'
         kind: 'transaction' | 'signature' | 'request' | 'confirmation'
         data?: any
-        loading?: boolean
       }[]
     | undefined
   query?: { [x: string]: any }
@@ -34,21 +34,18 @@ export type Execute = {
 export default async function executeSteps(
   url: URL,
   signer: Signer,
-  setState: React.Dispatch<React.SetStateAction<Execute['steps']>>,
+  setSteps: Dispatch<SetStateAction<Execute['steps']>>,
   newJson?: Execute
 ) {
   let json = newJson
 
   if (!json) {
-    // Fetch the steps
     const res = await fetch(url.href)
     json = (await res.json()) as Execute
-    setState(json.steps)
-    console.debug(
-      'FETCHED',
-      json.steps?.map(({ status }) => status)
-    )
   }
+
+  // Update state on first call or recursion
+  setSteps(json.steps?.map((step) => step))
 
   // Handle errors
   if (json.error) throw new Error(json.error)
@@ -137,11 +134,5 @@ export default async function executeSteps(
 
   json.steps[incompleteIndex].status = 'complete'
 
-  console.debug(
-    'BEFORE RECURSION',
-    json.steps?.map(({ status }) => status)
-  )
-  await executeSteps(url, signer, setState, json)
-
-  return json
+  await executeSteps(url, signer, setSteps, json)
 }

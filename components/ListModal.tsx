@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HiCheckCircle, HiMinusCircle, HiX } from 'react-icons/hi'
+import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
@@ -226,7 +226,11 @@ const ListModal: FC<Props> = ({
                         // closeButton.current?.click()
                         details.mutate()
                         setSuccess(true)
-                      } catch (err) {
+                      } catch (err: any) {
+                        // Handle user rejection
+                        if (err?.code === 4001) {
+                          setSteps(undefined)
+                        }
                         console.error(err)
                       }
 

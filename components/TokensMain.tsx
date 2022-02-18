@@ -234,7 +234,11 @@ const TokensMain: FC<Props> = ({
 
               await executeSteps(url, signer, setSteps)
               stats.mutate()
-            } catch (err) {
+            } catch (err: any) {
+              // Handle user rejection
+              if (err?.code === 4001) {
+                setSteps(undefined)
+              }
               console.error(err)
             }
 

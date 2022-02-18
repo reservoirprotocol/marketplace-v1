@@ -1,5 +1,11 @@
 import { IncomingMessage } from 'http'
 
+/**
+ *
+ * @param req Client's incoming request object
+ * @returns The first subdomain as `wildcard`. Note: If no subdomain
+ * exists, `wilcard` defaults to 'www'
+ */
 export default function getWildcard(req: IncomingMessage) {
   // ['TLD', 'domain', 'subdomain1', 'subdomain2']
   const hostParts = req.headers.host?.split('.').reverse()

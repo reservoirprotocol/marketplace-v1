@@ -62,9 +62,14 @@ const BuyNow: FC<Props> = ({
                 }
               setParams(url, query)
               setWaitingTx(true)
+
               await executeSteps(url, signer, setSteps)
               details.mutate()
             } catch (err: any) {
+              // Handle user rejection
+              if (err?.code === 4001) {
+                setSteps(undefined)
+              }
               console.error(err)
               if (err?.message === 'Not enough ETH balance') setError(true)
             }

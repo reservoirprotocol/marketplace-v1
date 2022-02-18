@@ -32,9 +32,9 @@ const StepsModal: FC<Props> = ({ steps, data, title }) => {
     if (!isOpen && steps) {
       trigger.current?.click()
     }
-    // if (isOpen && !steps) {
-    //   trigger.current?.click()
-    // }
+    if (isOpen && !steps) {
+      trigger.current?.click()
+    }
   }, [steps])
 
   return (
