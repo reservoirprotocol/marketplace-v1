@@ -15,7 +15,6 @@ import getWeth from 'lib/getWeth'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
 import setParams from 'lib/params'
-import { Subject } from 'rxjs'
 
 type Props = {
   trigger?: ReactNode
@@ -326,17 +325,7 @@ const TokenOfferModal: FC<Props> = ({
                         setParams(url, query)
                         setWaitingTx(true)
 
-                        // Fetch the steps
-                        const res = await fetch(url.href)
-                        const json = (await res.json()) as Execute
-
-                        const observer = new Subject<Execute['steps']>()
-
-                        observer.subscribe({
-                          next: setSteps,
-                        })
-
-                        await executeSteps(url, signer, json, observer)
+                        await executeSteps(url, signer, setSteps)
 
                         // Close modal
                         // closeButton.current?.click()

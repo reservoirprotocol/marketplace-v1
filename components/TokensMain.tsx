@@ -25,7 +25,6 @@ import SortMenuExplore from './SortMenuExplore'
 import StepsModal from './StepsModal'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
-import { Subject } from 'rxjs'
 
 type Props = {
   fallback: {
@@ -233,17 +232,7 @@ const TokensMain: FC<Props> = ({
               setParams(url, query)
               setWaitingTx(true)
 
-              // Fetch the steps
-              const res = await fetch(url.href)
-              const json = (await res.json()) as Execute
-
-              const observer = new Subject<Execute['steps']>()
-
-              observer.subscribe({
-                next: setSteps,
-              })
-
-              await executeSteps(url, signer, json, observer)
+              await executeSteps(url, signer, setSteps)
               stats.mutate()
             } catch (err: any) {
               // Handle user rejection

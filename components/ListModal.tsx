@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HiCheckCircle, HiMinusCircle, HiX } from 'react-icons/hi'
+import { HiX } from 'react-icons/hi'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
@@ -12,7 +12,6 @@ import { SWRResponse } from 'swr'
 import executeSteps, { Execute } from 'lib/executeSteps'
 import Steps from './Steps'
 import setParams from 'lib/params'
-import { Subject } from 'rxjs'
 
 type Props = {
   apiBase: string
@@ -221,17 +220,7 @@ const ListModal: FC<Props> = ({
                       setWaitingTx(true)
 
                       try {
-                        // Fetch the steps
-                        const res = await fetch(url.href)
-                        const json = (await res.json()) as Execute
-
-                        const observer = new Subject<Execute['steps']>()
-
-                        observer.subscribe({
-                          next: setSteps,
-                        })
-
-                        await executeSteps(url, signer, json, observer)
+                        await executeSteps(url, signer, setSteps)
 
                         // Close modal
                         // closeButton.current?.click()

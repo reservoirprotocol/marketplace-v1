@@ -5,7 +5,6 @@ import setParams from 'lib/params'
 import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import StepsModal from './StepsModal'
-import { Subject } from 'rxjs'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -57,18 +56,7 @@ const CancelOffer: FC<Props> = ({
             setWaitingTx(true)
 
             try {
-              // Fetch the steps
-              const res = await fetch(url.href)
-              const json = (await res.json()) as Execute
-              setSteps(json.steps)
-
-              const observer = new Subject<Execute['steps']>()
-
-              observer.subscribe({
-                next: setSteps,
-              })
-
-              await executeSteps(url, signer, json, observer)
+              await executeSteps(url, signer, setSteps)
 
               details.mutate()
             } catch (err: any) {
