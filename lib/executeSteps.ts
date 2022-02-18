@@ -13,6 +13,7 @@ export type Execute = {
         status: 'complete' | 'incomplete'
         loading?: boolean
         message?: string
+        error?: string
         kind: 'transaction' | 'signature' | 'request' | 'confirmation'
         data?: any
       }[]
@@ -76,7 +77,7 @@ export default async function executeSteps(
   switch (kind) {
     // Make an on-chain transaction
     case 'transaction': {
-      json.steps[incompleteIndex].loading = true
+      // json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Waiting for user to confirm'
       setSteps([...json?.steps])
 
@@ -93,7 +94,7 @@ export default async function executeSteps(
     case 'signature': {
       let signature: string | undefined
 
-      json.steps[incompleteIndex].loading = true
+      // json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Waiting for user to sign'
       setSteps([...json?.steps])
 
@@ -122,7 +123,7 @@ export default async function executeSteps(
     case 'request': {
       const postOrderUrl = new URL(data.endpoint, url.origin)
 
-      json.steps[incompleteIndex].loading = true
+      // json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Verifying'
       setSteps([...json?.steps])
 
@@ -135,6 +136,9 @@ export default async function executeSteps(
           body: JSON.stringify(data.body),
         })
       } catch (err) {
+        json.steps[incompleteIndex].error = 'Your order could not be posted.'
+        // delete json.steps[incompleteIndex].loading
+        setSteps([...json?.steps])
         throw err
       }
 
@@ -145,7 +149,7 @@ export default async function executeSteps(
     case 'confirmation': {
       const confirmationUrl = new URL(data.endpoint, url.origin)
 
-      json.steps[incompleteIndex].loading = true
+      // json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Verifying'
       setSteps([...json?.steps])
 
@@ -158,7 +162,7 @@ export default async function executeSteps(
   }
 
   // Clear loading indicator and message
-  delete json.steps[incompleteIndex].loading
+  // delete json.steps[incompleteIndex].loading
   delete json.steps[incompleteIndex].message
   json.steps[incompleteIndex].status = 'complete'
 
