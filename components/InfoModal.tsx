@@ -14,10 +14,8 @@ const InfoModal: FC = () => {
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
             <div className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
-              <Dialog.Close asChild>
-                <button className="btn-neutral-ghost ml-auto mb-3 p-1.5">
-                  Close
-                </button>
+              <Dialog.Close className="btn-neutral-ghost ml-auto mb-3 p-1.5">
+                Close
               </Dialog.Close>
               <div className="space-y-3">
                 <section>

@@ -11,7 +11,7 @@ import { formatBN } from 'lib/numbers'
 import setParams from 'lib/params'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, { ComponentProps, FC, useEffect, useRef, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import AttributesFlex from './AttributesFlex'
@@ -22,9 +22,12 @@ import Hero from './Hero'
 import Sidebar from './Sidebar'
 import SortMenu from './SortMenu'
 import SortMenuExplore from './SortMenuExplore'
-import StepsModal from './StepsModal'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
+import * as Dialog from '@radix-ui/react-dialog'
+import { HiX } from 'react-icons/hi'
+import StepsModalHeader from './StepsModalHeader'
+import Steps from './Steps'
 
 type Props = {
   fallback: {
@@ -50,6 +53,7 @@ const TokensMain: FC<Props> = ({
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
+  const [open, setOpen] = useState(false)
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
   >({
@@ -182,7 +186,6 @@ const TokensMain: FC<Props> = ({
 
   return (
     <>
-      <StepsModal title="Buy token" data={dataSteps} steps={steps} />
       <Head>
         {collectionId === 'www' ? (
           <title>
@@ -202,54 +205,83 @@ const TokensMain: FC<Props> = ({
         <meta property="og:image" content={header.banner} />
       </Head>
       <Hero stats={statsObj} header={header}>
-        <button
-          disabled={
-            !signer ||
-            isOwner ||
-            floor?.value === null ||
-            waitingTx ||
-            isInTheWrongNetwork
-          }
-          onClick={async () => {
-            const tokenId = floor?.token?.tokenId
-            const contract = floor?.token?.contract
-
-            if (!signer || !tokenId || !contract) {
-              console.debug({ tokenId, signer, contract })
-              return
+        <Dialog.Root open={open} onOpenChange={setOpen}>
+          <Dialog.Trigger
+            disabled={
+              !signer ||
+              isOwner ||
+              floor?.value === null ||
+              waitingTx ||
+              isInTheWrongNetwork
             }
+            onClick={async () => {
+              const tokenId = floor?.token?.tokenId
+              const contract = floor?.token?.contract
 
-            try {
-              const url = new URL('/execute/buy', apiBase)
-
-              const query: paths['/execute/buy']['get']['parameters']['query'] =
-                {
-                  contract,
-                  tokenId,
-                  taker: await signer.getAddress(),
-                }
-
-              setParams(url, query)
-              setWaitingTx(true)
-
-              await executeSteps(url, signer, setSteps)
-              stats.mutate()
-            } catch (err: any) {
-              // Handle user rejection
-              if (err?.code === 4001) {
-                setSteps(undefined)
+              if (!signer || !tokenId || !contract) {
+                console.debug({ tokenId, signer, contract })
+                return
               }
-              console.error(err)
-            }
 
-            setWaitingTx(false)
-          }}
-          className="btn-neutral-fill-dark"
-        >
-          {waitingTx
-            ? 'Waiting...'
-            : `Buy for ${formatBN(floor?.value, 4)} ETH`}
-        </button>
+              try {
+                const url = new URL('/execute/buy', apiBase)
+
+                const query: paths['/execute/buy']['get']['parameters']['query'] =
+                  {
+                    contract,
+                    tokenId,
+                    taker: await signer.getAddress(),
+                  }
+
+                setParams(url, query)
+                setWaitingTx(true)
+
+                await executeSteps(url, signer, setSteps)
+                stats.mutate()
+              } catch (err: any) {
+                // Handle user rejection
+                if (err?.code === 4001) {
+                  // close modal
+                  setOpen(false)
+                  setSteps(undefined)
+                }
+                console.error(err)
+              }
+
+              setWaitingTx(false)
+            }}
+            className="btn-neutral-fill-dark"
+          >
+            {waitingTx
+              ? 'Waiting...'
+              : `Buy for ${formatBN(floor?.value, 4)} ETH`}
+          </Dialog.Trigger>
+          {steps && (
+            <Dialog.Portal>
+              <Dialog.Overlay>
+                <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
+                  <div className="fixed top-1/2 left-1/2 w-[330px] max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
+                    <div className="mb-5 flex items-center justify-between">
+                      <Dialog.Title className="text-lg font-medium uppercase opacity-75">
+                        Buy token
+                      </Dialog.Title>
+                      <Dialog.Close className="btn-neutral-ghost ml-auto p-1.5">
+                        <HiX className="h-5 w-5" />
+                      </Dialog.Close>
+                    </div>
+                    <StepsModalHeader data={dataSteps} />
+                    <Steps steps={steps} />
+                    {steps?.[steps.length - 1].status === 'complete' && (
+                      <Dialog.Close className="btn-green-fill w-full">
+                        Success, Close this menu
+                      </Dialog.Close>
+                    )}
+                  </div>
+                </Dialog.Content>
+              </Dialog.Overlay>
+            </Dialog.Portal>
+          )}
+        </Dialog.Root>
         {hasTokenSetId &&
           (isAttributeModal ? (
             <AttributeOfferModal

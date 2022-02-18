@@ -12,9 +12,10 @@ const Steps: FC<Props> = ({ steps }) => {
       {steps?.map(
         ({ action, description, status, loading, message }, index) => (
           <div className="mb-3 flex gap-2" key={action + index}>
-            {status === 'complete' ? (
+            {status === 'complete' && (
               <HiCheckCircle className="mt-0.5 h-6 w-6 flex-none text-green-600" />
-            ) : loading ? (
+            )}
+            {status === 'incomplete' && loading && (
               <svg
                 className="mt-1 mr-1 h-5 w-5 flex-none animate-spin text-black"
                 xmlns="http://www.w3.org/2000/svg"
@@ -35,16 +36,21 @@ const Steps: FC<Props> = ({ steps }) => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-            ) : (
+            )}
+            {status === 'incomplete' && !loading && (
               <div className="w-6 text-center text-lg font-semibold">
                 {index + 1}
               </div>
             )}
             <div>
               <div className="mb-1 font-semibold">{action}</div>
-              <div className="mb-2.5">{description}</div>
-              {message && (
-                <div className="italic text-neutral-800">{message}</div>
+              {loading && (
+                <>
+                  <div className="mb-2.5">{description}</div>
+                  {message && (
+                    <div className="italic text-neutral-800">{message}</div>
+                  )}
+                </>
               )}
             </div>
           </div>

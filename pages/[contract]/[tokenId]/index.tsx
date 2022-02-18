@@ -200,7 +200,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
                   signer={signer}
                   isInTheWrongNetwork={isInTheWrongNetwork}
                   setError={setError}
-                  hide={!isOwner}
+                  show={!isOwner}
                 />
               </Price>
               <Price
@@ -218,7 +218,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
                   details={details}
                   data={data}
                   signer={signer}
-                  hide={isOwner}
+                  show={isOwner}
                   isInTheWrongNetwork={isInTheWrongNetwork}
                 />
                 {!isOwner && (
@@ -250,7 +250,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
               details={details}
               data={data}
               signer={signer}
-              hide={isTopBidder}
+              show={isTopBidder}
               isInTheWrongNetwork={isInTheWrongNetwork}
             />
             <CancelListing
@@ -258,7 +258,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
               data={data}
               signer={signer}
               details={details}
-              hide={isOwner && isListed}
+              show={isOwner && isListed}
               isInTheWrongNetwork={isInTheWrongNetwork}
             />
           </div>

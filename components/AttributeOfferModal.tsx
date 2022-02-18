@@ -55,7 +55,6 @@ const AttributeOfferModal: FC<Props> = ({
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [success, setSuccess] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [{ data: network }] = useNetwork()
   const [calculations, setCalculations] = useState<
@@ -78,7 +77,7 @@ const AttributeOfferModal: FC<Props> = ({
   const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
-  const closeButton = useRef<HTMLButtonElement>(null)
+  const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = network.chain?.id !== env.chainId
 
   useEffect(() => {
@@ -109,8 +108,10 @@ const AttributeOfferModal: FC<Props> = ({
     }
   }, [offerPrice])
 
+  const success = steps && !steps.find(({ status }) => status === 'incomplete')
+
   return (
-    <Dialog.Root onOpenChange={() => setSuccess(false)}>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         {trigger ?? (
           <button
@@ -129,14 +130,11 @@ const AttributeOfferModal: FC<Props> = ({
                 <Dialog.Title className="text-lg font-medium uppercase opacity-75">
                   Maker an attribute offer
                 </Dialog.Title>
-                <Dialog.Close asChild>
-                  <button
-                    onClick={() => setSteps(undefined)}
-                    ref={closeButton}
-                    className="btn-neutral-ghost p-1.5"
-                  >
-                    <HiX className="h-5 w-5 " />
-                  </button>
+                <Dialog.Close
+                  onClick={() => setSteps(undefined)}
+                  className="btn-neutral-ghost p-1.5"
+                >
+                  <HiX className="h-5 w-5 " />
                 </Dialog.Close>
               </div>
               <div className="mb-3 flex items-center gap-4">
@@ -224,23 +222,19 @@ const AttributeOfferModal: FC<Props> = ({
                 </>
               )}
               {success ? (
-                <Dialog.Close asChild>
-                  <button
-                    onClick={() => setSteps(undefined)}
-                    className="btn-green-fill w-full"
-                  >
-                    Success, Close this menu
-                  </button>
+                <Dialog.Close
+                  onClick={() => setSteps(undefined)}
+                  className="btn-green-fill w-full"
+                >
+                  Success, Close this menu
                 </Dialog.Close>
               ) : (
                 <div className="flex items-center gap-4">
-                  <Dialog.Close asChild>
-                    <button
-                      onClick={() => setSteps(undefined)}
-                      className="btn-neutral-fill w-full"
-                    >
-                      Cancel
-                    </button>
+                  <Dialog.Close
+                    onClick={() => setSteps(undefined)}
+                    className="btn-neutral-fill w-full"
+                  >
+                    Cancel
                   </Dialog.Close>
                   <button
                     disabled={
@@ -283,14 +277,13 @@ const AttributeOfferModal: FC<Props> = ({
                         setWaitingTx(true)
 
                         await executeSteps(url, signer, setSteps)
-                        // Close modal
-                        // closeButton.current?.click()
                         stats.mutate()
                         tokens.mutate()
-                        setSuccess(true)
                       } catch (err: any) {
                         // Handle user rejection
                         if (err?.code === 4001) {
+                          // close modal
+                          setOpen(false)
                           setSteps(undefined)
                         }
                         console.error(err)

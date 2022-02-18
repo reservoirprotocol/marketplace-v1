@@ -45,7 +45,6 @@ const ListModal: FC<Props> = ({
   const token = details.data?.tokens?.[0]
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
-  const closeButton = useRef<HTMLButtonElement>(null)
   const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   useEffect(() => {
@@ -76,14 +75,11 @@ const ListModal: FC<Props> = ({
                 <Dialog.Title className="text-lg font-medium uppercase opacity-75">
                   List Token for Sale
                 </Dialog.Title>
-                <Dialog.Close asChild>
-                  <button
-                    onClick={() => setSteps(undefined)}
-                    ref={closeButton}
-                    className="btn-neutral-ghost p-1.5"
-                  >
-                    <HiX className="h-5 w-5 " />
-                  </button>
+                <Dialog.Close
+                  onClick={() => setSteps(undefined)}
+                  className="btn-neutral-ghost p-1.5"
+                >
+                  <HiX className="h-5 w-5 " />
                 </Dialog.Close>
               </div>
               <div className="mb-8 flex items-center gap-4">
@@ -152,23 +148,19 @@ const ListModal: FC<Props> = ({
                 </div>
               )}
               {success ? (
-                <Dialog.Close asChild>
-                  <button
-                    onClick={() => setSteps(undefined)}
-                    className="btn-green-fill w-full"
-                  >
-                    Success, Close this menu
-                  </button>
+                <Dialog.Close
+                  onClick={() => setSteps(undefined)}
+                  className="btn-green-fill w-full"
+                >
+                  Success, Close this menu
                 </Dialog.Close>
               ) : (
                 <div className="flex items-center gap-4">
-                  <Dialog.Close asChild>
-                    <button
-                      onClick={() => setSteps(undefined)}
-                      className="btn-neutral-fill w-full"
-                    >
-                      Cancel
-                    </button>
+                  <Dialog.Close
+                    onClick={() => setSteps(undefined)}
+                    className="btn-neutral-fill w-full"
+                  >
+                    Cancel
                   </Dialog.Close>
                   <button
                     disabled={waitingTx || isInTheWrongNetwork}
@@ -222,8 +214,6 @@ const ListModal: FC<Props> = ({
                       try {
                         await executeSteps(url, signer, setSteps)
 
-                        // Close modal
-                        // closeButton.current?.click()
                         details.mutate()
                         setSuccess(true)
                       } catch (err: any) {

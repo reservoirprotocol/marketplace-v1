@@ -58,7 +58,7 @@ export default async function executeSteps(
   )
 
   // There are no more incomplete steps
-  if (incompleteIndex === -1) return json
+  if (incompleteIndex === -1) return
 
   let { kind, data } = json.steps[incompleteIndex]
 
@@ -76,21 +76,16 @@ export default async function executeSteps(
   switch (kind) {
     // Make an on-chain transaction
     case 'transaction': {
+      json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Waiting for user to confirm'
       setSteps([...json?.steps])
 
       const tx = await signer.sendTransaction(data)
 
-      json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Finalizing on blockchain'
       setSteps([...json?.steps])
 
       await tx.wait()
-
-      json.steps[incompleteIndex].loading
-      delete json.steps[incompleteIndex].message
-      setSteps([...json?.steps])
-
       break
     }
 
@@ -98,6 +93,7 @@ export default async function executeSteps(
     case 'signature': {
       let signature: string | undefined
 
+      json.steps[incompleteIndex].loading = true
       json.steps[incompleteIndex].message = 'Waiting for user to sign'
       setSteps([...json?.steps])
 
@@ -111,9 +107,6 @@ export default async function executeSteps(
           data.value
         )
       }
-
-      delete json.steps[incompleteIndex].message
-      setSteps([...json?.steps])
 
       if (signature) {
         // Split signature into r,s,v components
@@ -145,10 +138,6 @@ export default async function executeSteps(
         throw err
       }
 
-      json.steps[incompleteIndex].loading
-      delete json.steps[incompleteIndex].message
-      setSteps([...json?.steps])
-
       break
     }
 
@@ -161,11 +150,6 @@ export default async function executeSteps(
       setSteps([...json?.steps])
 
       await pollUntilOk(confirmationUrl)
-
-      json.steps[incompleteIndex].loading
-      delete json.steps[incompleteIndex].message
-      setSteps([...json?.steps])
-
       break
     }
 
@@ -173,6 +157,9 @@ export default async function executeSteps(
       break
   }
 
+  // Clear loading indicator and message
+  delete json.steps[incompleteIndex].loading
+  delete json.steps[incompleteIndex].message
   json.steps[incompleteIndex].status = 'complete'
 
   await executeSteps(url, signer, setSteps, json)
