@@ -49,7 +49,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
           alt="ENS Avatar"
         />
       ) : (
-        <Jazzicon diameter={27} seed={jsNumberForAddress(address)} />
+        <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
       )}
       <div>
         {title && (
@@ -59,7 +59,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
           <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
           <div
-            className="block min-w-[110px] whitespace-nowrap font-mono lowercase"
+            className="block whitespace-nowrap font-mono lowercase"
             title={address}
           >
             {shrinkAddress(address)}
