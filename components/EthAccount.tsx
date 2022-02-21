@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 /**
