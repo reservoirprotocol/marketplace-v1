@@ -85,16 +85,12 @@ const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
     }
   }, [inView])
 
-  // let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
-
-  // const collection = useSWR<
-  //   paths['/collections/{collection}']['get']['responses']['200']['schema']
-  // >(collectionUrl.href, fetcher)
+  const address = router.query?.address?.toString()
 
   return (
     <Layout>
       <div className="mt-4 mb-10 flex items-center justify-center">
-        <EthAccount address={router.query?.address?.toString()} />
+        {address && <EthAccount address={address} />}
       </div>
       <UserTokensGrid tokens={tokens} viewRef={ref} />
     </Layout>
