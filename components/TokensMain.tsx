@@ -25,9 +25,7 @@ import SortMenuExplore from './SortMenuExplore'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HiX } from 'react-icons/hi'
-import StepsModalHeader from './StepsModalHeader'
-import Steps from './Steps'
+import ModalCard from './modal/ModalCard'
 
 type Props = {
   fallback: {
@@ -259,25 +257,7 @@ const TokensMain: FC<Props> = ({
           {steps && (
             <Dialog.Portal>
               <Dialog.Overlay>
-                <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-                  <div className="fixed top-1/2 left-1/2 w-[330px] max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
-                    <div className="mb-5 flex items-center justify-between">
-                      <Dialog.Title className="text-lg font-medium uppercase opacity-75">
-                        Buy token
-                      </Dialog.Title>
-                      <Dialog.Close className="btn-neutral-ghost ml-auto p-1.5">
-                        <HiX className="h-5 w-5" />
-                      </Dialog.Close>
-                    </div>
-                    <StepsModalHeader data={dataSteps} />
-                    <Steps steps={steps} />
-                    {steps?.[steps.length - 1].status === 'complete' && (
-                      <Dialog.Close className="btn-green-fill w-full">
-                        Success, Close this menu
-                      </Dialog.Close>
-                    )}
-                  </div>
-                </Dialog.Content>
+                <ModalCard title="Buy token" data={data} steps={steps} />
               </Dialog.Overlay>
             </Dialog.Portal>
           )}
@@ -285,14 +265,6 @@ const TokensMain: FC<Props> = ({
         {hasTokenSetId &&
           (isAttributeModal ? (
             <AttributeOfferModal
-              trigger={
-                <button
-                  className="btn-neutral-outline border-black py-2"
-                  disabled={!signer || isInTheWrongNetwork}
-                >
-                  Make an attribute offer
-                </button>
-              }
               royalties={royalties}
               signer={signer}
               data={attributeData}
@@ -302,14 +274,6 @@ const TokensMain: FC<Props> = ({
             />
           ) : (
             <CollectionOfferModal
-              trigger={
-                <button
-                  className="btn-neutral-outline border-black py-2"
-                  disabled={!signer || isInTheWrongNetwork}
-                >
-                  Make a collection offer
-                </button>
-              }
               royalties={royalties}
               signer={signer}
               data={data}
