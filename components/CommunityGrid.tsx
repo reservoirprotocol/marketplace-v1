@@ -1,17 +1,15 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Head from 'next/head'
 import ImagesGrid from './ImagesGrid'
 import useCommunity from 'hooks/useCommunity'
 import LoadingCard from './LoadingCard'
 
 type Props = {
   communities: ReturnType<typeof useCommunity>
-  wildcard: string
 }
 
-const CommunityGrid: FC<Props> = ({ communities, wildcard }) => {
+const CommunityGrid: FC<Props> = ({ communities }) => {
   const {
     communities: { data, isValidating },
     ref,

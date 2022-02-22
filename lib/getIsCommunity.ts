@@ -1,6 +1,6 @@
-export default function getIsCommunity(wildcard: string) {
+export default function getIsCommunity(communityId: string) {
   const isCommunity = ['loot', 'bayc', 'forgottenrunes', 'artblocks'].includes(
-    wildcard
+    communityId
   )
 
   return isCommunity

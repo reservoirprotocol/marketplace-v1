@@ -20,7 +20,7 @@ import EthAccount from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
-import handleWildcard from 'lib/handleWildcard'
+import getMode from 'lib/getMode'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -30,13 +30,12 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
+const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
-  const isHome = wildcard === 'www'
   const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
@@ -90,7 +89,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
   return (
     <Layout>
       <Head>
-        {isHome ? (
+        {mode === 'global' ? (
           <title>
             {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
             {collection.data?.collection?.collection?.name} | Reservoir Market
@@ -159,7 +158,7 @@ const Index: NextPage<Props> = ({ collectionId, isCommunity, wildcard }) => {
             <div>
               <Link
                 href={
-                  isCommunity || isHome ? `/collections/${collectionId}` : '/'
+                  mode === 'collection' ? '/' : `/collections/${collectionId}`
                 }
               >
                 <a className="mb-1 block text-2xl font-bold">
@@ -285,14 +284,9 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
-  isCommunity: boolean
-  wildcard: string
+  mode: string
 }> = async ({ req, params }) => {
-  const { wildcard, isCommunity } = handleWildcard(
-    req,
-    communityEnv,
-    collectionEnv
-  )
+  const { mode } = getMode(req, communityEnv, collectionEnv)
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -317,5 +311,5 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  return { props: { collectionId, isCommunity, wildcard } }
+  return { props: { collectionId, mode } }
 }

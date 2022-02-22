@@ -11,23 +11,23 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { useInView } from 'react-intersection-observer'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import handleWildcard from 'lib/handleWildcard'
+import getMode from 'lib/getMode'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 
 type InfiniteKeyLoader = (
-  custom: { url: URL; wildcard: string; isCommunity: boolean; isHome: boolean },
+  custom: { url: URL; collectionId: string; mode: string },
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
-  custom: { url: URL; wildcard: string; isCommunity: boolean; isHome: boolean },
+  custom: { url: URL; collectionId: string; mode: string },
   index: number,
   previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
 ) => {
-  const { url, wildcard, isCommunity, isHome } = custom
+  const { url, collectionId, mode } = custom
   if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
@@ -41,12 +41,12 @@ const getKey: InfiniteKeyLoader = (
     offset: index * 20,
   }
 
-  if (isCommunity) {
-    query.community = wildcard
+  if (mode === 'community') {
+    query.community = collectionId
   }
 
-  if (!isHome && !isCommunity) {
-    query.collection = wildcard
+  if (mode === 'collection') {
+    query.collection = collectionId
   }
 
   setParams(url, query)
@@ -56,11 +56,10 @@ const getKey: InfiniteKeyLoader = (
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
+const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
-  const isHome = wildcard === 'www'
 
   const { ref, inView } = useInView()
 
@@ -70,7 +69,7 @@ const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
     paths['/users/{user}/tokens']['get']['responses']['200']['schema']
   >(
     (index, previousPageData) =>
-      getKey({ url, wildcard, isCommunity, isHome }, index, previousPageData),
+      getKey({ url, mode, collectionId }, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -85,16 +84,12 @@ const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
     }
   }, [inView])
 
-  // let collectionUrl = new URL(`/collections/${wildcard}`, apiBase)
-
-  // const collection = useSWR<
-  //   paths['/collections/{collection}']['get']['responses']['200']['schema']
-  // >(collectionUrl.href, fetcher)
+  const address = router.query?.address?.toString()
 
   return (
     <Layout>
       <div className="mt-4 mb-10 flex items-center justify-center">
-        <EthAccount address={router.query?.address?.toString()} />
+        {address && <EthAccount address={address} />}
       </div>
       <UserTokensGrid tokens={tokens} viewRef={ref} />
     </Layout>
@@ -104,14 +99,10 @@ const Address: NextPage<Props> = ({ wildcard, isCommunity }) => {
 export default Address
 
 export const getServerSideProps: GetServerSideProps<{
-  wildcard: string
-  isCommunity: boolean
+  mode: string
+  collectionId: string
 }> = async ({ req }) => {
-  const { wildcard, isCommunity } = handleWildcard(
-    req,
-    communityEnv,
-    collectionEnv
-  )
+  const { collectionId, mode } = getMode(req, communityEnv, collectionEnv)
 
-  return { props: { wildcard, isCommunity } }
+  return { props: { collectionId, mode } }
 }

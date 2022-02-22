@@ -9,14 +9,15 @@ type Collections = paths['/collections']['get']['responses']['200']['schema']
 
 export default function useCommunity(
   apiBase: string | undefined,
-  wildcard: string
+  collectionId: string
 ) {
   const { ref, inView } = useInView()
 
   const url = new URL('/collections', apiBase)
 
   const communities = useSWRInfinite<Collections>(
-    (index, previousPageData) => getKey(url, wildcard, index, previousPageData),
+    (index, previousPageData) =>
+      getKey(url, collectionId, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -35,11 +36,11 @@ export default function useCommunity(
 
 const getKey: (
   url: URL,
-  wildcard: string,
+  collectionId: string,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   url: URL,
-  wildcard: string,
+  collectionId: string,
   index: number,
   previousPageData: Collections
 ) => {
@@ -50,7 +51,7 @@ const getKey: (
   let query: paths['/collections']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
-    community: wildcard,
+    community: collectionId,
     sortBy: 'floorCap',
     sortDirection: 'desc',
   }

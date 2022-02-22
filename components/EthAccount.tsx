@@ -1,35 +1,37 @@
-import { FC, useEffect, useState } from 'react'
-import blockies from 'ethereum-blockies'
+import { FC } from 'react'
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 
 /**
  * Ensure that an Ethereum address does not overflow
  * by removing the middle characters
  * @param address An Ethereum address
+ * @param shrinkInidicator Visual indicator to show address is only
+ * partially displayed
  * @returns A shrinked version of the Ethereum address
  * with the middle characters removed.
  */
-export function shrinkAddress(address: string | undefined) {
-  if (!address) return '-'
-  return `${address.slice(0, 4)}…${address.slice(-4)}`
+function shrinkAddress(address: string, shrinkInidicator?: string) {
+  return address.slice(0, 4) + (shrinkInidicator || '…') + address.slice(-4)
 }
 
 /**
  * Ensure the ENS names do not overflow by removing the
  * middle characters
  * @param ensName An ENS name
+ * @param shrinkInidicator Visual indicator to show address is only
+ * partially displayed
  * @returns A shrinked version of the ENS name if and
  * and only if the ENS name is longer than 24 characters
  * such that the displayed string does not overflow
  */
-function shrinkEns(ensName: string) {
-  if (ensName.length > 24) {
-    return `${ensName.slice(0, 20)}…${ensName.slice(-3)}`
-  }
-  return ensName
+function shrinkEns(ensName: string, shrinkInidicator?: string) {
+  if (ensName.length < 24) return ensName
+
+  return ensName.slice(0, 20) + (shrinkInidicator || '…') + ensName.slice(-3)
 }
 
 type Props = {
-  address: string | undefined
+  address: string
   ens?: {
     avatar: string | null | undefined
     name: string | null | undefined
@@ -38,25 +40,6 @@ type Props = {
 }
 
 const EthAccount: FC<Props> = ({ address, ens, title }) => {
-  const isBrowser = typeof window !== 'undefined'
-  const [dataUrl, setDataUrl] = useState('')
-
-  useEffect(() => {
-    if (dataUrl === '' && isBrowser) {
-      setDataUrl(
-        blockies
-          .create({
-            seed: address,
-          })
-          .toDataURL()
-      )
-    }
-  }, [isBrowser])
-
-  const blockie = (
-    <img className="h-[32px] w-[32px] rounded-full" src={dataUrl} />
-  )
-
   return (
     <div className="flex items-center gap-2">
       {ens?.avatar ? (
@@ -66,7 +49,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
           alt="ENS Avatar"
         />
       ) : (
-        blockie
+        <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
       )}
       <div>
         {title && (
@@ -76,7 +59,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
           <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
           <div
-            className="block min-w-[110px] whitespace-nowrap font-mono lowercase"
+            className="block whitespace-nowrap font-mono lowercase"
             title={address}
           >
             {shrinkAddress(address)}

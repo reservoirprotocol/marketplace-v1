@@ -10,22 +10,29 @@ import getWildcard from './getWildcard'
  * @returns The current wildcard (subdomain) and whether it corresponds to
  * a community or not
  */
-export default function handleWildcard(
+export default function getMode(
   req: IncomingMessage,
   communityEnv?: string,
   collectionEnv?: string
 ) {
   if (communityEnv) {
-    return { wildcard: communityEnv, isCommunity: true }
+    return { mode: 'community', collectionId: communityEnv, isCommunity: true }
   }
 
   if (collectionEnv) {
-    return { wildcard: collectionEnv, isCommunity: false }
+    return {
+      mode: 'collection',
+      collectionId: collectionEnv,
+      isCommunity: false,
+    }
   }
 
   // Handle wildcard
-  const wildcard = getWildcard(req)
-  const isCommunity = getIsCommunity(wildcard)
+  const collectionId = getWildcard(req)
+  const isCommunity = getIsCommunity(collectionId)
 
-  return { wildcard, isCommunity }
+  const mode =
+    collectionId === 'www' ? 'global' : isCommunity ? 'community' : 'collection'
+
+  return { mode, isCommunity, collectionId }
 }
