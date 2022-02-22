@@ -10,7 +10,7 @@ import TokensMain from 'components/TokensMain'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import handleWildcard from 'lib/handleWildcard'
+import getMode from 'lib/getMode'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -20,14 +20,13 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ wildcard, isCommunity }) => {
+const Home: NextPage<Props> = ({ mode, collectionId }) => {
   const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const isHome = wildcard === 'www'
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -36,13 +35,17 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity }) => {
 
   return (
     <Layout>
-      {isHome ? (
+      {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
-      ) : isCommunity ? (
-        <CommunityLanding apiBase={apiBase} wildcard={wildcard} />
+      ) : mode === 'community' ? (
+        <CommunityLanding
+          apiBase={apiBase}
+          collectionId={collectionId}
+          mode={mode}
+        />
       ) : (
         <TokensMain
-          collectionId={wildcard}
+          collectionId={collectionId}
           apiBase={apiBase}
           chainId={+chainId as ChainId}
           fallback={fallback}
@@ -56,14 +59,10 @@ const Home: NextPage<Props> = ({ wildcard, isCommunity }) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps<{
-  wildcard: string
-  isCommunity: boolean
+  collectionId: string
+  mode: string
 }> = async ({ req }) => {
-  const { wildcard, isCommunity } = handleWildcard(
-    req,
-    communityEnv,
-    collectionEnv
-  )
+  const { mode, collectionId } = getMode(req, communityEnv, collectionEnv)
 
-  return { props: { wildcard, isCommunity } }
+  return { props: { mode, collectionId } }
 }

@@ -5,12 +5,13 @@ import CommunityGrid from './CommunityGrid'
 import SearchCollections from './SearchCollections'
 
 type Props = {
-  wildcard: string
+  collectionId: string
   apiBase: string
+  mode: string
 }
 
-const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
-  const communities = useCommunity(apiBase, wildcard)
+const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
+  const communities = useCommunity(apiBase, collectionId)
 
   const { data } = communities.communities
 
@@ -21,20 +22,21 @@ const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
   return (
     <>
       <Head>
-        {wildcard === 'www' ? (
+        {mode === 'global' ? (
           <title>
-            {wildcard.toUpperCase()} Community Marketplace | Reservoir Market
+            {collectionId.toUpperCase()} Community Marketplace | Reservoir
+            Market
           </title>
         ) : (
           <title>
-            {wildcard.toUpperCase()} Community Marketplace | Powered by
+            {collectionId.toUpperCase()} Community Marketplace | Powered by
             Reservoir
           </title>
         )}
         <meta
           name="description"
           content={
-            communities.communities.data?.[0].collections?.[0].collection
+            communities.communities.data?.[0].collections?.[0]?.collection
               ?.description
           }
         />
@@ -43,17 +45,20 @@ const CommunityLanding: FC<Props> = ({ apiBase, wildcard }) => {
         <img
           className="h-[50px] w-[50px] rounded-full"
           src={
-            communities.communities.data?.[0].collections?.[0].collection?.image
+            communities.communities.data?.[0].collections?.[0]?.collection
+              ?.image
           }
         />
-        <h1 className=" text-xl font-bold uppercase">{wildcard} Community</h1>
+        <h1 className=" text-xl font-bold uppercase">
+          {collectionId} Community
+        </h1>
       </header>
       {isBigCommunity && (
         <div className="mb-12 grid justify-center">
-          <SearchCollections communityId={wildcard} />
+          <SearchCollections communityId={collectionId} />
         </div>
       )}
-      <CommunityGrid communities={communities} wildcard={wildcard} />
+      <CommunityGrid communities={communities} />
     </>
   )
 }
