@@ -187,9 +187,23 @@ const AttributeOfferModal: FC<Props> = ({
                       stats.mutate()
                       tokens.mutate()
                     },
-                    handleUserRejection: () => {
-                      setOpen(false)
-                      setSteps(undefined)
+                    handleError: (err) => {
+                      // Handle user rejection
+                      if (err?.code === 4001) {
+                        setOpen(false)
+                        setSteps(undefined)
+                        setToast({
+                          kind: 'error',
+                          message: 'You have canceled the transaction.',
+                          title: 'User canceled transaction',
+                        })
+                        return
+                      }
+                      setToast({
+                        kind: 'error',
+                        message: 'The transaction was not completed.',
+                        title: 'Could not place bid',
+                      })
                     },
                   })
                   setWaitingTx(false)

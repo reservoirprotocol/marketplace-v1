@@ -9,7 +9,6 @@ type Data = {
   signer: Signer | undefined
   apiBase: string | undefined
   setSteps: React.Dispatch<React.SetStateAction<Execute['steps']>>
-  handleUserRejection?: () => any
   handleError?: (err: any) => any
   handleSuccess?: () => any
 }
@@ -21,7 +20,6 @@ export default async function buyToken(data: Data) {
     signer,
     apiBase,
     setSteps,
-    handleUserRejection,
     handleSuccess,
     handleError,
   } = data
@@ -46,11 +44,6 @@ export default async function buyToken(data: Data) {
 
     if (handleSuccess) handleSuccess()
   } catch (err: any) {
-    // Handle user rejection
-    if (err?.code === 4001) {
-      // close modal
-      if (handleUserRejection) handleUserRejection()
-    }
     if (handleError) handleError(err)
     console.error(err)
   }

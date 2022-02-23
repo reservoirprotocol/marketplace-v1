@@ -6,6 +6,8 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import acceptOffer from 'lib/actions/acceptOffer'
+import { useConnect } from 'wagmi'
+import Toast from './Toast'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -17,6 +19,7 @@ type Props = {
   apiBase: string
   signer: Signer | undefined
   show: boolean
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const AcceptOffer: FC<Props> = ({
@@ -26,8 +29,10 @@ const AcceptOffer: FC<Props> = ({
   data,
   signer,
   show,
+  setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -41,6 +46,18 @@ const AcceptOffer: FC<Props> = ({
             waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
           }
           onClick={async () => {
+            if (!signer) {
+              const data = await connect(connectData.connectors[0])
+              if (data?.data) {
+                setToast({
+                  kind: 'success',
+                  message: 'Connected your wallet successfully.',
+                  title: 'Wallet connected',
+                })
+              }
+              return
+            }
+
             setWaitingTx(true)
             await acceptOffer({
               apiBase,
@@ -49,9 +66,23 @@ const AcceptOffer: FC<Props> = ({
               setSteps,
               signer,
               handleSuccess: () => details.mutate(),
-              handleUserRejection: () => {
-                setOpen(false)
-                setSteps(undefined)
+              handleError: (err) => {
+                // Handle user rejection
+                if (err?.code === 4001) {
+                  setOpen(false)
+                  setSteps(undefined)
+                  setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not accept offer',
+                })
               },
             })
             setWaitingTx(false)

@@ -9,8 +9,7 @@ type Data = {
   signer: Signer | undefined
   apiBase: string | undefined
   setSteps: React.Dispatch<React.SetStateAction<Execute['steps']>>
-  handleUserRejection?: () => any
-  handleError?: () => any
+  handleError?: (err: any) => any
   handleSuccess?: () => any
 }
 
@@ -19,16 +18,8 @@ type Data = {
  * @param data
  */
 export default async function cancelOrder(data: Data) {
-  const {
-    hash,
-    maker,
-    signer,
-    apiBase,
-    setSteps,
-    handleUserRejection,
-    handleSuccess,
-    handleError,
-  } = data
+  const { hash, maker, signer, apiBase, setSteps, handleSuccess, handleError } =
+    data
 
   if (!hash || !maker || !signer || !apiBase) {
     console.debug(data)
@@ -49,12 +40,7 @@ export default async function cancelOrder(data: Data) {
 
     if (handleSuccess) handleSuccess()
   } catch (err: any) {
-    // Handle user rejection
-    if (err?.code === 4001) {
-      // close modal
-      if (handleUserRejection) handleUserRejection()
-    }
-    if (handleError) handleError()
+    if (handleError) handleError(err)
     console.error(err)
   }
 }

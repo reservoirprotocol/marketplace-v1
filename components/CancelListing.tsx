@@ -6,6 +6,8 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import cancelOrder from 'lib/actions/cancelOrder'
+import { useConnect } from 'wagmi'
+import Toast from './Toast'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -17,6 +19,7 @@ type Props = {
   apiBase: string
   signer: Signer | undefined
   show: boolean
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const CancelListing: FC<Props> = ({
@@ -26,8 +29,10 @@ const CancelListing: FC<Props> = ({
   apiBase,
   signer,
   show,
+  setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -39,6 +44,18 @@ const CancelListing: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
           onClick={async () => {
+            if (!signer) {
+              const data = await connect(connectData.connectors[0])
+              if (data?.data) {
+                setToast({
+                  kind: 'success',
+                  message: 'Connected your wallet successfully.',
+                  title: 'Wallet connected',
+                })
+              }
+              return
+            }
+
             setWaitingTx(true)
             await cancelOrder({
               hash: token?.market?.floorSell?.hash,
@@ -47,9 +64,23 @@ const CancelListing: FC<Props> = ({
               apiBase,
               setSteps,
               handleSuccess: () => details.mutate(),
-              handleUserRejection: () => {
-                setOpen(false)
-                setSteps(undefined)
+              handleError: (err: any) => {
+                // Handle user rejection
+                if (err?.code === 4001) {
+                  setOpen(false)
+                  setSteps(undefined)
+                  setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not cancel listing',
+                })
               },
             })
             setWaitingTx(false)

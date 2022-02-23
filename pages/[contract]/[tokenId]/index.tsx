@@ -191,6 +191,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                     maker={accountData?.address}
                     collection={collection.data}
                     details={details}
+                    setToast={(data) =>
+                      toast.custom((t) => (
+                        <Toast t={t} toast={toast} data={data} />
+                      ))
+                    }
                   />
                 )}
                 <BuyNow
@@ -224,6 +229,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   signer={signer}
                   show={isOwner}
                   isInTheWrongNetwork={isInTheWrongNetwork}
+                  setToast={(data) =>
+                    toast.custom((t) => (
+                      <Toast t={t} toast={toast} data={data} />
+                    ))
+                  }
                 />
                 {!isOwner && (
                   <TokenOfferModal
@@ -240,6 +250,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                       openSeaApiKey,
                     }}
                     details={details}
+                    setToast={(data) =>
+                      toast.custom((t) => (
+                        <Toast t={t} toast={toast} data={data} />
+                      ))
+                    }
                   />
                 )}
               </Price>
@@ -251,6 +266,9 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               signer={signer}
               show={isTopBidder}
               isInTheWrongNetwork={isInTheWrongNetwork}
+              setToast={(data) =>
+                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+              }
             />
             <CancelListing
               apiBase={apiBase}
@@ -259,6 +277,9 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               details={details}
               show={isOwner && isListed}
               isInTheWrongNetwork={isInTheWrongNetwork}
+              setToast={(data) =>
+                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+              }
             />
           </div>
           <TokenAttributes token={token?.token} />

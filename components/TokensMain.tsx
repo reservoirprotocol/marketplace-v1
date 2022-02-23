@@ -240,17 +240,31 @@ const TokensMain: FC<Props> = ({
                 apiBase,
                 setSteps,
                 handleSuccess: () => stats.mutate(),
-                handleUserRejection: () => {
-                  setOpen(false)
-                  setSteps(undefined)
-                },
-                handleError: (err: any) => {
-                  if (err?.message === 'Not enough ETH balance')
+                handleError: (err) => {
+                  if (err?.message === 'Not enough ETH balance') {
                     setToast({
                       kind: 'error',
                       message: 'You have insufficient funds to buy this token.',
                       title: 'Not enough ETH balance',
                     })
+                    return
+                  }
+                  // Handle user rejection
+                  if (err?.code === 4001) {
+                    setOpen(false)
+                    setSteps(undefined)
+                    setToast({
+                      kind: 'error',
+                      message: 'You have canceled the transaction.',
+                      title: 'User canceled transaction',
+                    })
+                    return
+                  }
+                  setToast({
+                    kind: 'error',
+                    message: 'The transaction was not completed.',
+                    title: 'Could not buy token',
+                  })
                 },
               })
               setWaitingTx(false)
