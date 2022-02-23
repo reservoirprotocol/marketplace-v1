@@ -6,7 +6,7 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactNode } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
@@ -21,6 +21,8 @@ import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
 import getMode from 'lib/getMode'
+import toast from 'react-hot-toast'
+import Toast from 'components/Toast'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -36,7 +38,6 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
-  const [error, setError] = useState(false)
 
   let url = new URL('/tokens/details', apiBase)
 
@@ -198,7 +199,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   data={data}
                   signer={signer}
                   isInTheWrongNetwork={isInTheWrongNetwork}
-                  setError={setError}
+                  setToast={(data) =>
+                    toast.custom((t) => (
+                      <Toast t={t} toast={toast} data={data} />
+                    ))
+                  }
                   show={!isOwner}
                 />
               </Price>
@@ -239,11 +244,6 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 )}
               </Price>
             </div>
-            {error && (
-              <div className="mx-auto mt-4 rounded border border-red-400 bg-red-100 py-1 px-2 text-red-900">
-                You have insufficient funds to buy this token.
-              </div>
-            )}
             <CancelOffer
               apiBase={apiBase}
               details={details}

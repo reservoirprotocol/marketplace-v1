@@ -25,9 +25,9 @@ import SortMenuExplore from './SortMenuExplore'
 import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HiX } from 'react-icons/hi'
-import StepsModalHeader from './StepsModalHeader'
-import Steps from './Steps'
+import ModalCard from './modal/ModalCard'
+import buyToken from 'lib/actions/buyToken'
+import Toast from './Toast'
 
 type Props = {
   fallback: {
@@ -38,6 +38,7 @@ type Props = {
   chainId: ChainId
   openSeaApiKey: string | undefined
   collectionId: string
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const TokensMain: FC<Props> = ({
@@ -46,6 +47,7 @@ const TokensMain: FC<Props> = ({
   chainId,
   openSeaApiKey,
   collectionId,
+  setToast,
 }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
@@ -215,39 +217,27 @@ const TokensMain: FC<Props> = ({
               isInTheWrongNetwork
             }
             onClick={async () => {
-              const tokenId = floor?.token?.tokenId
-              const contract = floor?.token?.contract
-
-              if (!signer || !tokenId || !contract) {
-                console.debug({ tokenId, signer, contract })
-                return
-              }
-
-              try {
-                const url = new URL('/execute/buy', apiBase)
-
-                const query: paths['/execute/buy']['get']['parameters']['query'] =
-                  {
-                    contract,
-                    tokenId,
-                    taker: await signer.getAddress(),
-                  }
-
-                setParams(url, query)
-                setWaitingTx(true)
-
-                await executeSteps(url, signer, setSteps)
-                stats.mutate()
-              } catch (err: any) {
-                // Handle user rejection
-                if (err?.code === 4001) {
-                  // close modal
+              setWaitingTx(true)
+              await buyToken({
+                tokenId: floor?.token?.tokenId,
+                contract: floor?.token?.contract,
+                signer,
+                apiBase,
+                setSteps,
+                handleSuccess: () => stats.mutate(),
+                handleUserRejection: () => {
                   setOpen(false)
                   setSteps(undefined)
-                }
-                console.error(err)
-              }
-
+                },
+                handleError: (err: any) => {
+                  if (err?.message === 'Not enough ETH balance')
+                    setToast({
+                      kind: 'error',
+                      message: 'You have insufficient funds to buy this token.',
+                      title: 'Not enough ETH balance',
+                    })
+                },
+              })
               setWaitingTx(false)
             }}
             className="btn-neutral-fill-dark"
@@ -259,25 +249,7 @@ const TokensMain: FC<Props> = ({
           {steps && (
             <Dialog.Portal>
               <Dialog.Overlay>
-                <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-                  <div className="fixed top-1/2 left-1/2 w-[330px] max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
-                    <div className="mb-5 flex items-center justify-between">
-                      <Dialog.Title className="text-lg font-medium uppercase opacity-75">
-                        Buy token
-                      </Dialog.Title>
-                      <Dialog.Close className="btn-neutral-ghost ml-auto p-1.5">
-                        <HiX className="h-5 w-5" />
-                      </Dialog.Close>
-                    </div>
-                    <StepsModalHeader data={dataSteps} />
-                    <Steps steps={steps} />
-                    {steps?.[steps.length - 1].status === 'complete' && (
-                      <Dialog.Close className="btn-green-fill w-full">
-                        Success, Close this menu
-                      </Dialog.Close>
-                    )}
-                  </div>
-                </Dialog.Content>
+                <ModalCard title="Buy token" data={data} steps={steps} />
               </Dialog.Overlay>
             </Dialog.Portal>
           )}
@@ -285,14 +257,6 @@ const TokensMain: FC<Props> = ({
         {hasTokenSetId &&
           (isAttributeModal ? (
             <AttributeOfferModal
-              trigger={
-                <button
-                  className="btn-neutral-outline border-black py-2"
-                  disabled={!signer || isInTheWrongNetwork}
-                >
-                  Make an attribute offer
-                </button>
-              }
               royalties={royalties}
               signer={signer}
               data={attributeData}
@@ -302,14 +266,6 @@ const TokensMain: FC<Props> = ({
             />
           ) : (
             <CollectionOfferModal
-              trigger={
-                <button
-                  className="btn-neutral-outline border-black py-2"
-                  disabled={!signer || isInTheWrongNetwork}
-                >
-                  Make a collection offer
-                </button>
-              }
               royalties={royalties}
               signer={signer}
               data={data}

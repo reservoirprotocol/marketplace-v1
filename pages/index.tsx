@@ -11,6 +11,8 @@ import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
+import toast from 'react-hot-toast'
+import Toast from 'components/Toast'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -50,6 +52,9 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
           chainId={+chainId as ChainId}
           fallback={fallback}
           openSeaApiKey={openSeaApiKey}
+          setToast={(data) =>
+            toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+          }
         />
       )}
     </Layout>
