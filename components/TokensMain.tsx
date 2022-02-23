@@ -6,13 +6,12 @@ import useFiltersApplied from 'hooks/useFiltersApplied'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
-import executeSteps, { Execute } from 'lib/executeSteps'
+import { Execute } from 'lib/executeSteps'
 import { formatBN } from 'lib/numbers'
-import setParams from 'lib/params'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ComponentProps, FC, useEffect, useRef, useState } from 'react'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
+import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import AttributesFlex from './AttributesFlex'
 import CollectionOfferModal from './CollectionOfferModal'
@@ -50,6 +49,7 @@ const TokensMain: FC<Props> = ({
   setToast,
 }) => {
   const [{ data: accountData }] = useAccount()
+  const [{ data: connectData }, connect] = useConnect()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
   const router = useRouter()
@@ -209,14 +209,29 @@ const TokensMain: FC<Props> = ({
       <Hero stats={statsObj} header={header}>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
-            disabled={
-              !signer ||
-              isOwner ||
-              floor?.value === null ||
-              waitingTx ||
-              isInTheWrongNetwork
-            }
+            disabled={floor?.value === null || waitingTx || isInTheWrongNetwork}
             onClick={async () => {
+              if (!signer) {
+                const data = await connect(connectData.connectors[0])
+                if (data?.data) {
+                  setToast({
+                    kind: 'success',
+                    message: 'Connected your wallet successfully.',
+                    title: 'Wallet connected',
+                  })
+                }
+                return
+              }
+
+              if (isOwner) {
+                setToast({
+                  kind: 'error',
+                  message: 'You already own this token.',
+                  title: 'Failed to buy token',
+                })
+                return
+              }
+
               setWaitingTx(true)
               await buyToken({
                 tokenId: floor?.token?.tokenId,
@@ -263,6 +278,7 @@ const TokensMain: FC<Props> = ({
               env={env}
               stats={stats}
               tokens={tokens}
+              setToast={setToast}
             />
           ) : (
             <CollectionOfferModal
@@ -272,6 +288,7 @@ const TokensMain: FC<Props> = ({
               env={env}
               stats={stats}
               tokens={tokens}
+              setToast={setToast}
             />
           ))}
       </Hero>
