@@ -6,6 +6,7 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import buyToken from 'lib/actions/buyToken'
+import Toast from './Toast'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -16,7 +17,7 @@ type Props = {
   data: ComponentProps<typeof ModalCard>['data']
   apiBase: string
   signer: Signer | undefined
-  setError: React.Dispatch<React.SetStateAction<boolean>>
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
 }
 
@@ -26,7 +27,7 @@ const BuyNow: FC<Props> = ({
   apiBase,
   data,
   signer,
-  setError,
+  setToast,
   show,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -58,7 +59,12 @@ const BuyNow: FC<Props> = ({
                 setSteps(undefined)
               },
               handleError: (err: any) => {
-                if (err?.message === 'Not enough ETH balance') setError(true)
+                if (err?.message === 'Not enough ETH balance')
+                  setToast({
+                    kind: 'error',
+                    message: 'You have insufficient funds to buy this token.',
+                    title: 'Not enough ETH balance',
+                  })
               },
             })
             setWaitingTx(false)

@@ -11,6 +11,8 @@ import Layout from 'components/Layout'
 import TokensMain from 'components/TokensMain'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
+import Toast from 'components/Toast'
+import toast from 'react-hot-toast'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -22,7 +24,6 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const router = useRouter()
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  // const collections = useCollections(apiBase)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -47,6 +48,9 @@ const Home: NextPage<Props> = ({ fallback }) => {
         chainId={+chainId as ChainId}
         fallback={fallback}
         openSeaApiKey={openSeaApiKey}
+        setToast={(data) =>
+          toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+        }
       />
     </Layout>
   )

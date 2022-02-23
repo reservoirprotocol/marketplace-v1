@@ -26,6 +26,8 @@ import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
+import buyToken from 'lib/actions/buyToken'
+import Toast from './Toast'
 
 type Props = {
   fallback: {
@@ -36,6 +38,7 @@ type Props = {
   chainId: ChainId
   openSeaApiKey: string | undefined
   collectionId: string
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const TokensMain: FC<Props> = ({
@@ -44,6 +47,7 @@ const TokensMain: FC<Props> = ({
   chainId,
   openSeaApiKey,
   collectionId,
+  setToast,
 }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
@@ -213,39 +217,27 @@ const TokensMain: FC<Props> = ({
               isInTheWrongNetwork
             }
             onClick={async () => {
-              const tokenId = floor?.token?.tokenId
-              const contract = floor?.token?.contract
-
-              if (!signer || !tokenId || !contract) {
-                console.debug({ tokenId, signer, contract })
-                return
-              }
-
-              try {
-                const url = new URL('/execute/buy', apiBase)
-
-                const query: paths['/execute/buy']['get']['parameters']['query'] =
-                  {
-                    contract,
-                    tokenId,
-                    taker: await signer.getAddress(),
-                  }
-
-                setParams(url, query)
-                setWaitingTx(true)
-
-                await executeSteps(url, signer, setSteps)
-                stats.mutate()
-              } catch (err: any) {
-                // Handle user rejection
-                if (err?.code === 4001) {
-                  // close modal
+              setWaitingTx(true)
+              await buyToken({
+                tokenId: floor?.token?.tokenId,
+                contract: floor?.token?.contract,
+                signer,
+                apiBase,
+                setSteps,
+                handleSuccess: () => stats.mutate(),
+                handleUserRejection: () => {
                   setOpen(false)
                   setSteps(undefined)
-                }
-                console.error(err)
-              }
-
+                },
+                handleError: (err: any) => {
+                  if (err?.message === 'Not enough ETH balance')
+                    setToast({
+                      kind: 'error',
+                      message: 'You have insufficient funds to buy this token.',
+                      title: 'Not enough ETH balance',
+                    })
+                },
+              })
               setWaitingTx(false)
             }}
             className="btn-neutral-fill-dark"
