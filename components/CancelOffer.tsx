@@ -1,12 +1,13 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import executeSteps, { Execute } from 'lib/executeSteps'
-import setParams from 'lib/params'
+import { Execute } from 'lib/executeSteps'
 import React, { ComponentProps, FC, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import cancelOrder from 'lib/actions/cancelOrder'
+import { useConnect } from 'wagmi'
+import Toast from './Toast'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -18,6 +19,7 @@ type Props = {
   apiBase: string
   signer: Signer | undefined
   show: boolean
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const CancelOffer: FC<Props> = ({
@@ -27,8 +29,10 @@ const CancelOffer: FC<Props> = ({
   apiBase,
   signer,
   show,
+  setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
   const token = details.data?.tokens?.[0]
@@ -39,6 +43,18 @@ const CancelOffer: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
           onClick={async () => {
+            if (!signer) {
+              const data = await connect(connectData.connectors[0])
+              if (data?.data) {
+                setToast({
+                  kind: 'success',
+                  message: 'Connected your wallet successfully.',
+                  title: 'Wallet connected',
+                })
+              }
+              return
+            }
+
             setWaitingTx(true)
             await cancelOrder({
               hash: token?.market?.topBuy?.hash,
@@ -47,9 +63,23 @@ const CancelOffer: FC<Props> = ({
               apiBase,
               setSteps,
               handleSuccess: () => details.mutate(),
-              handleUserRejection: () => {
-                setOpen(false)
-                setSteps(undefined)
+              handleError: (err: any) => {
+                // Handle user rejection
+                if (err?.code === 4001) {
+                  setOpen(false)
+                  setSteps(undefined)
+                  setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not cancel offer',
+                })
               },
             })
             setWaitingTx(false)

@@ -1,8 +1,14 @@
-import { FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
-import { useBalance, useNetwork, useProvider, useSigner } from 'wagmi'
+import {
+  useBalance,
+  useConnect,
+  useNetwork,
+  useProvider,
+  useSigner,
+} from 'wagmi'
 import calculateOffer from 'lib/calculateOffer'
 import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
@@ -10,10 +16,10 @@ import expirationPresets from 'lib/offerExpirationPresets'
 import { paths } from 'interfaces/apiTypes'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
-import executeSteps, { Execute } from 'lib/executeSteps'
-import setParams from 'lib/params'
+import { Execute } from 'lib/executeSteps'
 import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
+import Toast from './Toast'
 
 type Props = {
   env: {
@@ -43,11 +49,19 @@ type Props = {
     paths['/tokens/details']['get']['responses']['200']['schema'],
     any
   >
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
-const TokenOfferModal: FC<Props> = ({ env, royalties, details, data }) => {
+const TokenOfferModal: FC<Props> = ({
+  env,
+  royalties,
+  details,
+  data,
+  setToast,
+}) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
+  const [{ data: connectData }, connect] = useConnect()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [{ data: network }] = useNetwork()
@@ -72,7 +86,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, details, data }) => {
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const [open, setOpen] = useState(false)
-  const isInTheWrongNetwork = network.chain?.id !== env.chainId
+  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
 
   useEffect(() => {
     async function loadWeth() {
@@ -105,7 +119,20 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, details, data }) => {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
-        disabled={!signer || isInTheWrongNetwork}
+        disabled={isInTheWrongNetwork}
+        onClick={async () => {
+          if (!signer) {
+            const data = await connect(connectData.connectors[0])
+            if (data?.data) {
+              setToast({
+                kind: 'success',
+                message: 'Connected your wallet successfully.',
+                title: 'Wallet connected',
+              })
+            }
+            return
+          }
+        }}
         className="btn-neutral-outline w-full border-neutral-900"
       >
         Make Offer
@@ -125,6 +152,18 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, details, data }) => {
                   waitingTx
                 }
                 onClick={async () => {
+                  if (!signer) {
+                    const data = await connect(connectData.connectors[0])
+                    if (data?.data) {
+                      setToast({
+                        kind: 'success',
+                        message: 'Connected your wallet successfully.',
+                        title: 'Wallet connected',
+                      })
+                    }
+                    return
+                  }
+
                   setWaitingTx(true)
 
                   const expirationValue = expirationPresets
@@ -145,9 +184,23 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, details, data }) => {
                     apiBase: env.apiBase,
                     setSteps,
                     handleSuccess: () => details.mutate(),
-                    handleUserRejection: () => {
-                      setOpen(false)
-                      setSteps(undefined)
+                    handleError: (err) => {
+                      // Handle user rejection
+                      if (err?.code === 4001) {
+                        setOpen(false)
+                        setSteps(undefined)
+                        setToast({
+                          kind: 'error',
+                          message: 'You have canceled the transaction.',
+                          title: 'User canceled transaction',
+                        })
+                        return
+                      }
+                      setToast({
+                        kind: 'error',
+                        message: 'The transaction was not completed.',
+                        title: 'Could not make offer',
+                      })
                     },
                   })
                   setWaitingTx(false)

@@ -7,6 +7,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import buyToken from 'lib/actions/buyToken'
 import Toast from './Toast'
+import { useConnect } from 'wagmi'
 
 type Props = {
   isInTheWrongNetwork: boolean | undefined
@@ -31,6 +32,7 @@ const BuyNow: FC<Props> = ({
   show,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
   const token = details.data?.tokens?.[0]
@@ -40,12 +42,23 @@ const BuyNow: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={
-            !signer ||
             token?.market?.floorSell?.value === null ||
             waitingTx ||
             isInTheWrongNetwork
           }
           onClick={async () => {
+            if (!signer) {
+              const data = await connect(connectData.connectors[0])
+              if (data?.data) {
+                setToast({
+                  kind: 'success',
+                  message: 'Connected your wallet successfully.',
+                  title: 'Wallet connected',
+                })
+              }
+              return
+            }
+
             setWaitingTx(true)
             await buyToken({
               tokenId: token?.token?.tokenId,
@@ -54,17 +67,31 @@ const BuyNow: FC<Props> = ({
               apiBase,
               setSteps,
               handleSuccess: () => details.mutate(),
-              handleUserRejection: () => {
-                setOpen(false)
-                setSteps(undefined)
-              },
               handleError: (err: any) => {
-                if (err?.message === 'Not enough ETH balance')
+                if (err?.message === 'Not enough ETH balance') {
                   setToast({
                     kind: 'error',
                     message: 'You have insufficient funds to buy this token.',
                     title: 'Not enough ETH balance',
                   })
+                  return
+                }
+                // Handle user rejection
+                if (err?.code === 4001) {
+                  setOpen(false)
+                  setSteps(undefined)
+                  setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not buy token',
+                })
               },
             })
             setWaitingTx(false)

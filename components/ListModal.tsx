@@ -4,12 +4,13 @@ import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { useNetwork } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
 import { Execute } from 'lib/executeSteps'
 import listToken from 'lib/actions/listToken'
 import ModalCard from './modal/ModalCard'
+import Toast from './Toast'
 
 type Props = {
   apiBase: string
@@ -23,6 +24,7 @@ type Props = {
   collection:
     | paths['/collections/{collection}']['get']['responses']['200']['schema']
     | undefined
+  setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const ListModal: FC<Props> = ({
@@ -32,9 +34,11 @@ const ListModal: FC<Props> = ({
   apiBase,
   signer,
   details,
+  setToast,
 }) => {
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('')
+  const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [youGet, setYouGet] = useState(constants.Zero)
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -86,6 +90,18 @@ const ListModal: FC<Props> = ({
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
                 onClick={async () => {
+                  if (!signer) {
+                    const data = await connect(connectData.connectors[0])
+                    if (data?.data) {
+                      setToast({
+                        kind: 'success',
+                        message: 'Connected your wallet successfully.',
+                        title: 'Wallet connected',
+                      })
+                    }
+                    return
+                  }
+
                   setWaitingTx(true)
 
                   const expirationValue = expirationPresets
@@ -104,7 +120,23 @@ const ListModal: FC<Props> = ({
                     apiBase,
                     setSteps,
                     handleSuccess: () => details.mutate(),
-                    handleUserRejection: () => setSteps(undefined),
+                    handleError: (err: any) => {
+                      // Handle user rejection
+                      if (err?.code === 4001) {
+                        setSteps(undefined)
+                        setToast({
+                          kind: 'error',
+                          message: 'You have canceled the transaction.',
+                          title: 'User canceled transaction',
+                        })
+                        return
+                      }
+                      setToast({
+                        kind: 'error',
+                        message: 'The transaction was not completed.',
+                        title: 'Could not list token',
+                      })
+                    },
                   })
                   setWaitingTx(false)
                 }}
