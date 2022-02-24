@@ -4,7 +4,6 @@ import { BigNumberish } from '@ethersproject/bignumber'
 const { format: formatDollar } = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  minimumFractionDigits: 2,
 })
 
 function formatNumber(amount: number | null | undefined) {
@@ -31,12 +30,10 @@ function formatBN(
 
   if (typeof amount === 'number') {
     value = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
       maximumFractionDigits,
     }).format(amount)
   } else {
     value = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
       maximumFractionDigits,
     }).format(+utils.formatEther(amount))
   }

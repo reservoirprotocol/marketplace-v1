@@ -11,7 +11,7 @@ type Props = {
 const FormatEth: FC<Props> = ({ amount, maximumFractionDigits, logoWidth }) => {
   const value = formatBN(amount, maximumFractionDigits)
   return (
-    <div className="flex items-center gap-1">
+    <div className="inline-flex items-center gap-1">
       {value !== '-' && (
         <img
           src="/eth.svg"
