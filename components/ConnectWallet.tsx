@@ -34,20 +34,18 @@ const ConnectWallet: FC = () => {
             <div>Balance</div>
             {accountData.address && <Balance address={accountData.address} />}
           </DropdownMenu.Item>
-          <Link href={`/address/${accountData.address}`}>
-            <a className="group flex w-full items-center justify-between px-4 py-3 transition">
-              <DropdownMenu.Item>Portfolio</DropdownMenu.Item>
-            </a>
-          </Link>
+          <DropdownMenu.Item className="group flex w-full items-center justify-between px-4 py-3 transition">
+            <Link href={`/address/${accountData.address}`}>
+              <a>Portfolio</a>
+            </Link>
+          </DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <button
-            className="group flex w-full items-center justify-between gap-3 px-4 py-3 transition"
-            key={wallet.id}
-            onClick={() => disconnect()}
-          >
-            <DropdownMenu.Item>Disconnect</DropdownMenu.Item>
+          <DropdownMenu.Item className="group flex w-full items-center justify-between gap-3 px-4 py-3 transition">
+            <button key={wallet.id} onClick={() => disconnect()}>
+              Disconnect
+            </button>
             <HiOutlineLogout className="h-6 w-7" />
-          </button>
+          </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     )

@@ -1,58 +1,23 @@
 import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
 import UserTokensGrid from 'components/UserTokensGrid'
-import { paths } from 'interfaces/apiTypes'
-import fetcher from 'lib/fetcher'
-import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
-import { useInView } from 'react-intersection-observer'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
+import * as Tabs from '@radix-ui/react-tabs'
+import { toggleOnItem } from 'lib/router'
+import useUserTokens from 'hooks/useUserTokens'
+import useUserActivity from 'hooks/useUserActivity'
+import useUserPositions from 'hooks/useUserPositions'
+import UserOffersTable from 'components/tables/UserOffersTable'
+import UserListingsTable from 'components/tables/UserListingsTable'
+import UserActivityTable from 'components/tables/UserActivityTable'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
-
-type InfiniteKeyLoader = (
-  custom: { url: URL; collectionId: string; mode: string },
-  ...base: Parameters<SWRInfiniteKeyLoader>
-) => ReturnType<SWRInfiniteKeyLoader>
-
-const getKey: InfiniteKeyLoader = (
-  custom: { url: URL; collectionId: string; mode: string },
-  index: number,
-  previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-) => {
-  const { url, collectionId, mode } = custom
-  if (!apiBase) {
-    console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
-    return null
-  }
-
-  // Reached the end
-  if (previousPageData && previousPageData?.tokens?.length === 0) return null
-
-  let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: index * 20,
-  }
-
-  if (mode === 'community') {
-    query.community = collectionId
-  }
-
-  if (mode === 'collection') {
-    query.collection = collectionId
-  }
-
-  setParams(url, query)
-
-  return url.href
-}
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
@@ -60,38 +25,57 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
   const router = useRouter()
   useDataDog(accountData)
-
-  const { ref, inView } = useInView()
-
-  const url = new URL(`/users/${router.query?.address}/tokens`, apiBase)
-
-  const tokens = useSWRInfinite<
-    paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-  >(
-    (index, previousPageData) =>
-      getKey({ url, mode, collectionId }, index, previousPageData),
-    fetcher,
-    {
-      revalidateFirstPage: false,
-      // revalidateOnMount: false,
-    }
-  )
-
-  // Fetch more data when component is visible
-  useEffect(() => {
-    if (inView) {
-      tokens.setSize(tokens.size + 1)
-    }
-  }, [inView])
-
   const address = router.query?.address?.toString()
+  const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
+  const userActivity = useUserActivity(apiBase, [], address)
+  const userOffers = useUserPositions(apiBase, [], 'buy', address)
+  const userListings = useUserPositions(apiBase, [], 'sell', address)
 
   return (
     <Layout>
       <div className="mt-4 mb-10 flex items-center justify-center">
         {address && <EthAccount address={address} />}
       </div>
-      <UserTokensGrid tokens={tokens} viewRef={ref} />
+      <Tabs.Root
+        value={
+          (!!router.query.tab && router.query.tab.toString()) || 'portfolio'
+        }
+      >
+        <Tabs.List className="mb-3 flex justify-center gap-4 md:mb-4 lg:mb-5">
+          <div className="flex cursor-pointer items-center divide-x divide-neutral-200 overflow-hidden rounded-t-lg border  border-neutral-200 dark:divide-neutral-900 dark:border-neutral-900">
+            {[
+              { name: 'Portfolio', id: 'portfolio' },
+              { name: 'Activity', id: 'activity' },
+              { name: 'My Offers', id: 'offers' },
+              { name: 'My Listings', id: 'listings' },
+            ].map(({ name, id }) => (
+              <Tabs.Trigger
+                key={id}
+                id={id}
+                value={id}
+                className={
+                  'group relative min-w-0 overflow-hidden whitespace-nowrap  bg-white py-4 px-4 text-center text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:text-gray-900'
+                }
+                onClick={() => toggleOnItem(router, 'tab', id)}
+              >
+                {name}
+              </Tabs.Trigger>
+            ))}
+          </div>
+        </Tabs.List>
+        <Tabs.Content value="portfolio">
+          <UserTokensGrid tokens={userTokens.tokens} viewRef={userTokens.ref} />
+        </Tabs.Content>
+        <Tabs.Content value="activity">
+          <UserActivityTable data={userActivity} />
+        </Tabs.Content>
+        <Tabs.Content value="offers">
+          <UserOffersTable data={userOffers} />
+        </Tabs.Content>
+        <Tabs.Content value="listings">
+          <UserListingsTable data={userListings} />
+        </Tabs.Content>
+      </Tabs.Root>
     </Layout>
   )
 }
