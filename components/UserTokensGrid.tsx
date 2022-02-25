@@ -1,24 +1,16 @@
-import { paths } from 'interfaces/apiTypes'
 import { FC } from 'react'
 import LoadingCard from './LoadingCard'
-import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from './FormatEth'
-import { useInView } from 'react-intersection-observer'
+import useUserTokens from 'hooks/useUserTokens'
 
 type Props = {
-  tokens: SWRInfiniteResponse<
-    paths['/users/{user}/tokens']['get']['responses']['200']['schema'],
-    any
-  >
-  viewRef: ReturnType<typeof useInView>['ref']
+  data: ReturnType<typeof useUserTokens>
 }
 
-const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
+const UserTokensGrid: FC<Props> = ({ data: { tokens, ref } }) => {
   const { data, isValidating, size } = tokens
-
-  // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
   const isEmpty = mappedTokens.length === 0
   const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
@@ -85,9 +77,7 @@ const UserTokensGrid: FC<Props> = ({ tokens, viewRef }) => {
           .fill(null)
           .map((_, index) => {
             if (index === 0) {
-              return (
-                <LoadingCard viewRef={viewRef} key={`loading-card-${index}`} />
-              )
+              return <LoadingCard viewRef={ref} key={`loading-card-${index}`} />
             }
             return <LoadingCard key={`loading-card-${index}`} />
           })}

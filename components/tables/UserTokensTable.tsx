@@ -1,23 +1,23 @@
 import Link from 'next/link'
-import { BigNumber, constants, utils } from 'ethers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { paths } from 'interfaces/apiTypes'
 import { formatBN, formatNumber } from 'lib/numbers'
 import { FC } from 'react'
+import useUserTokens from 'hooks/useUserTokens'
+import FormatEth from 'components/FormatEth'
 
 type Props = {
-  tokens: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
-  portfolio: paths['/users/{user}/collections']['get']['responses']['200']['schema']
-  viewRef: (node?: Element) => void
-  isOwner: boolean
+  data: ReturnType<typeof useUserTokens>
 }
 
-const Portfolio: FC<Props> = ({ tokens, portfolio, viewRef, isOwner }) => {
+const UserTokensTable: FC<Props> = ({ data: { ref, tokens } }) => {
+  const { data } = tokens
+  const tokensFlat = data ? data.flatMap(({ tokens }) => tokens) : []
+  const isOwner = true
+
   return (
     <table className="mb-6 w-full table-auto">
       <thead>
         <tr className="text-left">
-          <th className="px-3">Collection</th>
           <th className="pr-3">Item</th>
           <th className="whitespace-nowrap pr-3">List Price</th>
           <th className="whitespace-nowrap pr-3">Top Offer</th>
@@ -25,31 +25,23 @@ const Portfolio: FC<Props> = ({ tokens, portfolio, viewRef, isOwner }) => {
         </tr>
       </thead>
       <tbody>
-        {tokens?.tokens?.map(({ token, ownership }, index, arr) => (
+        {tokensFlat?.map((token, index, arr) => (
           <tr
-            key={`${token?.collection?.id}-${index}`}
-            // ref={index === arr.length - 5 ? viewRef : null}
+            key={`${token?.token?.collection?.id}-${index}`}
+            ref={index === arr.length - 5 ? ref : null}
             className="group even:bg-neutral-100 dark:even:bg-neutral-900"
           >
             <td className="pr-3">
-              <Link href={`/collections/${token?.collection?.id}`}>
-                <a
-                  title={token?.collection?.name}
-                  className="block max-w-[250px] truncate whitespace-nowrap p-2"
-                >
-                  {token?.collection?.name}
-                </a>
-              </Link>
-            </td>
-            <td className="pr-3">
-              <Link href={`/collections/${token?.contract}/${token?.tokenId}`}>
+              <Link
+                href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
+              >
                 <a className="flex items-center gap-2 p-1 md:p-2">
                   <div className="relative h-10 w-10">
-                    {token?.image && (
+                    {token?.token?.image && (
                       <div className="aspect-w-1 aspect-h-1 relative">
                         <img
-                          src={optimizeImage(token?.image, 35)}
-                          alt={token?.image}
+                          src={optimizeImage(token?.token?.image, 35)}
+                          alt={token?.token?.image}
                           className="w-[35px] object-contain"
                           width="35"
                           height="35"
@@ -57,44 +49,62 @@ const Portfolio: FC<Props> = ({ tokens, portfolio, viewRef, isOwner }) => {
                       </div>
                     )}
                   </div>
-                  <span className="whitespace-nowrap">{token?.name}</span>
+                  <span className="whitespace-nowrap">
+                    <div> {token?.token?.collection?.name}</div>
+                    <div className="font-semibold"> {token?.token?.name}</div>
+                  </span>
                 </a>
               </Link>
             </td>
             <td className="pr-3">
               <div className="min-w-[70px]">
                 <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
-                  {formatBN(ownership?.floorSellValue, 2)}
+                  <FormatEth
+                    amount={token?.ownership?.floorSellValue}
+                    maximumFractionDigits={4}
+                  />
                 </span>
                 {isOwner && (
                   <div className="hidden group-hover:inline-block">
                     <Link
-                      href={`/collections/${token?.contract}/${token?.tokenId}/sell`}
+                      href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
                       passHref
                     >
-                      {ownership?.floorSellValue ? 'Edit' : 'List'}
+                      {token?.ownership?.floorSellValue ? 'Edit' : 'List'}
                     </Link>
                   </div>
                 )}
               </div>
             </td>
             <td className="pr-3">
-              {token?.topBuy?.value ? (
+              {token?.token?.topBuy?.value ? (
                 isOwner ? (
                   <div className="min-w-[95px]">
                     <span className="group-hover:hidden">
-                      {token?.topBuy?.value}
+                      <FormatEth
+                        amount={token?.token?.topBuy?.value}
+                        maximumFractionDigits={4}
+                      />
                     </span>
                     <div className="hidden group-hover:inline-block">
                       Accept
                     </div>
                   </div>
                 ) : (
-                  `Ξ${formatNumber(token?.topBuy?.value)}`
+                  <FormatEth
+                    amount={token?.token?.topBuy?.value}
+                    maximumFractionDigits={4}
+                  />
                 )
               ) : (
                 '-'
               )}
+            </td>
+            <td>
+              <FormatEth
+                amount={token?.ownership?.floorSellValue}
+                maximumFractionDigits={4}
+              />
             </td>
           </tr>
         ))}
@@ -103,4 +113,4 @@ const Portfolio: FC<Props> = ({ tokens, portfolio, viewRef, isOwner }) => {
   )
 }
 
-export default Portfolio
+export default UserTokensTable

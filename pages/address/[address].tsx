@@ -1,6 +1,5 @@
 import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
-import UserTokensGrid from 'components/UserTokensGrid'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
@@ -14,6 +13,7 @@ import useUserPositions from 'hooks/useUserPositions'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserActivityTable from 'components/tables/UserActivityTable'
+import UserTokensTable from 'components/tables/UserTokensTable'
 
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
@@ -64,7 +64,8 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           </div>
         </Tabs.List>
         <Tabs.Content value="portfolio">
-          <UserTokensGrid tokens={userTokens.tokens} viewRef={userTokens.ref} />
+          <UserTokensTable data={userTokens} />
+          {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
         <Tabs.Content value="activity">
           <UserActivityTable data={userActivity} />
