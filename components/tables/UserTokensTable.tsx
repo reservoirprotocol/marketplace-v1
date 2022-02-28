@@ -26,7 +26,7 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
   const isOwner = true
 
   return (
-    <div className="mb-11 overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
       <table className="min-w-full table-auto divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
