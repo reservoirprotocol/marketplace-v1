@@ -1,41 +1,102 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
 import { Execute } from 'lib/executeSteps'
-import React, { ComponentProps, FC, useState } from 'react'
+import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import cancelOrder from 'lib/actions/cancelOrder'
 import { useConnect } from 'wagmi'
 import Toast from './Toast'
+import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
+import { getCollection, getDetails } from 'lib/fetch/fetch'
+
+type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Collection =
+  paths['/collections/{collection}']['get']['responses']['200']['schema']
 
 type Props = {
-  isInTheWrongNetwork: boolean | undefined
-  details: SWRResponse<
-    paths['/tokens/details']['get']['responses']['200']['schema'],
-    any
-  >
-  data: ComponentProps<typeof ModalCard>['data']
   apiBase: string
-  signer: Signer | undefined
-  show: boolean
+  data:
+    | {
+        details: SWRResponse<Details, any>
+        collection: Collection | undefined
+      }
+    | {
+        collectionId: string | undefined
+        contract: string | undefined
+        tokenId: string | undefined
+      }
+  isInTheWrongNetwork: boolean | undefined
+  mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
+  show: boolean
+  signer: Signer | undefined
 }
 
 const CancelOffer: FC<Props> = ({
-  isInTheWrongNetwork,
-  data,
-  details,
   apiBase,
-  signer,
-  show,
+  data,
+  isInTheWrongNetwork,
+  mutate,
   setToast,
+  show,
+  signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: connectData }, connect] = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
-  const token = details.data?.tokens?.[0]
+
+  // Data from props
+  const [collection, setCollection] = useState<Collection>()
+  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+
+  useEffect(() => {
+    if (data) {
+      // Load data if missing
+      if ('tokenId' in data) {
+        const { contract, tokenId, collectionId } = data
+
+        getDetails(apiBase, contract, tokenId, setDetails)
+        getCollection(apiBase, collectionId, setCollection)
+      }
+      // Load data if provided
+      if ('details' in data) {
+        const { details, collection } = data
+
+        setDetails(details)
+        setCollection(collection)
+      }
+    }
+  }, [data])
+
+  // Set the token either from SWR or fetch
+  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+
+  // From fetch
+  if (details && 'tokens' in details && details.tokens?.[0]) {
+    token = details.tokens?.[0]
+  }
+
+  // From SWR
+  if (details && 'data' in details && details?.data?.tokens?.[0]) {
+    token = details.data?.tokens?.[0]
+  }
+
+  const modalData = {
+    collection: {
+      name: collection?.collection?.collection?.name,
+    },
+    token: {
+      contract: token?.token?.contract,
+      id: token?.token?.tokenId,
+      image: token?.token?.image,
+      name: token?.token?.name,
+      topBuyValue: token?.market?.topBuy?.value,
+      floorSellValue: token?.market?.floorSell?.value,
+    },
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -62,7 +123,10 @@ const CancelOffer: FC<Props> = ({
               signer,
               apiBase,
               setSteps,
-              handleSuccess: () => details.mutate(),
+              handleSuccess: () => {
+                details && 'mutate' in details && details.mutate()
+                mutate && mutate()
+              },
               handleError: (err: any) => {
                 // Handle user rejection
                 if (err?.code === 4001) {
@@ -84,7 +148,7 @@ const CancelOffer: FC<Props> = ({
             })
             setWaitingTx(false)
           }}
-          className="btn-red-ghost col-span-2 mx-auto mt-6"
+          className="btn-red-ghost"
         >
           {waitingTx ? 'Waiting...' : 'Cancel your offer'}
         </Dialog.Trigger>
@@ -92,7 +156,11 @@ const CancelOffer: FC<Props> = ({
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Cancel your offer" data={data} steps={steps} />
+            <ModalCard
+              title="Cancel your offer"
+              data={modalData}
+              steps={steps}
+            />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

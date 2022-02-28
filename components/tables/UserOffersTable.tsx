@@ -1,15 +1,26 @@
-import { FC } from 'react'
+import { ComponentProps, FC } from 'react'
 import { DateTime } from 'luxon'
 import useUserPositions from 'hooks/useUserPositions'
 import FormatEth from 'components/FormatEth'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
+import CancelOffer from 'components/CancelOffer'
+import { useAccount, useSigner } from 'wagmi'
+import Toast from 'components/Toast'
 
 type Props = {
   data: ReturnType<typeof useUserPositions>
+  modal: {
+    accountData: ReturnType<typeof useAccount>[0]['data']
+    apiBase: string
+    collectionId: string | undefined
+    isInTheWrongNetwork: boolean | undefined
+    setToast: (data: ComponentProps<typeof Toast>['data']) => any
+    signer: ReturnType<typeof useSigner>[0]['data']
+  }
 }
 
-const UserOffersTable: FC<Props> = ({ data: { positions, ref } }) => {
+const UserOffersTable: FC<Props> = ({ data: { positions, ref }, modal }) => {
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
   const isOwner = true
@@ -91,7 +102,21 @@ const UserOffersTable: FC<Props> = ({ data: { positions, ref } }) => {
               </td>
               {isOwner && (
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                  <button className="btn-red-ghost">Cancel</button>
+                  <CancelOffer
+                    apiBase={modal.apiBase}
+                    data={{
+                      collectionId: modal?.collectionId,
+                      // @ts-ignore
+                      contract: position?.set?.schema?.data?.contract,
+                      // @ts-ignore
+                      tokenId: position?.set?.schema?.data?.tokenId,
+                    }}
+                    signer={modal.signer}
+                    show={true}
+                    isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                    setToast={modal.setToast}
+                    mutate={positions.mutate}
+                  />
                 </td>
               )}
             </tr>

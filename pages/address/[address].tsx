@@ -2,7 +2,7 @@ import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
 import * as Tabs from '@radix-ui/react-tabs'
@@ -27,6 +27,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
+  const [{ data: network }] = useNetwork()
   const [{ data: signer }] = useSigner()
   const router = useRouter()
   useDataDog(accountData)
@@ -44,6 +45,8 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+
+  const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   return (
     <Layout>
@@ -79,7 +82,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             modal={{
               accountData,
               apiBase,
-              chainId: +chainId as ChainId,
+              isInTheWrongNetwork,
               collectionId,
               setToast,
               signer,
@@ -91,10 +94,30 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           <UserActivityTable data={userActivity} />
         </Tabs.Content>
         <Tabs.Content value="offers">
-          <UserOffersTable data={userOffers} />
+          <UserOffersTable
+            data={userOffers}
+            modal={{
+              accountData,
+              apiBase,
+              isInTheWrongNetwork,
+              collectionId,
+              setToast,
+              signer,
+            }}
+          />
         </Tabs.Content>
         <Tabs.Content value="listings">
-          <UserListingsTable data={userListings} />
+          <UserListingsTable
+            data={userListings}
+            modal={{
+              accountData,
+              apiBase,
+              isInTheWrongNetwork,
+              collectionId,
+              setToast,
+              signer,
+            }}
+          />
         </Tabs.Content>
       </Tabs.Root>
     </Layout>

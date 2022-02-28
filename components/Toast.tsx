@@ -37,8 +37,8 @@ const Toast: FC<Props> = ({ t, toast, data: { kind, message, title } }) => {
             <div className="flex items-start">
               <div className="flex-shrink-0">{icons[kind]}</div>
               <div className="ml-3 w-0 flex-1 pt-0.5">
-                <p className="text-sm font-medium text-gray-900">{title}</p>
-                <p className="mt-1 text-sm text-gray-500">{message}</p>
+                <p className="font-medium text-gray-900">{title}</p>
+                <p className="mt-1 text-gray-500">{message}</p>
               </div>
               <div className="ml-4 flex flex-shrink-0">
                 <button

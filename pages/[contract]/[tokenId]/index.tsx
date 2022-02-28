@@ -73,20 +73,6 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
-  const data = {
-    collection: {
-      name: collection.data?.collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBuy?.value,
-      floorSellValue: token?.market?.floorSell?.value,
-    },
-  }
-
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
@@ -189,21 +175,23 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               >
                 {isOwner && (
                   <ListModal
-                    signer={signer}
                     apiBase={apiBase}
-                    chainId={+chainId}
-                    maker={accountData?.address}
                     data={{
                       collection: collection.data,
                       details,
                     }}
+                    isInTheWrongNetwork={isInTheWrongNetwork}
+                    maker={accountData?.address}
                     setToast={setToast}
+                    signer={signer}
                   />
                 )}
                 <BuyNow
                   apiBase={apiBase}
-                  details={details}
-                  data={data}
+                  data={{
+                    collection: collection.data,
+                    details,
+                  }}
                   signer={signer}
                   isInTheWrongNetwork={isInTheWrongNetwork}
                   setToast={setToast}
@@ -222,17 +210,22 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               >
                 <AcceptOffer
                   apiBase={apiBase}
-                  details={details}
-                  data={data}
-                  signer={signer}
-                  show={isOwner}
+                  data={{
+                    collection: collection.data,
+                    details,
+                  }}
                   isInTheWrongNetwork={isInTheWrongNetwork}
                   setToast={setToast}
+                  show={isOwner}
+                  signer={signer}
                 />
                 {!isOwner && (
                   <TokenOfferModal
                     signer={signer}
-                    data={data}
+                    data={{
+                      collection: collection.data,
+                      details,
+                    }}
                     royalties={{
                       bps: collection.data?.collection?.royalties?.bps,
                       recipient:
@@ -243,30 +236,35 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                       chainId: +chainId as ChainId,
                       openSeaApiKey,
                     }}
-                    details={details}
                     setToast={setToast}
                   />
                 )}
               </Price>
             </div>
-            <CancelOffer
-              apiBase={apiBase}
-              details={details}
-              data={data}
-              signer={signer}
-              show={isTopBidder}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={setToast}
-            />
-            <CancelListing
-              apiBase={apiBase}
-              data={data}
-              signer={signer}
-              details={details}
-              show={isOwner && isListed}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={setToast}
-            />
+            <div className="mt-6 flex justify-center">
+              <CancelOffer
+                apiBase={apiBase}
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                signer={signer}
+                show={isTopBidder}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+              <CancelListing
+                apiBase={apiBase}
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                signer={signer}
+                show={isOwner && isListed}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+            </div>
           </div>
           <TokenAttributes token={token?.token} />
         </div>

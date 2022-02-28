@@ -1,18 +1,18 @@
-import { ComponentProps, Dispatch, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { useConnect, useNetwork } from 'wagmi'
+import { useConnect } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
 import { Execute } from 'lib/executeSteps'
 import listToken from 'lib/actions/listToken'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import setParams from 'lib/params'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
+import { getCollection, getDetails } from 'lib/fetch/fetch'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -20,10 +20,6 @@ type Collection =
 
 type Props = {
   apiBase: string
-  chainId: number
-  signer: ethers.Signer | undefined
-  maker: string | undefined
-  mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   data:
     | {
         details: SWRResponse<Details, any>
@@ -34,58 +30,23 @@ type Props = {
         tokenId: string | undefined
         collectionId: string | undefined
       }
+  isInTheWrongNetwork: boolean | undefined
+  maker: string | undefined
+  mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
-}
-async function getDetails(
-  apiBase: string,
-  contract: string | undefined,
-  tokenId: string | undefined,
-  setDetails: Dispatch<any>
-) {
-  let url = new URL('/tokens/details', apiBase)
-
-  let query: paths['/tokens/details']['get']['parameters']['query'] = {
-    contract,
-    tokenId,
-  }
-
-  setParams(url, query)
-
-  const res = await fetch(url.href)
-
-  const json =
-    (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
-
-  setDetails(json)
-}
-
-async function getCollection(
-  apiBase: string,
-  collectionId: string | undefined,
-  setCollection: Dispatch<any>
-) {
-  const url = new URL(`/collections/${collectionId}`, apiBase)
-
-  const res = await fetch(url.href)
-
-  const json =
-    (await res.json()) as paths['/collections/{collection}']['get']['responses']['200']['schema']
-
-  setCollection(json)
+  signer: ethers.Signer | undefined
 }
 
 const ListModal: FC<Props> = ({
   data,
   maker,
-  chainId,
+  isInTheWrongNetwork,
   apiBase,
   signer,
   mutate,
   setToast,
 }) => {
   // wagmi
-  const [{ data: network }] = useNetwork()
-  const isInTheWrongNetwork = network.chain?.id !== +chainId
   const [{ data: connectData }, connect] = useConnect()
 
   // User input
@@ -112,14 +73,23 @@ const ListModal: FC<Props> = ({
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
   useEffect(() => {
-    // Load data if missing
-    if ('tokenId' in data) {
-      const { contract, tokenId, collectionId } = data
+    if (data) {
+      // Load data if missing
+      if ('tokenId' in data) {
+        const { contract, tokenId, collectionId } = data
 
-      getDetails(apiBase, contract, tokenId, setDetails)
-      getCollection(apiBase, collectionId, setCollection)
+        getDetails(apiBase, contract, tokenId, setDetails)
+        getCollection(apiBase, collectionId, setCollection)
+      }
+      // Load data if provided
+      if ('details' in data) {
+        const { details, collection } = data
+
+        setDetails(details)
+        setCollection(collection)
+      }
     }
-  }, [])
+  }, [data])
 
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`

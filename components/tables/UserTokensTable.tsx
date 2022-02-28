@@ -4,19 +4,19 @@ import { ComponentProps, FC } from 'react'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatEth from 'components/FormatEth'
 import ListModal from 'components/ListModal'
-import { Signer } from 'ethers'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
+import AcceptOffer from 'components/AcceptOffer'
 
 type Props = {
   data: ReturnType<typeof useUserTokens>
   modal: {
-    collectionId: string | undefined
-    signer: ReturnType<typeof useSigner>[0]['data']
-    apiBase: string
-    chainId: ChainId
     accountData: ReturnType<typeof useAccount>[0]['data']
+    apiBase: string
+    collectionId: string | undefined
+    isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
+    signer: ReturnType<typeof useSigner>[0]['data']
   }
 }
 
@@ -92,7 +92,7 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
                         <ListModal
                           signer={modal.signer}
                           apiBase={modal.apiBase}
-                          chainId={+modal.chainId}
+                          isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           maker={modal.accountData?.address}
                           data={{
                             collectionId: modal?.collectionId,
@@ -117,8 +117,20 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
                           maximumFractionDigits={4}
                         />
                       </span>
-                      <div className="btn-green-ghost hidden group-hover:inline-block">
-                        Accept
+                      <div className="hidden group-hover:inline-block">
+                        <AcceptOffer
+                          apiBase={modal.apiBase}
+                          data={{
+                            collectionId: modal?.collectionId,
+                            contract: token?.token?.contract,
+                            tokenId: token?.token?.tokenId,
+                          }}
+                          signer={modal.signer}
+                          show={isOwner}
+                          isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                          setToast={modal.setToast}
+                          mutate={tokens.mutate}
+                        />
                       </div>
                     </div>
                   ) : (
