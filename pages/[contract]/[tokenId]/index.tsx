@@ -6,7 +6,7 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode } from 'react'
+import { ComponentProps, FC, ReactNode } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
@@ -86,6 +86,10 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
       floorSellValue: token?.market?.floorSell?.value,
     },
   }
+
+  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
+    data
+  ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
   return (
     <Layout>
@@ -189,13 +193,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                     apiBase={apiBase}
                     chainId={+chainId}
                     maker={accountData?.address}
-                    collection={collection.data}
-                    details={details}
-                    setToast={(data) =>
-                      toast.custom((t) => (
-                        <Toast t={t} toast={toast} data={data} />
-                      ))
-                    }
+                    data={{
+                      collection: collection.data,
+                      details,
+                    }}
+                    setToast={setToast}
                   />
                 )}
                 <BuyNow
@@ -204,11 +206,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   data={data}
                   signer={signer}
                   isInTheWrongNetwork={isInTheWrongNetwork}
-                  setToast={(data) =>
-                    toast.custom((t) => (
-                      <Toast t={t} toast={toast} data={data} />
-                    ))
-                  }
+                  setToast={setToast}
                   show={!isOwner}
                 />
               </Price>
@@ -229,11 +227,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   signer={signer}
                   show={isOwner}
                   isInTheWrongNetwork={isInTheWrongNetwork}
-                  setToast={(data) =>
-                    toast.custom((t) => (
-                      <Toast t={t} toast={toast} data={data} />
-                    ))
-                  }
+                  setToast={setToast}
                 />
                 {!isOwner && (
                   <TokenOfferModal
@@ -250,11 +244,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                       openSeaApiKey,
                     }}
                     details={details}
-                    setToast={(data) =>
-                      toast.custom((t) => (
-                        <Toast t={t} toast={toast} data={data} />
-                      ))
-                    }
+                    setToast={setToast}
                   />
                 )}
               </Price>
@@ -266,9 +256,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               signer={signer}
               show={isTopBidder}
               isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={(data) =>
-                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-              }
+              setToast={setToast}
             />
             <CancelListing
               apiBase={apiBase}
@@ -277,9 +265,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               details={details}
               show={isOwner && isListed}
               isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={(data) =>
-                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-              }
+              setToast={setToast}
             />
           </div>
           <TokenAttributes token={token?.token} />

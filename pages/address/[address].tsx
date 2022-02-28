@@ -2,7 +2,7 @@ import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
 import * as Tabs from '@radix-ui/react-tabs'
@@ -14,7 +14,11 @@ import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserActivityTable from 'components/tables/UserActivityTable'
 import UserTokensTable from 'components/tables/UserTokensTable'
+import { ComponentProps } from 'react'
+import Toast from 'components/Toast'
+import toast from 'react-hot-toast'
 
+const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
@@ -23,6 +27,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
+  const [{ data: signer }] = useSigner()
   const router = useRouter()
   useDataDog(accountData)
   const address = router.query?.address?.toString()
@@ -30,6 +35,15 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const userActivity = useUserActivity(apiBase, [], address)
   const userOffers = useUserPositions(apiBase, [], 'buy', address)
   const userListings = useUserPositions(apiBase, [], 'sell', address)
+
+  if (!apiBase || !chainId) {
+    console.debug({ apiBase, chainId })
+    return <div>There was an error</div>
+  }
+
+  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
+    data
+  ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
   return (
     <Layout>
@@ -60,7 +74,17 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           </nav>
         </Tabs.List>
         <Tabs.Content value="portfolio">
-          <UserTokensTable data={userTokens} />
+          <UserTokensTable
+            data={userTokens}
+            modal={{
+              accountData,
+              apiBase,
+              chainId: +chainId as ChainId,
+              collectionId,
+              setToast,
+              signer,
+            }}
+          />
           {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
         <Tabs.Content value="activity">

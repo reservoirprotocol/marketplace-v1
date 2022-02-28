@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, Dispatch, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
@@ -11,42 +11,87 @@ import { Execute } from 'lib/executeSteps'
 import listToken from 'lib/actions/listToken'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
+import setParams from 'lib/params'
+import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
+
+type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Collection =
+  paths['/collections/{collection}']['get']['responses']['200']['schema']
 
 type Props = {
   apiBase: string
   chainId: number
   signer: ethers.Signer | undefined
   maker: string | undefined
-  details: SWRResponse<
-    paths['/tokens/details']['get']['responses']['200']['schema'],
-    any
-  >
-  collection:
-    | paths['/collections/{collection}']['get']['responses']['200']['schema']
-    | undefined
+  mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
+  data:
+    | {
+        details: SWRResponse<Details, any>
+        collection: Collection | undefined
+      }
+    | {
+        contract: string | undefined
+        tokenId: string | undefined
+        collectionId: string | undefined
+      }
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
+}
+async function getDetails(
+  apiBase: string,
+  contract: string | undefined,
+  tokenId: string | undefined,
+  setDetails: Dispatch<any>
+) {
+  let url = new URL('/tokens/details', apiBase)
+
+  let query: paths['/tokens/details']['get']['parameters']['query'] = {
+    contract,
+    tokenId,
+  }
+
+  setParams(url, query)
+
+  const res = await fetch(url.href)
+
+  const json =
+    (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
+
+  setDetails(json)
+}
+
+async function getCollection(
+  apiBase: string,
+  collectionId: string | undefined,
+  setCollection: Dispatch<any>
+) {
+  const url = new URL(`/collections/${collectionId}`, apiBase)
+
+  const res = await fetch(url.href)
+
+  const json =
+    (await res.json()) as paths['/collections/{collection}']['get']['responses']['200']['schema']
+
+  setCollection(json)
 }
 
 const ListModal: FC<Props> = ({
+  data,
   maker,
-  collection,
   chainId,
   apiBase,
   signer,
-  details,
+  mutate,
   setToast,
 }) => {
+  // wagmi
+  const [{ data: network }] = useNetwork()
+  const isInTheWrongNetwork = network.chain?.id !== +chainId
+  const [{ data: connectData }, connect] = useConnect()
+
+  // User input
   const [expiration, setExpiration] = useState('oneWeek')
   const [listingPrice, setListingPrice] = useState('')
-  const [{ data: connectData }, connect] = useConnect()
-  const [steps, setSteps] = useState<Execute['steps']>()
   const [youGet, setYouGet] = useState(constants.Zero)
-  const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: network }] = useNetwork()
-  const token = details.data?.tokens?.[0]
-  const bps = collection?.collection?.royalties?.bps ?? 0
-  const royaltyPercentage = `${bps / 100}%`
-  const isInTheWrongNetwork = network.chain?.id !== +chainId
 
   useEffect(() => {
     const userInput = ethers.utils.parseEther(
@@ -58,14 +103,50 @@ const ListModal: FC<Props> = ({
     setYouGet(total)
   }, [listingPrice])
 
-  const data: ComponentProps<typeof ModalCard>['data'] = {
+  // Modal
+  const [steps, setSteps] = useState<Execute['steps']>()
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
+
+  // Data from props
+  const [collection, setCollection] = useState<Collection>()
+  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+
+  useEffect(() => {
+    // Load data if missing
+    if ('tokenId' in data) {
+      const { contract, tokenId, collectionId } = data
+
+      getDetails(apiBase, contract, tokenId, setDetails)
+      getCollection(apiBase, collectionId, setCollection)
+    }
+  }, [])
+
+  const bps = collection?.collection?.royalties?.bps ?? 0
+  const royaltyPercentage = `${bps / 100}%`
+
+  // Set the token either from SWR or fetch
+  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+
+  // From fetch
+  if (details && 'tokens' in details && details.tokens?.[0]) {
+    token = details.tokens?.[0]
+  }
+
+  // From SWR
+  if (details && 'data' in details && details?.data?.tokens?.[0]) {
+    token = details.data?.tokens?.[0]
+  }
+
+  const { market, token: token_ } = token
+
+  const tokenData: ComponentProps<typeof ModalCard>['data'] = {
     token: {
-      contract: token?.token?.contract,
-      floorSellValue: token?.market?.floorSell?.value,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBuy?.value,
+      contract: token_?.contract,
+      floorSellValue: market?.floorSell?.value,
+      id: token_?.tokenId,
+      image: token_?.image,
+      name: token_?.name,
+      topBuyValue: market?.topBuy?.value,
     },
   }
 
@@ -83,7 +164,7 @@ const ListModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             title="List Token for Sale"
-            data={data}
+            data={tokenData}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={
@@ -110,16 +191,19 @@ const ListModal: FC<Props> = ({
 
                   await listToken({
                     query: {
-                      contract: token?.token?.contract,
+                      contract: token_?.contract,
                       maker,
                       price: ethers.utils.parseEther(listingPrice).toString(),
-                      tokenId: token?.token?.tokenId,
+                      tokenId: token_?.tokenId,
                       expirationTime: expirationValue,
                     },
                     signer,
                     apiBase,
                     setSteps,
-                    handleSuccess: () => details.mutate(),
+                    handleSuccess: () => {
+                      details && 'mutate' in details && details.mutate()
+                      mutate && mutate()
+                    },
                     handleError: (err: any) => {
                       // Handle user rejection
                       if (err?.code === 4001) {

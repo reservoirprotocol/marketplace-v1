@@ -1,15 +1,26 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import { formatBN, formatNumber } from 'lib/numbers'
-import { FC } from 'react'
+import { ComponentProps, FC } from 'react'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatEth from 'components/FormatEth'
+import ListModal from 'components/ListModal'
+import { Signer } from 'ethers'
+import { useAccount, useSigner } from 'wagmi'
+import Toast from 'components/Toast'
 
 type Props = {
   data: ReturnType<typeof useUserTokens>
+  modal: {
+    collectionId: string | undefined
+    signer: ReturnType<typeof useSigner>[0]['data']
+    apiBase: string
+    chainId: ChainId
+    accountData: ReturnType<typeof useAccount>[0]['data']
+    setToast: (data: ComponentProps<typeof Toast>['data']) => any
+  }
 }
 
-const UserTokensTable: FC<Props> = ({ data: { ref, tokens } }) => {
+const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
   const { data } = tokens
   const tokensFlat = data ? data.flatMap(({ tokens }) => tokens) : []
   const isOwner = true
@@ -75,9 +86,22 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens } }) => {
                       <Link
                         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
                       >
-                        <a className="btn-blue-ghost">
+                        {/* <a className="btn-blue-ghost">
                           {token?.ownership?.floorSellValue ? 'Edit' : 'List'}
-                        </a>
+                        </a> */}
+                        <ListModal
+                          signer={modal.signer}
+                          apiBase={modal.apiBase}
+                          chainId={+modal.chainId}
+                          maker={modal.accountData?.address}
+                          data={{
+                            collectionId: modal?.collectionId,
+                            contract: token?.token?.contract,
+                            tokenId: token?.token?.tokenId,
+                          }}
+                          mutate={tokens.mutate}
+                          setToast={modal.setToast}
+                        />
                       </Link>
                     </div>
                   )}
