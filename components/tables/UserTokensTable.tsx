@@ -10,6 +10,7 @@ import AcceptOffer from 'components/AcceptOffer'
 
 type Props = {
   data: ReturnType<typeof useUserTokens>
+  isOwner: boolean
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -20,10 +21,13 @@ type Props = {
   }
 }
 
-const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
+const UserTokensTable: FC<Props> = ({
+  data: { ref, tokens },
+  modal,
+  isOwner,
+}) => {
   const { data } = tokens
   const tokensFlat = data ? data.flatMap(({ tokens }) => tokens) : []
-  const isOwner = true
 
   return (
     <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
@@ -74,7 +78,7 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
                 </Link>
               </td>
               <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <div className="min-w-[70px]">
+                <div className="min-w-[140px]">
                   <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
                     <FormatEth
                       amount={token?.ownership?.floorSellValue}
@@ -110,7 +114,7 @@ const UserTokensTable: FC<Props> = ({ data: { ref, tokens }, modal }) => {
               <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
                 {token?.token?.topBuy?.value ? (
                   isOwner ? (
-                    <div className="min-w-[95px]">
+                    <div className="min-w-[140px]">
                       <span className="group-hover:hidden">
                         <FormatEth
                           amount={token?.token?.topBuy?.value}

@@ -10,6 +10,7 @@ import CancelListing from 'components/CancelListing'
 
 type Props = {
   data: ReturnType<typeof useUserPositions>
+  isOwner: boolean
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -20,10 +21,13 @@ type Props = {
   }
 }
 
-const UserListingsTable: FC<Props> = ({ data: { positions, ref }, modal }) => {
+const UserListingsTable: FC<Props> = ({
+  data: { positions, ref },
+  modal,
+  isOwner,
+}) => {
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
-  const isOwner = true
 
   return (
     <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">

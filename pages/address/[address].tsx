@@ -17,6 +17,7 @@ import UserTokensTable from 'components/tables/UserTokensTable'
 import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
+import Head from 'next/head'
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
@@ -31,7 +32,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: signer }] = useSigner()
   const router = useRouter()
   useDataDog(accountData)
-  const address = router.query?.address?.toString()
+  const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
   const userActivity = useUserActivity(apiBase, [], address)
   const userOffers = useUserPositions(apiBase, [], 'buy', address)
@@ -47,9 +48,13 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
   const isInTheWrongNetwork = network.chain?.id !== +chainId
+  const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
   return (
     <Layout>
+      <Head>
+        <title>{address} Profile | Reservoir Market</title>
+      </Head>
       <div className="mt-4 mb-10 flex items-center justify-center">
         {address && <EthAccount address={address} />}
       </div>
@@ -67,7 +72,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 id={id}
                 value={id}
                 className={
-                  'group relative min-w-0 overflow-hidden whitespace-nowrap  border-b-2 border-transparent bg-white py-4 px-12 text-center font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-indigo-500 radix-state-active:text-gray-900'
+                  'group relative min-w-0 overflow-hidden whitespace-nowrap  border-b-2 border-transparent bg-white py-4 px-12 text-center font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >
@@ -79,6 +84,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         <Tabs.Content value="portfolio">
           <UserTokensTable
             data={userTokens}
+            isOwner={isOwner}
             modal={{
               accountData,
               apiBase,
@@ -96,6 +102,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         <Tabs.Content value="offers">
           <UserOffersTable
             data={userOffers}
+            isOwner={isOwner}
             modal={{
               accountData,
               apiBase,
@@ -109,6 +116,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         <Tabs.Content value="listings">
           <UserListingsTable
             data={userListings}
+            isOwner={isOwner}
             modal={{
               accountData,
               apiBase,
