@@ -19,42 +19,46 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
   const transfersFlat = data ? data.flatMap(({ transfers }) => transfers) : []
 
   return (
-    <table className="mb-6 w-full table-auto">
-      <thead>
-        <tr className="text-left">
-          <th className="px-3">Type</th>
-          <th className="pr-3">Item</th>
-          <th className="pr-3">Price</th>
-          <th className="pr-3">From</th>
-          <th className="pr-3">To</th>
-          <th className="pr-3">Time</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transfersFlat.map((transfer, index, arr) => (
-          <tr
-            key={`${transfer?.token?.tokenId}-${index}`}
-            ref={index === arr.length - 5 ? ref : null}
-            className="group even:bg-neutral-100 dark:even:bg-neutral-900"
-          >
-            <td className="pr-3">
-              {transfer?.to?.toLowerCase() ===
-                accountData?.address.toLowerCase() && transfer?.price !== null
-                ? 'Buy'
-                : transfer?.from?.toLowerCase() ===
-                    accountData?.address.toLowerCase() &&
-                  transfer?.price !== null
-                ? 'Sell'
-                : transfer?.from === ethers.constants.AddressZero
-                ? 'Mint'
-                : 'Transfer'}
-            </td>
-            <td className="pr-3">
-              <Link
-                href={`/${transfer?.token?.contract}/${transfer?.token?.tokenId}`}
+    <div className="mb-11 overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            {['Type', 'Item', 'Price', 'From', 'To', 'Time'].map((item) => (
+              <th
+                key={item}
+                scope="col"
+                className="px-6 py-3 text-left font-medium uppercase tracking-wider text-gray-500"
               >
-                <a className="flex items-center gap-2 p-1 md:p-2">
-                  {/* <div className="relative h-10 w-10">
+                {item}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {transfersFlat.map((transfer, index, arr) => (
+            <tr
+              key={`${transfer?.token?.tokenId}-${index}`}
+              ref={index === arr.length - 5 ? ref : null}
+              className="group bg-white even:bg-gray-50"
+            >
+              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                {transfer?.to?.toLowerCase() ===
+                  accountData?.address.toLowerCase() && transfer?.price !== null
+                  ? 'Buy'
+                  : transfer?.from?.toLowerCase() ===
+                      accountData?.address.toLowerCase() &&
+                    transfer?.price !== null
+                  ? 'Sell'
+                  : transfer?.from === ethers.constants.AddressZero
+                  ? 'Mint'
+                  : 'Transfer'}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <Link
+                  href={`/${transfer?.token?.contract}/${transfer?.token?.tokenId}`}
+                >
+                  <a className="flex items-center gap-2">
+                    {/* <div className="relative h-10 w-10">
                     {transfer?.token?.image && (
                       <div className="aspect-w-1 aspect-h-1 relative">
                         <img
@@ -67,52 +71,54 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
                       </div>
                     )}
                   </div> */}
-                  <span className="whitespace-nowrap">
-                    <div>{transfer?.token?.collection?.name}</div>
-                    <div className="font-semibold">{transfer?.token?.name}</div>
-                  </span>
-                </a>
-              </Link>
-            </td>
-
-            <td>
-              <FormatEth amount={transfer?.price} maximumFractionDigits={4} />
-            </td>
-            <td className="pr-3">
-              {transfer?.from && (
-                <Link href={`/address/${transfer?.from}`}>
-                  <a>
-                    <EthAccount address={transfer?.from} />
+                    <span className="whitespace-nowrap">
+                      <div>{transfer?.token?.collection?.name}</div>
+                      <div className="font-semibold">
+                        {transfer?.token?.name}
+                      </div>
+                    </span>
                   </a>
                 </Link>
-              )}
-            </td>
-            <td className="pr-3">
-              {transfer?.to && (
-                <Link href={`/address/${transfer?.to}`}>
-                  <a>
-                    <EthAccount address={transfer?.to} />
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <FormatEth amount={transfer?.price} maximumFractionDigits={4} />
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                {transfer?.from && (
+                  <Link href={`/address/${transfer?.from}`}>
+                    <a>
+                      <EthAccount address={transfer?.from} />
+                    </a>
+                  </Link>
+                )}
+              </td>
+              <td className="pr-3">
+                {transfer?.to && (
+                  <Link href={`/address/${transfer?.to}`}>
+                    <a>
+                      <EthAccount address={transfer?.to} />
+                    </a>
+                  </Link>
+                )}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <Link
+                  href={`https://${
+                    process.env.NEXT_PUBLIC_CHAIN_ID === '4' ? 'rinkeby.' : ''
+                  }etherscan.io/tx/${transfer?.txHash}`}
+                >
+                  <a target="_blank" rel="noreferrer">
+                    {DateTime.fromMillis(
+                      +`${transfer?.timestamp}000`
+                    ).toRelative()}
                   </a>
                 </Link>
-              )}
-            </td>
-            <td className="whitespace-nowrap pr-3">
-              <Link
-                href={`https://${
-                  process.env.NEXT_PUBLIC_CHAIN_ID === '4' ? 'rinkeby.' : ''
-                }etherscan.io/tx/${transfer?.txHash}`}
-              >
-                <a target="_blank" rel="noreferrer">
-                  {DateTime.fromMillis(
-                    +`${transfer?.timestamp}000`
-                  ).toRelative()}
-                </a>
-              </Link>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

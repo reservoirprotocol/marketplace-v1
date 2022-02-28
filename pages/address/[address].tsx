@@ -36,13 +36,9 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
       <div className="mt-4 mb-10 flex items-center justify-center">
         {address && <EthAccount address={address} />}
       </div>
-      <Tabs.Root
-        value={
-          (!!router.query.tab && router.query.tab.toString()) || 'portfolio'
-        }
-      >
+      <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
         <Tabs.List className="mb-3 flex justify-center gap-4 md:mb-4 lg:mb-5">
-          <div className="flex cursor-pointer items-center divide-x divide-neutral-200 overflow-hidden rounded-t-lg border  border-neutral-200 dark:divide-neutral-900 dark:border-neutral-900">
+          <nav className="flex overflow-hidden rounded-lg shadow">
             {[
               { name: 'Portfolio', id: 'portfolio' },
               { name: 'Activity', id: 'activity' },
@@ -54,14 +50,14 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 id={id}
                 value={id}
                 className={
-                  'group relative min-w-0 overflow-hidden whitespace-nowrap  bg-white py-4 px-4 text-center text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:text-gray-900'
+                  'group relative min-w-0 overflow-hidden whitespace-nowrap  border-b-2 border-transparent bg-white py-4 px-12 text-center font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-indigo-500 radix-state-active:text-gray-900'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >
-                {name}
+                <span>{name}</span>
               </Tabs.Trigger>
             ))}
-          </div>
+          </nav>
         </Tabs.List>
         <Tabs.Content value="portfolio">
           <UserTokensTable data={userTokens} />
