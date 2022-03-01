@@ -9,7 +9,7 @@ import acceptOffer from 'lib/actions/acceptOffer'
 import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { getDetails } from 'lib/fetch/fetch'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -23,7 +23,6 @@ type Props = {
         collection: Collection | undefined
       }
     | {
-        collectionId: string | undefined
         contract: string | undefined
         tokenId: string | undefined
       }
@@ -56,10 +55,9 @@ const AcceptOffer: FC<Props> = ({
     if (data) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId, collectionId } = data
+        const { contract, tokenId } = data
 
         getDetails(apiBase, contract, tokenId, setDetails)
-        getCollection(apiBase, collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {

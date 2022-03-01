@@ -28,7 +28,6 @@ type Props = {
     | {
         contract: string | undefined
         tokenId: string | undefined
-        collectionId: string | undefined
       }
   isInTheWrongNetwork: boolean | undefined
   maker: string | undefined
@@ -76,10 +75,9 @@ const ListModal: FC<Props> = ({
     if (data) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId, collectionId } = data
+        const { contract, tokenId } = data
 
         getDetails(apiBase, contract, tokenId, setDetails)
-        getCollection(apiBase, collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {

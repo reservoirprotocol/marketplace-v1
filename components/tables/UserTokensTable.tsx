@@ -107,7 +107,6 @@ const UserTokensTable: FC<Props> = ({
                           isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           maker={modal.accountData?.address}
                           data={{
-                            collectionId: modal?.collectionId,
                             contract: token?.token?.contract,
                             tokenId: token?.token?.tokenId,
                           }}
@@ -133,7 +132,6 @@ const UserTokensTable: FC<Props> = ({
                         <AcceptOffer
                           apiBase={modal.apiBase}
                           data={{
-                            collectionId: modal?.collectionId,
                             contract: token?.token?.contract,
                             tokenId: token?.token?.tokenId,
                           }}
