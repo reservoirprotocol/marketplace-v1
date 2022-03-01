@@ -38,7 +38,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                   key={`${community?.collection?.name}${idx}`}
                   href={`/collections/${community?.collection?.id}`}
                 >
-                  <a className="group overflow-hidden rounded-md bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <a className="group self-start overflow-hidden rounded-md bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                     <ImagesGrid
                       sample_images={community?.set?.sampleImages}
                       value={community?.collection?.name}
