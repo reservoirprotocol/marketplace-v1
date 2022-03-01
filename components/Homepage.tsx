@@ -15,7 +15,6 @@ const Homepage: FC<Props> = ({ apiBase }) => {
       <Head>
         <title>
           Reservoir Market | Open source NFT marketplace powered by Reservoir
-          Protocol
         </title>
         <meta
           name="description"

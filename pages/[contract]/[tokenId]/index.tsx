@@ -32,7 +32,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, mode, wildcard }) => {
+const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
@@ -80,25 +80,10 @@ const Index: NextPage<Props> = ({ collectionId, mode, wildcard }) => {
   return (
     <Layout>
       <Head>
-        {mode === 'global' ? (
-          <title>
-            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-            {collection.data?.collection?.collection?.name} | Reservoir Market
-          </title>
-        ) : mode === 'collection' ? (
-          <title>
-            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-            {collection.data?.collection?.collection?.name} Marketplace |
-            Powered by Reservoir
-          </title>
-        ) : (
-          <title>
-            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-            {collection.data?.collection?.collection?.name} -{' '}
-            {wildcard?.toUpperCase()} Community Marketplace | Powered by
-            Reservoir
-          </title>
-        )}
+        <title>
+          {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+          {collection.data?.collection?.collection?.name} | Reservoir Market
+        </title>
         <meta
           name="description"
           content={collection.data?.collection?.collection?.description}
@@ -297,13 +282,8 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   mode: ReturnType<typeof getMode>['mode']
-  wildcard: string
 }> = async ({ req, params }) => {
-  const { mode, collectionId: wildcard } = getMode(
-    req,
-    communityEnv,
-    collectionEnv
-  )
+  const { mode } = getMode(req, communityEnv, collectionEnv)
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -328,5 +308,5 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  return { props: { collectionId, mode, wildcard } }
+  return { props: { collectionId, mode } }
 }

@@ -189,18 +189,8 @@ const TokensMain: FC<Props> = ({
   return (
     <>
       <Head>
-        {/* {collectionId === 'www' ? (
-          <title>
-            {collection.data?.collection?.collection?.name} | Reservoir Market
-          </title>
-        ) : (
-          <title>
-            {collection.data?.collection?.collection?.name} Marketplace |
-            Powered by Reservoir
-          </title>
-        )} */}
         <title>
-          {collection.data?.collection?.collection?.name} | Powered by Reservoir
+          {collection.data?.collection?.collection?.name} | Reservoir Market
         </title>
         <meta
           name="description"

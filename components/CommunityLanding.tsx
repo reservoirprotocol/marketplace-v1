@@ -22,7 +22,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
   return (
     <>
       <Head>
-        {mode === 'global' ? (
+        {/* {mode === 'global' ? (
           <title>
             {collectionId.toUpperCase()} Community Marketplace | Reservoir
             Market
@@ -32,7 +32,10 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
             {collectionId.toUpperCase()} Community Marketplace | Powered by
             Reservoir
           </title>
-        )}
+        )} */}
+        <title>
+          Reservoir Market | Open source NFT marketplace powered by Reservoir
+        </title>
         <meta
           name="description"
           content={
