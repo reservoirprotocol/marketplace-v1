@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import ImagesGrid from './ImagesGrid'
 import useCommunity from 'hooks/useCommunity'
-import LoadingCard from './LoadingCard'
+import LoadingCardCollection from './LoadingCardCollection'
 
 type Props = {
   communities: ReturnType<typeof useCommunity>
@@ -22,7 +22,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
 
   return (
     <>
-      <div className="mx-auto mb-5 grid flex-wrap place-items-center justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="mx-auto mb-5 grid flex-wrap justify-evenly gap-5 sm:justify-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {!data && isValidating
           ? Array(20)
               .fill(null)
@@ -46,7 +46,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                     <div className="mt-3 flex items-center gap-2">
                       <img
                         src={optimizeImage(community?.collection?.image, 40)}
-                        className="h-[40px] w-[40px] rounded-full"
+                        className="h-12 w-12 rounded-full"
                       />
                       <div className="font-semibold">
                         {community?.collection?.name}
@@ -55,17 +55,20 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                   </a>
                 </Link>
               )
-            })}{' '}
+            })}
         {!didReactEnd &&
           Array(20)
             .fill(null)
             .map((_, index) => {
               if (index === 0) {
                 return (
-                  <LoadingCard viewRef={ref} key={`loading-card-${index}`} />
+                  <LoadingCardCollection
+                    viewRef={ref}
+                    key={`loading-card-${index}`}
+                  />
                 )
               }
-              return <LoadingCard key={`loading-card-${index}`} />
+              return <LoadingCardCollection key={`loading-card-${index}`} />
             })}
       </div>
     </>

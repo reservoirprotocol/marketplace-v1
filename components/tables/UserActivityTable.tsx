@@ -55,22 +55,22 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
               </td>
               <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
                 <Link
-                  href={`/${transfer?.token?.contract}/${transfer?.token?.tokenId}`}
+                  href={`/${transfer?.token?.collection?.id}/${transfer?.token?.tokenId}`}
                 >
                   <a className="flex items-center gap-2">
                     {/* <div className="relative h-10 w-10">
-                    {transfer?.token?.image && (
-                      <div className="aspect-w-1 aspect-h-1 relative">
-                        <img
-                          src={optimizeImage(transfer?.token?.image, 35)}
-                          alt={transfer?.token?.name}
-                          className="w-[35px] object-contain"
-                          width="35"
-                          height="35"
-                        />
-                      </div>
-                    )}
-                  </div> */}
+                      {transfer?.token?.image && (
+                        <div className="aspect-w-1 aspect-h-1 relative">
+                          <img
+                            src={optimizeImage(transfer?.token?.image, 35)}
+                            alt={transfer?.token?.name}
+                            className="w-[35px] object-contain"
+                            width="35"
+                            height="35"
+                          />
+                        </div>
+                      )}
+                    </div> */}
                     <span className="whitespace-nowrap">
                       <div>{transfer?.token?.collection?.name}</div>
                       <div className="font-semibold">

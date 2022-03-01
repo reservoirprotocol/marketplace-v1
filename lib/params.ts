@@ -5,6 +5,6 @@
  */
 export default function setParams(url: URL, query: { [x: string]: any }) {
   Object.keys(query).map((key) =>
-    url.searchParams.set(key, query[key].toString())
+    url.searchParams.set(key, query[key]?.toString())
   )
 }
