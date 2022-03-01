@@ -35,8 +35,6 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
   const userActivity = useUserActivity(apiBase, [], address)
-  const userOffers = useUserPositions(apiBase, [], 'buy', address)
-  const userListings = useUserPositions(apiBase, [], 'sell', address)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -50,6 +48,19 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const isInTheWrongNetwork = network.chain?.id !== +chainId
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
+  let tabs = [
+    { name: 'Portfolio', id: 'portfolio' },
+    { name: 'Activity', id: 'activity' },
+  ]
+
+  if (isOwner) {
+    tabs = [
+      ...tabs,
+      { name: 'My Offers', id: 'offers' },
+      { name: 'My Listings', id: 'listings' },
+    ]
+  }
+
   return (
     <Layout>
       <Head>
@@ -61,12 +72,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
       <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
         <Tabs.List className="mb-3 flex justify-center gap-4 md:mb-4 lg:mb-5">
           <nav className="flex overflow-hidden rounded-lg shadow">
-            {[
-              { name: 'Portfolio', id: 'portfolio' },
-              { name: 'Activity', id: 'activity' },
-              { name: 'My Offers', id: 'offers' },
-              { name: 'My Listings', id: 'listings' },
-            ].map(({ name, id }) => (
+            {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
                 id={id}
@@ -99,35 +105,40 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         <Tabs.Content value="activity">
           <UserActivityTable data={userActivity} />
         </Tabs.Content>
-        <Tabs.Content value="offers">
-          <UserOffersTable
-            data={userOffers}
-            isOwner={isOwner}
-            maker={address || ''}
-            modal={{
-              accountData,
-              apiBase,
-              isInTheWrongNetwork,
-              collectionId,
-              setToast,
-              signer,
-            }}
-          />
-        </Tabs.Content>
-        <Tabs.Content value="listings">
-          <UserListingsTable
-            data={userListings}
-            isOwner={isOwner}
-            modal={{
-              accountData,
-              apiBase,
-              isInTheWrongNetwork,
-              collectionId,
-              setToast,
-              signer,
-            }}
-          />
-        </Tabs.Content>
+        {isOwner && (
+          <>
+            <Tabs.Content value="offers">
+              <UserOffersTable
+                apiBase={apiBase}
+                isOwner={isOwner}
+                maker={address || ''}
+                modal={{
+                  accountData,
+                  apiBase,
+                  isInTheWrongNetwork,
+                  collectionId,
+                  setToast,
+                  signer,
+                }}
+              />
+            </Tabs.Content>
+            <Tabs.Content value="listings">
+              <UserListingsTable
+                apiBase={apiBase}
+                isOwner={isOwner}
+                maker={address || ''}
+                modal={{
+                  accountData,
+                  apiBase,
+                  isInTheWrongNetwork,
+                  collectionId,
+                  setToast,
+                  signer,
+                }}
+              />
+            </Tabs.Content>
+          </>
+        )}
       </Tabs.Root>
     </Layout>
   )

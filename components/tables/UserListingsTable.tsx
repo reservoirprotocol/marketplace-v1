@@ -9,8 +9,9 @@ import Toast from 'components/Toast'
 import CancelListing from 'components/CancelListing'
 
 type Props = {
-  data: ReturnType<typeof useUserPositions>
+  apiBase: string
   isOwner: boolean
+  maker: string
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -21,13 +22,18 @@ type Props = {
   }
 }
 
-const UserListingsTable: FC<Props> = ({
-  data: { positions, ref },
-  modal,
-  isOwner,
-}) => {
+const UserListingsTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
+  const { positions, ref } = useUserPositions(apiBase, [], 'sell', maker)
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
+
+  if (positionsFlat.length === 0) {
+    return (
+      <div className="mt-14 grid justify-center text-lg font-semibold">
+        You don&apos;t have any items listed for sale.
+      </div>
+    )
+  }
 
   return (
     <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">

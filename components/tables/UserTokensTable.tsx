@@ -29,6 +29,14 @@ const UserTokensTable: FC<Props> = ({
   const { data } = tokens
   const tokensFlat = data ? data.flatMap(({ tokens }) => tokens) : []
 
+  if (tokensFlat.length === 0) {
+    return (
+      <div className="mt-14 grid justify-center text-lg font-semibold">
+        No items to display.
+      </div>
+    )
+  }
+
   return (
     <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
       <table className="min-w-full table-auto divide-y divide-gray-200">

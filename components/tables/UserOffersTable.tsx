@@ -9,7 +9,7 @@ import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 
 type Props = {
-  data: ReturnType<typeof useUserPositions>
+  apiBase: string
   isOwner: boolean
   maker: string
   modal: {
@@ -22,14 +22,18 @@ type Props = {
   }
 }
 
-const UserOffersTable: FC<Props> = ({
-  data: { positions, ref },
-  maker,
-  modal,
-  isOwner,
-}) => {
+const UserOffersTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
+  const { positions, ref } = useUserPositions(apiBase, [], 'buy', maker)
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
+
+  if (positionsFlat.length === 0) {
+    return (
+      <div className="mt-14 grid justify-center text-lg font-semibold">
+        You have not made any offers.
+      </div>
+    )
+  }
 
   return (
     <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
