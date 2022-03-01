@@ -5,8 +5,8 @@ import CommunityGrid from './CommunityGrid'
 import SearchCollections from './SearchCollections'
 
 type Props = {
-  collectionId: string
   apiBase: string
+  collectionId: string
   mode: string
 }
 

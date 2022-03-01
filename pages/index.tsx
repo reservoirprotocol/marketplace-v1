@@ -47,9 +47,9 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
         />
       ) : (
         <TokensMain
-          collectionId={collectionId}
           apiBase={apiBase}
           chainId={+chainId as ChainId}
+          collectionId={collectionId}
           fallback={fallback}
           openSeaApiKey={openSeaApiKey}
           setToast={(data) =>
@@ -65,7 +65,7 @@ export default Home
 
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
-  mode: string
+  mode: ReturnType<typeof getMode>['mode']
 }> = async ({ req }) => {
   const { mode, collectionId } = getMode(req, communityEnv, collectionEnv)
 

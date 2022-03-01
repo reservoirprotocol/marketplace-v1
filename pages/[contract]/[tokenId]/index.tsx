@@ -32,7 +32,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, mode }) => {
+const Index: NextPage<Props> = ({ collectionId, mode, wildcard }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
@@ -85,11 +85,18 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
             {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
             {collection.data?.collection?.collection?.name} | Reservoir Market
           </title>
-        ) : (
+        ) : mode === 'collection' ? (
           <title>
             {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
             {collection.data?.collection?.collection?.name} Marketplace |
             Powered by Reservoir
+          </title>
+        ) : (
+          <title>
+            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+            {collection.data?.collection?.collection?.name} -{' '}
+            {wildcard?.toUpperCase()} Community Marketplace | Powered by
+            Reservoir
           </title>
         )}
         <meta
@@ -289,9 +296,14 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
-  mode: string
+  mode: ReturnType<typeof getMode>['mode']
+  wildcard: string
 }> = async ({ req, params }) => {
-  const { mode } = getMode(req, communityEnv, collectionEnv)
+  const { mode, collectionId: wildcard } = getMode(
+    req,
+    communityEnv,
+    collectionEnv
+  )
 
   // GET token details
   const url = new URL('/tokens/details', apiBase)
@@ -316,5 +328,5 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  return { props: { collectionId, mode } }
+  return { props: { collectionId, mode, wildcard } }
 }

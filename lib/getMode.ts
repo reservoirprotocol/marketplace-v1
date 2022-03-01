@@ -15,13 +15,17 @@ export default function getMode(
   communityEnv?: string,
   collectionEnv?: string
 ) {
+  let mode: 'global' | 'community' | 'collection' = 'global'
+
   if (communityEnv) {
-    return { mode: 'community', collectionId: communityEnv, isCommunity: true }
+    mode = 'community'
+    return { mode, collectionId: communityEnv, isCommunity: true }
   }
 
   if (collectionEnv) {
+    mode = 'collection'
     return {
-      mode: 'collection',
+      mode,
       collectionId: collectionEnv,
       isCommunity: false,
     }
@@ -31,7 +35,7 @@ export default function getMode(
   const collectionId = getWildcard(req)
   const isCommunity = getIsCommunity(collectionId)
 
-  const mode =
+  mode =
     collectionId === 'www' ? 'global' : isCommunity ? 'community' : 'collection'
 
   return { mode, isCommunity, collectionId }
