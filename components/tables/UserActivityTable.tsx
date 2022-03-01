@@ -20,7 +20,7 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
 
   if (transfersFlat.length === 0) {
     return (
-      <div className="mt-14 grid justify-center text-lg font-semibold">
+      <div className="mt-14 grid justify-center text-lg">
         No trading history yet.
       </div>
     )

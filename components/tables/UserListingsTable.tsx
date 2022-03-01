@@ -29,7 +29,7 @@ const UserListingsTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
 
   if (positionsFlat.length === 0) {
     return (
-      <div className="mt-14 grid justify-center text-lg font-semibold">
+      <div className="mt-14 grid justify-center text-lg">
         You don&apos;t have any items listed for sale.
       </div>
     )
