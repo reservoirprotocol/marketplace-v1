@@ -24,10 +24,12 @@ type Props = {
       }
     | {
         collectionId: string | undefined
-        contract: string | undefined
-        tokenId: string | undefined
+        contract?: string | undefined
+        tokenId?: string | undefined
+        hash?: string | undefined
       }
   isInTheWrongNetwork: boolean | undefined
+  maker?: string
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
@@ -38,6 +40,7 @@ const CancelOffer: FC<Props> = ({
   apiBase,
   data,
   isInTheWrongNetwork,
+  maker,
   mutate,
   setToast,
   show,
@@ -84,7 +87,7 @@ const CancelOffer: FC<Props> = ({
     token = details.data?.tokens?.[0]
   }
 
-  const modalData = {
+  const modalData: ComponentProps<typeof ModalCard>['data'] = {
     collection: {
       name: collection?.collection?.collection?.name,
     },
@@ -118,8 +121,8 @@ const CancelOffer: FC<Props> = ({
 
             setWaitingTx(true)
             await cancelOrder({
-              hash: token?.market?.topBuy?.hash,
-              maker: token?.market?.topBuy?.maker,
+              hash: ('hash' in data && data?.hash) || '',
+              maker,
               signer,
               apiBase,
               setSteps,

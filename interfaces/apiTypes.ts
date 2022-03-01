@@ -553,6 +553,7 @@ export interface definitions {
   primaryOrder: {
     value?: number
     expiry?: number
+    hash?: string
     status?: string
   }
   Model42: {

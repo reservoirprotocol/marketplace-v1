@@ -78,7 +78,11 @@ const UserListingsTable: FC<Props> = ({
                     </div>
                     <span className="whitespace-nowrap">
                       {/* @ts-ignore */}
-                      {position?.set?.schema?.data?.tokenId}
+                      <div>{position?.set?.metadata?.collectionName}</div>
+                      <div className="font-semibold">
+                        {/* @ts-ignore */}
+                        {position?.set?.metadata?.tokenName}
+                      </div>
                     </span>
                   </a>
                 </Link>

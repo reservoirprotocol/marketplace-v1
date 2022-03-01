@@ -103,6 +103,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           <UserOffersTable
             data={userOffers}
             isOwner={isOwner}
+            maker={address || ''}
             modal={{
               accountData,
               apiBase,

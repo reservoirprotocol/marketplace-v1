@@ -58,7 +58,7 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
                   href={`/${transfer?.token?.collection?.id}/${transfer?.token?.tokenId}`}
                 >
                   <a className="flex items-center gap-2">
-                    {/* <div className="relative h-10 w-10">
+                    <div className="relative h-10 w-10">
                       {transfer?.token?.image && (
                         <div className="aspect-w-1 aspect-h-1 relative">
                           <img
@@ -70,7 +70,7 @@ const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
                           />
                         </div>
                       )}
-                    </div> */}
+                    </div>
                     <span className="whitespace-nowrap">
                       <div>{transfer?.token?.collection?.name}</div>
                       <div className="font-semibold">
