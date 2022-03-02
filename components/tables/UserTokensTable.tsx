@@ -11,6 +11,7 @@ import AcceptOffer from 'components/AcceptOffer'
 type Props = {
   data: ReturnType<typeof useUserTokens>
   isOwner: boolean
+  mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -24,6 +25,7 @@ type Props = {
 const UserTokensTable: FC<Props> = ({
   data: { ref, tokens },
   modal,
+  mutate,
   isOwner,
 }) => {
   const { data } = tokens
@@ -110,7 +112,7 @@ const UserTokensTable: FC<Props> = ({
                             contract: token?.token?.contract,
                             tokenId: token?.token?.tokenId,
                           }}
-                          mutate={tokens.mutate}
+                          mutate={mutate}
                           setToast={modal.setToast}
                         />
                       </Link>
@@ -139,7 +141,7 @@ const UserTokensTable: FC<Props> = ({
                           show={isOwner}
                           isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           setToast={modal.setToast}
-                          mutate={tokens.mutate}
+                          mutate={mutate}
                         />
                       </div>
                     </div>

@@ -9,9 +9,10 @@ import Toast from 'components/Toast'
 import CancelListing from 'components/CancelListing'
 
 type Props = {
-  apiBase: string
+  data: ReturnType<typeof useUserPositions>
   isOwner: boolean
   maker: string
+  mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -22,8 +23,13 @@ type Props = {
   }
 }
 
-const UserListingsTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
-  const { positions, ref } = useUserPositions(apiBase, [], 'sell', maker)
+const UserListingsTable: FC<Props> = ({
+  maker,
+  modal,
+  mutate,
+  isOwner,
+  data: { positions, ref },
+}) => {
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
 
@@ -123,7 +129,7 @@ const UserListingsTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
                     show={true}
                     isInTheWrongNetwork={modal.isInTheWrongNetwork}
                     setToast={modal.setToast}
-                    mutate={positions.mutate}
+                    mutate={mutate}
                   />
                 </td>
               )}

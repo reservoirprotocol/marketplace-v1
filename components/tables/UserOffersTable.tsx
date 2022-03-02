@@ -9,9 +9,10 @@ import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 
 type Props = {
-  apiBase: string
+  data: ReturnType<typeof useUserPositions>
   isOwner: boolean
   maker: string
+  mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
     apiBase: string
@@ -22,8 +23,13 @@ type Props = {
   }
 }
 
-const UserOffersTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
-  const { positions, ref } = useUserPositions(apiBase, [], 'buy', maker)
+const UserOffersTable: FC<Props> = ({
+  data: { positions, ref },
+  maker,
+  mutate,
+  modal,
+  isOwner,
+}) => {
   const { data } = positions
   const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
 
@@ -143,7 +149,7 @@ const UserOffersTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
                       show={true}
                       isInTheWrongNetwork={modal.isInTheWrongNetwork}
                       setToast={modal.setToast}
-                      mutate={positions.mutate}
+                      mutate={mutate}
                     />
                   </td>
                 )}

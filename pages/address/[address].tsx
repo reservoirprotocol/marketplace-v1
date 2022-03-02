@@ -42,6 +42,8 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
   const userActivity = useUserActivity(apiBase, [], address)
+  const sellPositions = useUserPositions(apiBase, [], 'sell', address)
+  const buyPositions = useUserPositions(apiBase, [], 'buy', address)
 
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -98,6 +100,12 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         <Tabs.Content value="portfolio">
           <UserTokensTable
             data={userTokens}
+            mutate={() => {
+              buyPositions.positions.mutate()
+              userTokens.tokens.mutate()
+              userActivity.transfers.mutate()
+              sellPositions.positions.mutate()
+            }}
             isOwner={isOwner}
             modal={{
               accountData,
@@ -117,7 +125,11 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           <>
             <Tabs.Content value="buying">
               <UserOffersTable
-                apiBase={apiBase}
+                data={buyPositions}
+                mutate={() => {
+                  buyPositions.positions.mutate()
+                  userTokens.tokens.mutate()
+                }}
                 isOwner={isOwner}
                 maker={address || ''}
                 modal={{
@@ -132,7 +144,11 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             </Tabs.Content>
             <Tabs.Content value="selling">
               <UserListingsTable
-                apiBase={apiBase}
+                data={sellPositions}
+                mutate={() => {
+                  userTokens.tokens.mutate()
+                  sellPositions.positions.mutate()
+                }}
                 isOwner={isOwner}
                 maker={address || ''}
                 modal={{
