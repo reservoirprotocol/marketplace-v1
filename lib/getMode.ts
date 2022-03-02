@@ -4,6 +4,12 @@ import getWildcard from './getWildcard'
 
 /**
  * Handle wildcard logic to support base domain, communities and collections
+ *
+ * The mode is used to load data and use certain layouts depending on the
+ * subdomain
+ * - https://www.reservoir.market -> `global` (Displays all collections)
+ * - https://lootproject.reservoir.market -> `collection` (Displays collection tokens)
+ * - https://loot.reservoir.market -> `community` (Displays community collections)
  * @param req Client's incoming request object
  * @param communityEnv Optional environment variable for the community id
  * @param collectionEnv Optional environment variable for the collection id
