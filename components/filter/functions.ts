@@ -1,12 +1,16 @@
 import { paths } from 'interfaces/apiTypes'
 
+/**
+ * Sort the values of an attribute by count descending, then by name ascending
+ * @param values Attribute values
+ * @returns Sorted attribute values
+ */
 export function sortAttributes(
   values: NonNullable<
     paths['/attributes']['get']['responses']['200']['schema']['attributes']
   >[0]['values']
 ) {
   if (!values) return
-  // Attributes sorted by count desc, then name asc
   values
     .sort((a, b) => {
       if (!a.value || !b.value) return 0

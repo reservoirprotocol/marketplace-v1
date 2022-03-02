@@ -14,8 +14,15 @@ import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
 
+// Environment variables
+// For more information about these variables
+// refer to the README.md file on this repository
+// Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
+// REQUIRED
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+
+// OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
@@ -30,6 +37,8 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
 
+  // Return error page if the API base url or the environment's
+  // chain ID are missing
   if (!apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>

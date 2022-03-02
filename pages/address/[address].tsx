@@ -19,8 +19,15 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 
+// Environment variables
+// For more information about these variables
+// refer to the README.md file on this repository
+// Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
+// REQUIRED
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
+
+// OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 
@@ -50,14 +57,15 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
 
   let tabs = [
     { name: 'Portfolio', id: 'portfolio' },
-    { name: 'Activity', id: 'activity' },
+    { name: 'History', id: 'history' },
   ]
 
   if (isOwner) {
     tabs = [
-      ...tabs,
-      { name: 'My Offers', id: 'offers' },
-      { name: 'My Listings', id: 'listings' },
+      { name: 'Portfolio', id: 'portfolio' },
+      { name: 'Buying', id: 'buying' },
+      { name: 'Selling', id: 'selling' },
+      { name: 'History', id: 'history' },
     ]
   }
 
@@ -102,12 +110,12 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           />
           {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
-        <Tabs.Content value="activity">
+        <Tabs.Content value="history">
           <UserActivityTable data={userActivity} />
         </Tabs.Content>
         {isOwner && (
           <>
-            <Tabs.Content value="offers">
+            <Tabs.Content value="buying">
               <UserOffersTable
                 apiBase={apiBase}
                 isOwner={isOwner}
@@ -122,7 +130,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 }}
               />
             </Tabs.Content>
-            <Tabs.Content value="listings">
+            <Tabs.Content value="selling">
               <UserListingsTable
                 apiBase={apiBase}
                 isOwner={isOwner}

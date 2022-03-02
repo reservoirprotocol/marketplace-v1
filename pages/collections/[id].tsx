@@ -72,6 +72,8 @@ export const getStaticProps: GetStaticProps<{
   }
 }> = async ({ params }) => {
   try {
+    // Pass in fallback data to prevent loading screens on the client side
+    // Reference: https://swr.vercel.app/docs/options
     // -------------- COLLECTION --------------
     const url1 = new URL(`/collections/${params?.id}`, apiBase)
 
