@@ -52,25 +52,36 @@ const AcceptOffer: FC<Props> = ({
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
   useEffect(() => {
-    if (data) {
+    if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId } = data
-
-        getDetails(apiBase, contract, tokenId, setDetails)
+        getDetails(apiBase, data.contract, data.tokenId, setDetails)
       }
       // Load data if provided
       if ('details' in data) {
-        const { details, collection } = data
-
-        setDetails(details)
-        setCollection(collection)
+        setDetails(data.details)
+        setCollection(data.collection)
       }
     }
-  }, [data])
+  }, [data, open])
+
+  let tokenId: string | undefined = undefined
+  let contract: string | undefined = undefined
+
+  if ('tokenId' in data) {
+    tokenId = data.tokenId
+    contract = data.contract
+  }
+
+  if ('details' in data) {
+    tokenId = data.details.data?.tokens?.[0].token?.tokenId
+    contract = data.details.data?.tokens?.[0].token?.contract
+  }
 
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+
+  let topBuyValueExists = false
 
   // From fetch
   if (details && 'tokens' in details && details.tokens?.[0]) {
@@ -80,6 +91,7 @@ const AcceptOffer: FC<Props> = ({
   // From SWR
   if (details && 'data' in details && details?.data?.tokens?.[0]) {
     token = details.data?.tokens?.[0]
+    topBuyValueExists = !token?.market?.topBuy?.value
   }
 
   const modalData = {
@@ -100,9 +112,7 @@ const AcceptOffer: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
-          disabled={
-            waitingTx || !token?.market?.topBuy?.value || isInTheWrongNetwork
-          }
+          disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
           onClick={async () => {
             if (!signer) {
               const data = await connect(connectData.connectors[0])
@@ -119,8 +129,8 @@ const AcceptOffer: FC<Props> = ({
             setWaitingTx(true)
             await acceptOffer({
               apiBase,
-              tokenId: token?.token?.tokenId,
-              contract: token?.token?.contract,
+              tokenId: tokenId || token?.token?.tokenId,
+              contract: contract || token?.token?.contract,
               setSteps,
               signer,
               handleSuccess: () => {
