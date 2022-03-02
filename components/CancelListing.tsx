@@ -53,7 +53,7 @@ const CancelListing: FC<Props> = ({
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
   useEffect(() => {
-    if (data) {
+    if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
@@ -69,7 +69,7 @@ const CancelListing: FC<Props> = ({
         setCollection(collection)
       }
     }
-  }, [data])
+  }, [data, open])
 
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }

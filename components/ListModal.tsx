@@ -71,8 +71,10 @@ const ListModal: FC<Props> = ({
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
+  const [open, setOpen] = useState(false)
+
   useEffect(() => {
-    if (data) {
+    if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
         const { contract, tokenId } = data
@@ -87,7 +89,7 @@ const ListModal: FC<Props> = ({
         setCollection(collection)
       }
     }
-  }, [data])
+  }, [data, open])
 
   const bps = collection?.collection?.royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
@@ -119,7 +121,7 @@ const ListModal: FC<Props> = ({
   }
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
           disabled={isInTheWrongNetwork}
