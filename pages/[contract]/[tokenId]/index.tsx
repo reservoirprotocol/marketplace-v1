@@ -292,7 +292,6 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, params }) => {
   const { mode } = getMode(req, communityEnv, collectionEnv)
 
-  // GET token details
   const url = new URL('/tokens/details', apiBase)
 
   const query: paths['/tokens/details']['get']['parameters']['query'] = {

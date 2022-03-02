@@ -112,11 +112,13 @@ const UserListingsTable: FC<Props> = ({ apiBase, maker, modal, isOwner }) => {
                     apiBase={modal.apiBase}
                     data={{
                       collectionId: modal?.collectionId,
+                      hash: position?.primaryOrder?.hash,
                       // @ts-ignore
                       contract: position?.set?.schema?.data?.contract,
                       // @ts-ignore
                       tokenId: position?.set?.schema?.data?.tokenId,
                     }}
+                    maker={maker}
                     signer={modal.signer}
                     show={true}
                     isInTheWrongNetwork={modal.isInTheWrongNetwork}

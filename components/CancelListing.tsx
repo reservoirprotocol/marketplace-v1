@@ -24,9 +24,11 @@ type Props = {
       }
     | {
         collectionId: string | undefined
-        contract: string | undefined
-        tokenId: string | undefined
+        contract?: string | undefined
+        tokenId?: string | undefined
+        hash?: string | undefined
       }
+  maker?: string
   isInTheWrongNetwork: boolean | undefined
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -38,6 +40,7 @@ const CancelListing: FC<Props> = ({
   apiBase,
   data,
   isInTheWrongNetwork,
+  maker,
   mutate,
   setToast,
   show,
@@ -118,8 +121,8 @@ const CancelListing: FC<Props> = ({
 
             setWaitingTx(true)
             await cancelOrder({
-              hash: token?.market?.floorSell?.hash,
-              maker: token?.market?.floorSell?.maker,
+              hash: ('hash' in data && data?.hash) || '',
+              maker,
               signer,
               apiBase,
               setSteps,
