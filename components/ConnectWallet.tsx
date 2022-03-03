@@ -29,27 +29,40 @@ const ConnectWallet: FC = () => {
             />
           )}
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content className="absolute left-0 z-10 mt-3 divide-y divide-neutral-300 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-neutral-300 focus:outline-none dark:divide-neutral-700 dark:bg-neutral-900 dark:ring-neutral-700">
-          <DropdownMenu.Item className="group flex w-full items-center justify-between gap-4 px-4 py-3 transition">
-            <div>Balance</div>
-            {accountData.address && <Balance address={accountData.address} />}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item className="group flex w-full items-center justify-between px-4 py-3 transition">
-            <Link href={`/address/${accountData.address}`}>
-              <a>Portfolio</a>
-            </Link>
-          </DropdownMenu.Item>
-          <DropdownMenu.Separator />
-          <DropdownMenu.Item className="group flex w-full items-center justify-between gap-3 px-4 py-3 transition">
-            <button key={wallet.id} onClick={() => disconnect()}>
-              Disconnect
+
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={6}
+          className="w-48 space-y-1 rounded bg-white px-1.5 py-2 shadow-md  radix-side-bottom:animate-slide-down md:w-56"
+        >
+          <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
+            <span>Balance </span>
+            <span>
+              {accountData.address && <Balance address={accountData.address} />}
+            </span>
+          </div>
+          <Link href={`/address/${accountData.address}`}>
+            <DropdownMenu.Item asChild>
+              <a className="group flex w-full cursor-pointer items-center justify-between rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100">
+                Portfolio
+              </a>
+            </DropdownMenu.Item>
+          </Link>
+          <DropdownMenu.Item asChild>
+            <button
+              key={wallet.id}
+              onClick={() => disconnect()}
+              className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100"
+            >
+              <span>Disconnect</span>
+              <HiOutlineLogout className="h-6 w-7" />
             </button>
-            <HiOutlineLogout className="h-6 w-7" />
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     )
   }
+
   return (
     <button
       key={wallet.id}
