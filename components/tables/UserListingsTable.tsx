@@ -63,78 +63,81 @@ const UserListingsTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {positionsFlat?.map((position, index, arr) => (
-            <tr
-              key={`${position?.set?.id}-${index}`}
-              ref={index === arr.length - 5 ? ref : null}
-              className="group even:bg-neutral-100 dark:even:bg-neutral-900"
-            >
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <Link
-                  //   @ts-ignore
-                  href={`/${position?.set?.schema?.data?.contract}/${position?.set?.schema?.data?.tokenId}`}
-                >
-                  <a className="flex items-center gap-2">
-                    <div className="relative h-10 w-10">
-                      {position?.set?.image && (
-                        <div className="aspect-w-1 aspect-h-1 relative">
-                          <img
-                            src={optimizeImage(position?.set?.image, 35)}
-                            alt={position?.set?.image}
-                            className="w-[35px] object-contain"
-                            width="35"
-                            height="35"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <span className="whitespace-nowrap">
-                      {/* @ts-ignore */}
-                      <div>{position?.set?.metadata?.collectionName}</div>
-                      <div className="font-semibold">
-                        {/* @ts-ignore */}
-                        {position?.set?.metadata?.tokenName}
-                      </div>
-                    </span>
-                  </a>
-                </Link>
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <FormatEth
-                  amount={position?.primaryOrder?.value}
-                  maximumFractionDigits={4}
-                />
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                {position?.primaryOrder?.expiry === 0
-                  ? 'Never'
-                  : DateTime.fromMillis(
-                      +`${position?.primaryOrder?.expiry}000`
-                    ).toRelative()}
-              </td>
-              {isOwner && (
+          {positionsFlat?.map((position, index, arr) => {
+            const {
+              collectionName,
+              contract,
+              expiration,
+              hash,
+              image,
+              name,
+              tokenHref,
+              tokenId,
+              value,
+            } = processPosition(position)
+
+            return (
+              <tr
+                key={`${position?.set?.id}-${index}`}
+                ref={index === arr.length - 5 ? ref : null}
+                className="group even:bg-neutral-100 dark:even:bg-neutral-900"
+              >
+                {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                  <CancelListing
-                    apiBase={modal.apiBase}
-                    data={{
-                      collectionId: modal?.collectionId,
-                      hash: position?.primaryOrder?.hash,
-                      // @ts-ignore
-                      contract: position?.set?.schema?.data?.contract,
-                      // @ts-ignore
-                      tokenId: position?.set?.schema?.data?.tokenId,
-                    }}
-                    maker={maker}
-                    signer={modal.signer}
-                    show={true}
-                    isInTheWrongNetwork={modal.isInTheWrongNetwork}
-                    setToast={modal.setToast}
-                    mutate={mutate}
-                  />
+                  <Link href={tokenHref}>
+                    <a className="flex items-center gap-2">
+                      <div className="relative h-10 w-10">
+                        {image && (
+                          <div className="aspect-w-1 aspect-h-1 relative">
+                            <img
+                              src={optimizeImage(image, 35)}
+                              alt={image}
+                              className="w-[35px] object-contain"
+                              width="35"
+                              height="35"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <span className="whitespace-nowrap">
+                        <div>{collectionName}</div>
+                        <div className="font-semibold">{name}</div>
+                      </span>
+                    </a>
+                  </Link>
                 </td>
-              )}
-            </tr>
-          ))}
+
+                {/* PRICE */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <FormatEth amount={value} maximumFractionDigits={4} />
+                </td>
+
+                {/* EXPIRATION */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {expiration}
+                </td>
+                {isOwner && (
+                  <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                    <CancelListing
+                      apiBase={modal.apiBase}
+                      data={{
+                        collectionId: modal?.collectionId,
+                        hash,
+                        contract,
+                        tokenId,
+                      }}
+                      maker={maker}
+                      signer={modal.signer}
+                      show={true}
+                      isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                      setToast={modal.setToast}
+                      mutate={mutate}
+                    />
+                  </td>
+                )}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
@@ -142,3 +145,37 @@ const UserListingsTable: FC<Props> = ({
 }
 
 export default UserListingsTable
+
+function processPosition(
+  position:
+    | NonNullable<
+        NonNullable<Props['data']['positions']['data']>[0]['positions']
+      >[0]
+    | undefined
+) {
+  const data = {
+    // @ts-ignore
+    contract: position?.set?.schema?.data?.contract,
+    // @ts-ignore
+    tokenId: position?.set?.schema?.data?.tokenId,
+    image: position?.set?.image,
+    // @ts-ignore
+    name: position?.set?.metadata?.tokenName,
+    expiration:
+      position?.primaryOrder?.expiry === 0
+        ? 'Never'
+        : DateTime.fromMillis(
+            +`${position?.primaryOrder?.expiry}000`
+          ).toRelative(),
+    hash: position?.primaryOrder?.hash,
+    // @ts-ignore
+    collectionName: position?.set?.metadata?.collectionName,
+    value: position?.primaryOrder?.value,
+  }
+
+  const tokenHref =
+    // data.contract && data.tokenId && `/${data.contract}/${data.tokenId}`
+    `/${data.contract}/${data.tokenId}`
+
+  return { ...data, tokenHref }
+}

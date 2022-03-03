@@ -121,7 +121,11 @@ const CancelListing: FC<Props> = ({
 
             setWaitingTx(true)
             await cancelOrder({
-              hash: ('hash' in data && data?.hash) || '',
+              hash:
+                ('hash' in data && data?.hash) ||
+                ('details' in data &&
+                  data?.details.data?.tokens?.[0].market?.floorSell?.hash) ||
+                '',
               maker,
               signer,
               apiBase,

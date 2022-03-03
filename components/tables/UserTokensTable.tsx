@@ -56,113 +56,115 @@ const UserTokensTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {tokensFlat?.map((token, index, arr) => (
-            <tr
-              key={`${token?.token?.collection?.id}-${index}`}
-              ref={index === arr.length - 5 ? ref : null}
-              className="group bg-white even:bg-gray-50"
-            >
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <Link
-                  href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
-                >
-                  <a className="flex items-center gap-2">
-                    <div className="relative h-10 w-10">
-                      {token?.token?.image && (
-                        <div className="aspect-w-1 aspect-h-1 relative">
-                          <img
-                            src={optimizeImage(token?.token?.image, 35)}
-                            alt={token?.token?.image}
-                            className="w-[35px] object-contain"
-                            width="35"
-                            height="35"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <span className="whitespace-nowrap">
-                      <div> {token?.token?.collection?.name}</div>
-                      <div className="font-semibold">{token?.token?.name}</div>
+          {tokensFlat?.map((token, index, arr) => {
+            const {
+              contract,
+              tokenHref,
+              tokenId,
+              listPrice,
+              image,
+              collectionName,
+              tokenName,
+              topOffer,
+            } = processToken(token)
+
+            return (
+              <tr
+                key={`${contract}:${tokenId}`}
+                ref={index === arr.length - 5 ? ref : null}
+                className="group bg-white even:bg-gray-50"
+              >
+                {/* ITEM */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <Link href={tokenHref}>
+                    <a className="flex items-center gap-2">
+                      <div className="relative h-10 w-10">
+                        {image && (
+                          <div className="aspect-w-1 aspect-h-1 relative">
+                            <img
+                              src={optimizeImage(image, 35)}
+                              alt={image}
+                              className="w-[35px] object-contain"
+                              width="35"
+                              height="35"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <span className="whitespace-nowrap">
+                        <div> {collectionName}</div>
+                        <div className="font-semibold">{tokenName}</div>
+                      </span>
+                    </a>
+                  </Link>
+                </td>
+
+                {/* LIST PRICE */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <div className="min-w-[140px]">
+                    <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
+                      <FormatEth amount={listPrice} maximumFractionDigits={4} />
                     </span>
-                  </a>
-                </Link>
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <div className="min-w-[140px]">
-                  <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
-                    <FormatEth
-                      amount={token?.ownership?.floorSellValue}
-                      maximumFractionDigits={4}
-                    />
-                  </span>
-                  {isOwner && (
-                    <div className="hidden group-hover:inline-block">
-                      <Link
-                        href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
-                      >
-                        {/* <a className="btn-blue-ghost">
-                          {token?.ownership?.floorSellValue ? 'Edit' : 'List'}
-                        </a> */}
+                    {isOwner && (
+                      <div className="hidden group-hover:inline-block">
                         <ListModal
                           signer={modal.signer}
                           apiBase={modal.apiBase}
                           isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           maker={modal.accountData?.address}
                           data={{
-                            contract: token?.token?.contract,
-                            tokenId: token?.token?.tokenId,
+                            contract,
+                            tokenId,
                           }}
                           mutate={mutate}
                           setToast={modal.setToast}
-                        />
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                {token?.token?.topBuy?.value ? (
-                  isOwner ? (
-                    <div className="min-w-[140px]">
-                      <span className="group-hover:hidden">
-                        <FormatEth
-                          amount={token?.token?.topBuy?.value}
-                          maximumFractionDigits={4}
-                        />
-                      </span>
-                      <div className="hidden group-hover:inline-block">
-                        <AcceptOffer
-                          apiBase={modal.apiBase}
-                          data={{
-                            contract: token?.token?.contract,
-                            tokenId: token?.token?.tokenId,
-                          }}
-                          signer={modal.signer}
-                          show={isOwner}
-                          isInTheWrongNetwork={modal.isInTheWrongNetwork}
-                          setToast={modal.setToast}
-                          mutate={mutate}
                         />
                       </div>
-                    </div>
+                    )}
+                  </div>
+                </td>
+
+                {/* TOP OFFER */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {topOffer ? (
+                    isOwner ? (
+                      <div className="min-w-[140px]">
+                        <span className="group-hover:hidden">
+                          <FormatEth
+                            amount={topOffer}
+                            maximumFractionDigits={4}
+                          />
+                        </span>
+                        <div className="hidden group-hover:inline-block">
+                          <AcceptOffer
+                            apiBase={modal.apiBase}
+                            data={{
+                              contract,
+                              tokenId,
+                            }}
+                            signer={modal.signer}
+                            show={isOwner}
+                            isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                            setToast={modal.setToast}
+                            mutate={mutate}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <FormatEth amount={topOffer} maximumFractionDigits={4} />
+                    )
                   ) : (
-                    <FormatEth
-                      amount={token?.token?.topBuy?.value}
-                      maximumFractionDigits={4}
-                    />
-                  )
-                ) : (
-                  '-'
-                )}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                <FormatEth
-                  amount={token?.ownership?.floorSellValue}
-                  maximumFractionDigits={4}
-                />
-              </td>
-            </tr>
-          ))}
+                    '-'
+                  )}
+                </td>
+
+                {/* FLOOR */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <FormatEth amount={listPrice} maximumFractionDigits={4} />
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
@@ -170,3 +172,25 @@ const UserTokensTable: FC<Props> = ({
 }
 
 export default UserTokensTable
+
+function processToken(
+  token:
+    | NonNullable<NonNullable<Props['data']['tokens']['data']>[0]['tokens']>[0]
+    | undefined
+) {
+  const data = {
+    contract: token?.token?.contract,
+    tokenId: token?.token?.tokenId,
+    image: token?.token?.image,
+    collectionName: token?.token?.collection?.name,
+    tokenName: token?.token?.name,
+    listPrice: token?.ownership?.floorSellValue,
+    topOffer: token?.token?.topBuy?.value,
+  }
+
+  const tokenHref =
+    // data.contract && data.tokenId && `/${data.contract}/${data.tokenId}`
+    `/${data.contract}/${data.tokenId}`
+
+  return { ...data, tokenHref }
+}

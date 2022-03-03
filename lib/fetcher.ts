@@ -1,5 +1,5 @@
 /**
- * swr's fetcher function [reference](https://swr.vercel.app/docs/data-fetching#fetch)
+ * swr's fetcher function. [Reference](https://swr.vercel.app/docs/data-fetching#fetch)
  * @param href An url to be fetched
  * @returns The API's response
  */

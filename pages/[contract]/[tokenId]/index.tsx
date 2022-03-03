@@ -236,6 +236,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   collection: collection.data,
                   details,
                 }}
+                maker={accountData?.address.toLowerCase()}
                 signer={signer}
                 show={isTopBidder}
                 isInTheWrongNetwork={isInTheWrongNetwork}
@@ -247,6 +248,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   collection: collection.data,
                   details,
                 }}
+                maker={accountData?.address.toLowerCase()}
                 signer={signer}
                 show={isOwner && isListed}
                 isInTheWrongNetwork={isInTheWrongNetwork}

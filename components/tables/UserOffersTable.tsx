@@ -64,33 +64,42 @@ const UserOffersTable: FC<Props> = ({
         </thead>
         <tbody>
           {positionsFlat?.map((position, index, arr) => {
-            const href =
-              // @ts-ignore
-              position?.set?.schema?.kind === 'collection'
-                ? // @ts-ignore
-                  `/collections/${position?.set?.schema?.data?.collection}`
-                : // @ts-ignore
-                  `/${position?.set?.schema?.data?.contract}/${position?.set?.schema?.data?.tokenId}`
+            const {
+              collectionName,
+              contract,
+              expiration,
+              hash,
+              key,
+              href,
+              image,
+              kind,
+              tokenName,
+              tokenId,
+              price,
+              value,
+            } = processPosition(position)
 
             return (
               <tr
-                key={`${position?.set?.id}-${index}`}
+                key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
                 className="group bg-white even:bg-gray-50"
               >
+                {/* TYPE */}
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                  {/* @ts-ignore */}
-                  {position?.set?.schema?.kind}
+                  {kind}
                 </td>
+
+                {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
                   <Link href={href}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-10 w-10">
-                        {position?.set?.image && (
+                        {image && (
                           <div className="aspect-w-1 aspect-h-1 relative">
                             <img
-                              src={optimizeImage(position?.set?.image, 35)}
-                              alt={position?.set?.image}
+                              src={optimizeImage(image, 35)}
+                              alt={image}
                               className="w-[35px] object-contain"
                               width="35"
                               height="35"
@@ -99,38 +108,25 @@ const UserOffersTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        {/* @ts-ignore */}
-                        <div>{position?.set?.metadata?.collectionName}</div>
+                        <div>{collectionName}</div>
                         <div>
-                          <span>
-                            {/* @ts-ignore */}
-                            {position?.set?.schema?.data?.attribute?.key}
-                          </span>{' '}
-                          <span className="font-semibold">
-                            {/* @ts-ignore */}
-                            {position?.set?.schema?.data?.attribute?.value}
-                          </span>
+                          <span>{key}</span>
+                          <span className="font-semibold">{value}</span>
                         </div>
-                        <div className="font-semibold">
-                          {/* @ts-ignore */}
-                          {position?.set?.metadata?.tokenName}
-                        </div>
+                        <div className="font-semibold">{tokenName}</div>
                       </span>
                     </a>
                   </Link>
                 </td>
+
+                {/* OFFER */}
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                  <FormatEth
-                    amount={position?.primaryOrder?.value}
-                    maximumFractionDigits={4}
-                  />
+                  <FormatEth amount={price} maximumFractionDigits={4} />
                 </td>
+
+                {/* EXPIRATION */}
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
-                  {position?.primaryOrder?.expiry === 0
-                    ? 'Never'
-                    : DateTime.fromMillis(
-                        +`${position?.primaryOrder?.expiry}000`
-                      ).toRelative()}
+                  {expiration}
                 </td>
                 {isOwner && (
                   <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
@@ -138,11 +134,9 @@ const UserOffersTable: FC<Props> = ({
                       apiBase={modal.apiBase}
                       data={{
                         collectionId: modal?.collectionId,
-                        hash: position?.primaryOrder?.hash,
-                        // @ts-ignore
-                        contract: position?.set?.schema?.data?.contract,
-                        // @ts-ignore
-                        tokenId: position?.set?.schema?.data?.tokenId,
+                        hash,
+                        contract,
+                        tokenId,
                       }}
                       maker={maker}
                       signer={modal.signer}
@@ -163,3 +157,47 @@ const UserOffersTable: FC<Props> = ({
 }
 
 export default UserOffersTable
+
+function processPosition(
+  position:
+    | NonNullable<
+        NonNullable<Props['data']['positions']['data']>[0]['positions']
+      >[0]
+    | undefined
+) {
+  const href =
+    // @ts-ignore
+    position?.set?.schema?.kind === 'collection'
+      ? // @ts-ignore
+        `/collections/${position?.set?.schema?.data?.collection}`
+      : // @ts-ignore
+        `/${position?.set?.schema?.data?.contract}/${position?.set?.schema?.data?.tokenId}`
+
+  const data = {
+    // @ts-ignore
+    key: position?.set?.schema?.data?.attribute?.key,
+    // @ts-ignore
+    value: position?.set?.schema?.data?.attribute?.value,
+    // @ts-ignore
+    kind: position?.set?.schema?.kind,
+    // @ts-ignore
+    contract: position?.set?.schema?.data?.contract,
+    // @ts-ignore
+    tokenId: position?.set?.schema?.data?.tokenId,
+    image: position?.set?.image,
+    // @ts-ignore
+    tokenName: position?.set?.metadata?.tokenName,
+    expiration:
+      position?.primaryOrder?.expiry === 0
+        ? 'Never'
+        : DateTime.fromMillis(
+            +`${position?.primaryOrder?.expiry}000`
+          ).toRelative(),
+    hash: position?.primaryOrder?.hash,
+    // @ts-ignore
+    collectionName: position?.set?.metadata?.collectionName,
+    price: position?.primaryOrder?.value,
+  }
+
+  return { ...data, href }
+}

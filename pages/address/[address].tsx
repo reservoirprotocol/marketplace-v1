@@ -119,7 +119,10 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
         <Tabs.Content value="history">
-          <UserActivityTable data={userActivity} />
+          <UserActivityTable
+            data={userActivity}
+            chainId={+chainId as ChainId}
+          />
         </Tabs.Content>
         {isOwner && (
           <>
