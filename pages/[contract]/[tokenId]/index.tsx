@@ -23,6 +23,8 @@ import Head from 'next/head'
 import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
+import useDetails from 'hooks/useDetails'
+import useCollection from 'hooks/useCollection'
 
 // Environment variables
 // For more information about these variables
@@ -46,24 +48,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const router = useRouter()
   useDataDog(accountData)
 
-  let url = new URL('/tokens/details', apiBase)
-
-  let query: paths['/tokens/details']['get']['parameters']['query'] = {
+  const details = useDetails(apiBase, {
     contract: router.query?.contract?.toString(),
     tokenId: router.query?.tokenId?.toString(),
-  }
-
-  setParams(url, query)
-
-  const details = useSWR<
-    paths['/tokens/details']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
-
-  const collectionUrl = new URL(`/collections/${collectionId}`, apiBase)
-
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(collectionUrl.href, fetcher)
+  })
+  const collection = useCollection(apiBase, undefined, collectionId)
 
   if (details.error || !apiBase || !chainId) {
     console.debug({ apiBase, chainId })

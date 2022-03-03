@@ -35,7 +35,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
               key={`${token?.collection?.name}${idx}`}
               href={`/${token?.contract}/${token?.tokenId}`}
             >
-              <a className="group grid rounded-b-md bg-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
+              <a className="group grid self-start rounded-b-md bg-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
                 <img
                   src={optimizeImage(token?.image, 250)}
                   alt={`${token?.collection?.name}`}
@@ -43,7 +43,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                   width="250"
                   height="250"
                 />
-                <p className="mb-3 px-6 pt-4 text-lg lg:pt-3">{token?.name}</p>
+                <p className="mb-3 overflow-hidden text-ellipsis px-6 pt-4 text-lg lg:pt-3">
+                  {token?.name}
+                </p>
                 <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
                     <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
