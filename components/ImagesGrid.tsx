@@ -15,13 +15,13 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
   return (
     <>
       {!!sample_images && sample_images.length > 0 ? (
-        <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-1.5">
+        <div className="grid grid-cols-[1fr_1fr_25%] items-center gap-1.5">
           {sample_images.length > 1 ? (
             // SMALLER IMAGE, HAS SIDE IMAGES
             <img
               alt={`${value}`}
               src={optimizeImage(sample_images[0], 250)}
-              className="col-span-2 h-full rounded object-cover"
+              className="col-span-2 w-full rounded object-cover"
               width="224"
               height="224"
             />
@@ -30,7 +30,7 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
             <img
               alt={`${value}`}
               src={optimizeImage(sample_images[0], 300)}
-              className="col-span-2 rounded object-contain"
+              className="col-span-2 w-full rounded object-contain"
               width="300"
               height="300"
             />
