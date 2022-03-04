@@ -89,11 +89,11 @@ const ModalCard: FC<Props> = ({
                 data?.collection?.name
               )}
             </div>
-            <div className="mb-1.5 text-sm">
-              {data?.collection?.tokenCount
-                ? `${data?.collection?.tokenCount} Eligible Tokens`
-                : `1 Eligible Token`}
-            </div>
+            {data?.collection?.tokenCount && (
+              <div className="mb-1.5 text-sm">
+                {`${data?.collection?.tokenCount} Eligible Tokens`}
+              </div>
+            )}
           </div>
         </div>
         <div className="mb-5 flex flex-wrap items-stretch gap-1.5 text-sm">
