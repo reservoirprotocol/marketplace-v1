@@ -6,7 +6,7 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { ComponentProps, FC, ReactNode } from 'react'
+import { ComponentProps, FC, ReactNode, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
@@ -47,10 +47,51 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const [{ data: network }] = useNetwork()
   const router = useRouter()
   useDataDog(accountData)
+  const [tokenOpenSea, setTokenOpenSea] = useState<any>({
+    animation_url: null,
+    extension: null,
+  })
+
+  const contract = router.query?.contract?.toString()
+  const tokenId = router.query?.tokenId?.toString()
+
+  const urlOpenSea = new URL(
+    `/api/v1/asset/${contract}/${tokenId}`,
+    'https://api.opensea.io/'
+  )
+
+  useEffect(() => {
+    async function getOpenSeaData(url: URL) {
+      let result: any = { animation_url: null, extension: null }
+      try {
+        const res = await fetch(url.href)
+        const json = await res.json()
+
+        const animation_url = json?.animation_url
+        // Get the last section of the URL
+        // lastPartOfUrl = '874f68834bdf5f05982d01067776acc2.wav' when input is
+        // 'https://storage.opensea.io/files/874f68834bdf5f05982d01067776acc2.wav'
+        const lastPartOfUrl = animation_url?.split('/')?.pop()
+        // Extract the file extension from `lastPartOfUrl`, example: 'wav'
+        let extension = null
+        if (lastPartOfUrl) {
+          extension = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
+        }
+
+        result = { animation_url, extension }
+      } catch (err) {
+        console.error(err)
+      }
+
+      setTokenOpenSea(result)
+    }
+
+    getOpenSeaData(urlOpenSea)
+  }, [])
 
   const details = useDetails(apiBase, {
-    contract: router.query?.contract?.toString(),
-    tokenId: router.query?.tokenId?.toString(),
+    contract,
+    tokenId,
   })
   const collection = useCollection(apiBase, undefined, collectionId)
 
@@ -109,10 +150,14 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           </div>
         </div>
         <div className="mb-6 sm:ml-auto sm:mb-0 sm:self-start">
-          <img
-            className="mb-4 w-[500px]"
-            src={optimizeImage(token?.token?.image, 500)}
-          />
+          {/* TOKEN IMAGE */}
+          <div className="group mb-4 w-[500px]">
+            {tokenOpenSea?.extension === null ? (
+              <img src={optimizeImage(token?.token?.image, 500)} />
+            ) : (
+              <Media tokenOpenSea={tokenOpenSea} />
+            )}
+          </div>
           <div className="mb-3 w-min ">
             {token?.token?.owner && (
               <Link href={`/address/${token.token.owner}`}>
@@ -297,7 +342,7 @@ export const getServerSideProps: GetServerSideProps<{
   const tokenDetails =
     (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
 
-  const collectionId = tokenDetails.tokens?.[0].token?.collection?.id
+  const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
 
   if (!collectionId) {
     return {
@@ -306,4 +351,43 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   return { props: { collectionId, mode } }
+}
+
+import React from 'react'
+
+const Media: FC<{
+  tokenOpenSea: {
+    animation_url: any
+    extension: any
+  }
+}> = ({ tokenOpenSea }) => {
+  const { animation_url, extension } = tokenOpenSea
+
+  // VIDEO
+  if (extension === 'mp4') {
+    return (
+      <video controls>
+        <source src={animation_url} type="video/mp4" />
+        Your browser does not support the
+        <code>video</code> element.
+      </video>
+    )
+  }
+
+  // AUDIO
+  if (extension === 'wav' || extension === 'mp3') {
+    return (
+      <audio controls src={animation_url}>
+        Your browser does not support the
+        <code>audio</code> element.
+      </audio>
+    )
+  }
+
+  // HTML
+  if (extension === 'html' || extension === undefined) {
+    return <iframe width="500" height="500" src={animation_url}></iframe>
+  }
+
+  return null
 }
