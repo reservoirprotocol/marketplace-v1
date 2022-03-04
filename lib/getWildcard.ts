@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http'
 
 /**
- *
+ * Extract the first subdomain from the request's host
  * @param req Client's incoming request object
  * @returns The first subdomain as `wildcard`. Note: If no subdomain
  * exists, `wilcard` defaults to 'www'

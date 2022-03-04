@@ -20,6 +20,11 @@ import { Execute } from 'lib/executeSteps'
 import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
+import { getCollection, getDetails } from 'lib/fetch/fetch'
+
+type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Collection =
+  paths['/collections/{collection}']['get']['responses']['200']['schema']
 
 type Props = {
   env: {
@@ -27,38 +32,25 @@ type Props = {
     chainId: ChainId
     openSeaApiKey: string | undefined
   }
-  data: {
-    token: {
-      image: string | undefined
-      name: string | undefined
-      id: string | undefined
-      contract: string | undefined
-      topBuyValue: number | undefined
-      floorSellValue: number | undefined
-    }
-    collection: {
-      name: string | undefined
-    }
-  }
+  data:
+    | {
+        details: SWRResponse<Details, any>
+        collection: Collection | undefined
+      }
+    | {
+        collectionId: string | undefined
+        contract: string | undefined
+        tokenId: string | undefined
+      }
   royalties: {
     bps: number | undefined
     recipient: string | undefined
   }
   signer: ethers.Signer | undefined
-  details: SWRResponse<
-    paths['/tokens/details']['get']['responses']['200']['schema'],
-    any
-  >
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
-const TokenOfferModal: FC<Props> = ({
-  env,
-  royalties,
-  details,
-  data,
-  setToast,
-}) => {
+const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [{ data: connectData }, connect] = useConnect()
@@ -116,6 +108,56 @@ const TokenOfferModal: FC<Props> = ({
     }
   }, [offerPrice])
 
+  // Data from props
+  const [collection, setCollection] = useState<Collection>()
+  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+
+  useEffect(() => {
+    if (data && open) {
+      // Load data if missing
+      if ('tokenId' in data) {
+        const { contract, tokenId, collectionId } = data
+
+        getDetails(env.apiBase, contract, tokenId, setDetails)
+        getCollection(env.apiBase, collectionId, setCollection)
+      }
+      // Load data if provided
+      if ('details' in data) {
+        const { details, collection } = data
+
+        setDetails(details)
+        setCollection(collection)
+      }
+    }
+  }, [data, open])
+
+  // Set the token either from SWR or fetch
+  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+
+  // From fetch
+  if (details && 'tokens' in details && details.tokens?.[0]) {
+    token = details.tokens?.[0]
+  }
+
+  // From SWR
+  if (details && 'data' in details && details?.data?.tokens?.[0]) {
+    token = details.data?.tokens?.[0]
+  }
+
+  const modalData = {
+    collection: {
+      name: collection?.collection?.collection?.name,
+    },
+    token: {
+      contract: token?.token?.contract,
+      id: token?.token?.tokenId,
+      image: token?.token?.image,
+      name: token?.token?.name,
+      topBuyValue: token?.market?.topBuy?.value,
+      floorSellValue: token?.market?.floorSell?.value,
+    },
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -141,7 +183,7 @@ const TokenOfferModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             title="Make a token offer"
-            data={data}
+            data={modalData}
             steps={steps}
             onCloseCallback={() => setSteps(undefined)}
             actionButton={
@@ -177,13 +219,15 @@ const TokenOfferModal: FC<Props> = ({
                       maker: await signer.getAddress(),
                       price: calculations.total.toString(),
                       expirationTime: expirationValue,
-                      contract: data.token.contract,
-                      tokenId: data.token.id,
+                      contract: token.token?.contract,
+                      tokenId: token.token?.tokenId,
                     },
                     signer,
                     apiBase: env.apiBase,
                     setSteps,
-                    handleSuccess: () => details.mutate(),
+                    handleSuccess: () => {
+                      details && 'mutate' in details && details.mutate()
+                    },
                     handleError: (err) => {
                       // Handle user rejection
                       if (err?.code === 4001) {

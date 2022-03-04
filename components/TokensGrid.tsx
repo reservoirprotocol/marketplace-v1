@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
+import Masonry from 'react-masonry-css'
 
 type Props = {
   tokens: SWRInfiniteResponse<
@@ -25,7 +26,19 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
   const didReactEnd = isEmpty || (data && mappedTokens.length < tokenCount)
 
   return (
-    <div className="mx-auto mb-5 grid max-w-[2400px] grid-cols-2 gap-5 md:grid-cols-3 md:gap-10 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <Masonry
+      breakpointCols={{
+        default: 5,
+        1536: 4,
+        1280: 3,
+        1024: 3,
+        768: 2,
+        640: 2,
+        500: 1,
+      }}
+      className="masonry-grid"
+      columnClassName="masonry-grid_column"
+    >
       {size === 1 && isValidating
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
@@ -35,7 +48,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
               key={`${token?.collection?.name}${idx}`}
               href={`/${token?.contract}/${token?.tokenId}`}
             >
-              <a className="group grid rounded-b-md bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-black">
+              <a className="group mb-6 grid self-start rounded-b-md bg-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg ">
                 <img
                   src={optimizeImage(token?.image, 250)}
                   alt={`${token?.collection?.name}`}
@@ -43,7 +56,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                   width="250"
                   height="250"
                 />
-                <p className="mb-3 px-6 pt-4 text-lg lg:pt-3">{token?.name}</p>
+                <p className="mb-3 overflow-hidden text-ellipsis px-6 pt-4 text-lg lg:pt-3">
+                  {token?.name}
+                </p>
                 <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
                     <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
@@ -84,7 +99,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
             }
             return <LoadingCard key={`loading-card-${index}`} />
           })}
-    </div>
+    </Masonry>
   )
 }
 

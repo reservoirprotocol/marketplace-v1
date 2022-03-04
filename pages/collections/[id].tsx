@@ -14,8 +14,15 @@ import useDataDog from 'hooks/useAnalytics'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 
+// Environment variables
+// For more information about these variables
+// refer to the README.md file on this repository
+// Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
+// REQUIRED
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+
+// OPTIONAL
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
@@ -72,6 +79,8 @@ export const getStaticProps: GetStaticProps<{
   }
 }> = async ({ params }) => {
   try {
+    // Pass in fallback data to prevent loading screens
+    // Reference: https://swr.vercel.app/docs/options
     // -------------- COLLECTION --------------
     const url1 = new URL(`/collections/${params?.id}`, apiBase)
 

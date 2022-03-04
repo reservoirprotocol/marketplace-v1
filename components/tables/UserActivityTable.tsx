@@ -1,0 +1,194 @@
+import { FC } from 'react'
+import { DateTime } from 'luxon'
+import useUserActivity from 'hooks/useUserActivity'
+import Link from 'next/link'
+import { optimizeImage } from 'lib/optmizeImage'
+import EthAccount from 'components/EthAccount'
+import { ethers } from 'ethers'
+import { useAccount } from 'wagmi'
+import FormatEth from 'components/FormatEth'
+
+type Props = {
+  data: ReturnType<typeof useUserActivity>
+  chainId: ChainId
+}
+
+const UserActivityTable: FC<Props> = ({
+  data: { transfers, ref },
+  chainId,
+}) => {
+  const { data } = transfers
+  const [{ data: accountData }] = useAccount()
+
+  const transfersFlat = data ? data.flatMap(({ transfers }) => transfers) : []
+
+  if (transfersFlat.length === 0) {
+    return (
+      <div className="mt-14 grid justify-center text-lg">
+        No trading history yet.
+      </div>
+    )
+  }
+
+  return (
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            {['Type', 'Item', 'Price', 'From', 'To', 'Time'].map((item) => (
+              <th
+                key={item}
+                scope="col"
+                className="px-6 py-3 text-left font-medium uppercase tracking-wider text-gray-500"
+              >
+                {item}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {transfersFlat.map((transfer, index, arr) => {
+            const {
+              type,
+              to,
+              from,
+              tokenHref,
+              image,
+              name,
+              txUrl,
+              timestamp,
+              price,
+              collectionName,
+            } = processTransfer(transfer, accountData?.address, chainId)
+            return (
+              <tr
+                key={`${transfer?.token?.tokenId}-${index}`}
+                ref={index === arr.length - 5 ? ref : null}
+                className="group bg-white even:bg-gray-50"
+              >
+                {/* TYPE */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {type}
+                </td>
+
+                {/* ITEM */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {tokenHref && (
+                    <Link href={tokenHref}>
+                      <a className="flex items-center gap-2">
+                        <div className="relative h-10 w-10">
+                          {image && (
+                            <div className="aspect-w-1 aspect-h-1 relative">
+                              <img
+                                src={optimizeImage(image, 35)}
+                                className="w-9 object-contain"
+                                width="36"
+                                height="36"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <span className="whitespace-nowrap">
+                          <div>{collectionName}</div>
+                          <div className="font-semibold">{name}</div>
+                        </span>
+                      </a>
+                    </Link>
+                  )}
+                </td>
+
+                {/* PRICE */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <FormatEth amount={price} maximumFractionDigits={4} />
+                </td>
+
+                {/* FROM */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {from && (
+                    <Link href={`/address/${from}`}>
+                      <a>
+                        <EthAccount address={from} />
+                      </a>
+                    </Link>
+                  )}
+                </td>
+
+                {/* TO */}
+                <td className="pr-3">
+                  {to && (
+                    <Link href={`/address/${to}`}>
+                      <a>
+                        <EthAccount address={to} />
+                      </a>
+                    </Link>
+                  )}
+                </td>
+
+                {/* TIME */}
+                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  {txUrl && (
+                    <Link href={txUrl}>
+                      <a target="_blank" rel="noreferrer">
+                        {timestamp}
+                      </a>
+                    </Link>
+                  )}
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+export default UserActivityTable
+
+function processTransfer(
+  transfer:
+    | NonNullable<
+        NonNullable<Props['data']['transfers']['data']>[0]['transfers']
+      >[0]
+    | undefined,
+  address: string | undefined,
+  chainId: ChainId | undefined
+) {
+  const type =
+    transfer?.to?.toLowerCase() === address?.toLowerCase() &&
+    transfer?.price !== null
+      ? 'Buy'
+      : transfer?.from?.toLowerCase() === address?.toLowerCase() &&
+        transfer?.price !== null
+      ? 'Sell'
+      : transfer?.from === ethers.constants.AddressZero
+      ? 'Mint'
+      : 'Transfer'
+
+  const etherscan = {
+    4: 'https://rinkeby.etherscan.io/tx/',
+    1: 'https://etherscan.io/tx/',
+  }
+
+  const data = {
+    contract: transfer?.token?.contract,
+    tokenId: transfer?.token?.tokenId,
+    image: transfer?.token?.image,
+    name: transfer?.token?.name,
+    to: transfer?.to,
+    from: transfer?.from,
+    txUrl:
+      transfer?.txHash && chainId && `${etherscan[chainId]}${transfer?.txHash}`,
+    timestamp:
+      transfer?.timestamp &&
+      DateTime.fromMillis(+`${transfer?.timestamp}000`).toRelative(),
+    price: transfer?.price,
+    collectionName: transfer?.token?.collection?.name,
+  }
+
+  const tokenHref =
+    // data.contract && data.tokenId && `/${data.contract}/${data.tokenId}`
+    `/${data.contract}/${data.tokenId}`
+
+  return { ...data, type, tokenHref }
+}

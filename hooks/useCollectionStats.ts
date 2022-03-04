@@ -1,7 +1,7 @@
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
 import { NextRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import useSWR from 'swr'
 
 export default function useCollectionStats(

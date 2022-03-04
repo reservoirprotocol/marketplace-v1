@@ -9,7 +9,6 @@ type Props = {
   communityId?: string
 }
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const title = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const logo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 

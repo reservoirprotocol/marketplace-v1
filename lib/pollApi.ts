@@ -1,20 +1,12 @@
-import { KeyedMutator } from 'swr'
 import { URL } from 'url'
-import { Execute } from './executeSteps'
 
-async function pollSwr(previousJson: any, mutate: KeyedMutator<any>) {
-  const json = await mutate()
-
-  // Check that the response from an endpoint updated
-  if (JSON.stringify(previousJson) !== JSON.stringify(json)) {
-    return true
-  } else {
-    // The response is still unchanged. Check again in five seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000))
-    await pollSwr(json, mutate)
-  }
-}
-
+/**
+ * Poll the URL with a 5 second interval until the step has data
+ * available
+ * @param url an URL object
+ * @param index The index of the step to be polled for
+ * @returns The updated JSON response
+ */
 async function pollUntilHasData(url: URL, index: number) {
   const res = await fetch(url.href)
 
@@ -28,6 +20,11 @@ async function pollUntilHasData(url: URL, index: number) {
   await pollUntilHasData(url, index)
 }
 
+/**
+ * Poll the URL with a 5 second interval until it responds with success
+ * @param url An URL object
+ * @returns When it has finished polling
+ */
 async function pollUntilOk(url: URL) {
   const res = await fetch(url.href)
 
@@ -41,19 +38,4 @@ async function pollUntilOk(url: URL) {
   }
 }
 
-async function pollUntilChange(url: URL, oldJson: any) {
-  const res = await fetch(url.href)
-
-  const json = (await res.json()) as Execute
-
-  // Check that the response from an endpoint updated
-  if (JSON.stringify(json) !== JSON.stringify(oldJson)) {
-    return json
-  } else {
-    // The response is still unchanged. Check again in five seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000))
-    await pollUntilChange(url, json)
-  }
-}
-
-export { pollSwr, pollUntilHasData, pollUntilOk, pollUntilChange }
+export { pollUntilHasData, pollUntilOk }

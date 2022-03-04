@@ -29,23 +29,23 @@ import buyToken from 'lib/actions/buyToken'
 import Toast from './Toast'
 
 type Props = {
+  apiBase: string
+  chainId: ChainId
+  collectionId: string
   fallback: {
     tokens: paths['/tokens']['get']['responses']['200']['schema']
     collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
   }
-  apiBase: string
-  chainId: ChainId
   openSeaApiKey: string | undefined
-  collectionId: string
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
 const TokensMain: FC<Props> = ({
-  fallback,
   apiBase,
   chainId,
-  openSeaApiKey,
   collectionId,
+  fallback,
+  openSeaApiKey,
   setToast,
 }) => {
   const [{ data: accountData }] = useAccount()
@@ -189,16 +189,9 @@ const TokensMain: FC<Props> = ({
   return (
     <>
       <Head>
-        {collectionId === 'www' ? (
-          <title>
-            {collection.data?.collection?.collection?.name} | Reservoir Market
-          </title>
-        ) : (
-          <title>
-            {collection.data?.collection?.collection?.name} Marketplace |
-            Powered by Reservoir
-          </title>
-        )}
+        <title>
+          {collection.data?.collection?.collection?.name} | Reservoir Market
+        </title>
         <meta
           name="description"
           content={collection.data?.collection?.collection?.description}

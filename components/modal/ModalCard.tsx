@@ -41,8 +41,14 @@ const ModalCard: FC<Props> = ({
   actionButton,
   steps,
 }) => {
+  // SUBTITLE
+  // Attribute Offer -> Loot (for Adventurers)
+  // Collection Offer -> Collection
+  // Token Offer -> Loot (for Adventurers)
   const subTitle =
     data?.attribute || data?.token ? data?.collection?.name : 'Collection'
+
+  // If all executed succesfully, then success is true
   const success = steps && !steps.find(({ status }) => status === 'incomplete')
 
   return (
@@ -65,12 +71,13 @@ const ModalCard: FC<Props> = ({
               data?.collection?.image || data?.token?.image,
               50
             )}
-            alt=""
             className="w-[50px]"
           />
           <div className="overflow-auto">
             <div className="text-sm">{subTitle}</div>
             <div className="my-1.5 text-lg font-medium">
+              {/* If this is an offer modal, change */}
+              {/* the header based on the type of offer */}
               {data?.attribute ? (
                 <>
                   <span>{data?.attribute?.key}: </span>
@@ -82,36 +89,16 @@ const ModalCard: FC<Props> = ({
                 data?.collection?.name
               )}
             </div>
-            <div className="mb-1.5 text-sm">
-              {data?.collection?.tokenCount || 1} Eligible Tokens
-            </div>
+            {data?.collection?.tokenCount && (
+              <div className="mb-1.5 text-sm">
+                {`${data?.collection?.tokenCount} Eligible Tokens`}
+              </div>
+            )}
           </div>
         </div>
         <div className="mb-5 flex flex-wrap items-stretch gap-1.5 text-sm">
-          {data?.token?.topBuyValue && (
-            <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
-              <span className="whitespace-nowrap">Current Top Offer</span>
-              <div className="font-semibold">
-                <FormatEth
-                  amount={data.token.topBuyValue}
-                  maximumFractionDigits={4}
-                  logoWidth={7}
-                />
-              </div>
-            </div>
-          )}
-          {data?.token?.floorSellValue && (
-            <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
-              <span className="whitespace-nowrap">List Price</span>
-              <div className="font-semibold">
-                <FormatEth
-                  amount={data.token.floorSellValue}
-                  maximumFractionDigits={4}
-                  logoWidth={7}
-                />
-              </div>
-            </div>
-          )}
+          <TopOffer topBuyValue={data?.token?.topBuyValue} />
+          <ListPrice floorSellValue={data?.token?.floorSellValue} />
         </div>
         {steps ? <Steps steps={steps} /> : children}
         {success ? (
@@ -138,3 +125,49 @@ const ModalCard: FC<Props> = ({
 }
 
 export default ModalCard
+
+export const ListPrice = ({
+  floorSellValue,
+}: {
+  floorSellValue: number | undefined
+}) => {
+  if (floorSellValue) {
+    return (
+      <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
+        <span className="whitespace-nowrap">List Price</span>
+        <div className="font-semibold">
+          <FormatEth
+            amount={floorSellValue}
+            maximumFractionDigits={4}
+            logoWidth={7}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}
+
+export const TopOffer = ({
+  topBuyValue,
+}: {
+  topBuyValue: number | undefined
+}) => {
+  if (topBuyValue) {
+    return (
+      <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
+        <span className="whitespace-nowrap">Current Top Offer</span>
+        <div className="font-semibold">
+          <FormatEth
+            amount={topBuyValue}
+            maximumFractionDigits={4}
+            logoWidth={7}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}

@@ -6,7 +6,7 @@ import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { FC, ReactNode } from 'react'
+import { ComponentProps, FC, ReactNode } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
 import FormatEth from 'components/FormatEth'
@@ -23,9 +23,18 @@ import Head from 'next/head'
 import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
+import useDetails from 'hooks/useDetails'
+import useCollection from 'hooks/useCollection'
 
+// Environment variables
+// For more information about these variables
+// refer to the README.md file on this repository
+// Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
+// REQUIRED
 const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+
+// OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
@@ -39,24 +48,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const router = useRouter()
   useDataDog(accountData)
 
-  let url = new URL('/tokens/details', apiBase)
-
-  let query: paths['/tokens/details']['get']['parameters']['query'] = {
+  const details = useDetails(apiBase, {
     contract: router.query?.contract?.toString(),
     tokenId: router.query?.tokenId?.toString(),
-  }
-
-  setParams(url, query)
-
-  const details = useSWR<
-    paths['/tokens/details']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
-
-  const collectionUrl = new URL(`/collections/${collectionId}`, apiBase)
-
-  const collection = useSWR<
-    paths['/collections/{collection}']['get']['responses']['200']['schema']
-  >(collectionUrl.href, fetcher)
+  })
+  const collection = useCollection(apiBase, undefined, collectionId)
 
   if (details.error || !apiBase || !chainId) {
     console.debug({ apiBase, chainId })
@@ -73,35 +69,17 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   const isListed = token?.market?.floorSell?.value !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
-  const data = {
-    collection: {
-      name: collection.data?.collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBuy?.value,
-      floorSellValue: token?.market?.floorSell?.value,
-    },
-  }
+  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
+    data
+  ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
   return (
     <Layout>
       <Head>
-        {mode === 'global' ? (
-          <title>
-            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-            {collection.data?.collection?.collection?.name} | Reservoir Market
-          </title>
-        ) : (
-          <title>
-            {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-            {collection.data?.collection?.collection?.name} Marketplace |
-            Powered by Reservoir
-          </title>
-        )}
+        <title>
+          {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+          {collection.data?.collection?.collection?.name} | Reservoir Market
+        </title>
         <meta
           name="description"
           content={collection.data?.collection?.collection?.description}
@@ -185,30 +163,26 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               >
                 {isOwner && (
                   <ListModal
-                    signer={signer}
                     apiBase={apiBase}
-                    chainId={+chainId}
+                    data={{
+                      collection: collection.data,
+                      details,
+                    }}
+                    isInTheWrongNetwork={isInTheWrongNetwork}
                     maker={accountData?.address}
-                    collection={collection.data}
-                    details={details}
-                    setToast={(data) =>
-                      toast.custom((t) => (
-                        <Toast t={t} toast={toast} data={data} />
-                      ))
-                    }
+                    setToast={setToast}
+                    signer={signer}
                   />
                 )}
                 <BuyNow
                   apiBase={apiBase}
-                  details={details}
-                  data={data}
+                  data={{
+                    collection: collection.data,
+                    details,
+                  }}
                   signer={signer}
                   isInTheWrongNetwork={isInTheWrongNetwork}
-                  setToast={(data) =>
-                    toast.custom((t) => (
-                      <Toast t={t} toast={toast} data={data} />
-                    ))
-                  }
+                  setToast={setToast}
                   show={!isOwner}
                 />
               </Price>
@@ -224,21 +198,22 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               >
                 <AcceptOffer
                   apiBase={apiBase}
-                  details={details}
-                  data={data}
-                  signer={signer}
-                  show={isOwner}
+                  data={{
+                    collection: collection.data,
+                    details,
+                  }}
                   isInTheWrongNetwork={isInTheWrongNetwork}
-                  setToast={(data) =>
-                    toast.custom((t) => (
-                      <Toast t={t} toast={toast} data={data} />
-                    ))
-                  }
+                  setToast={setToast}
+                  show={isOwner}
+                  signer={signer}
                 />
                 {!isOwner && (
                   <TokenOfferModal
                     signer={signer}
-                    data={data}
+                    data={{
+                      collection: collection.data,
+                      details,
+                    }}
                     royalties={{
                       bps: collection.data?.collection?.royalties?.bps,
                       recipient:
@@ -249,38 +224,37 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                       chainId: +chainId as ChainId,
                       openSeaApiKey,
                     }}
-                    details={details}
-                    setToast={(data) =>
-                      toast.custom((t) => (
-                        <Toast t={t} toast={toast} data={data} />
-                      ))
-                    }
+                    setToast={setToast}
                   />
                 )}
               </Price>
             </div>
-            <CancelOffer
-              apiBase={apiBase}
-              details={details}
-              data={data}
-              signer={signer}
-              show={isTopBidder}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={(data) =>
-                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-              }
-            />
-            <CancelListing
-              apiBase={apiBase}
-              data={data}
-              signer={signer}
-              details={details}
-              show={isOwner && isListed}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={(data) =>
-                toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-              }
-            />
+            <div className="mt-6 flex justify-center">
+              <CancelOffer
+                apiBase={apiBase}
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                maker={accountData?.address.toLowerCase()}
+                signer={signer}
+                show={isTopBidder}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+              <CancelListing
+                apiBase={apiBase}
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                maker={accountData?.address.toLowerCase()}
+                signer={signer}
+                show={isOwner && isListed}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+            </div>
           </div>
           <TokenAttributes token={token?.token} />
         </div>
@@ -305,11 +279,10 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
-  mode: string
+  mode: ReturnType<typeof getMode>['mode']
 }> = async ({ req, params }) => {
   const { mode } = getMode(req, communityEnv, collectionEnv)
 
-  // GET token details
   const url = new URL('/tokens/details', apiBase)
 
   const query: paths['/tokens/details']['get']['parameters']['query'] = {
