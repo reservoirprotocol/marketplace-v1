@@ -81,7 +81,6 @@ const UserActivityTable: FC<Props> = ({
                             <div className="aspect-w-1 aspect-h-1 relative">
                               <img
                                 src={optimizeImage(image, 35)}
-                                alt={name}
                                 className="w-9 object-contain"
                                 width="36"
                                 height="36"

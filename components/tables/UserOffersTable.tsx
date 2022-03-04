@@ -99,7 +99,6 @@ const UserOffersTable: FC<Props> = ({
                           <div className="aspect-w-1 aspect-h-1 relative">
                             <img
                               src={optimizeImage(image, 35)}
-                              alt={image}
                               className="w-[35px] object-contain"
                               width="35"
                               height="35"

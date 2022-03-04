@@ -71,7 +71,6 @@ const ModalCard: FC<Props> = ({
               data?.collection?.image || data?.token?.image,
               50
             )}
-            alt=""
             className="w-[50px]"
           />
           <div className="overflow-auto">
