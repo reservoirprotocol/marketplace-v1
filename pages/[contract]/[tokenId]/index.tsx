@@ -140,7 +140,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           />
           <div>
             <Link href={`/collections/${collectionId}`}>
-              <a className="mb-1 block  text-2xl font-bold">
+              <a className="mb-1 block text-2xl font-bold">
                 {token?.token?.collection?.name}
               </a>
             </Link>
@@ -189,7 +189,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   {token?.token?.collection?.name}
                 </a>
               </Link>
-              <div className="mb-4 text-lg font-medium opacity-80">
+              <div className="mb-4 mr-3 max-w-[300px] overflow-hidden text-lg font-medium opacity-80">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
             </div>
