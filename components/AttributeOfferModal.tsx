@@ -130,7 +130,7 @@ const AttributeOfferModal: FC<Props> = ({
             return
           }
         }}
-        className="btn-neutral-outline border-black py-2"
+        className="btn-primary-outline"
       >
         Maker an attribute offer
       </Dialog.Trigger>
@@ -206,7 +206,7 @@ const AttributeOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-green-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

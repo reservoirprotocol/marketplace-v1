@@ -60,7 +60,7 @@ const ModalCard: FC<Props> = ({
           </Dialog.Title>
           <Dialog.Close
             onClick={onCloseCallback}
-            className="btn-neutral-ghost p-1.5"
+            className="btn-neutral-outline p-1.5"
           >
             <HiX className="h-5 w-5" />
           </Dialog.Close>
@@ -112,7 +112,7 @@ const ModalCard: FC<Props> = ({
           <div className="flex items-center gap-4">
             <Dialog.Close
               onClick={onCloseCallback}
-              className="btn-neutral-fill w-full"
+              className="btn-red-fill w-full"
             >
               Cancel
             </Dialog.Close>

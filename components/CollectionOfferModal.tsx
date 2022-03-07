@@ -126,7 +126,7 @@ const CollectionOfferModal: FC<Props> = ({
             return
           }
         }}
-        className="btn-neutral-outline border-black py-2"
+        className="btn-primary-outline"
       >
         Make a collection offer
       </Dialog.Trigger>
@@ -198,7 +198,7 @@ const CollectionOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-green-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

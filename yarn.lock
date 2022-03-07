@@ -1110,10 +1110,15 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@ramosdiego/ui@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@ramosdiego/ui/-/ui-0.0.9.tgz#1c3bc18b78efdf4e662733677d43fbc7edc437cc"
-  integrity sha512-3/yDeGUG+ruYgn43azflgPInfJs0aDn7fngo7+WbQ+pjo8aGDMiQVTtxJIYyoa/WGI4VMAl8l9ub7pmYwdg3Iw==
+"@ramosdiego/reservoir@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@ramosdiego/reservoir/-/reservoir-0.0.4.tgz#84fe32b1dfe15cc414aea51035976b0977b222f1"
+  integrity sha512-7VYKV7Z9XIy5Ic7zl+u3VUcStqeOGoDjXMxRHUa5BNHDvok9JnyrJpO6DVK37RGp/+6G+4AY+7ruRAvAmlnKLA==
+
+"@ramosdiego/ui@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@ramosdiego/ui/-/ui-0.0.10.tgz#a2f64c23cb03fca80184dd20ef01173f49a7a8e1"
+  integrity sha512-V4o+owVvgeVfKvj5oUobm1GyJO2VPKKtIwmGS/WlwPLXGvV470g6D8xUG8AHN6bM9EhALWUl8/QEiDMXwco0wQ==
 
 "@reservoir0x/sdk@^0.0.25":
   version "0.0.25"

@@ -51,6 +51,8 @@ export default async function executeSteps(
   if (json.error) throw new Error(json.error)
   if (!json.steps) throw new ReferenceError('There are no steps.')
 
+  console.log(json)
+
   // Update state on first call or recursion
   setSteps([...json?.steps])
 
