@@ -253,7 +253,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-primary-outline w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

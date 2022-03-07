@@ -198,7 +198,7 @@ const CollectionOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-primary-outline w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>
