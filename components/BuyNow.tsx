@@ -160,7 +160,7 @@ const BuyNow: FC<Props> = ({
             })
             setWaitingTx(false)
           }}
-          className="btn-neutral-fill w-full"
+          className="btn-primary-fill w-full"
         >
           {waitingTx ? 'Waiting...' : 'Buy now'}
         </Dialog.Trigger>

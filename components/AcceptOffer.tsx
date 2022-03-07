@@ -158,7 +158,7 @@ const AcceptOffer: FC<Props> = ({
             })
             setWaitingTx(false)
           }}
-          className="btn-neutral-outline w-full"
+          className="btn-primary-outline w-full"
         >
           {waitingTx ? 'Waiting...' : 'Accept offer'}
         </Dialog.Trigger>

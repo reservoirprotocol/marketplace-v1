@@ -178,7 +178,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
             return
           }
         }}
-        className="btn-neutral-outline w-full"
+        className="btn-primary-outline w-full"
       >
         Make Offer
       </Dialog.Trigger>
@@ -253,7 +253,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-primary-outline w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

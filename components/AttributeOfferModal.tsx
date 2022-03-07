@@ -206,7 +206,7 @@ const AttributeOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-green-fill w-full"
+                className="btn-primary-outline w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

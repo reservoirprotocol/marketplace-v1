@@ -155,7 +155,7 @@ const CancelOffer: FC<Props> = ({
             })
             setWaitingTx(false)
           }}
-          className="btn-red-outline"
+          className="btn-primary-outline"
         >
           {waitingTx ? 'Waiting...' : 'Cancel your offer'}
         </Dialog.Trigger>
