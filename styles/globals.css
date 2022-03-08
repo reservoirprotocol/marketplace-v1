@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-size: 14px;
-  }
-}
-
 @font-face {
   font-family: 'Obvia';
   src: url('/fonts/obvia_medium-webfont.woff2') format('woff2'),
