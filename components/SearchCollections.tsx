@@ -141,7 +141,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         index,
                         item: collection,
                       })}
-                      className={`flex items-center gap-4 p-4 hover:bg-[#F3F4F6] md:p-3.5 ${
+                      className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
                         highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
                       }`}
                     >
@@ -153,14 +153,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         alt={`${collection?.collection?.name}'s logo.`}
                         className="h-9 w-9 overflow-hidden rounded-full"
                       />
-                      <span className="reservoir-subtitle">
+                      <span className="reservoir-subtitle ml-2">
                         {collection?.collection?.name}
                       </span>
                     </a>
                   </Link>
                 ))
               ) : (
-                <div className="flex items-center gap-4 p-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 md:p-3.5">
+                <div className="flex items-center p-4">
                   No collections found
                 </div>
               )}
