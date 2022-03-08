@@ -115,7 +115,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           <input
             type="search"
             className="input-primary-outline w-full pl-9"
-            placeholder="Search for an NFT collection"
+            placeholder="Search for a collection"
             {...getInputProps()}
           />
 
