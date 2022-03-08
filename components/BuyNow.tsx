@@ -162,13 +162,13 @@ const BuyNow: FC<Props> = ({
           }}
           className="btn-primary-fill w-full"
         >
-          {waitingTx ? 'Waiting...' : 'Buy now'}
+          {waitingTx ? 'Waiting...' : 'Buy Now'}
         </Dialog.Trigger>
       )}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Buy now" data={modalData} steps={steps} />
+            <ModalCard title="Buy Now" data={modalData} steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

@@ -185,7 +185,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Make a token offer"
+            title="Make a Token Offer"
             data={modalData}
             steps={steps}
             onCloseCallback={() => setSteps(undefined)}

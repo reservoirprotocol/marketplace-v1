@@ -128,12 +128,12 @@ const CollectionOfferModal: FC<Props> = ({
         }}
         className="btn-primary-outline"
       >
-        Make a collection offer
+        Make a Collection Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Make a collection offer"
+            title="Make a Collection Offer"
             data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}

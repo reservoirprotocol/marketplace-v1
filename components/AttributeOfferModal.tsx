@@ -132,12 +132,12 @@ const AttributeOfferModal: FC<Props> = ({
         }}
         className="btn-primary-outline"
       >
-        Maker an attribute offer
+        Maker an Attribute Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Maker an attribute offer"
+            title="Maker an Attribute Offer"
             data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}

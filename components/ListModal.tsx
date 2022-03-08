@@ -127,7 +127,7 @@ const ListModal: FC<Props> = ({
           disabled={isInTheWrongNetwork}
           className="btn-primary-fill w-full"
         >
-          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sale'}
+          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for Sale'}
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

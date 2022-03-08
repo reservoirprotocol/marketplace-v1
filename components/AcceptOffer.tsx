@@ -160,13 +160,13 @@ const AcceptOffer: FC<Props> = ({
           }}
           className="btn-primary-outline w-full"
         >
-          {waitingTx ? 'Waiting...' : 'Accept offer'}
+          {waitingTx ? 'Waiting...' : 'Accept Offer'}
         </Dialog.Trigger>
       )}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Accept offer" data={modalData} steps={steps} />
+            <ModalCard title="Accept Offer" data={modalData} steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

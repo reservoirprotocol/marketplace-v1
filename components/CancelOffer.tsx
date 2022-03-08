@@ -157,7 +157,7 @@ const CancelOffer: FC<Props> = ({
           }}
           className="btn-primary-outline"
         >
-          {waitingTx ? 'Waiting...' : 'Cancel your offer'}
+          {waitingTx ? 'Waiting...' : 'Cancel Your Offer'}
         </Dialog.Trigger>
       )}
       {steps && (
