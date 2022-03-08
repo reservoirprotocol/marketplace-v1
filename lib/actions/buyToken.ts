@@ -13,6 +13,10 @@ type Data = {
   handleSuccess?: () => any
 }
 
+/**
+ * Instantly buy a token
+ * @param data
+ */
 export default async function buyToken(data: Data) {
   const {
     tokenId,
@@ -30,8 +34,10 @@ export default async function buyToken(data: Data) {
   }
 
   try {
+    // Construct an URL object for the `/execute/buy` endpoint
     const url = new URL('/execute/buy', apiBase)
 
+    // Construct the query object to execute the trade
     const query: paths['/execute/buy']['get']['parameters']['query'] = {
       contract,
       tokenId,

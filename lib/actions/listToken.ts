@@ -20,6 +20,10 @@ type Data = {
   handleSuccess?: () => any
 }
 
+/**
+ * List a token for sale
+ * @param data
+ */
 export default async function listToken(data: Data) {
   const { query, signer, apiBase, setSteps, handleSuccess, handleError } = data
 
@@ -37,6 +41,7 @@ export default async function listToken(data: Data) {
   }
 
   try {
+    // Construct an URL object for the `/execute/list` endpoint
     const url = new URL('/execute/list', apiBase)
 
     setParams(url, query)

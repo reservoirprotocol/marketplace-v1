@@ -12,6 +12,10 @@ type Data = {
   handleSuccess?: () => any
 }
 
+/**
+ * Place an offer to buy a token
+ * @param data
+ */
 export default async function placeBid(data: Data) {
   const { query, signer, apiBase, setSteps, handleSuccess, handleError } = data
 
@@ -21,6 +25,7 @@ export default async function placeBid(data: Data) {
   }
 
   try {
+    // Construct an URL object for the `/execute/bid` endpoint
     const url = new URL('/execute/bid', apiBase)
 
     setParams(url, query)

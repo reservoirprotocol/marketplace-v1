@@ -27,8 +27,10 @@ export default async function cancelOrder(data: Data) {
   }
 
   try {
+    // Construct an URL object for the `/execute/cancel` endpoint
     const url = new URL('/execute/cancel', apiBase)
 
+    // Construct the query object to execute the trade
     const query: paths['/execute/cancel']['get']['parameters']['query'] = {
       hash,
       maker,
