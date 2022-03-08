@@ -158,6 +158,9 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     },
   }
 
+  const orderbook: Parameters<typeof placeBid>[0]['query']['orderbook'] =
+    postOnOpenSea ? 'opensea' : 'reservoir'
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -175,14 +178,14 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
             return
           }
         }}
-        className="btn-neutral-outline w-full border-neutral-900"
+        className="btn-primary-outline w-full"
       >
         Make Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Make a token offer"
+            title="Make a Token Offer"
             data={modalData}
             steps={steps}
             onCloseCallback={() => setSteps(undefined)}
@@ -218,6 +221,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                     query: {
                       maker: await signer.getAddress(),
                       price: calculations.total.toString(),
+                      orderbook,
                       expirationTime: expirationValue,
                       contract: token.token?.contract,
                       tokenId: token.token?.tokenId,
@@ -249,7 +253,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>
@@ -274,7 +278,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   className="input-blue-outline w-[120px]"
                 />
               </div>
-              <div className="hidden items-center gap-3">
+              <div className="flex items-center gap-3">
                 <label
                   htmlFor="postOpenSea"
                   className="font-medium uppercase opacity-75"

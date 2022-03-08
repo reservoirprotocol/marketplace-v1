@@ -126,14 +126,14 @@ const CollectionOfferModal: FC<Props> = ({
             return
           }
         }}
-        className="btn-neutral-outline border-black py-2"
+        className="btn-primary-outline"
       >
-        Make a collection offer
+        Make a Collection Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Make a collection offer"
+            title="Make a Collection Offer"
             data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
@@ -198,7 +198,7 @@ const CollectionOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

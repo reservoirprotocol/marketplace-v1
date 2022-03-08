@@ -130,14 +130,14 @@ const AttributeOfferModal: FC<Props> = ({
             return
           }
         }}
-        className="btn-neutral-outline border-black py-2"
+        className="btn-primary-outline"
       >
-        Maker an attribute offer
+        Maker an Attribute Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
-            title="Maker an attribute offer"
+            title="Maker an Attribute Offer"
             data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
@@ -206,7 +206,7 @@ const AttributeOfferModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'Make Offer'}
               </button>

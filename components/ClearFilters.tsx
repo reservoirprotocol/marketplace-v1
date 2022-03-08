@@ -5,7 +5,7 @@ const ClearFilters = ({ router }: { router: NextRouter }) => {
     <div className="grid place-items-center gap-3">
       <p className="text-center">No tokens found.</p>
       <button
-        className="btn-neutral-outline"
+        className="btn-primary-outline"
         onClick={() => {
           if (router.query.pathname === '/collections/[id]') {
             router.push(

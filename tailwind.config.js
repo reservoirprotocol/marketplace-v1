@@ -15,11 +15,20 @@ module.exports = {
       animation: {
         'slide-down': 'slide-down 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
       },
+      colors: {
+        primary: {
+          100: '#F1E5FF',
+          300: '#E2CCFF',
+          500: '#A966FF',
+          700: '#7000FF',
+          900: '#430099',
+        },
+      },
     },
   },
   plugins: [
     require('tailwindcss-radix')(),
-    require('@ramosdiego/ui')({
+    require('@ramosdiego/reservoir')({
       buttons: {
         animate: true,
       },

@@ -155,9 +155,9 @@ const CancelListing: FC<Props> = ({
             })
             setWaitingTx(false)
           }}
-          className="btn-red-ghost"
+          className="btn-primary-outline"
         >
-          {waitingTx ? 'Waiting...' : 'Cancel listing'}
+          {waitingTx ? 'Waiting...' : 'Cancel Listing'}
         </Dialog.Trigger>
       )}
       {steps && (

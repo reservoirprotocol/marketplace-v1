@@ -125,9 +125,9 @@ const ListModal: FC<Props> = ({
       <Dialog.Trigger asChild>
         <button
           disabled={isInTheWrongNetwork}
-          className="btn-neutral-fill-dark w-full"
+          className="btn-primary-fill w-full"
         >
-          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for sale'}
+          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for Sale'}
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -194,7 +194,7 @@ const ListModal: FC<Props> = ({
                   })
                   setWaitingTx(false)
                 }}
-                className="btn-blue-fill w-full"
+                className="btn-primary-fill w-full"
               >
                 {waitingTx ? 'Waiting...' : 'List'}
               </button>
