@@ -53,11 +53,9 @@ const ModalCard: FC<Props> = ({
 
   return (
     <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-      <div className="fixed top-1/2 left-1/2 w-[420px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-11 shadow-md ">
+      <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-11 shadow-md ">
         <div className="mb-4 flex items-center justify-between">
-          <Dialog.Title className="text-lg font-medium uppercase opacity-75">
-            {title}
-          </Dialog.Title>
+          <Dialog.Title className="reservoir-h4">{title}</Dialog.Title>
           <Dialog.Close
             onClick={onCloseCallback}
             className="btn-primary-outline p-1.5"
@@ -74,14 +72,14 @@ const ModalCard: FC<Props> = ({
             className="w-[50px]"
           />
           <div className="overflow-auto">
-            <div className="text-sm">{subTitle}</div>
-            <div className="my-1.5 text-lg font-medium">
+            <div className="reservoir-body">{subTitle}</div>
+            <div className="reservoir-h4 my-1.5">
               {/* If this is an offer modal, change */}
               {/* the header based on the type of offer */}
               {data?.attribute ? (
                 <>
                   <span>{data?.attribute?.key}: </span>
-                  <strong>{data?.attribute?.value}</strong>
+                  <span>{data?.attribute?.value}</span>
                 </>
               ) : data?.token ? (
                 data?.token?.name
@@ -90,13 +88,13 @@ const ModalCard: FC<Props> = ({
               )}
             </div>
             {data?.collection?.tokenCount && (
-              <div className="mb-1.5 text-sm">
+              <div className="reservoir-body mb-1.5">
                 {`${data?.collection?.tokenCount} Eligible Tokens`}
               </div>
             )}
           </div>
         </div>
-        <div className="mb-5 flex flex-wrap items-stretch gap-1.5 text-sm">
+        <div className="reservoir-body mb-5 flex flex-wrap items-stretch gap-1.5">
           <TopOffer topBuyValue={data?.token?.topBuyValue} />
           <ListPrice floorSellValue={data?.token?.floorSellValue} />
         </div>
@@ -133,9 +131,9 @@ export const ListPrice = ({
 }) => {
   if (floorSellValue) {
     return (
-      <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
+      <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5 text-[#111827]">
         <span className="whitespace-nowrap">List Price</span>
-        <div className="font-semibold">
+        <div>
           <FormatEth
             amount={floorSellValue}
             maximumFractionDigits={4}
@@ -156,9 +154,9 @@ export const TopOffer = ({
 }) => {
   if (topBuyValue) {
     return (
-      <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
+      <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5">
         <span className="whitespace-nowrap">Current Top Offer</span>
-        <div className="font-semibold">
+        <div>
           <FormatEth
             amount={topBuyValue}
             maximumFractionDigits={4}

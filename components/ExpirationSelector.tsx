@@ -17,10 +17,7 @@ const ExpirationSelector: FC<Props> = ({
 }) => {
   return (
     <>
-      <label
-        htmlFor="expirationSelector"
-        className="mb-2 font-medium uppercase opacity-75"
-      >
+      <label htmlFor="expirationSelector" className="reservoir-h6 mb-2">
         Expiration
       </label>
 
@@ -29,7 +26,7 @@ const ExpirationSelector: FC<Props> = ({
         id="expirationSelector"
         defaultValue={expiration}
         onChange={(e) => setExpiration(e.target.value)}
-        className="input-blue-outline"
+        className="input-primary-outline"
       >
         {presets.map(({ preset, display }) => (
           <option key={preset} value={preset}>

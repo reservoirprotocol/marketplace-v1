@@ -1,35 +1,38 @@
 import { FC } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
+import { HiX } from 'react-icons/hi'
 
 const InfoModal: FC = () => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="hidden hover:underline sm:grid">
+        <button className="reservoir-body hidden hover:underline sm:grid">
           What is reservoir.market?
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-            <div className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-6 shadow-md ">
-              <Dialog.Close className="btn-primary-outline ml-auto mb-3 p-1.5">
-                Close
-              </Dialog.Close>
+            <div className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-8 shadow-md ">
               <div className="space-y-3">
                 <section>
-                  <strong className="mb-3 block text-xl">
-                    What is reservoir.market?
-                  </strong>
-                  <p className="mb-1">
+                  <div className="reservoir-h4 mb-3 flex justify-between">
+                    <p>What is reservoir.market?</p>
+                    <Dialog.Close className="btn-primary-outline p-1.5">
+                      <HiX className="h-5 w-5" />
+                    </Dialog.Close>
+                  </div>
+                  <p className="reservoir-body mb-1">
                     Reservoir.market is a demo marketplace designed to show how
                     simple it is to build on top of Reservoir, a web3-native
                     order book protocol.
                   </p>
                 </section>
-                <section>
-                  <strong className="mb-2 block">It supports 3 modes:</strong>
+                <section className="reservoir-body">
+                  <div className="reservoir-h6 mb-2 block">
+                    It supports 3 modes:
+                  </div>
                   <ul>
                     <li>
                       Single collection community:{' '}

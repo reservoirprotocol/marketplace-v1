@@ -42,19 +42,21 @@ const Steps: FC<Props> = ({ steps }) => {
                 ></path>
               </svg>
             ) : (
-              <div className="mr-1 ml-1 flex h-8 w-8 items-center justify-center rounded-full text-center text-lg font-semibold ring-2 ring-inset ring-neutral-900">
+              <div className="reservoir-h6 mr-1 ml-1 flex h-8 w-8 items-center justify-center rounded-full text-center ring-2 ring-inset ring-neutral-900">
                 <div>{index + 1}</div>
               </div>
             )}
           </div>
           <div>
-            <div className="mb-1 mt-0.5 font-semibold">{action}</div>
-            {error && <div className="mb-2.5 text-red-800">{error}</div>}
+            <div className="reservoir-h6 mb-1 mt-0.5">{action}</div>
+            {error && (
+              <div className="reservoir-h6 mb-2.5 text-red-800">{error}</div>
+            )}
             {firstIncomplete === index && (
               <>
-                <div className="mb-2.5">{description}</div>
+                <div className="reservoir-body mb-2.5">{description}</div>
                 {message && (
-                  <div className="italic text-neutral-800">{message}</div>
+                  <div className="reservoir-body italic">{message}</div>
                 )}
               </>
             )}
