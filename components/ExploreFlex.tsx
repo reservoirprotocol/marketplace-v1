@@ -10,9 +10,9 @@ const ExploreFlex = () => {
     return (
       <div className="flex flex-wrap gap-3">
         <div className="relative flex rounded-md border border-neutral-300 dark:border-neutral-700">
-          <div className="flex items-center justify-between gap-1.5 px-4 py-1 lg:py-2">
-            <p className="reservoir-body capitalize">Explore</p>
-            <p className="reservoir-label-l">{`${
+          <div className="reservoir-label-l flex items-center justify-between gap-1.5 px-4 py-1 lg:py-2">
+            <p className="capitalize">Explore</p>
+            <p>{`${
               router.query?.attribute_key === ''
                 ? 'All'
                 : router.query?.attribute_key

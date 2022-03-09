@@ -66,31 +66,31 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                           value={attribute?.value}
                         />
                         <div className="flex-grow"></div>
-                        <div className="mb-2 mt-2.5 flex items-baseline gap-2 text-lg lg:mt-4">
+                        <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
                           <span>{attribute?.key}</span>
-                          <span className="mr-2 font-bold tracking-wide">
-                            {attribute?.value}
-                          </span>
-                          <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 text-base dark:bg-neutral-800">
+                          <span className="mr-2">{attribute?.value}</span>
+                          <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 dark:bg-neutral-800">
                             {formatNumber(attribute?.tokenCount)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="grid">
-                            <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                            <span className="reservoir-subtitle text-gray-400">
                               Offer
                             </span>
-                            <FormatEth
-                              amount={attribute?.topBuy?.value}
-                              maximumFractionDigits={4}
-                              logoWidth={7}
-                            />
+                            <span className="reservoir-h6">
+                              <FormatEth
+                                amount={attribute?.topBuy?.value}
+                                maximumFractionDigits={4}
+                                logoWidth={7}
+                              />
+                            </span>
                           </div>
                           <div className="grid text-right">
-                            <span className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                            <span className="reservoir-subtitle text-gray-400">
                               Price
                             </span>
-                            <span>
+                            <span className="reservoir-h6">
                               <FormatEth
                                 amount={attribute?.floorSellValues?.[0]}
                                 maximumFractionDigits={4}
