@@ -35,7 +35,7 @@ const UserListingsTable: FC<Props> = ({
 
   if (positionsFlat.length === 0) {
     return (
-      <div className="mt-14 grid justify-center text-lg">
+      <div className="reservoir-body mt-14 grid justify-center">
         You don&apos;t have any items listed for sale.
       </div>
     )
@@ -50,7 +50,7 @@ const UserListingsTable: FC<Props> = ({
               <th
                 key={item}
                 scope="col"
-                className="px-6 py-3 text-left font-medium uppercase tracking-wider text-gray-500"
+                className="reservoir-label-l px-6 py-3 text-left"
               >
                 {item}
               </th>
@@ -83,7 +83,7 @@ const UserListingsTable: FC<Props> = ({
                 className="group even:bg-neutral-100 dark:even:bg-neutral-900"
               >
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-10 w-10">
@@ -99,24 +99,24 @@ const UserListingsTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div>{collectionName}</div>
-                        <div className="font-semibold">{name}</div>
+                        <div className="reservoir-body">{collectionName}</div>
+                        <div className="reservoir-h6">{name}</div>
                       </span>
                     </a>
                   </Link>
                 </td>
 
                 {/* PRICE */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <FormatEth amount={value} maximumFractionDigits={4} />
                 </td>
 
                 {/* EXPIRATION */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {expiration}
                 </td>
                 {isOwner && (
-                  <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <td className="reservoir-body whitespace-nowrap px-6 py-4">
                     <CancelListing
                       apiBase={modal.apiBase}
                       data={{

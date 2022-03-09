@@ -3,9 +3,9 @@ import Link from 'next/link'
 import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { paths } from 'interfaces/apiTypes'
-import { RiLoader2Fill } from 'react-icons/ri'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
+import { FiSearch, FiXCircle } from 'react-icons/fi'
 
 type Props = {
   communityId?: string
@@ -104,33 +104,39 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
         isOpen,
         highlightedIndex,
         inputValue,
+        reset,
       }) => (
         <div
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className={`relative mr-auto inline-flex w-[300px] rounded-md border py-2 transition hover:border-neutral-300 hover:shadow-md dark:hover:border-neutral-700 md:w-[400px] ${
-            focused
-              ? 'border-neutral-300 shadow-md dark:border-neutral-700'
-              : 'border-neutral-200 dark:border-neutral-800'
-          }`}
+          className="relative w-[300px] md:w-[400px]"
         >
+          <FiSearch
+            className={`absolute top-1/2 left-3 z-20 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
+              focused ? 'text-[#9CA3AF]' : ''
+            }`}
+          />
           <input
-            type="search"
-            className="w-full bg-transparent px-4 py-1 placeholder-neutral-600 focus:outline-none dark:placeholder-neutral-500"
-            placeholder="Search for an NFT collection"
+            type="text"
+            className="reservoir-label-l input-primary-outline w-full pl-9"
+            placeholder="Search for a collection"
             {...getInputProps()}
           />
-
+          {typeof inputValue === 'string' && inputValue !== '' && (
+            <button
+              onClick={() => {
+                reset()
+                setFocused(false)
+              }}
+            >
+              <FiXCircle className="absolute top-1/2 right-3 z-20 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+            </button>
+          )}
           {(focused || isOpen) && (
             <div
-              className="absolute top-14 z-10 w-full overflow-hidden rounded-md border border-neutral-200 bg-white shadow-lg"
+              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
               {...getMenuProps()}
             >
-              {loading && (
-                <div className="absolute right-0 z-20 p-1.5">
-                  <RiLoader2Fill className="h-6 w-6 animate-spin" />
-                </div>
-              )}
               {results?.collections?.length !== 0 ? (
                 results?.collections?.slice(0, 6).map((collection, index) => (
                   <Link
@@ -143,10 +149,8 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         index,
                         item: collection,
                       })}
-                      className={`flex items-center gap-4 p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 md:p-3.5 ${
-                        highlightedIndex === index
-                          ? 'bg-neutral-200 dark:bg-neutral-800'
-                          : ''
+                      className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
+                        highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
                       }`}
                     >
                       <img
@@ -155,14 +159,16 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                           'https://via.placeholder.com/30'
                         }
                         alt={`${collection?.collection?.name}'s logo.`}
-                        className="h-[40px] w-[40px] overflow-hidden rounded-full"
+                        className="h-9 w-9 overflow-hidden rounded-full"
                       />
-                      <span>{collection?.collection?.name}</span>
+                      <span className="reservoir-subtitle ml-2">
+                        {collection?.collection?.name}
+                      </span>
                     </a>
                   </Link>
                 ))
               ) : (
-                <div className="flex items-center gap-4 p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 md:p-3.5">
+                <div className="flex items-center p-4">
                   No collections found
                 </div>
               )}

@@ -36,7 +36,7 @@ const AttributeSelector: FC<Props> = ({
   return (
     <div className="bg-white p-2 dark:bg-black lg:p-3">
       <DebounceInput
-        className={`mt-1 mb-1.5 w-full rounded-md bg-transparent px-1.5 py-1 font-medium placeholder-neutral-500 ring-1 ring-neutral-300 hover:ring-neutral-500 focus:bg-neutral-50 focus:shadow focus:outline-none focus:ring-neutral-400 dark:placeholder-neutral-400 dark:ring-neutral-700 dark:focus:bg-neutral-900 dark:focus:ring-neutral-500`}
+        className={`input-primary-outline mt-1 mb-1.5 w-full px-1.5 py-1 `}
         type="search"
         autoFocus
         autoComplete="off"
@@ -54,8 +54,8 @@ const AttributeSelector: FC<Props> = ({
               key={`${value}${index}`}
               setTokensSize={setTokensSize}
             >
-              <span>{value}</span>
-              <span>{count}</span>
+              <span className="reservoir-body">{value}</span>
+              <span className="reservoir-body">{count}</span>
             </AttributeButton>
           )
         })}

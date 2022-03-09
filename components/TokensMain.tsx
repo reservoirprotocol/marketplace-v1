@@ -306,13 +306,6 @@ const TokensMain: FC<Props> = ({
             <div>
               <AttributesFlex />
               <ExploreFlex />
-              {!router.query?.attribute_key &&
-                router.query?.attribute_key !== '' &&
-                !filtersApplied && (
-                  <div className="font-medium uppercase opacity-75">
-                    All Tokens
-                  </div>
-                )}
             </div>
             <div className="flex items-center gap-2">
               {router.query?.attribute_key ||

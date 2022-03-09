@@ -44,7 +44,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
     <div className="flex items-center gap-2">
       {ens?.avatar ? (
         <img
-          className="block h-[32px] w-[32px] rounded-full"
+          className="block h-8 w-8 rounded-full"
           src={ens.avatar}
           alt="ENS Avatar"
         />
@@ -53,13 +53,13 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
       )}
       <div>
         {title && (
-          <p className="text-sm font-medium uppercase opacity-75">{title}</p>
+          <p className="reservoir-label-l capitalize text-gray-400">{title}</p>
         )}
         {ens?.name ? (
           <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
           <div
-            className="block whitespace-nowrap font-mono lowercase"
+            className="reservoir-label-l block whitespace-nowrap"
             title={address}
           >
             {shrinkAddress(address)}

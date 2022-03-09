@@ -206,10 +206,7 @@ const CollectionOfferModal: FC<Props> = ({
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="price"
-                  className="font-medium uppercase opacity-75"
-                >
+                <label htmlFor="price" className="reservoir-h6">
                   Price (wETH)
                 </label>
                 <input
@@ -220,7 +217,7 @@ const CollectionOfferModal: FC<Props> = ({
                   step={0.01}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-blue-outline w-[120px]"
+                  className="input-primary-outline w-[140px]"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -231,17 +228,15 @@ const CollectionOfferModal: FC<Props> = ({
                 />
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">Fees</div>
-                <div className="text-right">
+                <div className="reservoir-h6">Fees</div>
+                <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">
-                  Total Cost
-                </div>
-                <div className="text-2xl font-bold">
+                <div className="reservoir-h6">Total Cost</div>
+                <div className="reservoir-h6">
                   <FormatEth
                     amount={calculations.total}
                     maximumFractionDigits={4}

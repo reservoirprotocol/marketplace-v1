@@ -55,15 +55,15 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                   width="250"
                   height="250"
                 />
-                <p className="mb-3 overflow-hidden text-ellipsis px-6 pt-4 text-lg lg:pt-3">
+                <p className="reservoir-subtitle mb-3 overflow-hidden text-ellipsis px-6 pt-4 lg:pt-3">
                   {token?.name}
                 </p>
                 <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
-                    <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                    <div className="reservoir-subtitle text-gray-400">
                       Offer
                     </div>
-                    <div>
+                    <div className="reservoir-h6">
                       <FormatEth
                         amount={token?.topBuyValue}
                         maximumFractionDigits={4}
@@ -72,10 +72,10 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm uppercase text-neutral-500 dark:text-neutral-400">
+                    <div className="reservoir-subtitle text-gray-400">
                       Price
                     </div>
-                    <div>
+                    <div className="reservoir-h6">
                       <FormatEth
                         amount={token?.floorSellValue}
                         maximumFractionDigits={4}

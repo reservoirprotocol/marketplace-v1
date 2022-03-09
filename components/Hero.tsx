@@ -43,15 +43,15 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
-            <h1 className="mb-1 text-2xl font-semibold">{header.name}</h1>
+            <h1 className="reservoir-h4 mb-1">{header.name}</h1>
             <div className="flex items-center gap-5">
-              <Stat name="top offer">
+              <Stat name="Top Offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
               </Stat>
-              <Stat name="floor">
+              <Stat name="Floor">
                 <FormatEth amount={stats.floor} maximumFractionDigits={4} />
               </Stat>
-              <Stat name="items">{formatNumber(stats.count)}</Stat>
+              <Stat name="Items">{formatNumber(stats.count)}</Stat>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div className="grid items-center sm:flex sm:gap-1">
-    <div className="text-sm font-medium uppercase opacity-75">{name}</div>
-    <div className="font-semibold">{children}</div>
+    <div className="reservoir-h6 text-gray-400">{name}</div>
+    <div className="reservoir-h6">{children}</div>
   </div>
 )

@@ -1,11 +1,9 @@
 import Layout from 'components/Layout'
 import { paths } from 'interfaces/apiTypes'
-import fetcher from 'lib/fetcher'
 import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 import { ComponentProps, FC, ReactNode, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
@@ -149,16 +147,21 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
             </div>
           </div>
         </div>
-        <div className="mb-6 sm:ml-auto sm:mb-0 sm:self-start">
+        <div className="mb-6  sm:ml-auto sm:mb-0 sm:self-start">
           {/* TOKEN IMAGE */}
-          <div className="group mb-4 w-[500px]">
-            {tokenOpenSea?.extension === null ? (
-              <img src={optimizeImage(token?.token?.image, 500)} />
-            ) : (
-              <Media tokenOpenSea={tokenOpenSea} />
-            )}
-          </div>
-          <div className="mb-3 w-min ">
+          <img
+            className="mb-4 w-[500px]"
+            src={optimizeImage(token?.token?.image, 500)}
+          />
+          {/* {tokenOpenSea?.extension === null ? (
+            <img
+              className="mb-4 w-[500px]"
+              src={optimizeImage(token?.token?.image, 500)}
+            />
+          ) : (
+            <Media tokenOpenSea={tokenOpenSea} />
+          )} */}
+          <div className="mb-3 w-min">
             {token?.token?.owner && (
               <Link href={`/address/${token.token.owner}`}>
                 <a className="block">
@@ -185,11 +188,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   mode === 'collection' ? '/' : `/collections/${collectionId}`
                 }
               >
-                <a className="mb-1 block text-2xl font-bold">
+                <a className="reservoir-body mb-1 block">
                   {token?.token?.collection?.name}
                 </a>
               </Link>
-              <div className="mb-4 mr-3 max-w-[300px] overflow-hidden text-lg font-medium opacity-80">
+              <div className="reservoir-h4 mb-4 mr-3 max-w-[300px] overflow-hidden">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
             </div>
@@ -197,12 +200,12 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           <div className="mb-5 rounded-md border border-neutral-200 p-6">
             <div className="grid grid-cols-2 gap-8">
               <Price
-                title="list price"
+                title="List Price"
                 price={
                   <FormatEth
                     amount={token?.market?.floorSell?.value}
                     maximumFractionDigits={4}
-                    logoWidth={12}
+                    logoWidth={16}
                   />
                 }
               >
@@ -232,12 +235,12 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 />
               </Price>
               <Price
-                title="top offer"
+                title="Top Offer"
                 price={
                   <FormatEth
                     amount={token?.market?.topBuy?.value}
                     maximumFractionDigits={4}
-                    logoWidth={12}
+                    logoWidth={16}
                   />
                 }
               >
@@ -316,9 +319,9 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
   children,
 }) => (
   <div className="grid justify-items-center space-y-5">
-    <div className="text-center font-medium uppercase opacity-75">{title}</div>
-    <div className="text-3xl font-bold">{price}</div>
-    {children}
+    <div className="reservoir-h5 text-center">{title}</div>
+    <div className="reservoir-h4">{price}</div>
+    <div className="reservoir-h4">{children}</div>
   </div>
 )
 
@@ -366,7 +369,7 @@ const Media: FC<{
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video controls>
+      <video className="mb-4 w-[500px]" controls>
         <source src={animation_url} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
@@ -377,7 +380,7 @@ const Media: FC<{
   // AUDIO
   if (extension === 'wav' || extension === 'mp3') {
     return (
-      <audio controls src={animation_url}>
+      <audio className="mb-4" controls src={animation_url}>
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -386,7 +389,14 @@ const Media: FC<{
 
   // HTML
   if (extension === 'html' || extension === undefined) {
-    return <iframe width="500" height="500" src={animation_url}></iframe>
+    return (
+      <div className="relative h-[500px] w-full overflow-hidden pt-[56.25%]">
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={animation_url}
+        ></iframe>
+      </div>
+    )
   }
 
   return null

@@ -13,6 +13,10 @@ type Data = {
   handleSuccess?: () => any
 }
 
+/**
+ * Accept an offer to buy your token
+ * @param data
+ */
 export default async function acceptOffer(data: Data) {
   const {
     tokenId,
@@ -30,8 +34,10 @@ export default async function acceptOffer(data: Data) {
   }
 
   try {
+    // Construct an URL object for the `/execute/sell` endpoint
     const url = new URL('/execute/sell', apiBase)
 
+    // Construct the query object to execute the trade
     const query: paths['/execute/sell']['get']['parameters']['query'] = {
       tokenId,
       contract,

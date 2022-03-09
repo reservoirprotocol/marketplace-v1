@@ -1110,10 +1110,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@ramosdiego/reservoir@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@ramosdiego/reservoir/-/reservoir-0.0.6.tgz#032ebdd1447aa772f801f41953a98dbbb955736d"
-  integrity sha512-MpseUxDHXPFY7lPGEaKfqwbz6UuR4gWeT1s7sFsNmkWqJCMcc0qiOvQ9TijmRLbtHQYBqaV9xQJqocFswrDsxA==
+"@ramosdiego/reservoir@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@ramosdiego/reservoir/-/reservoir-0.0.10.tgz#e3025e7f63532514e26f1884149e33e6dac6f3ee"
+  integrity sha512-Ijniu3d5krQja3EQjg1rCUtuuQTYrGwjIk0gJ7N4wXy5bapRX+jOGQ0OuGP0Z7+oA83MHlskREFDeid/ikGfbw==
 
 "@ramosdiego/ui@^0.0.10":
   version "0.0.10"

@@ -202,10 +202,7 @@ const ListModal: FC<Props> = ({
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="price"
-                  className="font-medium uppercase opacity-75"
-                >
+                <label htmlFor="price" className="reservoir-h6">
                   Price (ETH)
                 </label>
                 <input
@@ -216,7 +213,7 @@ const ListModal: FC<Props> = ({
                   step={0.01}
                   value={listingPrice}
                   onChange={(e) => setListingPrice(e.target.value)}
-                  className="input-blue-outline w-[140px]"
+                  className="input-primary-outline w-[160px]"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -227,15 +224,15 @@ const ListModal: FC<Props> = ({
                 />
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">Fees</div>
-                <div className="text-right">
+                <div className="reservoir-h6">Fees</div>
+                <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">You get</div>
-                <div className="text-2xl font-bold">
+                <div className="reservoir-h6">You get</div>
+                <div className="reservoir-h6">
                   <FormatEth
                     amount={youGet}
                     maximumFractionDigits={4}

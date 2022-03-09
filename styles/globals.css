@@ -2,18 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-size: 14px;
-  }
-}
-
 @font-face {
   font-family: 'Obvia';
   src: url('/fonts/obvia_medium-webfont.woff2') format('woff2'),
     url('/fonts/obvia_bold-webfont.woff2') format('woff2');
+  font-display: swap;
   font-weight: 400 500 700;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* @font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Thin.ttf') format('truetype'),
+    url('/fonts/Inter-ExtraLight.ttf') format('truetype'),
+    url('/fonts/Inter-Light.ttf') format('truetype'),
+    url('/fonts/Inter-Regular.ttf') format('truetype'),
+    url('/fonts/Inter-Medium.ttf') format('truetype'),
+    url('/fonts/Inter-Semibold.ttf') format('truetype'),
+    url('/fonts/Inter-Bold.ttf') format('truetype'),
+    url('/fonts/Inter-ExtraBold.ttf') format('truetype'),
+    url('/fonts/Inter-Black.ttf') format('truetype');
+  font-display: swap;
+  font-weight: 100 900;
+} */
 
 .masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */

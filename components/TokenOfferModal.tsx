@@ -261,10 +261,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="price"
-                  className="font-medium uppercase opacity-75"
-                >
+                <label htmlFor="price" className="reservoir-h6">
                   Price (wETH)
                 </label>
                 <input
@@ -275,15 +272,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   step={0.01}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-blue-outline w-[120px]"
+                  className="input-primary-outline w-[160px]"
                 />
               </div>
               <div className="flex items-center gap-3">
-                <label
-                  htmlFor="postOpenSea"
-                  className="font-medium uppercase opacity-75"
-                >
-                  Also post to Open Sea
+                <label htmlFor="postOpenSea" className="reservoir-h6">
+                  Also post to OpenSea
                 </label>
                 <input
                   type="checkbox"
@@ -302,17 +296,15 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 />
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">Fees</div>
-                <div className="text-right">
+                <div className="reservoir-h6">Fees</div>
+                <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
                   <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="font-medium uppercase opacity-75">
-                  Total Cost
-                </div>
-                <div className="text-2xl font-bold">
+                <div className="reservoir-h6">Total Cost</div>
+                <div className="reservoir-h6">
                   <FormatEth
                     amount={calculations.total}
                     maximumFractionDigits={4}

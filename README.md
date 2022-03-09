@@ -57,7 +57,7 @@ The url for the logo can be a relative path if you have the image stored in your
 
 `NEXT_PUBLIC_NAVBAR_LOGO="/logo.png"`
 
-If you want to support cross-posting listings to Open Sea (optional), you'll need an API key:
+If you want to support cross-posting listings to OpenSea (optional), you'll need an API key:
 
 `NEXT_PUBLIC_OPENSEA_API_KEY=abc`
 
