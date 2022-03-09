@@ -147,16 +147,21 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
             </div>
           </div>
         </div>
-        <div className="mb-6 sm:ml-auto sm:mb-0 sm:self-start">
+        <div className="mb-6  sm:ml-auto sm:mb-0 sm:self-start">
           {/* TOKEN IMAGE */}
-          <div className="group mb-4 w-[500px]">
-            {tokenOpenSea?.extension === null ? (
-              <img src={optimizeImage(token?.token?.image, 500)} />
-            ) : (
-              <Media tokenOpenSea={tokenOpenSea} />
-            )}
-          </div>
-          <div className="mb-3 w-min ">
+          <img
+            className="mb-4 w-[500px]"
+            src={optimizeImage(token?.token?.image, 500)}
+          />
+          {/* {tokenOpenSea?.extension === null ? (
+            <img
+              className="mb-4 w-[500px]"
+              src={optimizeImage(token?.token?.image, 500)}
+            />
+          ) : (
+            <Media tokenOpenSea={tokenOpenSea} />
+          )} */}
+          <div className="mb-3 w-min">
             {token?.token?.owner && (
               <Link href={`/address/${token.token.owner}`}>
                 <a className="block">
@@ -364,7 +369,7 @@ const Media: FC<{
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video controls>
+      <video className="mb-4 w-[500px]" controls>
         <source src={animation_url} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
@@ -375,7 +380,7 @@ const Media: FC<{
   // AUDIO
   if (extension === 'wav' || extension === 'mp3') {
     return (
-      <audio controls src={animation_url}>
+      <audio className="mb-4" controls src={animation_url}>
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -384,7 +389,14 @@ const Media: FC<{
 
   // HTML
   if (extension === 'html' || extension === undefined) {
-    return <iframe width="500" height="500" src={animation_url}></iframe>
+    return (
+      <div className="relative h-[500px] w-full overflow-hidden pt-[56.25%]">
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={animation_url}
+        ></iframe>
+      </div>
+    )
   }
 
   return null
