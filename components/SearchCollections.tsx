@@ -109,7 +109,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
         <div
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="relative w-[400px]"
+          className="relative w-[300px] md:w-[400px]"
         >
           <FiSearch
             className={`absolute top-1/2 left-3 z-20 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${

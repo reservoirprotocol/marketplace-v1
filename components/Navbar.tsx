@@ -15,7 +15,7 @@ const logo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const Navbar: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   return (
-    <nav className="flex items-center justify-between py-3 px-3 sm:py-4">
+    <nav className="flex items-center justify-between gap-8 py-3 px-3 sm:py-4">
       <Link href="/">
         <a className="flex items-center justify-between gap-3">
           <img
