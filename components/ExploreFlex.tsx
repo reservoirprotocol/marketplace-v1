@@ -8,18 +8,18 @@ const ExploreFlex = () => {
 
   if (router.query?.attribute_key || router.query?.attribute_key === '') {
     return (
-      <div className="flex gap-3 flex-wrap">
-        <div className="relative flex border rounded-md border-neutral-300 dark:border-neutral-700">
-          <div className="px-4 py-1 lg:py-2 flex items-center justify-between gap-1.5">
-            <p className="capitalize">Explore</p>
-            <p className="font-semibold">{`${
+      <div className="flex flex-wrap gap-3">
+        <div className="relative flex rounded-md border border-neutral-300 dark:border-neutral-700">
+          <div className="flex items-center justify-between gap-1.5 px-4 py-1 lg:py-2">
+            <p className="reservoir-body capitalize">Explore</p>
+            <p className="reservoir-label-l">{`${
               router.query?.attribute_key === ''
                 ? 'All'
                 : router.query?.attribute_key
             }`}</p>
           </div>
           <button
-            className="absolute -top-2.5 -right-2.5 p-1 rounded-full text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-red-700 hover:bg-red-200"
+            className="absolute -top-2.5 -right-2.5 rounded-full bg-neutral-200 p-1 text-neutral-500 transition hover:bg-red-200 hover:text-neutral-900 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-red-700 dark:hover:text-neutral-100"
             onClick={() => toggleOffItem(router, 'attribute_key')}
           >
             <HiX className="h-3.5 w-3.5" />

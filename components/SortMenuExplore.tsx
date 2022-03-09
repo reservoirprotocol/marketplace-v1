@@ -29,7 +29,7 @@ const SortMenuExplore = ({ setSize }: { setSize: any }) => {
       type="single"
       defaultValue="high_floor"
       aria-label="Filter explore"
-      className="rounded-md overflow-hidden shadow-inner"
+      className="overflow-hidden rounded-md shadow-inner"
     >
       {[
         { display: 'High Floor', value: 'high_floor' },
@@ -47,9 +47,9 @@ const SortMenuExplore = ({ setSize }: { setSize: any }) => {
             }
           }}
           disabled={sortSelection === display}
-          className={`px-3 py-2 select-none transition ${
+          className={`reservoir-label-l select-none px-3 py-2 transition ${
             sortSelection === display
-              ? 'bg-neutral-200 dark:bg-neutral-700 cursor-not-allowed'
+              ? 'cursor-not-allowed bg-neutral-200 dark:bg-neutral-700'
               : 'hover:bg-neutral-200 dark:hover:bg-neutral-800'
           }`}
           aria-label={`Sort by ${display}`}

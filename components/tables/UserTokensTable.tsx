@@ -33,7 +33,7 @@ const UserTokensTable: FC<Props> = ({
 
   if (tokensFlat.length === 0) {
     return (
-      <div className="mt-14 grid justify-center text-lg">
+      <div className="reservoir-body mt-14 grid justify-center">
         No items to display.
       </div>
     )
@@ -48,7 +48,7 @@ const UserTokensTable: FC<Props> = ({
               <th
                 key={item}
                 scope="col"
-                className="px-6 py-3 text-left font-medium uppercase tracking-wider text-gray-500"
+                className="reservoir-label-l px-6 py-3 text-left"
               >
                 {item}
               </th>
@@ -75,7 +75,7 @@ const UserTokensTable: FC<Props> = ({
                 className="group bg-white even:bg-gray-50"
               >
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-10 w-10">
@@ -91,15 +91,15 @@ const UserTokensTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div> {collectionName}</div>
-                        <div className="font-semibold">{tokenName}</div>
+                        <div className="reservoir-body">{collectionName}</div>
+                        <div className="reservoir-h6">{tokenName}</div>
                       </span>
                     </a>
                   </Link>
                 </td>
 
                 {/* LIST PRICE */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <div className="min-w-[140px]">
                     <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
                       <FormatEth amount={listPrice} maximumFractionDigits={4} />
@@ -124,7 +124,7 @@ const UserTokensTable: FC<Props> = ({
                 </td>
 
                 {/* TOP OFFER */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {topOffer ? (
                     isOwner ? (
                       <div className="min-w-[140px]">
@@ -158,7 +158,7 @@ const UserTokensTable: FC<Props> = ({
                 </td>
 
                 {/* FLOOR */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <FormatEth amount={listPrice} maximumFractionDigits={4} />
                 </td>
               </tr>

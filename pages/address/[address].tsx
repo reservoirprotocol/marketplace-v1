@@ -88,7 +88,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 id={id}
                 value={id}
                 className={
-                  'group relative min-w-0 overflow-hidden whitespace-nowrap  border-b-2 border-transparent bg-white py-4 px-12 text-center font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
+                  'group reservoir-label-l relative min-w-0 overflow-hidden  whitespace-nowrap border-b-2 border-transparent bg-white py-4 px-12 text-center hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >

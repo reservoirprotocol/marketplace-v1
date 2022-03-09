@@ -60,9 +60,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                 </p>
                 <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
-                    <div className="reservoir-subtitle text-gray-400">
-                      Offer
-                    </div>
+                    <div className="reservoir-h6">Offer</div>
                     <div>
                       <FormatEth
                         amount={token?.topBuyValue}
@@ -72,9 +70,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="reservoir-subtitle text-gray-400">
-                      Price
-                    </div>
+                    <div className="reservoir-h6">Price</div>
                     <div>
                       <FormatEth
                         amount={token?.floorSellValue}

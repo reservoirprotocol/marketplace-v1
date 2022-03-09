@@ -44,7 +44,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
     <div className="flex items-center gap-2">
       {ens?.avatar ? (
         <img
-          className="block h-[32px] w-[32px] rounded-full"
+          className="block h-8 w-8 rounded-full"
           src={ens.avatar}
           alt="ENS Avatar"
         />
@@ -52,14 +52,12 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
         <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
       )}
       <div>
-        {title && (
-          <p className="text-sm font-medium uppercase opacity-75">{title}</p>
-        )}
+        {title && <p className="reservoir-label-l text-gray-400">{title}</p>}
         {ens?.name ? (
           <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
           <div
-            className="block whitespace-nowrap font-mono lowercase"
+            className="reservoir-label-l block whitespace-nowrap"
             title={address}
           >
             {shrinkAddress(address)}

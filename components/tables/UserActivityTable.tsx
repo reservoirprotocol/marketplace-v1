@@ -24,7 +24,7 @@ const UserActivityTable: FC<Props> = ({
 
   if (transfersFlat.length === 0) {
     return (
-      <div className="mt-14 grid justify-center text-lg">
+      <div className="reservoir-body mt-14 grid justify-center">
         No trading history yet.
       </div>
     )
@@ -39,7 +39,7 @@ const UserActivityTable: FC<Props> = ({
               <th
                 key={item}
                 scope="col"
-                className="px-6 py-3 text-left font-medium uppercase tracking-wider text-gray-500"
+                className="reservoir-label-l px-6 py-3 text-left"
               >
                 {item}
               </th>
@@ -67,12 +67,12 @@ const UserActivityTable: FC<Props> = ({
                 className="group bg-white even:bg-gray-50"
               >
                 {/* TYPE */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {type}
                 </td>
 
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {tokenHref && (
                     <Link href={tokenHref}>
                       <a className="flex items-center gap-2">
@@ -89,8 +89,8 @@ const UserActivityTable: FC<Props> = ({
                           )}
                         </div>
                         <span className="whitespace-nowrap">
-                          <div>{collectionName}</div>
-                          <div className="font-semibold">{name}</div>
+                          <div className="reservoir-body">{collectionName}</div>
+                          <div className="reservoir-h6">{name}</div>
                         </span>
                       </a>
                     </Link>
@@ -98,12 +98,12 @@ const UserActivityTable: FC<Props> = ({
                 </td>
 
                 {/* PRICE */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <FormatEth amount={price} maximumFractionDigits={4} />
                 </td>
 
                 {/* FROM */}
-                <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {from && (
                     <Link href={`/address/${from}`}>
                       <a>
@@ -128,7 +128,11 @@ const UserActivityTable: FC<Props> = ({
                 <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
                   {txUrl && (
                     <Link href={txUrl}>
-                      <a target="_blank" rel="noreferrer">
+                      <a
+                        className="reservoir-body"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         {timestamp}
                       </a>
                     </Link>

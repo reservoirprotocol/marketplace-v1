@@ -187,7 +187,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   {token?.token?.collection?.name}
                 </a>
               </Link>
-              <div className="reservoir-h2 mb-4 mr-3 max-w-[300px] overflow-hidden">
+              <div className="reservoir-h4 mb-4 mr-3 max-w-[300px] overflow-hidden">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
             </div>
@@ -315,8 +315,8 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 }) => (
   <div className="grid justify-items-center space-y-5">
     <div className="reservoir-h5 text-center">{title}</div>
-    <div className="reservoir-h1">{price}</div>
-    <div className="reservoir-h1">{children}</div>
+    <div className="reservoir-h4">{price}</div>
+    <div className="reservoir-h4">{children}</div>
   </div>
 )
 
