@@ -17,16 +17,14 @@ const ViewMenu = () => {
         onClick={() => toggleOffItem(router, 'view')}
         value="grid"
         disabled={!!router.query?.view && !router.query?.view}
-        className={`select-none px-3 py-2 transition ${
+        className={`select-none p-3 transition ${
           !router.query?.view
             ? 'cursor-not-allowed bg-[#F1E5FF]'
             : 'hover:bg-[#F1E5FF]'
         }`}
         aria-label="Set view to grid"
       >
-        <div className="p-2">
-          <FiGrid className="h-6 w-6 text-[#4B5563]" />
-        </div>
+        <FiGrid className="h-5 w-5 text-[#4B5563]" />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         onClick={() => toggleOnItem(router, 'view', 'table')}
@@ -34,16 +32,14 @@ const ViewMenu = () => {
         disabled={
           !!router.query?.view && router.query?.view.toString() === 'table'
         }
-        className={`select-none px-3 py-2 transition ${
+        className={`select-none p-3 transition ${
           router.query?.view && router.query?.view.toString() === 'table'
             ? 'cursor-not-allowed bg-[#F1E5FF]'
             : 'hover:bg-[#F1E5FF]'
         }`}
         aria-label="Set view to table"
       >
-        <div className="p-2">
-          <FiList className="h-6 w-6 text-[#4B5563]" />
-        </div>
+        <FiList className="h-5 w-5 text-[#4B5563]" />
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   )
