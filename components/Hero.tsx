@@ -43,7 +43,7 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
-            <h1 className="mb-1 text-2xl font-semibold">{header.name}</h1>
+            <h1 className="reservoir-h4 mb-1">{header.name}</h1>
             <div className="flex items-center gap-5">
               <Stat name="top offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />

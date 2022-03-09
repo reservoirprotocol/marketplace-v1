@@ -6,7 +6,23 @@
   font-family: 'Obvia';
   src: url('/fonts/obvia_medium-webfont.woff2') format('woff2'),
     url('/fonts/obvia_bold-webfont.woff2') format('woff2');
+  font-display: swap;
   font-weight: 400 500 700;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Black.ttf') format('ttf'),
+    url('/fonts/Inter-Bold.ttf') format('ttf'),
+    url('/fonts/Inter-ExtraBold.ttf') format('ttf'),
+    url('/fonts/Inter-ExtraLight.ttf') format('ttf'),
+    url('/fonts/Inter-Light.ttf') format('ttf'),
+    url('/fonts/Inter-Medium.ttf') format('ttf'),
+    url('/fonts/Inter-Regular.ttf') format('ttf'),
+    url('/fonts/Inter-Semibold.ttf') format('ttf'),
+    url('/fonts/Inter-Thin.ttf') format('ttf');
+  font-display: swap;
+  font-weight: 100 200 300 400 500 600 700 800 900;
 }
 
 .masonry-grid {

@@ -22,9 +22,7 @@ const Homepage: FC<Props> = ({ apiBase }) => {
         />
       </Head>
       <header className="mb-10 flex items-center justify-center gap-5">
-        <h1 className="mt-12 text-3xl font-bold">
-          Discover, buy and sell NFTs
-        </h1>
+        <h1 className="reservoir-h1 mt-12">Discover, buy and sell NFTs</h1>
       </header>
       <div className="mb-12 grid justify-center">
         <SearchCollection />

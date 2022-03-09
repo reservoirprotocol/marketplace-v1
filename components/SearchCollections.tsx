@@ -118,7 +118,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           />
           <input
             type="text"
-            className="input-primary-outline w-full pl-9"
+            className="reservoir-label-l input-primary-outline w-full pl-9"
             placeholder="Search for a collection"
             {...getInputProps()}
           />

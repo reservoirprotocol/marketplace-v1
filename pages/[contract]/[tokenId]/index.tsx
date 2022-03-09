@@ -1,11 +1,9 @@
 import Layout from 'components/Layout'
 import { paths } from 'interfaces/apiTypes'
-import fetcher from 'lib/fetcher'
 import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import useSWR from 'swr'
 import { ComponentProps, FC, ReactNode, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import ListModal from 'components/ListModal'
@@ -185,11 +183,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   mode === 'collection' ? '/' : `/collections/${collectionId}`
                 }
               >
-                <a className="mb-1 block text-2xl font-bold">
+                <a className="reservoir-body mb-1 block">
                   {token?.token?.collection?.name}
                 </a>
               </Link>
-              <div className="mb-4 mr-3 max-w-[300px] overflow-hidden text-lg font-medium opacity-80">
+              <div className="reservoir-h2 mb-4 mr-3 max-w-[300px] overflow-hidden">
                 {token?.token?.name || `#${token?.token?.tokenId}`}
               </div>
             </div>
@@ -197,12 +195,12 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           <div className="mb-5 rounded-md border border-neutral-200 p-6">
             <div className="grid grid-cols-2 gap-8">
               <Price
-                title="list price"
+                title="List Price"
                 price={
                   <FormatEth
                     amount={token?.market?.floorSell?.value}
                     maximumFractionDigits={4}
-                    logoWidth={12}
+                    logoWidth={16}
                   />
                 }
               >
@@ -232,12 +230,12 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 />
               </Price>
               <Price
-                title="top offer"
+                title="Top Offer"
                 price={
                   <FormatEth
                     amount={token?.market?.topBuy?.value}
                     maximumFractionDigits={4}
-                    logoWidth={12}
+                    logoWidth={16}
                   />
                 }
               >
@@ -316,9 +314,9 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
   children,
 }) => (
   <div className="grid justify-items-center space-y-5">
-    <div className="text-center font-medium uppercase opacity-75">{title}</div>
-    <div className="text-3xl font-bold">{price}</div>
-    {children}
+    <div className="reservoir-h5 text-center">{title}</div>
+    <div className="reservoir-h1">{price}</div>
+    <div className="reservoir-h1">{children}</div>
   </div>
 )
 
