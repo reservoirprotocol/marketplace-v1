@@ -52,8 +52,8 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
               ?.image
           }
         />
-        <h1 className=" text-xl font-bold uppercase">
-          {collectionId} Community
+        <h1 className="reservoir-h1">
+          {communityIds[collectionId] || collectionId} Community
         </h1>
       </header>
       {isBigCommunity && (
@@ -67,3 +67,10 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
 }
 
 export default CommunityLanding
+
+const communityIds: { [x: string]: any } = {
+  loot: 'Loot',
+  bayc: 'BAYC',
+  forgottenrunes: 'Forgotten Runes',
+  artblocks: 'Art Blocks',
+}

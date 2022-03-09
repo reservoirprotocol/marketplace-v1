@@ -51,7 +51,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                   key={`${community?.collection?.name}${idx}`}
                   href={`/collections/${community?.collection?.id}`}
                 >
-                  <a className="group mb-6 block overflow-hidden rounded-md bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                     <ImagesGrid
                       sample_images={community?.set?.sampleImages}
                       value={community?.collection?.name}
@@ -61,7 +61,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                         src={optimizeImage(community?.collection?.image, 40)}
                         className="h-12 w-12 rounded-full"
                       />
-                      <div className="font-semibold">
+                      <div className="reservoir-subtitle">
                         {community?.collection?.name}
                       </div>
                     </div>

@@ -49,7 +49,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
               key={`${collection?.collection?.name}${idx}`}
               href={`/collections/${collection?.collection?.id}`}
             >
-              <a className="group mb-6 block overflow-hidden rounded-md bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+              <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                 <ImagesGrid
                   sample_images={collection?.set?.sampleImages}
                   value={collection?.collection?.name}
