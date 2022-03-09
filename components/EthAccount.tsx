@@ -52,7 +52,9 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
         <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
       )}
       <div>
-        {title && <p className="reservoir-label-l text-gray-400">{title}</p>}
+        {title && (
+          <p className="reservoir-label-l capitalize text-gray-400">{title}</p>
+        )}
         {ens?.name ? (
           <div title={address}>{shrinkEns(ens.name)}</div>
         ) : (
