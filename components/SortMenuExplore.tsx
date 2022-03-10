@@ -1,64 +1,74 @@
 import { toggleOffItem, toggleOnItem } from 'lib/router'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import { FC } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { FiChevronDown } from 'react-icons/fi'
 
-const SortMenuExplore = ({ setSize }: { setSize: any }) => {
+type Props = { setSize: any }
+
+type Options = 'High Floor' | 'Best Offer' | 'Name'
+
+const options: { [x: string]: Options } = {
+  high_floor: 'High Floor',
+  best_offer: 'Best Offer',
+  name: 'Name',
+}
+
+const SortMenuExplore: FC<Props> = ({ setSize }) => {
   const router = useRouter()
-  const [sortSelection, setSortSelection] = useState<
-    'High Floor' | 'Best Offer' | 'Name' | null
-  >(null)
+  const [open, setOpen] = useState(false)
+  const [sortSelection, setSortSelection] = useState<Options>('High Floor')
 
   useEffect(() => {
-    if (router.isReady) {
-      if (!!router.query['sort']) {
-        if (router.query['sort'] === 'best_offer') {
-          setSortSelection('Best Offer')
-        }
-        if (router.query['sort'] === 'name') {
-          setSortSelection('Name')
-        }
-      } else {
-        setSortSelection('High Floor')
-      }
+    const sort = router?.query['sort']?.toString()
+    if (sort && options[sort]) {
+      setSortSelection(options[sort])
+      return
     }
+    setSortSelection('High Floor')
   }, [router.query])
 
   return (
-    <ToggleGroup.Root
-      type="single"
-      defaultValue="high_floor"
-      aria-label="Filter explore"
-      className="overflow-hidden rounded-md shadow-inner"
-    >
-      {[
-        { display: 'High Floor', value: 'high_floor' },
-        { display: 'Best Offer', value: 'best_offer' },
-        { display: 'Name', value: 'name' },
-      ].map(({ display, value }) => (
-        <ToggleGroup.Item
-          key={value}
-          onClick={() => {
-            setSize(0)
-            if (value === 'high_floor') {
-              toggleOffItem(router, 'sort')
-            } else {
-              toggleOnItem(router, 'sort', value)
-            }
-          }}
-          disabled={sortSelection === display}
-          className={`reservoir-label-l select-none px-3 py-2 transition ${
-            sortSelection === display
-              ? 'cursor-not-allowed bg-neutral-200 dark:bg-neutral-700'
-              : 'hover:bg-neutral-200 dark:hover:bg-neutral-800'
+    <DropdownMenu.Root onOpenChange={setOpen}>
+      <DropdownMenu.Trigger className="btn-primary-outline w-[228px] justify-between px-4 py-3">
+        <span className="reservoir-label-l">{sortSelection}</span>
+        <FiChevronDown
+          className={`h-5 w-5 text-[#9CA3AF] transition-transform ${
+            open ? 'rotate-180' : ''
           }`}
-          aria-label={`Sort by ${display}`}
-          value={value}
-        >
-          {display}
-        </ToggleGroup.Item>
-      ))}
-    </ToggleGroup.Root>
+        />
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Content
+        align="end"
+        sideOffset={12}
+        className="w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md  radix-side-bottom:animate-slide-down md:w-56"
+      >
+        {Object.keys(options).map((key) => (
+          <DropdownMenu.Item
+            key={key}
+            onClick={() => {
+              setSize(0)
+              if (key === 'high_floor') {
+                toggleOffItem(router, 'sort')
+              } else {
+                toggleOnItem(router, 'sort', key)
+              }
+            }}
+            disabled={sortSelection === options[key]}
+            className={`reservoir-gray-dropdown-item reservoir-h6 rounded-none ${
+              sortSelection === options[key]
+                ? 'cursor-not-allowed bg-gray-100'
+                : ''
+            }`}
+            aria-label={`Sort by ${options[key]}`}
+          >
+            {options[key]}
+          </DropdownMenu.Item>
+        ))}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   )
 }
 
