@@ -11,13 +11,13 @@ const ViewMenu = () => {
       type="single"
       defaultValue="grid"
       aria-label="Change view"
-      className="divide-x-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB]"
+      className="flex divide-x-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB]"
     >
       <ToggleGroup.Item
         onClick={() => toggleOffItem(router, 'view')}
         value="grid"
         disabled={!!router.query?.view && !router.query?.view}
-        className={`select-none p-3 transition ${
+        className={`block select-none p-3 transition ${
           !router.query?.view
             ? 'cursor-not-allowed bg-[#F1E5FF]'
             : 'hover:bg-[#F1E5FF]'
@@ -32,7 +32,7 @@ const ViewMenu = () => {
         disabled={
           !!router.query?.view && router.query?.view.toString() === 'table'
         }
-        className={`select-none p-3 transition ${
+        className={`block select-none p-3 transition ${
           router.query?.view && router.query?.view.toString() === 'table'
             ? 'cursor-not-allowed bg-[#F1E5FF]'
             : 'hover:bg-[#F1E5FF]'

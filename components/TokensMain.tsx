@@ -307,12 +307,12 @@ const TokensMain: FC<Props> = ({
               <AttributesFlex />
               <ExploreFlex />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex gap-4">
               {router.query?.attribute_key ||
               router.query?.attribute_key === '' ? (
                 <>
-                  <ViewMenu />
                   <SortMenuExplore setSize={collectionAttributes.setSize} />
+                  <ViewMenu />
                 </>
               ) : (
                 <SortMenu setSize={tokens.setSize} />
