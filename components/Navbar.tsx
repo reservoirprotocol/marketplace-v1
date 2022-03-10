@@ -4,6 +4,7 @@ import Link from 'next/link'
 import InfoModal from './InfoModal'
 import SearchCollections from './SearchCollections'
 import { useRouter } from 'next/router'
+import InfoBanner from './InfoBanner'
 
 type Props = {
   communityId?: string
@@ -15,7 +16,7 @@ const logo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const Navbar: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   return (
-    <nav className="flex items-center justify-between gap-8 py-3 px-3 sm:py-4">
+    <nav className="relative flex items-center justify-between gap-8 py-3 px-3 sm:py-4">
       <Link href="/">
         <a className="flex items-center justify-between gap-3">
           <img
@@ -37,9 +38,9 @@ const Navbar: FC<Props> = ({ communityId }) => {
             <SearchCollections communityId={communityId} />
           </div>
         )}
-      <div className="flex items-center gap-6">
-        <InfoModal />
-        <ConnectWallet />
+      <ConnectWallet />
+      <div className="absolute -bottom-full w-full">
+        <InfoBanner />
       </div>
     </nav>
   )

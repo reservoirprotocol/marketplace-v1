@@ -7,8 +7,8 @@ const InfoModal: FC = () => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className="reservoir-body hidden hover:underline sm:grid">
-          What is reservoir.market?
+        <button className="reservoir-h6 hidden whitespace-nowrap text-white hover:underline sm:grid">
+          Learn More
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
