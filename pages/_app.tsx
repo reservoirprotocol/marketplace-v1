@@ -1,4 +1,5 @@
 import 'styles/globals.css'
+import 'styles/inter.css'
 import type { AppProps } from 'next/app'
 import { Provider } from 'wagmi'
 import { providers } from 'ethers'
