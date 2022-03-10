@@ -30,7 +30,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-h6 w-full px-3 py-2 text-left transition ${
+          className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
               ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900 dark:bg-neutral-300 dark:text-black dark:hover:bg-neutral-200'
@@ -66,7 +66,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-h6 w-full px-3 py-2 text-left transition ${
+              className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
                   ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900 dark:bg-neutral-300 dark:text-black dark:hover:bg-neutral-200'
