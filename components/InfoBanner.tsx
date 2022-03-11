@@ -11,7 +11,7 @@ const InfoBanner = () => {
     return (
       <div
         style={{
-          background: 'linear-gradient(97.55deg, #BD00FF 0%, #7000FF 100%);',
+          background: 'linear-gradient(97.55deg, #BD00FF 0%, #7000FF 100%)',
         }}
         className="fixed inset-x-0 top-[84px] flex min-h-[72px] items-center justify-center sm:top-20"
       >
