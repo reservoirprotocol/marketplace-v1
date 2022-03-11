@@ -52,6 +52,9 @@ type Props = {
 
 const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
+  const [orderbook, setOrderbook] = useState<'opensea' | 'reservoir'>(
+    'reservoir'
+  )
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [{ data: connectData }, connect] = useConnect()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -158,9 +161,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     },
   }
 
-  const orderbook: Parameters<typeof placeBid>[0]['query']['orderbook'] =
-    postOnOpenSea ? 'opensea' : 'reservoir'
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -188,6 +188,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
             title="Make a Token Offer"
             data={modalData}
             steps={steps}
+            orderbook={orderbook}
             onCloseCallback={() => setSteps(undefined)}
             actionButton={
               <button
@@ -217,6 +218,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
                   if (!signer) return
 
+                  setOrderbook('reservoir')
                   await placeBid({
                     query: {
                       maker: await signer.getAddress(),
@@ -251,6 +253,45 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                       })
                     },
                   })
+
+                  if (postOnOpenSea) {
+                    setOrderbook('opensea')
+                    await placeBid({
+                      query: {
+                        maker: await signer.getAddress(),
+                        price: calculations.total.toString(),
+                        orderbook,
+                        expirationTime: expirationValue,
+                        contract: token.token?.contract,
+                        tokenId: token.token?.tokenId,
+                      },
+                      signer,
+                      apiBase: env.apiBase,
+                      setSteps,
+                      handleSuccess: () => {
+                        details && 'mutate' in details && details.mutate()
+                      },
+                      handleError: (err) => {
+                        // Handle user rejection
+                        if (err?.code === 4001) {
+                          setOpen(false)
+                          setSteps(undefined)
+                          setToast({
+                            kind: 'error',
+                            message: 'You have canceled the transaction.',
+                            title: 'User canceled transaction',
+                          })
+                          return
+                        }
+                        setToast({
+                          kind: 'error',
+                          message: 'The transaction was not completed.',
+                          title: 'Could not make offer',
+                        })
+                      },
+                    })
+                  }
+
                   setWaitingTx(false)
                 }}
                 className="btn-primary-fill w-full"
@@ -275,7 +316,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   className="input-primary-outline w-[160px]"
                 />
               </div>
-              {/* <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <label htmlFor="postOpenSea" className="reservoir-h6">
                   Also post to OpenSea
                 </label>
@@ -287,7 +328,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   checked={postOnOpenSea}
                   onChange={(e) => setPostOnOpenSea(e.target.checked)}
                 />
-              </div> */}
+              </div>
               <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
