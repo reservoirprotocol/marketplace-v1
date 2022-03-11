@@ -1,10 +1,8 @@
 import { FC } from 'react'
 import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
-import InfoModal from './InfoModal'
 import SearchCollections from './SearchCollections'
 import { useRouter } from 'next/router'
-import InfoBanner from './InfoBanner'
 
 type Props = {
   communityId?: string
@@ -39,7 +37,6 @@ const Navbar: FC<Props> = ({ communityId }) => {
           </div>
         )}
       <ConnectWallet />
-      <InfoBanner />
     </nav>
   )
 }

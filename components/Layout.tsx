@@ -1,5 +1,6 @@
 import { ComponentProps, FC } from 'react'
 import { Toaster } from 'react-hot-toast'
+import InfoBanner from './InfoBanner'
 import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
@@ -11,6 +12,7 @@ const Layout: FC<Props> = ({ children, navbar }) => {
   return (
     <>
       <NetworkWarning />
+      <InfoBanner />
       <Toaster position={'top-right'} />
       <main className="mx-auto max-w-screen-2xl px-3 md:px-4 lg:px-6">
         <Navbar {...navbar} />
