@@ -22,7 +22,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="my-3 hidden min-w-[200px] max-w-[250px] divide-y-[1px] border-r-[1px] border-gray-300 md:block"
+      className="my-3 hidden min-w-[200px] max-w-[250px] border-r-[1px] border-gray-300 md:block"
     >
       <div className="overflow-hidden">
         <button
@@ -31,11 +31,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
+          className={`reservoir-label-l w-full border-b-[1px] border-gray-300 px-4 py-3 text-left transition ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
-              ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900  dark:hover:bg-neutral-200'
-              : 'hover:bg-gray-300 '
+              ? 'bg-primary-100 hover:bg-primary-300'
+              : 'hover:bg-primary-100'
           }`}
         >
           Explore All
@@ -48,7 +48,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
           className="overflow-hidden"
         >
           <Accordion.Header
-            className={`flex w-full justify-between ${
+            className={`flex w-full justify-between border-b-[1px] border-gray-300 ${
               router.query.attribute_key &&
               router.query.attribute_key.toString() === attribute.key
                 ? 'divide-gray-800 dark:divide-gray-300'

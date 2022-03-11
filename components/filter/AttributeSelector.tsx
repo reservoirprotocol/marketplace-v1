@@ -34,17 +34,19 @@ const AttributeSelector: FC<Props> = ({
   }
 
   return (
-    <div className="bg-white p-2 dark:bg-black lg:p-3">
-      <DebounceInput
-        className={`input-primary-outline mt-1 mb-1.5 w-full px-1.5 py-1`}
-        type="search"
-        autoFocus
-        autoComplete="off"
-        placeholder="Search"
-        debounceTimeout={300}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <div className="mb-1.5 max-h-[155px] overflow-y-auto">
+    <div className="border-b-[1px] border-gray-300">
+      <div className="m-4">
+        <DebounceInput
+          className="input-primary-outline w-full"
+          type="search"
+          autoFocus
+          autoComplete="off"
+          placeholder="Search"
+          debounceTimeout={300}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <div className="mb-3 max-h-[155px] overflow-y-auto">
         {searchedValues.map(({ value, count }, index) => {
           if (!value) return null
           return (
