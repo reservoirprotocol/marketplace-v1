@@ -16,7 +16,7 @@ const Navbar: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   return (
     <nav className="relative">
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-8 py-3 px-3 sm:py-4 md:px-4 lg:px-6">
+      <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-8 p-3 sm:py-4 md:px-4 lg:px-6">
         <Link href="/">
           <a className="flex items-center justify-between gap-3">
             <img

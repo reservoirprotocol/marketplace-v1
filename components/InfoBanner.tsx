@@ -15,8 +15,8 @@ const InfoBanner = () => {
         }}
         className="absolute inset-x-0 top-[84px] flex min-h-[72px] items-center sm:top-20"
       >
-        <div className="mx-auto flex max-w-screen-2xl items-start gap-6 px-4 py-4  md:items-center md:py-3 ">
-          <div className="grid items-center justify-center gap-2 md:flex md:flex-grow">
+        <div className="mx-auto flex w-full max-w-screen-2xl items-start gap-6  p-3 sm:py-4 md:items-center md:px-4 lg:px-6">
+          <div className="grid flex-grow items-center justify-start gap-2 md:flex md:justify-center">
             <p className="reservoir-body text-white">
               Build your own NFT marketplace with reservoir.market.
             </p>

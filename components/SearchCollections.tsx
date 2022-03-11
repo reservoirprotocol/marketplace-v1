@@ -120,7 +120,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           className="relative w-[300px] md:w-[400px]"
         >
           <FiSearch
-            className={`absolute top-1/2 left-3 z-20 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
+            className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
               focused ? 'text-[#9CA3AF]' : ''
             }`}
           />
