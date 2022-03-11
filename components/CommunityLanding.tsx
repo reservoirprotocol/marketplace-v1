@@ -44,7 +44,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
           }
         />
       </Head>
-      <header className="mt-8 mb-14 flex items-center justify-center gap-5">
+      <header className="mt-40 mb-14 flex items-center justify-center gap-5">
         <img
           className="h-[50px] w-[50px] rounded-full"
           src={
