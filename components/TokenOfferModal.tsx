@@ -316,7 +316,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   className="input-primary-outline w-[160px]"
                 />
               </div>
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <label htmlFor="postOpenSea" className="reservoir-h6">
                   Also post to OpenSea
                 </label>
@@ -328,7 +328,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   checked={postOnOpenSea}
                   onChange={(e) => setPostOnOpenSea(e.target.checked)}
                 />
-              </div>
+              </div> */}
               <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
