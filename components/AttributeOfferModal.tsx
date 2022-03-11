@@ -219,7 +219,7 @@ const AttributeOfferModal: FC<Props> = ({
                     Price (wETH)
                   </label>
                   <input
-                    placeholder="Insert price"
+                    placeholder="Amount"
                     id="price"
                     type="number"
                     min={0}

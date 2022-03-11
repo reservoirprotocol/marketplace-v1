@@ -306,7 +306,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   Price (wETH)
                 </label>
                 <input
-                  placeholder="Insert price"
+                  placeholder="Amount"
                   id="price"
                   type="number"
                   min={0}
