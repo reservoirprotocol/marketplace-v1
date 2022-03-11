@@ -39,9 +39,7 @@ const Navbar: FC<Props> = ({ communityId }) => {
           </div>
         )}
       <ConnectWallet />
-      {/* <div className="absolute -bottom-full w-full">
-        <InfoBanner />
-      </div> */}
+      <InfoBanner />
     </nav>
   )
 }

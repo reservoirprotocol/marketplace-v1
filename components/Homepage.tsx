@@ -21,8 +21,8 @@ const Homepage: FC<Props> = ({ apiBase }) => {
           content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
         />
       </Head>
-      <header className="mb-10 flex items-center justify-center gap-5">
-        <h1 className="reservoir-h1 mt-12 text-center lg:mt-24">
+      <header className="mb-10 mt-40 flex items-center justify-center gap-5">
+        <h1 className="reservoir-h1 text-center lg:mt-24">
           Discover, buy and sell NFTs
         </h1>
       </header>
