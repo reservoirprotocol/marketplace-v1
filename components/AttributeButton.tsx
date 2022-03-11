@@ -35,7 +35,7 @@ const AttributeButton: FC<Props> = ({
         }
         setTokensSize(0)
       }}
-      className={`flex w-full items-center justify-between gap-3 rounded-md px-3 py-1 text-left ${
+      className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
         router.query[`attributes[${attribute}]`] &&
         `${router.query[`attributes[${attribute}]`]}` === value
           ? 'bg-neutral-200 text-neutral-900'

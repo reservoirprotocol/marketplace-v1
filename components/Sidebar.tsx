@@ -7,6 +7,7 @@ import { FC } from 'react'
 import AttributeSelector from './filter/AttributeSelector'
 import { SWRResponse } from 'swr'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
+import { FiChevronDown } from 'react-icons/fi'
 
 type Props = {
   attributes: SWRResponse<
@@ -21,9 +22,9 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="my-3 hidden min-w-[200px] max-w-[250px] space-y-2.5 md:block"
+      className="my-3 hidden min-w-[200px] max-w-[250px] divide-y-[1px] border-r-[1px] border-gray-300 md:block"
     >
-      <div className="overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800">
+      <div className="overflow-hidden">
         <button
           onClick={() => {
             router.query?.attribute_key === ''
@@ -33,8 +34,8 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
           className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
-              ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900 dark:bg-neutral-300 dark:text-black dark:hover:bg-neutral-200'
-              : 'hover:bg-neutral-200 dark:hover:bg-neutral-800'
+              ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900  dark:hover:bg-neutral-200'
+              : 'hover:bg-gray-300 '
           }`}
         >
           Explore All
@@ -44,14 +45,14 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
         <Accordion.Item
           value={`item-${attribute.key}`}
           key={attribute.key}
-          className="overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800"
+          className="overflow-hidden"
         >
           <Accordion.Header
-            className={`flex w-full justify-between divide-x ${
+            className={`flex w-full justify-between ${
               router.query.attribute_key &&
               router.query.attribute_key.toString() === attribute.key
-                ? 'divide-neutral-800 dark:divide-neutral-200'
-                : 'divide-neutral-200 dark:divide-neutral-800'
+                ? 'divide-gray-800 dark:divide-gray-300'
+                : 'divide-gray-300 dark:divide-gray-800'
             }`}
           >
             <button
@@ -66,24 +67,24 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
+              className={`reservoir-label-l w-full px-4 py-3 text-left transition ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900 dark:bg-neutral-300 dark:text-black dark:hover:bg-neutral-200'
-                  : 'hover:bg-neutral-200 dark:hover:bg-neutral-800'
+                  ? 'bg-primary-100 hover:bg-primary-300'
+                  : 'hover:bg-primary-100'
               }`}
             >
               {attribute.key}
             </button>
             <Accordion.Trigger
-              className={`transition hover:bg-neutral-200 dark:hover:bg-neutral-800 ${
+              className={`p-3 transition ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900 dark:bg-neutral-300 dark:text-black dark:hover:bg-neutral-200'
-                  : 'hover:bg-neutral-200 dark:hover:bg-neutral-800'
+                  ? 'bg-primary-100 hover:bg-primary-300'
+                  : 'hover:bg-primary-100'
               }`}
             >
-              <HiChevronDown className="h-7 w-9" aria-hidden />
+              <FiChevronDown className="h-5 w-5" aria-hidden />
             </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content>

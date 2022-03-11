@@ -36,7 +36,7 @@ const AttributeSelector: FC<Props> = ({
   return (
     <div className="bg-white p-2 dark:bg-black lg:p-3">
       <DebounceInput
-        className={`input-primary-outline mt-1 mb-1.5 w-full px-1.5 py-1 `}
+        className={`input-primary-outline mt-1 mb-1.5 w-full px-1.5 py-1`}
         type="search"
         autoFocus
         autoComplete="off"
