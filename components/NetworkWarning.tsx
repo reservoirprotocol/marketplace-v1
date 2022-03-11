@@ -9,7 +9,7 @@ function NetworkWarning() {
 
   if (chainId && signer && data.chain?.id !== +chainId) {
     return (
-      <div className="flex h-[40px] w-screen items-center justify-center bg-yellow-200 text-black">
+      <div className="flex w-screen items-center justify-center bg-yellow-200 p-4 text-black">
         <span>
           You are connected to the wrong network. Please, switch to{' '}
           <strong>

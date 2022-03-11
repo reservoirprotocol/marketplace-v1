@@ -12,10 +12,9 @@ const Layout: FC<Props> = ({ children, navbar }) => {
   return (
     <>
       <NetworkWarning />
-      <InfoBanner />
       <Toaster position={'top-right'} />
+      <Navbar {...navbar} />
       <main className="mx-auto max-w-screen-2xl px-3 md:px-4 lg:px-6">
-        <Navbar {...navbar} />
         {children}
       </main>
     </>
