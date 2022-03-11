@@ -28,7 +28,7 @@ type Props = {
     }
   }
   onCloseCallback?: () => any
-  orderbook: 'reservoir' | 'opensea'
+  orderbook?: 'reservoir' | 'opensea'
   actionButton?: ReactNode
   steps: Execute['steps']
   title: string
