@@ -126,7 +126,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 grid place-items-center sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
+      <div className="mb-2 grid place-items-center bg-gray-200 sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
         <div className="mt-5 flex gap-3 sm:hidden">
           <img
             src={optimizeImage(
@@ -150,7 +150,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <div className="mb-6  sm:ml-auto sm:mb-0 sm:self-start">
           {/* TOKEN IMAGE */}
           <img
-            className="mb-4 w-[500px]"
+            className="mb-4 w-[500px] rounded-2xl"
             src={optimizeImage(token?.token?.image, 500)}
           />
           {/* {tokenOpenSea?.extension === null ? (
@@ -161,43 +161,45 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           ) : (
             <Media tokenOpenSea={tokenOpenSea} />
           )} */}
-          <div className="mb-3 w-min">
+          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+            <div className="reservoir-h6 mb-4">Owner</div>
             {token?.token?.owner && (
               <Link href={`/address/${token.token.owner}`}>
-                <a className="block">
-                  <EthAccount address={token.token.owner} title="owner" />
+                <a className="inline-block">
+                  <EthAccount address={token.token.owner} />
                 </a>
               </Link>
             )}
-          </div>
+          </article>
         </div>
 
         <div className="mb-8 sm:mr-auto sm:self-start">
-          <div className="hidden gap-3 sm:flex">
-            <img
-              src={optimizeImage(
-                collection.data?.collection?.collection?.image,
-                50
-              )}
-              alt="collection avatar"
-              className="h-[50px] w-[50px] rounded-full"
-            />
-            <div>
-              <Link
-                href={
-                  mode === 'collection' ? '/' : `/collections/${collectionId}`
-                }
-              >
-                <a className="reservoir-body mb-1 block">
-                  {token?.token?.collection?.name}
-                </a>
-              </Link>
-              <div className="reservoir-h4 mb-4 mr-3 max-w-[300px] overflow-hidden">
-                {token?.token?.name || `#${token?.token?.tokenId}`}
-              </div>
+          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+            <div className="reservoir-h2 mb-3 overflow-hidden">
+              {token?.token?.name || `#${token?.token?.tokenId}`}
             </div>
-          </div>
-          <div className="mb-5 rounded-md border border-neutral-200 p-6">
+            <div className="reservoir-h6 mb-2">Collection</div>
+            <Link
+              href={
+                mode === 'collection' ? '/' : `/collections/${collectionId}`
+              }
+            >
+              <a className="reservoir-body mb-1 flex items-center gap-2">
+                <img
+                  src={optimizeImage(
+                    collection.data?.collection?.collection?.image,
+                    50
+                  )}
+                  alt="collection avatar"
+                  className="h-9 w-9 rounded-full"
+                />
+                <span className="reservoir-body">
+                  {token?.token?.collection?.name}
+                </span>
+              </a>
+            </Link>
+          </article>
+          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
             <div className="grid grid-cols-2 gap-8">
               <Price
                 title="List Price"
@@ -205,7 +207,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   <FormatEth
                     amount={token?.market?.floorSell?.value}
                     maximumFractionDigits={4}
-                    logoWidth={16}
+                    logoWidth={20}
                   />
                 }
               >
@@ -240,7 +242,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   <FormatEth
                     amount={token?.market?.topBuy?.value}
                     maximumFractionDigits={4}
-                    logoWidth={16}
+                    logoWidth={20}
                   />
                 }
               >
@@ -277,7 +279,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 )}
               </Price>
             </div>
-            <div className="mt-6 flex justify-center">
+            <div className="flex justify-center">
               <CancelOffer
                 apiBase={apiBase}
                 data={{
@@ -303,7 +305,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 setToast={setToast}
               />
             </div>
-          </div>
+          </article>
           <TokenAttributes token={token?.token} />
         </div>
       </div>
@@ -318,10 +320,10 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
   price,
   children,
 }) => (
-  <div className="grid justify-items-center space-y-5">
-    <div className="reservoir-h5 text-center">{title}</div>
-    <div className="reservoir-h4">{price}</div>
-    <div className="reservoir-h4">{children}</div>
+  <div className="grid space-y-5">
+    <div className="reservoir-h5">{title}</div>
+    <div className="reservoir-h1">{price}</div>
+    {children}
   </div>
 )
 

@@ -10,9 +10,9 @@ type Props = {
 
 const TokenAttributes = ({ token }: Props) => {
   return (
-    <div className="rounded-md border border-neutral-200 p-3 md:p-4 lg:p-5">
-      <p className="reservoir-h5 mb-3">Attributes</p>
-      <div className="flex max-w-sm flex-wrap gap-3">
+    <article className="mb-6 max-w-[500px] overflow-hidden rounded-[16px] border-[1px] border-gray-300 bg-white p-6">
+      <p className="reservoir-h5 mb-4">Attributes</p>
+      <div className="grid max-w-sm grid-cols-3 gap-2">
         {token?.attributes?.map(({ key, value }) => (
           <Link
             key={`${key}-${value}`}
@@ -20,14 +20,21 @@ const TokenAttributes = ({ token }: Props) => {
               `attributes[${key}]`
             )}=${formatUrl(`${value}`)}`}
           >
-            <a className="rounded-md border border-neutral-300 px-3 py-1.5 transition hover:border-neutral-700 hover:bg-white hover:shadow-md">
-              <p className="reservoir-label-m">{key}</p>
-              <p className="reservoir-subtitle">{value}</p>
+            <a className="rounded-lg border border-gray-300 transition  hover:shadow-md">
+              <p className="reservoir-subtitle truncate p-3 text-center">
+                {key}
+              </p>
+              <p
+                className="reservoir-subtitle truncate bg-primary-100 p-3 text-center"
+                title={value}
+              >
+                {value}
+              </p>
             </a>
           </Link>
         ))}
       </div>
-    </div>
+    </article>
   )
 }
 
