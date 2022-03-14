@@ -28,7 +28,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
   return (
     <Masonry
       breakpointCols={{
-        default: 5,
+        default: 4,
         1280: 4,
         1024: 3,
         768: 2,

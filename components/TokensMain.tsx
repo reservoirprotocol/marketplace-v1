@@ -299,10 +299,11 @@ const TokensMain: FC<Props> = ({
             />
           ))}
       </Hero>
-      <div className="flex gap-5">
+      <hr className="border-gray-300" />
+      <div className="flex">
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
-        <div className="flex-grow">
-          <div className="mb-4 hidden items-center justify-between md:flex">
+        <div className="mt-4 ml-6 flex-grow">
+          <div className="mb-10 hidden items-center justify-between md:flex">
             <div>
               <AttributesFlex />
               <ExploreFlex />
