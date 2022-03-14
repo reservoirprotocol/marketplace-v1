@@ -270,7 +270,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () => await checkWallet()}
+        onClick={async () => {
+          setPostOnOpenSea(false)
+          setOfferPrice('')
+          setOrderbook(['reservoir'])
+          await checkWallet()
+        }}
         className="btn-primary-outline w-full"
       >
         Make Offer
