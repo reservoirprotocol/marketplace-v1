@@ -30,7 +30,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-4 py-3 text-left transition ${
+          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-4 py-6 text-left transition ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
               ? 'bg-primary-100 hover:bg-primary-300'
@@ -66,7 +66,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-h6 w-full px-4 py-3 text-left transition ${
+              className={`reservoir-h6 w-full px-4 py-6 text-left transition ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
                   ? 'bg-primary-100 hover:bg-primary-300'
@@ -84,8 +84,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               }`}
             >
               <div className="h-6 w-px bg-gray-300"></div>
-              <Accordion.Trigger className="p-3 transition">
-                <FiChevronDown className="h-5 w-5" aria-hidden />
+              <Accordion.Trigger className="group p-6 transition">
+                <FiChevronDown
+                  className="h-6 w-6 transform text-gray-600 transition-transform group-radix-state-open:rotate-180"
+                  aria-hidden
+                />
               </Accordion.Trigger>
             </div>
           </Accordion.Header>
