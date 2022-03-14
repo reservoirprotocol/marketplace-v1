@@ -108,56 +108,69 @@ const AcceptOffer: FC<Props> = ({
     },
   }
 
+  const handleError: Parameters<typeof acceptOffer>[0]['handleError'] = (
+    err
+  ) => {
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setOpen(false)
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not accept offer',
+    })
+  }
+
+  const handleSuccess: Parameters<
+    typeof acceptOffer
+  >[0]['handleSuccess'] = () => {
+    details && 'mutate' in details && details.mutate()
+    mutate && mutate()
+  }
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    await checkWallet()
+
+    setWaitingTx(true)
+    await acceptOffer({
+      apiBase,
+      tokenId: tokenId || token?.token?.tokenId,
+      contract: contract || token?.token?.contract,
+      setSteps,
+      signer,
+      handleSuccess,
+      handleError,
+    })
+    setWaitingTx(false)
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
-          onClick={async () => {
-            if (!signer) {
-              const data = await connect(connectData.connectors[0])
-              if (data?.data) {
-                setToast({
-                  kind: 'success',
-                  message: 'Connected your wallet successfully.',
-                  title: 'Wallet connected',
-                })
-              }
-              return
-            }
-
-            setWaitingTx(true)
-            await acceptOffer({
-              apiBase,
-              tokenId: tokenId || token?.token?.tokenId,
-              contract: contract || token?.token?.contract,
-              setSteps,
-              signer,
-              handleSuccess: () => {
-                details && 'mutate' in details && details.mutate()
-                mutate && mutate()
-              },
-              handleError: (err) => {
-                // Handle user rejection
-                if (err?.code === 4001) {
-                  setOpen(false)
-                  setSteps(undefined)
-                  setToast({
-                    kind: 'error',
-                    message: 'You have canceled the transaction.',
-                    title: 'User canceled transaction',
-                  })
-                  return
-                }
-                setToast({
-                  kind: 'error',
-                  message: 'The transaction was not completed.',
-                  title: 'Could not accept offer',
-                })
-              },
-            })
-            setWaitingTx(false)
-          }}
+          onClick={execute}
           className="btn-primary-outline w-full"
         >
           {waitingTx ? 'Waiting...' : 'Accept Offer'}
@@ -166,7 +179,7 @@ const AcceptOffer: FC<Props> = ({
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Accept Offer" data={modalData} steps={steps} />
+            <ModalCard title="Accept Offer" steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

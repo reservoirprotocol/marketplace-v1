@@ -62,7 +62,7 @@ const ModalCard: FC<Props> = ({
 
   const orderbookTitle =
     orderbook && `Submitting to ${orderbooks[orderbook[0]]}`
-  const modalTitle = steps ? orderbookTitle : title
+  const modalTitle = steps && orderbook ? orderbookTitle : title
 
   return (
     <Dialog.Content className="fixed inset-0 bg-[#000000b6]">

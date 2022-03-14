@@ -236,7 +236,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     //   return orderbook
     // })
 
-    setSteps([])
     setOrderbook(['opensea'])
 
     const expirationValue = expirationPresets
