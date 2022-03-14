@@ -163,11 +163,7 @@ const CancelOffer: FC<Props> = ({
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard
-              title="Cancel your offer"
-              data={modalData}
-              steps={steps}
-            />
+            <ModalCard title="Cancel your offer" steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

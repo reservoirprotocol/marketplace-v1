@@ -134,7 +134,6 @@ const CollectionOfferModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             title="Make a Collection Offer"
-            data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={

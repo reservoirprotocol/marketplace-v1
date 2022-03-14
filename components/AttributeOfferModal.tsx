@@ -138,7 +138,6 @@ const AttributeOfferModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             title="Maker an Attribute Offer"
-            data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={

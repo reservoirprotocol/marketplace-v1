@@ -134,7 +134,6 @@ const ListModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             title="List Token for Sale"
-            data={tokenData}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={

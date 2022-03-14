@@ -163,11 +163,7 @@ const CancelListing: FC<Props> = ({
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard
-              title="Cancel your listing"
-              data={modalData}
-              steps={steps}
-            />
+            <ModalCard title="Cancel your listing" steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}
