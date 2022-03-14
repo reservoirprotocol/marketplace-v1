@@ -10,6 +10,7 @@ import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -101,63 +102,79 @@ const CancelOffer: FC<Props> = ({
     },
   }
 
+  const handleError: Parameters<typeof cancelOrder>[0]['handleError'] = (
+    err: any
+  ) => {
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setOpen(false)
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not cancel offer',
+    })
+  }
+
+  const handleSuccess: Parameters<
+    typeof cancelOrder
+  >[0]['handleSuccess'] = async () => {
+    details && 'mutate' in details && (await details.mutate())
+    mutate && (await mutate())
+  }
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    await checkWallet()
+    setWaitingTx(true)
+    await cancelOrder({
+      hash:
+        ('hash' in data && data?.hash) ||
+        ('details' in data &&
+          data?.details.data?.tokens?.[0].market?.topBuy?.hash) ||
+        '',
+      maker,
+      signer,
+      apiBase,
+      setSteps,
+      handleSuccess,
+      handleError,
+    })
+    setWaitingTx(false)
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
-          onClick={async () => {
-            if (!signer) {
-              const data = await connect(connectData.connectors[0])
-              if (data?.data) {
-                setToast({
-                  kind: 'success',
-                  message: 'Connected your wallet successfully.',
-                  title: 'Wallet connected',
-                })
-              }
-              return
-            }
-
-            setWaitingTx(true)
-            await cancelOrder({
-              hash:
-                ('hash' in data && data?.hash) ||
-                ('details' in data &&
-                  data?.details.data?.tokens?.[0].market?.topBuy?.hash) ||
-                '',
-              maker,
-              signer,
-              apiBase,
-              setSteps,
-              handleSuccess: () => {
-                details && 'mutate' in details && details.mutate()
-                mutate && mutate()
-              },
-              handleError: (err: any) => {
-                // Handle user rejection
-                if (err?.code === 4001) {
-                  setOpen(false)
-                  setSteps(undefined)
-                  setToast({
-                    kind: 'error',
-                    message: 'You have canceled the transaction.',
-                    title: 'User canceled transaction',
-                  })
-                  return
-                }
-                setToast({
-                  kind: 'error',
-                  message: 'The transaction was not completed.',
-                  title: 'Could not cancel offer',
-                })
-              },
-            })
-            setWaitingTx(false)
-          }}
+          onClick={execute}
           className="btn-primary-outline"
         >
-          {waitingTx ? 'Waiting...' : 'Cancel Your Offer'}
+          {waitingTx ? (
+            <CgSpinner className="h-4 w-4 animate-spin" />
+          ) : (
+            'Cancel Your Offer'
+          )}
         </Dialog.Trigger>
       )}
       {steps && (
@@ -165,7 +182,7 @@ const CancelOffer: FC<Props> = ({
           <Dialog.Overlay>
             <ModalCard
               title="Cancel your offer"
-              data={modalData}
+              loading={waitingTx}
               steps={steps}
             />
           </Dialog.Overlay>

@@ -27,6 +27,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import buyToken from 'lib/actions/buyToken'
 import Toast from './Toast'
+import { CgSpinner } from 'react-icons/cg'
 
 type Props = {
   apiBase: string
@@ -186,6 +187,72 @@ const TokensMain: FC<Props> = ({
     },
   }
 
+  const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
+    if (err?.message === 'Not enough ETH balance') {
+      setToast({
+        kind: 'error',
+        message: 'You have insufficient funds to buy this token.',
+        title: 'Not enough ETH balance',
+      })
+      return
+    }
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setOpen(false)
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not buy token',
+    })
+  }
+
+  const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
+    stats.mutate()
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    if (isOwner) {
+      setToast({
+        kind: 'error',
+        message: 'You already own this token.',
+        title: 'Failed to buy token',
+      })
+      return
+    }
+
+    setWaitingTx(true)
+    await buyToken({
+      tokenId: floor?.token?.tokenId,
+      contract: floor?.token?.contract,
+      signer,
+      apiBase,
+      setSteps,
+      handleSuccess,
+      handleError,
+    })
+    setWaitingTx(false)
+  }
+
   return (
     <>
       <Head>
@@ -203,75 +270,23 @@ const TokensMain: FC<Props> = ({
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             disabled={floor?.value === null || waitingTx || isInTheWrongNetwork}
-            onClick={async () => {
-              if (!signer) {
-                const data = await connect(connectData.connectors[0])
-                if (data?.data) {
-                  setToast({
-                    kind: 'success',
-                    message: 'Connected your wallet successfully.',
-                    title: 'Wallet connected',
-                  })
-                }
-                return
-              }
-
-              if (isOwner) {
-                setToast({
-                  kind: 'error',
-                  message: 'You already own this token.',
-                  title: 'Failed to buy token',
-                })
-                return
-              }
-
-              setWaitingTx(true)
-              await buyToken({
-                tokenId: floor?.token?.tokenId,
-                contract: floor?.token?.contract,
-                signer,
-                apiBase,
-                setSteps,
-                handleSuccess: () => stats.mutate(),
-                handleError: (err) => {
-                  if (err?.message === 'Not enough ETH balance') {
-                    setToast({
-                      kind: 'error',
-                      message: 'You have insufficient funds to buy this token.',
-                      title: 'Not enough ETH balance',
-                    })
-                    return
-                  }
-                  // Handle user rejection
-                  if (err?.code === 4001) {
-                    setOpen(false)
-                    setSteps(undefined)
-                    setToast({
-                      kind: 'error',
-                      message: 'You have canceled the transaction.',
-                      title: 'User canceled transaction',
-                    })
-                    return
-                  }
-                  setToast({
-                    kind: 'error',
-                    message: 'The transaction was not completed.',
-                    title: 'Could not buy token',
-                  })
-                },
-              })
-              setWaitingTx(false)
-            }}
+            onClick={execute}
             className="btn-primary-fill"
           >
-            {waitingTx
-              ? 'Waiting...'
-              : `Buy for ${formatBN(floor?.value, 4)} ETH`}
+            {waitingTx ? (
+              <CgSpinner className="h-4 w-4 animate-spin" />
+            ) : (
+              `Buy for ${formatBN(floor?.value, 4)} ETH`
+            )}
           </Dialog.Trigger>
           {steps && (
             <Dialog.Portal>
               <Dialog.Overlay>
-                <ModalCard title="Buy token" data={data} steps={steps} />
+                <ModalCard
+                  title="Buy token"
+                  loading={waitingTx}
+                  steps={steps}
+                />
               </Dialog.Overlay>
             </Dialog.Portal>
           )}

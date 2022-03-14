@@ -20,6 +20,7 @@ import { Execute } from 'lib/executeSteps'
 import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
+import { CgSpinner } from 'react-icons/cg'
 
 type Props = {
   env: {
@@ -109,23 +110,75 @@ const CollectionOfferModal: FC<Props> = ({
     }
   }, [offerPrice])
 
+  const handleError: Parameters<typeof placeBid>[0]['handleError'] = (err) => {
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setOpen(false)
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not place bid',
+    })
+  }
+
+  const handleSuccess: Parameters<typeof placeBid>[0]['handleSuccess'] = () => {
+    stats.mutate()
+    tokens.mutate()
+  }
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    await checkWallet()
+
+    setWaitingTx(true)
+
+    const expirationValue = expirationPresets
+      .find(({ preset }) => preset === expiration)
+      ?.value()
+
+    if (!signer) return
+
+    await placeBid({
+      query: {
+        maker: await signer.getAddress(),
+        price: calculations.total.toString(),
+        expirationTime: expirationValue,
+        collection: data.collection.id,
+      },
+      signer,
+      apiBase: env.apiBase,
+      setSteps,
+      handleSuccess,
+      handleError,
+    })
+    setWaitingTx(false)
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () => {
-          if (!signer) {
-            const data = await connect(connectData.connectors[0])
-            if (data?.data) {
-              setToast({
-                kind: 'success',
-                message: 'Connected your wallet successfully.',
-                title: 'Wallet connected',
-              })
-            }
-            return
-          }
-        }}
+        onClick={async () => await checkWallet()}
         className="btn-primary-outline"
       >
         Make a Collection Offer
@@ -133,8 +186,8 @@ const CollectionOfferModal: FC<Props> = ({
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
+            loading={waitingTx}
             title="Make a Collection Offer"
-            data={data}
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={
@@ -144,63 +197,14 @@ const CollectionOfferModal: FC<Props> = ({
                   !calculations.missingEth.isZero() ||
                   waitingTx
                 }
-                onClick={async () => {
-                  if (!signer) {
-                    const data = await connect(connectData.connectors[0])
-                    if (data?.data) {
-                      setToast({
-                        kind: 'success',
-                        message: 'Connected your wallet successfully.',
-                        title: 'Wallet connected',
-                      })
-                    }
-                    return
-                  }
-
-                  setWaitingTx(true)
-
-                  const expirationValue = expirationPresets
-                    .find(({ preset }) => preset === expiration)
-                    ?.value()
-
-                  await placeBid({
-                    query: {
-                      maker: await signer.getAddress(),
-                      price: calculations.total.toString(),
-                      expirationTime: expirationValue,
-                      collection: data.collection.id,
-                    },
-                    signer,
-                    apiBase: env.apiBase,
-                    setSteps,
-                    handleSuccess: () => {
-                      stats.mutate()
-                      tokens.mutate()
-                    },
-                    handleError: (err) => {
-                      // Handle user rejection
-                      if (err?.code === 4001) {
-                        setOpen(false)
-                        setSteps(undefined)
-                        setToast({
-                          kind: 'error',
-                          message: 'You have canceled the transaction.',
-                          title: 'User canceled transaction',
-                        })
-                        return
-                      }
-                      setToast({
-                        kind: 'error',
-                        message: 'The transaction was not completed.',
-                        title: 'Could not place bid',
-                      })
-                    },
-                  })
-                  setWaitingTx(false)
-                }}
+                onClick={execute}
                 className="btn-primary-fill w-full"
               >
-                {waitingTx ? 'Waiting...' : 'Make Offer'}
+                {waitingTx ? (
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Make Offer'
+                )}
               </button>
             }
           >

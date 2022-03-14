@@ -21,6 +21,7 @@ import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -52,9 +53,9 @@ type Props = {
 
 const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
-  const [orderbook, setOrderbook] = useState<'opensea' | 'reservoir'>(
-    'reservoir'
-  )
+  const [orderbook, setOrderbook] = useState<('opensea' | 'reservoir')[]>([
+    'reservoir',
+  ])
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [{ data: connectData }, connect] = useConnect()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
@@ -77,6 +78,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   } | null>(null)
   const [{ data: signer }] = useSigner()
   const [{ data: ethBalance }, getBalance] = useBalance()
+  const [continute, setContinute] = useState(false)
   const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
@@ -161,22 +163,118 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     },
   }
 
+  const handleError: Parameters<typeof placeBid>[0]['handleError'] = (err) => {
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setOpen(false)
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not make offer',
+    })
+  }
+
+  const handleSuccess: Parameters<typeof placeBid>[0]['handleSuccess'] = () => {
+    details && 'mutate' in details && details.mutate()
+  }
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    await checkWallet()
+
+    setWaitingTx(true)
+
+    const expirationValue = expirationPresets
+      .find(({ preset }) => preset === expiration)
+      ?.value()
+
+    if (!signer) return
+
+    await placeBid({
+      query: {
+        maker: await signer.getAddress(),
+        price: calculations.total.toString(),
+        orderbook: 'reservoir',
+        expirationTime: expirationValue,
+        contract: token.token?.contract,
+        tokenId: token.token?.tokenId,
+      },
+      signer,
+      apiBase: env.apiBase,
+      setSteps,
+      handleSuccess,
+      handleError,
+    })
+
+    setWaitingTx(false)
+  }
+
+  const onContinue = async () => {
+    setWaitingTx(true)
+
+    // setOrderbook((orderbook) => {
+    //   orderbook.shift()
+    //   return orderbook
+    // })
+
+    setOrderbook(['opensea'])
+
+    const expirationValue = expirationPresets
+      .find(({ preset }) => preset === expiration)
+      ?.value()
+
+    if (!signer) return
+
+    if (postOnOpenSea) {
+      await placeBid({
+        query: {
+          maker: await signer.getAddress(),
+          price: calculations.total.toString(),
+          orderbook: 'opensea',
+          expirationTime: expirationValue,
+          contract: token.token?.contract,
+          tokenId: token.token?.tokenId,
+        },
+        signer,
+        apiBase: env.apiBase,
+        setSteps,
+        handleSuccess,
+        handleError,
+      })
+    }
+
+    setWaitingTx(false)
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
         onClick={async () => {
-          if (!signer) {
-            const data = await connect(connectData.connectors[0])
-            if (data?.data) {
-              setToast({
-                kind: 'success',
-                message: 'Connected your wallet successfully.',
-                title: 'Wallet connected',
-              })
-            }
-            return
-          }
+          setPostOnOpenSea(false)
+          setOfferPrice('')
+          setOrderbook(['reservoir'])
+          await checkWallet()
         }}
         className="btn-primary-outline w-full"
       >
@@ -185,11 +283,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
+            loading={waitingTx}
             title="Make a Token Offer"
-            data={modalData}
             steps={steps}
             orderbook={orderbook}
             onCloseCallback={() => setSteps(undefined)}
+            onContinue={onContinue}
             actionButton={
               <button
                 disabled={
@@ -197,106 +296,14 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   !calculations.missingEth.isZero() ||
                   waitingTx
                 }
-                onClick={async () => {
-                  if (!signer) {
-                    const data = await connect(connectData.connectors[0])
-                    if (data?.data) {
-                      setToast({
-                        kind: 'success',
-                        message: 'Connected your wallet successfully.',
-                        title: 'Wallet connected',
-                      })
-                    }
-                    return
-                  }
-
-                  setWaitingTx(true)
-
-                  const expirationValue = expirationPresets
-                    .find(({ preset }) => preset === expiration)
-                    ?.value()
-
-                  if (!signer) return
-
-                  setOrderbook('reservoir')
-                  await placeBid({
-                    query: {
-                      maker: await signer.getAddress(),
-                      price: calculations.total.toString(),
-                      orderbook,
-                      expirationTime: expirationValue,
-                      contract: token.token?.contract,
-                      tokenId: token.token?.tokenId,
-                    },
-                    signer,
-                    apiBase: env.apiBase,
-                    setSteps,
-                    handleSuccess: () => {
-                      details && 'mutate' in details && details.mutate()
-                    },
-                    handleError: (err) => {
-                      // Handle user rejection
-                      if (err?.code === 4001) {
-                        setOpen(false)
-                        setSteps(undefined)
-                        setToast({
-                          kind: 'error',
-                          message: 'You have canceled the transaction.',
-                          title: 'User canceled transaction',
-                        })
-                        return
-                      }
-                      setToast({
-                        kind: 'error',
-                        message: 'The transaction was not completed.',
-                        title: 'Could not make offer',
-                      })
-                    },
-                  })
-
-                  if (postOnOpenSea) {
-                    setOrderbook('opensea')
-                    await placeBid({
-                      query: {
-                        maker: await signer.getAddress(),
-                        price: calculations.total.toString(),
-                        orderbook,
-                        expirationTime: expirationValue,
-                        contract: token.token?.contract,
-                        tokenId: token.token?.tokenId,
-                      },
-                      signer,
-                      apiBase: env.apiBase,
-                      setSteps,
-                      handleSuccess: () => {
-                        details && 'mutate' in details && details.mutate()
-                      },
-                      handleError: (err) => {
-                        // Handle user rejection
-                        if (err?.code === 4001) {
-                          setOpen(false)
-                          setSteps(undefined)
-                          setToast({
-                            kind: 'error',
-                            message: 'You have canceled the transaction.',
-                            title: 'User canceled transaction',
-                          })
-                          return
-                        }
-                        setToast({
-                          kind: 'error',
-                          message: 'The transaction was not completed.',
-                          title: 'Could not make offer',
-                        })
-                      },
-                    })
-                  }
-
-                  setWaitingTx(false)
-                }}
+                onClick={execute}
                 className="btn-primary-fill w-full"
               >
-                {waitingTx ? 'Waiting...' : 'Make Offer'}
+                {waitingTx ? (
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Make Offer'
+                )}
               </button>
             }
           >
@@ -316,7 +323,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   className="input-primary-outline w-[160px]"
                 />
               </div>
-              {/* <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <label htmlFor="postOpenSea" className="reservoir-h6">
                   Also post to OpenSea
                 </label>
@@ -326,9 +333,16 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   id="postOpenSea"
                   className="scale-125 transform"
                   checked={postOnOpenSea}
-                  onChange={(e) => setPostOnOpenSea(e.target.checked)}
+                  onChange={(e) => {
+                    setPostOnOpenSea(e.target.checked)
+                    if (e.target.checked) {
+                      setOrderbook(['reservoir', 'opensea'])
+                    } else {
+                      setOrderbook(['reservoir'])
+                    }
+                  }}
                 />
-              </div> */}
+              </div>
               <div className="flex items-center justify-between">
                 <ExpirationSelector
                   presets={expirationPresets}
@@ -340,7 +354,11 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 <div className="reservoir-h6">Fees</div>
                 <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
-                  <div>Marketplace 0%</div>
+                  {postOnOpenSea && (
+                    <div>
+                      OpenSea 2.5%<sup>*</sup>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex justify-between">
@@ -353,6 +371,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   />
                 </div>
               </div>
+              {postOnOpenSea && (
+                <div className="reservoir-small">
+                  <sup>*</sup>OpenSea fee is taken out of the total cost amount
+                  if item is sold on OpenSea.
+                </div>
+              )}
               {calculations.error && (
                 <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
                   {calculations.error}
