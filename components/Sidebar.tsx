@@ -1,5 +1,4 @@
 import * as Accordion from '@radix-ui/react-accordion'
-import { HiChevronDown } from 'react-icons/hi'
 import { paths } from 'interfaces/apiTypes'
 import { toggleOffItem, toggleOnAttributeKey } from 'lib/router'
 import { useRouter } from 'next/router'
@@ -22,7 +21,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="my-3 hidden min-w-[200px] max-w-[250px] divide-y-[1px] border-r-[1px] border-gray-300 md:block"
+      className="mb-3 hidden w-[220px] flex-none border-r-[1px] border-gray-300 md:block lg:w-[260px] xl:w-[374px]"
     >
       <div className="overflow-hidden">
         <button
@@ -31,11 +30,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-label-l w-full px-3 py-2 text-left transition ${
+          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-4 py-3 text-left transition ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
-              ? 'bg-neutral-800 text-neutral-50 hover:bg-neutral-900  dark:hover:bg-neutral-200'
-              : 'hover:bg-gray-300 '
+              ? 'bg-primary-100 hover:bg-primary-300'
+              : 'hover:bg-primary-100'
           }`}
         >
           Explore All
@@ -48,7 +47,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
           className="overflow-hidden"
         >
           <Accordion.Header
-            className={`flex w-full justify-between ${
+            className={`flex w-full justify-between border-b-[1px] border-gray-300 ${
               router.query.attribute_key &&
               router.query.attribute_key.toString() === attribute.key
                 ? 'divide-gray-800 dark:divide-gray-300'
@@ -67,7 +66,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-label-l w-full px-4 py-3 text-left transition ${
+              className={`reservoir-h6 w-full px-4 py-3 text-left transition ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
                   ? 'bg-primary-100 hover:bg-primary-300'
@@ -76,16 +75,19 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
             >
               {attribute.key}
             </button>
-            <Accordion.Trigger
-              className={`p-3 transition ${
+            <div
+              className={`flex items-center ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
                   ? 'bg-primary-100 hover:bg-primary-300'
                   : 'hover:bg-primary-100'
               }`}
             >
-              <FiChevronDown className="h-5 w-5" aria-hidden />
-            </Accordion.Trigger>
+              <div className="h-6 w-px bg-gray-300"></div>
+              <Accordion.Trigger className="p-3 transition">
+                <FiChevronDown className="h-5 w-5" aria-hidden />
+              </Accordion.Trigger>
+            </div>
           </Accordion.Header>
           <Accordion.Content>
             <AttributeSelector

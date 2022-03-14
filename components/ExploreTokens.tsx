@@ -58,7 +58,7 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                     >
                       <a
                         ref={idx === arr.length - 1 ? viewRef : null}
-                        className="flex flex-col rounded-md border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
+                        className="flex flex-col rounded-[16px] border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
                       >
                         <div className="flex-grow"></div>
                         <ExploreImagesGrid
@@ -67,8 +67,9 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                         />
                         <div className="flex-grow"></div>
                         <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
-                          <span>{attribute?.key}</span>
-                          <span className="mr-2">{attribute?.value}</span>
+                          <span className="truncate" title={attribute?.value}>
+                            {attribute?.value}
+                          </span>
                           <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 dark:bg-neutral-800">
                             {formatNumber(attribute?.tokenCount)}
                           </span>

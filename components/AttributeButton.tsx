@@ -38,8 +38,8 @@ const AttributeButton: FC<Props> = ({
       className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
         router.query[`attributes[${attribute}]`] &&
         `${router.query[`attributes[${attribute}]`]}` === value
-          ? 'bg-neutral-200 text-neutral-900'
-          : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
+          ? 'bg-primary-100 hover:bg-primary-300'
+          : 'hover:bg-primary-100'
       } 
         `}
     >

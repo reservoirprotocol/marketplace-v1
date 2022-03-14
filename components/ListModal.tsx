@@ -206,7 +206,7 @@ const ListModal: FC<Props> = ({
                   Price (ETH)
                 </label>
                 <input
-                  placeholder="Choose a price"
+                  placeholder="Amount"
                   id="price"
                   type="number"
                   min={0}
