@@ -10,6 +10,7 @@ import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -173,13 +174,17 @@ const AcceptOffer: FC<Props> = ({
           onClick={execute}
           className="btn-primary-outline w-full"
         >
-          {waitingTx ? 'Waiting...' : 'Accept Offer'}
+          {waitingTx ? (
+            <CgSpinner className="h-4 w-4 animate-spin" />
+          ) : (
+            'Accept Offer'
+          )}
         </Dialog.Trigger>
       )}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Accept Offer" steps={steps} />
+            <ModalCard title="Accept Offer" loading={waitingTx} steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

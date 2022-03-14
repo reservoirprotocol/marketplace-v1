@@ -10,6 +10,7 @@ import Toast from './Toast'
 import { useConnect } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -173,13 +174,17 @@ const BuyNow: FC<Props> = ({
           onClick={execute}
           className="btn-primary-fill w-full"
         >
-          {waitingTx ? 'Waiting...' : 'Buy Now'}
+          {waitingTx ? (
+            <CgSpinner className="h-4 w-4 animate-spin" />
+          ) : (
+            'Buy Now'
+          )}
         </Dialog.Trigger>
       )}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Buy Now" steps={steps} />
+            <ModalCard title="Buy Now" loading={waitingTx} steps={steps} />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

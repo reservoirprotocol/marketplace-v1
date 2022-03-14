@@ -13,6 +13,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -133,6 +134,7 @@ const ListModal: FC<Props> = ({
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
+            loading={waitingTx}
             title="List Token for Sale"
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
@@ -195,7 +197,11 @@ const ListModal: FC<Props> = ({
                 }}
                 className="btn-primary-fill w-full"
               >
-                {waitingTx ? 'Waiting...' : 'List'}
+                {waitingTx ? (
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  'List'
+                )}
               </button>
             }
           >

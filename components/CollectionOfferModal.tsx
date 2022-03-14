@@ -20,6 +20,7 @@ import { Execute } from 'lib/executeSteps'
 import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
+import { CgSpinner } from 'react-icons/cg'
 
 type Props = {
   env: {
@@ -185,6 +186,7 @@ const CollectionOfferModal: FC<Props> = ({
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
+            loading={waitingTx}
             title="Make a Collection Offer"
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
@@ -198,7 +200,11 @@ const CollectionOfferModal: FC<Props> = ({
                 onClick={execute}
                 className="btn-primary-fill w-full"
               >
-                {waitingTx ? 'Waiting...' : 'Make Offer'}
+                {waitingTx ? (
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Make Offer'
+                )}
               </button>
             }
           >

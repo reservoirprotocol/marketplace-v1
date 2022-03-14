@@ -10,6 +10,7 @@ import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -169,13 +170,21 @@ const CancelOffer: FC<Props> = ({
           onClick={execute}
           className="btn-primary-outline"
         >
-          {waitingTx ? 'Waiting...' : 'Cancel Your Offer'}
+          {waitingTx ? (
+            <CgSpinner className="h-4 w-4 animate-spin" />
+          ) : (
+            'Cancel Your Offer'
+          )}
         </Dialog.Trigger>
       )}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
-            <ModalCard title="Cancel your offer" steps={steps} />
+            <ModalCard
+              title="Cancel your offer"
+              loading={waitingTx}
+              steps={steps}
+            />
           </Dialog.Overlay>
         </Dialog.Portal>
       )}

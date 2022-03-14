@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+import React, { FC, ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -27,6 +27,7 @@ type Props = {
       value?: string | undefined
     }
   }
+  loading: boolean
   onCloseCallback?: () => any
   orderbook?: ('opensea' | 'reservoir')[]
   actionButton?: ReactNode
@@ -44,6 +45,7 @@ const ModalCard: FC<Props> = ({
   actionButton,
   children,
   data,
+  loading,
   orderbook,
   onCloseCallback,
   onContinue,
@@ -58,7 +60,8 @@ const ModalCard: FC<Props> = ({
     data?.attribute || data?.token ? data?.collection?.name : 'Collection'
 
   // If all executed succesfully, then success is true
-  const success = steps && !steps.find(({ status }) => status === 'incomplete')
+  const success =
+    !loading && steps && !steps.find(({ status }) => status === 'incomplete')
 
   const orderbookTitle =
     orderbook && `Submitting to ${orderbooks[orderbook[0]]}`
@@ -128,7 +131,7 @@ const ModalCard: FC<Props> = ({
             </Dialog.Close>
           )
         ) : (
-          <div className="flex items-center gap-4">
+          <div className="flex gap-4">
             <Dialog.Close
               onClick={onCloseCallback}
               className="btn-primary-outline w-full"

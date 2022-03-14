@@ -21,6 +21,7 @@ import ModalCard from './modal/ModalCard'
 import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { CgSpinner } from 'react-icons/cg'
 
 type Details = paths['/tokens/details']['get']['responses']['200']['schema']
 type Collection =
@@ -277,6 +278,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
+            loading={waitingTx}
             title="Make a Token Offer"
             steps={steps}
             orderbook={orderbook}
@@ -292,7 +294,11 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 onClick={execute}
                 className="btn-primary-fill w-full"
               >
-                {waitingTx ? 'Waiting...' : 'Make Offer'}
+                {waitingTx ? (
+                  <CgSpinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Make Offer'
+                )}
               </button>
             }
           >
