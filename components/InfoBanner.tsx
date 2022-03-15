@@ -13,7 +13,7 @@ const InfoBanner = () => {
         style={{
           background: 'linear-gradient(97.55deg, #BD00FF 0%, #7000FF 100%)',
         }}
-        className="absolute inset-x-0 top-[84px] flex min-h-[72px] items-center sm:top-20"
+        className="absolute inset-x-0 top-[74px] flex min-h-[72px] items-center"
       >
         <div className="mx-auto flex w-full max-w-screen-2xl items-start gap-6  p-3 sm:py-4 md:items-center md:px-4 lg:px-6">
           <div className="grid flex-grow items-center justify-start gap-2 md:flex md:justify-center">

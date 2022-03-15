@@ -126,12 +126,12 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 grid grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
-        <Link href={`/collections/${collectionId}`}>
+      <div className="mb-2 mt-9 grid  grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
+        {/* <Link href={`/collections/${collectionId}`}>
           <a className="reservoir-capitalized mt-9 flex items-center justify-self-start sm:col-span-2">
             <FiArrowLeft /> Back
           </a>
-        </Link>
+        </Link> */}
         <div className="ml-auto self-start">
           {/* TOKEN IMAGE */}
           {/* <img

@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        mono: ['Inter', ...defaultTheme.fontFamily.mono],
       },
       keyframes: {
         'slide-down': {

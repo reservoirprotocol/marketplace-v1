@@ -235,7 +235,6 @@ const CollectionOfferModal: FC<Props> = ({
                 <div className="reservoir-h6">Fees</div>
                 <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
-                  <div>Marketplace 0%</div>
                 </div>
               </div>
               <div className="flex justify-between">

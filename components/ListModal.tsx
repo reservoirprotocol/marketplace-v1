@@ -96,7 +96,12 @@ const ListModal: FC<Props> = ({
     }
   }, [data, open])
 
-  const bps = collection?.collection?.royalties?.bps ?? 0
+  let bps = 0
+
+  if ('details' in data) {
+    bps = data?.collection?.collection?.royalties?.bps || 0
+  }
+
   const royaltyPercentage = `${bps / 100}%`
 
   // Set the token either from SWR or fetch
