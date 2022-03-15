@@ -1,6 +1,5 @@
 import { ComponentProps, FC } from 'react'
 import { Toaster } from 'react-hot-toast'
-import InfoBanner from './InfoBanner'
 import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 

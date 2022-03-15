@@ -21,11 +21,11 @@ const TokenAttributes = ({ token }: Props) => {
             )}=${formatUrl(`${value}`)}`}
           >
             <a className="rounded-lg border border-gray-300 transition  hover:shadow-md">
-              <p className="reservoir-subtitle truncate p-3 text-center">
+              <p className="reservoir-subtitle truncate p-3 text-center capitalize">
                 {key}
               </p>
               <p
-                className="reservoir-subtitle truncate bg-primary-100 p-3 text-center"
+                className="reservoir-subtitle truncate bg-primary-100 p-3 text-center capitalize"
                 title={value}
               >
                 {value}
