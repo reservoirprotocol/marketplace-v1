@@ -6,7 +6,7 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 type Positions =
-  paths['/users/{user}/positions']['get']['responses']['200']['schema']
+  paths['/users/{user}/positions/v1']['get']['responses']['200']['schema']
 
 export default function useUserPositions(
   apiBase: string | undefined,
@@ -16,7 +16,7 @@ export default function useUserPositions(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(`/users/${user}/positions`, apiBase)
+  const url = new URL(`/users/${user}/positions/v1`, apiBase)
 
   const positions = useSWRInfinite<Positions>(
     (index, previousPageData) =>
@@ -65,12 +65,13 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.positions?.length === 0) return null
 
-  let query: paths['/users/{user}/positions']['get']['parameters']['query'] = {
-    status: 'valid',
-    side,
-    limit: 20,
-    offset: index * 20,
-  }
+  let query: paths['/users/{user}/positions/v1']['get']['parameters']['query'] =
+    {
+      status: 'valid',
+      side,
+      limit: 20,
+      offset: index * 20,
+    }
 
   setParams(url, query)
 

@@ -12,7 +12,7 @@ const ExploreTable = ({
 }: {
   mappedAttributes: (
     | NonNullable<
-        paths['/collections/{collection}/attributes']['get']['responses']['200']['schema']['attributes']
+        paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']['attributes']
       >[0]
     | undefined
   )[]
@@ -62,14 +62,14 @@ const ExploreTable = ({
             <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
             <td className="pr-3">
               <FormatEth
-                amount={attribute?.floorSellValues?.[0]}
+                amount={attribute?.floorAskPrices?.[0]}
                 maximumFractionDigits={4}
                 logoWidth={7}
               />
             </td>
             <td className="pr-3">
               <FormatEth
-                amount={attribute?.topBuy?.value}
+                amount={attribute?.topBid?.value}
                 maximumFractionDigits={4}
                 logoWidth={7}
               />
@@ -109,10 +109,10 @@ const ExploreImages = ({
   value,
 }: {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
   <div className="flex justify-start gap-1.5 py-1">

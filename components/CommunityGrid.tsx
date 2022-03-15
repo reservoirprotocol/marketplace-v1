@@ -48,21 +48,21 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
           : mappedCollections?.map((community, idx) => {
               return (
                 <Link
-                  key={`${community?.collection?.name}${idx}`}
-                  href={`/collections/${community?.collection?.id}`}
+                  key={`${community?.name}${idx}`}
+                  href={`/collections/${community?.id}`}
                 >
                   <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                     <ImagesGrid
                       sample_images={community?.set?.sampleImages}
-                      value={community?.collection?.name}
+                      value={community?.name}
                     />
                     <div className="mt-3 flex items-center gap-2">
                       <img
-                        src={optimizeImage(community?.collection?.image, 40)}
+                        src={optimizeImage(community?.image, 40)}
                         className="h-12 w-12 rounded-full"
                       />
                       <div className="reservoir-subtitle">
-                        {community?.collection?.name}
+                        {community?.name}
                       </div>
                     </div>
                   </a>

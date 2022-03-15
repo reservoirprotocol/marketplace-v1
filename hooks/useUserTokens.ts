@@ -5,7 +5,8 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-type Tokens = paths['/users/{user}/tokens']['get']['responses']['200']['schema']
+type Tokens =
+  paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 
 export default function useUserTokens(
   apiBase: string | undefined,
@@ -16,7 +17,7 @@ export default function useUserTokens(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(`/users/${user}/tokens`, apiBase)
+  const url = new URL(`/users/${user}/tokens/v2`, apiBase)
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
@@ -56,7 +57,7 @@ const getKey: InfiniteKeyLoader = (
     apiBase: string | undefined
   },
   index: number,
-  previousPageData: paths['/users/{user}/tokens']['get']['responses']['200']['schema']
+  previousPageData: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 ) => {
   const { url, collectionId, mode, apiBase } = custom
   if (!apiBase) {
@@ -67,7 +68,7 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let query: paths['/users/{user}/tokens']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
   }

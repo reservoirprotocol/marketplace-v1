@@ -6,13 +6,12 @@ import setParams from 'lib/params'
 type Data = {
   query:
     | {
-        contract: string | undefined
         maker: string | undefined
-        price: string | undefined
-        tokenId: string | undefined
+        weiPrice: string | undefined
+        token: string | undefined
         expirationTime: string | undefined
       }
-    | paths['/execute/list']['get']['parameters']['query']
+    | paths['/execute/list/v1']['get']['parameters']['query']
   signer: Signer | undefined
   apiBase: string | undefined
   setSteps: React.Dispatch<React.SetStateAction<Execute['steps']>>
@@ -28,11 +27,10 @@ export default async function listToken(data: Data) {
   const { query, signer, apiBase, setSteps, handleSuccess, handleError } = data
 
   if (
-    !query.contract ||
     !query.maker ||
     !query.expirationTime ||
-    !query.price ||
-    !query.tokenId ||
+    !query.weiPrice ||
+    !query.token ||
     !signer ||
     !apiBase
   ) {
@@ -41,8 +39,8 @@ export default async function listToken(data: Data) {
   }
 
   try {
-    // Construct an URL object for the `/execute/list` endpoint
-    const url = new URL('/execute/list', apiBase)
+    // Construct an URL object for the `/execute/list/v1` endpoint
+    const url = new URL('/execute/list/v1', apiBase)
 
     setParams(url, query)
 

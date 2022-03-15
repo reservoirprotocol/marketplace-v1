@@ -89,7 +89,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
 
   const details = useDetails(apiBase, {
     contract,
-    tokenId,
+    token,
   })
   const collection = useCollection(apiBase, undefined, collectionId)
 
@@ -103,9 +103,9 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
     token?.token?.owner?.toLowerCase() === accountData?.address.toLowerCase()
   const isTopBidder =
     !!accountData &&
-    token?.market?.topBuy?.maker?.toLowerCase() ===
+    token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
-  const isListed = token?.market?.floorSell?.value !== null
+  const isListed = token?.market?.floorAsk?.price !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
@@ -117,11 +117,11 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
       <Head>
         <title>
           {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-          {collection.data?.collection?.collection?.name} | Reservoir Market
+          {collection.data?.collection?.name} | Reservoir Market
         </title>
         <meta
           name="description"
-          content={collection.data?.collection?.collection?.description}
+          content={collection.data?.collection?.metadata?.description}
         />
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
@@ -193,7 +193,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 title="List Price"
                 price={
                   <FormatEth
-                    amount={token?.market?.floorSell?.value}
+                    amount={token?.market?.floorAsk?.price}
                     maximumFractionDigits={4}
                     logoWidth={20}
                   />
@@ -228,7 +228,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                 title="Top Offer"
                 price={
                   <FormatEth
-                    amount={token?.market?.topBuy?.value}
+                    amount={token?.market?.topBid?.value}
                     maximumFractionDigits={4}
                     logoWidth={20}
                   />
@@ -323,9 +323,8 @@ export const getServerSideProps: GetServerSideProps<{
 
   const url = new URL('/tokens/details', apiBase)
 
-  const query: paths['/tokens/details']['get']['parameters']['query'] = {
+  const query: paths['/tokens/details/v1']['get']['parameters']['query'] = {
     contract: params?.contract?.toString(),
-    tokenId: params?.tokenId?.toString(),
   }
 
   setParams(url, query)
@@ -333,7 +332,7 @@ export const getServerSideProps: GetServerSideProps<{
   const res = await fetch(url.href)
 
   const tokenDetails =
-    (await res.json()) as paths['/tokens/details']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v1']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
 

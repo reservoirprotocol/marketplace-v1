@@ -10,7 +10,7 @@ import { FiChevronDown } from 'react-icons/fi'
 
 type Props = {
   attributes: SWRResponse<
-    paths['/attributes']['get']['responses']['200']['schema']
+    paths['/attributes/v1']['get']['responses']['200']['schema']
   >
   setTokensSize: SWRInfiniteResponse['setSize']
 }

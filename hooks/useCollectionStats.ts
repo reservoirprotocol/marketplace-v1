@@ -14,7 +14,7 @@ export default function useCollectionStats(
   }, [router.query])
 
   function getUrl() {
-    const url = new URL('/stats', apiBase)
+    const url = new URL('/stats/v1', apiBase)
     url.searchParams.set('collection', collectionId)
 
     const attributes = Object.keys(router.query).filter(
@@ -36,7 +36,7 @@ export default function useCollectionStats(
     return url
   }
 
-  const stats = useSWR<paths['/stats']['get']['responses']['200']['schema']>(
+  const stats = useSWR<paths['/stats/v1']['get']['responses']['200']['schema']>(
     getUrl().href,
     fetcher
   )

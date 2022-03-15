@@ -15,9 +15,9 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 
-type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v1']['get']['responses']['200']['schema']
 type Collection =
-  paths['/collections/{collection}']['get']['responses']['200']['schema']
+  paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
 
 type Props = {
   apiBase: string
@@ -127,11 +127,11 @@ const ListModal: FC<Props> = ({
   const tokenData: ComponentProps<typeof ModalCard>['data'] = {
     token: {
       contract: token_?.contract,
-      floorSellValue: market?.floorSell?.value,
+      floorSellValue: market?.floorAsk?.price,
       id: token_?.tokenId,
       image: token_?.image,
       name: token_?.name,
-      topBuyValue: market?.topBuy?.value,
+      topBuyValue: market?.topBid?.value,
     },
   }
 
@@ -186,11 +186,11 @@ const ListModal: FC<Props> = ({
 
     await listToken({
       query: {
-        contract: token_?.contract,
+        // contract: token_?.contract,
         orderbook: 'reservoir',
         maker,
-        price: ethers.utils.parseEther(listingPrice).toString(),
-        tokenId: token_?.tokenId,
+        weiPrice: ethers.utils.parseEther(listingPrice).toString(),
+        token: token_?.tokenId,
         expirationTime: expirationValue,
       },
       signer,
@@ -221,11 +221,11 @@ const ListModal: FC<Props> = ({
     if (postOnOpenSea) {
       await listToken({
         query: {
-          contract: token_?.contract,
+          // contract: token_?.contract,
           orderbook: 'opensea',
           maker,
-          price: ethers.utils.parseEther(listingPrice).toString(),
-          tokenId: token_?.tokenId,
+          weiPrice: ethers.utils.parseEther(listingPrice).toString(),
+          token: token_?.tokenId,
           expirationTime: expirationValue,
         },
         signer,
@@ -251,7 +251,7 @@ const ListModal: FC<Props> = ({
           }}
           className="btn-primary-fill w-full"
         >
-          {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for Sale'}
+          {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

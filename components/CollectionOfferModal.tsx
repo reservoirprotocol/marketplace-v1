@@ -161,7 +161,7 @@ const CollectionOfferModal: FC<Props> = ({
     await placeBid({
       query: {
         maker: await signer.getAddress(),
-        price: calculations.total.toString(),
+        weiPrice: calculations.total.toString(),
         expirationTime: expirationValue,
         collection: data.collection.id,
       },

@@ -4,7 +4,7 @@ import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
 
 type Data = {
-  query: paths['/execute/bid']['get']['parameters']['query']
+  query: paths['/execute/bid/v1']['get']['parameters']['query']
   signer: Signer | undefined
   apiBase: string | undefined
   setSteps: React.Dispatch<React.SetStateAction<Execute['steps']>>
@@ -25,8 +25,8 @@ export default async function placeBid(data: Data) {
   }
 
   try {
-    // Construct an URL object for the `/execute/bid` endpoint
-    const url = new URL('/execute/bid', apiBase)
+    // Construct an URL object for the `/execute/bid/v1` endpoint
+    const url = new URL('/execute/bid/v1', apiBase)
 
     setParams(url, query)
 

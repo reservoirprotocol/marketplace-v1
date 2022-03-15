@@ -161,10 +161,10 @@ function processPosition(
     // @ts-ignore
     name: position?.set?.metadata?.tokenName,
     expiration:
-      position?.primaryOrder?.expiry === 0
+      position?.primaryOrder?.expiration === 0
         ? 'Never'
         : DateTime.fromMillis(
-            +`${position?.primaryOrder?.expiry}000`
+            +`${position?.primaryOrder?.expiration}000`
           ).toRelative(),
     hash: position?.primaryOrder?.hash,
     // @ts-ignore

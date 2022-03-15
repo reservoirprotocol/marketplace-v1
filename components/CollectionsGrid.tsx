@@ -46,22 +46,21 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
             ))
         : mappedCollections?.map((collection, idx) => (
             <Link
-              key={`${collection?.collection?.name}${idx}`}
-              href={`/collections/${collection?.collection?.id}`}
+              key={`${collection?.name}${idx}`}
+              href={`/collections/${collection?.id}`}
             >
               <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
-                <ImagesGrid
-                  sample_images={collection?.set?.sampleImages}
-                  value={collection?.collection?.name}
+                <img
+                  className="aspect-video w-full"
+                  src={optimizeImage(collection?.metadata?.bannerImageUrl, 150)}
+                  alt={collection?.name}
                 />
                 <div className="mt-3 flex items-center gap-2">
                   <img
-                    src={optimizeImage(collection?.collection?.image, 40)}
+                    src={optimizeImage(collection?.metadata?.imageUrl, 40)}
                     className="h-12 w-12 rounded-full"
                   />
-                  <div className="reservoir-subtitle">
-                    {collection?.collection?.name}
-                  </div>
+                  <div className="reservoir-subtitle">{collection?.name}</div>
                 </div>
               </a>
             </Link>

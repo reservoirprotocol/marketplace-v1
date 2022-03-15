@@ -10,7 +10,7 @@ import Masonry from 'react-masonry-css'
 
 type Props = {
   tokens: SWRInfiniteResponse<
-    paths['/tokens']['get']['responses']['200']['schema'],
+    paths['/tokens/v1']['get']['responses']['200']['schema'],
     any
   >
   viewRef: ReturnType<typeof useInView>['ref']
@@ -68,7 +68,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     </div>
                     <div className="reservoir-h6">
                       <FormatEth
-                        amount={token?.topBuyValue}
+                        amount={token?.topBidValue}
                         maximumFractionDigits={4}
                         logoWidth={7}
                       />
@@ -80,7 +80,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                     </div>
                     <div className="reservoir-h6">
                       <FormatEth
-                        amount={token?.floorSellValue}
+                        amount={token?.floorAskPrice}
                         maximumFractionDigits={4}
                         logoWidth={7}
                       />

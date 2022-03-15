@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-type Transfers = paths['/transfers']['get']['responses']['200']['schema']
+type Transfers = paths['/transfers/v2']['get']['responses']['200']['schema']
 
 export default function useUserActivity(
   apiBase: string | undefined,
@@ -14,7 +14,7 @@ export default function useUserActivity(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(`/transfers`, apiBase)
+  const url = new URL(`/transfers/v2`, apiBase)
 
   const transfers = useSWRInfinite<Transfers>(
     (index, previousPageData) =>
@@ -63,10 +63,10 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.transfers?.length === 0) return null
 
-  let query: paths['/transfers']['get']['parameters']['query'] = {
+  let query: paths['/transfers/v2']['get']['parameters']['query'] = {
     limit: 20,
-    offset: index * 20,
-    user,
+    // offset: index * 20,
+    // user,
   }
 
   setParams(url, query)

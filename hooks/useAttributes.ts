@@ -7,16 +7,16 @@ export default function useAttributes(
   apiBase: string | undefined,
   collectionId: string | undefined
 ) {
-  const url = new URL('/attributes', apiBase)
+  const url = new URL('/attributes/v1', apiBase)
 
-  const query: paths['/attributes']['get']['parameters']['query'] = {
+  const query: paths['/attributes/v1']['get']['parameters']['query'] = {
     collection: collectionId || '',
   }
 
   setParams(url, query)
 
   const attributes = useSWR<
-    paths['/attributes']['get']['responses']['200']['schema']
+    paths['/attributes/v1']['get']['responses']['200']['schema']
   >(url.href, fetcher)
 
   return attributes

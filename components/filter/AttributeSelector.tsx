@@ -9,7 +9,7 @@ import { FiSearch, FiXCircle } from 'react-icons/fi'
 
 type Props = {
   attribute: NonNullable<
-    paths['/attributes']['get']['responses']['200']['schema']['attributes']
+    paths['/attributes/v1']['get']['responses']['200']['schema']['attributes']
   >[number]
   setTokensSize: SWRInfiniteResponse['setSize']
 }

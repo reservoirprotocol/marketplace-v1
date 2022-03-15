@@ -17,21 +17,20 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
-    paths['/collections']['get']['responses']['200']['schema']
+    paths['/collections/v1']['get']['responses']['200']['schema']
   >({})
   const [initialResults, setInitialResults] = useState<
-    paths['/collections']['get']['responses']['200']['schema']
+    paths['/collections/v1']['get']['responses']['200']['schema']
   >({})
 
   // LOAD INITIAL RESULTS
   useEffect(() => {
     if (!apiBase) return
 
-    const url = new URL('/collections', apiBase)
+    const url = new URL('/collections/v1', apiBase)
 
-    const query: paths['/collections']['get']['parameters']['query'] = {
-      sortBy: 'floorCap',
-      sortDirection: 'desc',
+    const query: paths['/collections/v1']['get']['parameters']['query'] = {
+      sortBy: 'allTimeVolume',
     }
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost')
@@ -43,7 +42,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       const res = await fetch(url.href)
 
       const json =
-        (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
+        (await res.json()) as paths['/collections/v1']['get']['responses']['200']['schema']
 
       setResults({ collections: json.collections })
       setInitialResults({ collections: json.collections })
@@ -77,7 +76,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
         const res = await fetch(url.href)
 
         const data =
-          (await res.json()) as paths['/collections']['get']['responses']['200']['schema']
+          (await res.json()) as paths['/collections/v1']['get']['responses']['200']['schema']
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
@@ -89,11 +88,10 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     []
   )
 
-  const url = new URL('/collections', apiBase)
+  const url = new URL('/collections/v1', apiBase)
 
-  const query: paths['/collections']['get']['parameters']['query'] = {
-    sortBy: 'floorCap',
-    sortDirection: 'desc',
+  const query: paths['/collections/v1']['get']['parameters']['query'] = {
+    sortBy: 'allTimeVolume',
   }
 
   const isEmpty = results?.collections?.length === 0
@@ -153,12 +151,12 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                   ?.slice(0, 6)
                   .map((collection, index) => (
                     <Link
-                      key={collection?.collection?.name}
-                      href={`/collections/${collection?.collection?.id}`}
+                      key={collection?.name}
+                      href={`/collections/${collection?.id}`}
                     >
                       <a
                         {...getItemProps({
-                          key: collection?.collection?.name,
+                          key: collection?.name,
                           index,
                           item: collection,
                         })}
@@ -172,14 +170,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                       >
                         <img
                           src={
-                            collection?.collection?.image ??
+                            collection?.metadata?.imageUrl ??
                             'https://via.placeholder.com/30'
                           }
-                          alt={`${collection?.collection?.name}'s logo.`}
+                          alt={`${collection?.name}'s logo.`}
                           className="h-9 w-9 overflow-hidden rounded-full"
                         />
                         <span className="reservoir-subtitle ml-2">
-                          {collection?.collection?.name}
+                          {collection?.name}
                         </span>
                       </a>
                     </Link>
@@ -201,12 +199,12 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
             >
               {results?.collections?.slice(0, 6).map((collection, index) => (
                 <Link
-                  key={collection?.collection?.name}
-                  href={`/collections/${collection?.collection?.id}`}
+                  key={collection?.name}
+                  href={`/collections/${collection?.id}`}
                 >
                   <a
                     {...getItemProps({
-                      key: collection?.collection?.name,
+                      key: collection?.name,
                       index,
                       item: collection,
                     })}
@@ -220,14 +218,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                   >
                     <img
                       src={
-                        collection?.collection?.image ??
+                        collection?.metadata?.imageUrl ??
                         'https://via.placeholder.com/30'
                       }
-                      alt={`${collection?.collection?.name}'s logo.`}
+                      alt={`${collection?.name}'s logo.`}
                       className="h-9 w-9 overflow-hidden rounded-full"
                     />
                     <span className="reservoir-subtitle ml-2">
-                      {collection?.collection?.name}
+                      {collection?.name}
                     </span>
                   </a>
                 </Link>

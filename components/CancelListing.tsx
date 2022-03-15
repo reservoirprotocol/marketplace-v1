@@ -12,9 +12,9 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 
-type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v1']['get']['responses']['200']['schema']
 type Collection =
-  paths['/collections/{collection}']['get']['responses']['200']['schema']
+  paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
 
 type Props = {
   apiBase: string
@@ -90,15 +90,15 @@ const CancelListing: FC<Props> = ({
 
   const modalData = {
     collection: {
-      name: collection?.collection?.collection?.name,
+      name: collection?.collection?.name,
     },
     token: {
       contract: token?.token?.contract,
       id: token?.token?.tokenId,
       image: token?.token?.image,
       name: token?.token?.name,
-      topBuyValue: token?.market?.topBuy?.value,
-      floorSellValue: token?.market?.floorSell?.value,
+      topBuyValue: token?.market?.topBid?.value,
+      floorSellValue: token?.market?.floorAsk?.price,
     },
   }
 

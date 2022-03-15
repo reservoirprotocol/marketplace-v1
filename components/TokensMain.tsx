@@ -34,8 +34,8 @@ type Props = {
   chainId: ChainId
   collectionId: string
   fallback: {
-    tokens: paths['/tokens']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v1']['get']['responses']['200']['schema']
+    collection: paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -117,22 +117,22 @@ const TokensMain: FC<Props> = ({
   type ModalProps = ComponentProps<typeof CollectionOfferModal>
 
   const isOwner =
-    collection.data?.collection?.set?.market?.floorSell?.maker?.toLowerCase() ===
+    collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
     accountData?.address.toLowerCase()
 
-  const floor = stats?.data?.stats?.market?.floorSell
+  const floor = stats?.data?.stats?.market?.floorAsk
 
   const statsObj = {
     vol24: 10,
     count: stats?.data?.stats?.tokenCount ?? 0,
-    topOffer: stats?.data?.stats?.market?.topBuy?.value,
+    topOffer: stats?.data?.stats?.market?.topBid?.value,
     floor: floor?.value,
   }
 
   const header = {
     banner: openSeaMeta?.collection?.banner_image_url,
-    image: collection?.data?.collection?.collection?.image,
-    name: collection?.data?.collection?.collection?.name,
+    image: collection?.data?.collection?.metadata?.imageUrl,
+    name: collection?.data?.collection?.name,
   }
 
   const royalties: ModalProps['royalties'] = {
@@ -150,9 +150,10 @@ const TokensMain: FC<Props> = ({
 
   const data: ModalProps['data'] = {
     collection: {
-      id: collection?.data?.collection?.collection?.id,
-      image: collection?.data?.collection?.collection?.image,
-      name: collection?.data?.collection?.collection?.name,
+      id: collection?.data?.collection?.id,
+      // image: collection?.data?.collection?.collection?.image,
+      image: '',
+      name: collection?.data?.collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
   }
@@ -161,9 +162,9 @@ const TokensMain: FC<Props> = ({
 
   const attributeData: AttibuteModalProps['data'] = {
     collection: {
-      id: collection.data?.collection?.collection?.id,
-      image: collection?.data?.collection?.collection?.image,
-      name: collection?.data?.collection?.collection?.name,
+      id: collection.data?.collection?.id,
+      image: collection?.data?.collection?.metadata?.imageUrl,
+      name: collection?.data?.collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
     attribute,
@@ -171,19 +172,19 @@ const TokensMain: FC<Props> = ({
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
-  const hasTokenSetId = !!collection.data?.collection?.collection?.tokenSetId
+  const hasTokenSetId = !!collection.data?.collection?.tokenSetId
 
   const dataSteps = {
     token: {
-      image: stats.data?.stats?.market?.floorSell?.token?.image,
-      name: stats.data?.stats?.market?.floorSell?.token?.name,
-      id: stats.data?.stats?.market?.floorSell?.token?.tokenId,
-      contract: stats.data?.stats?.market?.floorSell?.token?.contract,
+      image: stats.data?.stats?.market?.floorAsk?.token?.image,
+      name: stats.data?.stats?.market?.floorAsk?.token?.name,
+      id: stats.data?.stats?.market?.floorAsk?.token?.tokenId,
+      contract: stats.data?.stats?.market?.floorAsk?.token?.contract,
       topBuyValue: undefined,
-      floorSellValue: stats.data?.stats?.market?.floorSell?.value,
+      floorSellValue: stats.data?.stats?.market?.floorAsk?.value,
     },
     collection: {
-      name: collection?.data?.collection?.collection?.name,
+      name: collection?.data?.collection?.name,
     },
   }
 
@@ -256,12 +257,10 @@ const TokensMain: FC<Props> = ({
   return (
     <>
       <Head>
-        <title>
-          {collection.data?.collection?.collection?.name} | Reservoir Market
-        </title>
+        <title>{collection.data?.collection?.name} | Reservoir Market</title>
         <meta
           name="description"
-          content={collection.data?.collection?.collection?.description}
+          content={collection.data?.collection?.metadata?.description}
         />
         <meta name="twitter:image" content={header.banner} />
         <meta property="og:image" content={header.banner} />

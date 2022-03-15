@@ -4,8 +4,7 @@ import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
 
 type Data = {
-  tokenId: string | undefined
-  contract: string | undefined
+  token: string | undefined
   signer: Signer | undefined
   apiBase: string | undefined
   setSteps: React.Dispatch<React.SetStateAction<Execute['steps']>>
@@ -18,29 +17,20 @@ type Data = {
  * @param data
  */
 export default async function buyToken(data: Data) {
-  const {
-    tokenId,
-    contract,
-    signer,
-    apiBase,
-    setSteps,
-    handleSuccess,
-    handleError,
-  } = data
+  const { token, signer, apiBase, setSteps, handleSuccess, handleError } = data
 
-  if (!tokenId || !contract || !signer || !apiBase) {
+  if (!token || !signer || !apiBase) {
     console.debug(data)
     throw new ReferenceError('Some data is missing')
   }
 
   try {
     // Construct an URL object for the `/execute/buy` endpoint
-    const url = new URL('/execute/buy', apiBase)
+    const url = new URL('/execute/buy/v1', apiBase)
 
     // Construct the query object to execute the trade
-    const query: paths['/execute/buy']['get']['parameters']['query'] = {
-      contract,
-      tokenId,
+    const query: paths['/execute/buy/v1']['get']['parameters']['query'] = {
+      token,
       taker: await signer.getAddress(),
     }
 

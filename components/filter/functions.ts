@@ -7,7 +7,7 @@ import { paths } from 'interfaces/apiTypes'
  */
 export function sortAttributes(
   values: NonNullable<
-    paths['/attributes']['get']['responses']['200']['schema']['attributes']
+    paths['/attributes/v1']['get']['responses']['200']['schema']['attributes']
   >[0]['values']
 ) {
   if (!values) return

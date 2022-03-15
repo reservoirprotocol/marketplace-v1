@@ -4,7 +4,7 @@ import executeSteps, { Execute } from 'lib/executeSteps'
 import setParams from 'lib/params'
 
 type Data = {
-  hash: string | undefined
+  id: string | undefined
   maker: string | undefined
   signer: Signer | undefined
   apiBase: string | undefined
@@ -18,21 +18,21 @@ type Data = {
  * @param data
  */
 export default async function cancelOrder(data: Data) {
-  const { hash, maker, signer, apiBase, setSteps, handleSuccess, handleError } =
+  const { id, maker, signer, apiBase, setSteps, handleSuccess, handleError } =
     data
 
-  if (!hash || !maker || !signer || !apiBase) {
+  if (!id || !maker || !signer || !apiBase) {
     console.debug(data)
     throw new ReferenceError('Some data is missing')
   }
 
   try {
-    // Construct an URL object for the `/execute/cancel` endpoint
-    const url = new URL('/execute/cancel', apiBase)
+    // Construct an URL object for the `/execute/cancel/v1` endpoint
+    const url = new URL('/execute/cancel/v1', apiBase)
 
     // Construct the query object to execute the trade
-    const query: paths['/execute/cancel']['get']['parameters']['query'] = {
-      hash,
+    const query: paths['/execute/cancel/v1']['get']['parameters']['query'] = {
+      id,
       maker,
     }
 

@@ -74,8 +74,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<{
   fallback: {
-    tokens: paths['/tokens']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collection}']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v1']['get']['responses']['200']['schema']
+    collection: paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   try {
@@ -90,7 +90,7 @@ export const getStaticProps: GetStaticProps<{
     // -------------- TOKENS --------------
     const url2 = new URL('/tokens', apiBase)
 
-    const query2: paths['/tokens']['get']['parameters']['query'] = {
+    const query2: paths['/tokens/v1']['get']['parameters']['query'] = {
       collection: params?.id?.toString(),
     }
 

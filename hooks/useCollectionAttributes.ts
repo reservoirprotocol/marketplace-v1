@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 type Attributes =
-  paths['/collections/{collection}/attributes']['get']['responses']['200']['schema']
+  paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']
 
 export default function useCollectionAttributes(
   apiBase: string | undefined,
@@ -17,7 +17,7 @@ export default function useCollectionAttributes(
   const { ref, inView } = useInView()
 
   const url = new URL(
-    `/collections/${router.query.id || collectionId}/attributes`,
+    `/collections/${router.query.id || collectionId}/attributes/v1`,
     apiBase
   )
 
@@ -54,23 +54,20 @@ const getKey: (
     return null
   }
 
-  let query: paths['/collections/{collection}/attributes']['get']['parameters']['query'] =
+  let query: paths['/collections/{collection}/attributes/v1']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
 
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {
     if (`${router.query?.sort}` === 'best_offer') {
-      query.sortBy = 'topBuyValue'
-      query.sortDirection = 'desc'
+      query.sortBy = 'topBidValue'
     }
 
     if (`${router.query?.sort}` === 'name') {
       query.sortBy = 'value'
-      query.sortDirection = 'asc'
     }
   } else {
-    query.sortBy = 'floorSellValue'
-    query.sortDirection = 'desc'
+    query.sortBy = 'floorAskPrice'
   }
 
   if (router.query.attribute_key) {

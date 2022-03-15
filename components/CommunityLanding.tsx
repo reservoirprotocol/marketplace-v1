@@ -39,7 +39,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
         <meta
           name="description"
           content={
-            communities.communities.data?.[0].collections?.[0]?.collection
+            communities.communities.data?.[0].collections?.[0]?.metadata
               ?.description
           }
         />
@@ -48,8 +48,8 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
         <img
           className="h-[50px] w-[50px] rounded-full"
           src={
-            communities.communities.data?.[0].collections?.[0]?.collection
-              ?.image
+            communities.communities.data?.[0].collections?.[0]?.metadata
+              ?.imageUrl
           }
         />
         <h1 className="reservoir-h1">

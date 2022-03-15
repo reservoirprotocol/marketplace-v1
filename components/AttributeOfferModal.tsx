@@ -165,7 +165,7 @@ const AttributeOfferModal: FC<Props> = ({
     await placeBid({
       query: {
         maker: await signer.getAddress(),
-        price: calculations.total.toString(),
+        weiPrice: calculations.total.toString(),
         expirationTime: expirationValue,
         attributeKey: data.attribute.key,
         attributeValue: data.attribute.value,

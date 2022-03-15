@@ -23,9 +23,9 @@ import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 
-type Details = paths['/tokens/details']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v1']['get']['responses']['200']['schema']
 type Collection =
-  paths['/collections/{collection}']['get']['responses']['200']['schema']
+  paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
 
 type Props = {
   env: {
@@ -151,15 +151,15 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
   const modalData = {
     collection: {
-      name: collection?.collection?.collection?.name,
+      name: collection?.collection?.name,
     },
     token: {
       contract: token?.token?.contract,
       id: token?.token?.tokenId,
       image: token?.token?.image,
       name: token?.token?.name,
-      topBuyValue: token?.market?.topBuy?.value,
-      floorSellValue: token?.market?.floorSell?.value,
+      topBuyValue: token?.market?.topBid?.value,
+      floorSellValue: token?.market?.floorAsk?.price,
     },
   }
 
@@ -213,11 +213,11 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     await placeBid({
       query: {
         maker: await signer.getAddress(),
-        price: calculations.total.toString(),
+        weiPrice: calculations.total.toString(),
         orderbook: 'reservoir',
         expirationTime: expirationValue,
-        contract: token.token?.contract,
-        tokenId: token.token?.tokenId,
+        // contract: token.token?.contract,
+        // tokenId: token.token?.tokenId,
       },
       signer,
       apiBase: env.apiBase,
@@ -249,11 +249,11 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       await placeBid({
         query: {
           maker: await signer.getAddress(),
-          price: calculations.total.toString(),
+          weiPrice: calculations.total.toString(),
           orderbook: 'opensea',
           expirationTime: expirationValue,
-          contract: token.token?.contract,
-          tokenId: token.token?.tokenId,
+          // contract: token.token?.contract,
+          // tokenId: token.token?.tokenId,
         },
         signer,
         apiBase: env.apiBase,

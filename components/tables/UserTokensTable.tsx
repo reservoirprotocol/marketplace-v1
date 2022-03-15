@@ -187,7 +187,7 @@ function processToken(
     collectionId: token?.token?.collection?.id,
     tokenName: token?.token?.name,
     listPrice: token?.ownership?.floorSellValue,
-    topOffer: token?.token?.topBuy?.value,
+    topOffer: token?.token?.topBid?.value,
   }
 
   const tokenHref =
