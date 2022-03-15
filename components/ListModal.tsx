@@ -292,7 +292,7 @@ const ListModal: FC<Props> = ({
               </div>
               <div className="flex items-center gap-3">
                 <label htmlFor="postOpenSea" className="reservoir-h6">
-                  Post offer to OpenSea
+                  Post listing to OpenSea
                 </label>
                 <input
                   type="checkbox"
