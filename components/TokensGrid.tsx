@@ -57,9 +57,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, tokenCount }) => {
                 />
                 <p
                   className="reservoir-subtitle mb-3 overflow-hidden truncate px-6 pt-4 lg:pt-3"
-                  title={token?.name}
+                  title={token?.name || token?.tokenId}
                 >
-                  {token?.name}
+                  {token?.name || `#${token?.tokenId}`}
                 </p>
                 <div className="flex items-center justify-between px-6 pb-4 lg:pb-3">
                   <div>
