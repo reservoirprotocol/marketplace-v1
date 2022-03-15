@@ -51,8 +51,12 @@ const ListModal: FC<Props> = ({
 
   // User input
   const [expiration, setExpiration] = useState('oneWeek')
+  const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
   const [listingPrice, setListingPrice] = useState('')
   const [youGet, setYouGet] = useState(constants.Zero)
+  const [orderbook, setOrderbook] = useState<('opensea' | 'reservoir')[]>([
+    'reservoir',
+  ])
 
   useEffect(() => {
     const userInput = ethers.utils.parseEther(
@@ -121,11 +125,120 @@ const ListModal: FC<Props> = ({
     },
   }
 
+  const handleError: Parameters<typeof listToken>[0]['handleError'] = (
+    err: any
+  ) => {
+    // Handle user rejection
+    if (err?.code === 4001) {
+      setSteps(undefined)
+      setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not list token',
+    })
+  }
+
+  const handleSuccess: Parameters<
+    typeof listToken
+  >[0]['handleSuccess'] = () => {
+    details && 'mutate' in details && details.mutate()
+    mutate && mutate()
+  }
+
+  const checkWallet = async () => {
+    if (!signer) {
+      const data = await connect(connectData.connectors[0])
+      if (data?.data) {
+        setToast({
+          kind: 'success',
+          message: 'Connected your wallet successfully.',
+          title: 'Wallet connected',
+        })
+      }
+    }
+  }
+
+  const execute = async () => {
+    await checkWallet()
+
+    setWaitingTx(true)
+
+    const expirationValue = expirationPresets
+      .find(({ preset }) => preset === expiration)
+      ?.value()
+
+    await listToken({
+      query: {
+        contract: token_?.contract,
+        orderbook: 'reservoir',
+        maker,
+        price: ethers.utils.parseEther(listingPrice).toString(),
+        tokenId: token_?.tokenId,
+        expirationTime: expirationValue,
+      },
+      signer,
+      apiBase,
+      setSteps,
+      handleSuccess,
+      handleError,
+    })
+    setWaitingTx(false)
+  }
+
+  const onContinue = async () => {
+    setWaitingTx(true)
+
+    // setOrderbook((orderbook) => {
+    //   orderbook.shift()
+    //   return orderbook
+    // })
+
+    setOrderbook(['opensea'])
+
+    const expirationValue = expirationPresets
+      .find(({ preset }) => preset === expiration)
+      ?.value()
+
+    if (!signer) return
+
+    if (postOnOpenSea) {
+      await listToken({
+        query: {
+          contract: token_?.contract,
+          orderbook: 'opensea',
+          maker,
+          price: ethers.utils.parseEther(listingPrice).toString(),
+          tokenId: token_?.tokenId,
+          expirationTime: expirationValue,
+        },
+        signer,
+        apiBase,
+        setSteps,
+        handleSuccess,
+        handleError,
+      })
+    }
+
+    setWaitingTx(false)
+  }
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
           disabled={isInTheWrongNetwork}
+          onClick={async () => {
+            setPostOnOpenSea(false)
+            setOrderbook(['reservoir'])
+            await checkWallet()
+          }}
           className="btn-primary-fill w-full"
         >
           {token?.market?.floorSell?.value ? 'Edit Listing' : 'List for Sale'}
@@ -135,66 +248,15 @@ const ListModal: FC<Props> = ({
         <Dialog.Overlay>
           <ModalCard
             loading={waitingTx}
+            orderbook={orderbook}
             title="List Token for Sale"
             onCloseCallback={() => setSteps(undefined)}
+            onContinue={onContinue}
             steps={steps}
             actionButton={
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
-                onClick={async () => {
-                  if (!signer) {
-                    const data = await connect(connectData.connectors[0])
-                    if (data?.data) {
-                      setToast({
-                        kind: 'success',
-                        message: 'Connected your wallet successfully.',
-                        title: 'Wallet connected',
-                      })
-                    }
-                    return
-                  }
-
-                  setWaitingTx(true)
-
-                  const expirationValue = expirationPresets
-                    .find(({ preset }) => preset === expiration)
-                    ?.value()
-
-                  await listToken({
-                    query: {
-                      contract: token_?.contract,
-                      maker,
-                      price: ethers.utils.parseEther(listingPrice).toString(),
-                      tokenId: token_?.tokenId,
-                      expirationTime: expirationValue,
-                    },
-                    signer,
-                    apiBase,
-                    setSteps,
-                    handleSuccess: () => {
-                      details && 'mutate' in details && details.mutate()
-                      mutate && mutate()
-                    },
-                    handleError: (err: any) => {
-                      // Handle user rejection
-                      if (err?.code === 4001) {
-                        setSteps(undefined)
-                        setToast({
-                          kind: 'error',
-                          message: 'You have canceled the transaction.',
-                          title: 'User canceled transaction',
-                        })
-                        return
-                      }
-                      setToast({
-                        kind: 'error',
-                        message: 'The transaction was not completed.',
-                        title: 'Could not list token',
-                      })
-                    },
-                  })
-                  setWaitingTx(false)
-                }}
+                onClick={execute}
                 className="btn-primary-fill w-full"
               >
                 {waitingTx ? (
@@ -228,11 +290,35 @@ const ListModal: FC<Props> = ({
                   expiration={expiration}
                 />
               </div>
+              <div className="flex items-center gap-3">
+                <label htmlFor="postOpenSea" className="reservoir-h6">
+                  Post offer to OpenSea
+                </label>
+                <input
+                  type="checkbox"
+                  name="postOpenSea"
+                  id="postOpenSea"
+                  className="scale-125 transform"
+                  checked={postOnOpenSea}
+                  onChange={(e) => {
+                    setPostOnOpenSea(e.target.checked)
+                    if (e.target.checked) {
+                      setOrderbook(['reservoir', 'opensea'])
+                    } else {
+                      setOrderbook(['reservoir'])
+                    }
+                  }}
+                />
+              </div>
               <div className="flex justify-between">
                 <div className="reservoir-h6">Fees</div>
                 <div className="reservoir-body text-right">
                   <div>Royalty {royaltyPercentage}</div>
-                  <div>Marketplace 0%</div>
+                  {postOnOpenSea && (
+                    <div>
+                      OpenSea 2.5%<sup>*</sup>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex justify-between">
@@ -245,6 +331,12 @@ const ListModal: FC<Props> = ({
                   />
                 </div>
               </div>
+              {postOnOpenSea && (
+                <div className="reservoir-small">
+                  <sup>*</sup>OpenSea fee is taken out of the above amount if
+                  item is sold on OpenSea.
+                </div>
+              )}
             </div>
           </ModalCard>
         </Dialog.Overlay>

@@ -126,8 +126,13 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 grid place-items-center bg-gray-200 sm:mb-12 sm:mt-10 sm:grid-cols-2 sm:gap-10">
-        <div className="mt-5 flex gap-3 sm:hidden">
+      <div className="mb-2 grid place-items-center bg-gray-200 sm:mb-12 sm:grid-cols-2 sm:gap-10">
+        <Link href={`/collections/${collectionId}`}>
+          <a className="reservoir-capitalized col-span-2 flex items-center justify-self-start">
+            <FiArrowLeft /> Back
+          </a>
+        </Link>
+        <div className=" flex gap-3 sm:hidden">
           <img
             src={optimizeImage(
               collection.data?.collection?.collection?.image,
@@ -359,6 +364,7 @@ export const getServerSideProps: GetServerSideProps<{
 }
 
 import React from 'react'
+import { FiArrowLeft } from 'react-icons/fi'
 
 const Media: FC<{
   tokenOpenSea: {

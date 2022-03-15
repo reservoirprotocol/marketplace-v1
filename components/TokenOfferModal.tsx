@@ -272,7 +272,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         disabled={isInTheWrongNetwork}
         onClick={async () => {
           setPostOnOpenSea(false)
-          setOfferPrice('')
           setOrderbook(['reservoir'])
           await checkWallet()
         }}
@@ -323,9 +322,16 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   className="input-primary-outline w-[160px]"
                 />
               </div>
+              <div className="flex items-center justify-between">
+                <ExpirationSelector
+                  presets={expirationPresets}
+                  setExpiration={setExpiration}
+                  expiration={expiration}
+                />
+              </div>
               <div className="flex items-center gap-3">
                 <label htmlFor="postOpenSea" className="reservoir-h6">
-                  Also post to OpenSea
+                  Post offer to OpenSea
                 </label>
                 <input
                   type="checkbox"
@@ -341,13 +347,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                       setOrderbook(['reservoir'])
                     }
                   }}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <ExpirationSelector
-                  presets={expirationPresets}
-                  setExpiration={setExpiration}
-                  expiration={expiration}
                 />
               </div>
               <div className="flex justify-between">
@@ -373,8 +372,8 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
               </div>
               {postOnOpenSea && (
                 <div className="reservoir-small">
-                  <sup>*</sup>OpenSea fee is taken out of the total cost amount
-                  if item is sold on OpenSea.
+                  <sup>*</sup>OpenSea fee is taken out of the above amount if
+                  item is sold on OpenSea.
                 </div>
               )}
               {calculations.error && (
