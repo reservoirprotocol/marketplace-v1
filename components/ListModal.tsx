@@ -27,6 +27,7 @@ type Props = {
         collection: Collection | undefined
       }
     | {
+        collectionId: string | undefined
         contract: string | undefined
         tokenId: string | undefined
       }
@@ -82,9 +83,10 @@ const ListModal: FC<Props> = ({
     if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId } = data
+        const { contract, tokenId, collectionId } = data
 
         getDetails(apiBase, contract, tokenId, setDetails)
+        getCollection(apiBase, collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
@@ -100,6 +102,9 @@ const ListModal: FC<Props> = ({
 
   if ('details' in data) {
     bps = data?.collection?.collection?.royalties?.bps || 0
+  }
+  if ('tokenId' in data) {
+    bps = collection?.collection?.royalties?.bps || 0
   }
 
   const royaltyPercentage = `${bps / 100}%`

@@ -58,12 +58,13 @@ const UserTokensTable: FC<Props> = ({
         <tbody>
           {tokensFlat?.map((token, index, arr) => {
             const {
+              collectionId,
+              collectionName,
               contract,
+              image,
+              listPrice,
               tokenHref,
               tokenId,
-              listPrice,
-              image,
-              collectionName,
               tokenName,
               topOffer,
             } = processToken(token)
@@ -112,6 +113,7 @@ const UserTokensTable: FC<Props> = ({
                           isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           maker={modal.accountData?.address}
                           data={{
+                            collectionId,
                             contract,
                             tokenId,
                           }}
@@ -182,6 +184,7 @@ function processToken(
     tokenId: token?.token?.tokenId,
     image: token?.token?.image,
     collectionName: token?.token?.collection?.name,
+    collectionId: token?.token?.collection?.id,
     tokenName: token?.token?.name,
     listPrice: token?.ownership?.floorSellValue,
     topOffer: token?.token?.topBuy?.value,
