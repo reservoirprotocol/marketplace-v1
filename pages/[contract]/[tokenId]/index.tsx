@@ -126,47 +126,30 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 grid place-items-center bg-gray-200 sm:mb-12 sm:grid-cols-2 sm:gap-10">
+      <div className="mb-2 grid grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
         <Link href={`/collections/${collectionId}`}>
-          <a className="reservoir-capitalized col-span-2 flex items-center justify-self-start">
+          <a className="reservoir-capitalized mt-9 flex items-center justify-self-start sm:col-span-2">
             <FiArrowLeft /> Back
           </a>
         </Link>
-        <div className=" flex gap-3 sm:hidden">
-          <img
-            src={optimizeImage(
-              collection.data?.collection?.collection?.image,
-              50
-            )}
-            alt="collection avatar"
-            className="h-[50px] w-[50px] rounded-full"
-          />
-          <div>
-            <Link href={`/collections/${collectionId}`}>
-              <a className="mb-1 block text-2xl font-bold">
-                {token?.token?.collection?.name}
-              </a>
-            </Link>
-            <div className="mb-4 text-lg font-medium uppercase opacity-80">
-              {token?.token?.name || `#${token?.token?.tokenId}`}
-            </div>
-          </div>
-        </div>
-        <div className="mb-6  sm:ml-auto sm:mb-0 sm:self-start">
+        <div className="ml-auto self-start">
           {/* TOKEN IMAGE */}
-          <img
-            className="mb-4 w-[500px] rounded-2xl"
-            src={optimizeImage(token?.token?.image, 500)}
-          />
-          {/* {tokenOpenSea?.extension === null ? (
+          {/* <img
+            className="mb-4 w-[533px] rounded-2xl"
+            src={optimizeImage(token?.token?.image, 533)}
+          /> */}
+          {tokenOpenSea?.extension === null ? (
             <img
-              className="mb-4 w-[500px]"
-              src={optimizeImage(token?.token?.image, 500)}
+              className="mb-4 w-[533px] rounded-2xl"
+              src={optimizeImage(token?.token?.image, 533)}
             />
           ) : (
-            <Media tokenOpenSea={tokenOpenSea} />
-          )} */}
-          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+            <Media
+              tokenOpenSea={tokenOpenSea}
+              tokenImage={optimizeImage(token?.token?.image, 533)}
+            />
+          )}
+          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
             <div className="reservoir-h6 mb-4">Owner</div>
             {token?.token?.owner && (
               <Link href={`/address/${token.token.owner}`}>
@@ -178,8 +161,8 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
           </article>
         </div>
 
-        <div className="mb-8 sm:mr-auto sm:self-start">
-          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+        <div className=" mb-8 self-start sm:mr-auto">
+          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
             <div className="reservoir-h2 mb-3 overflow-hidden">
               {token?.token?.name || `#${token?.token?.tokenId}`}
             </div>
@@ -204,7 +187,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               </a>
             </Link>
           </article>
-          <article className="mb-6 max-w-[500px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
             <div className="grid grid-cols-2 gap-8">
               <Price
                 title="List Price"
@@ -371,13 +354,14 @@ const Media: FC<{
     animation_url: any
     extension: any
   }
-}> = ({ tokenOpenSea }) => {
+  tokenImage: string
+}> = ({ tokenOpenSea, tokenImage }) => {
   const { animation_url, extension } = tokenOpenSea
 
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video className="mb-4 w-[500px]" controls>
+      <video className="mb-4 w-[533px]" controls>
         <source src={animation_url} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
@@ -388,22 +372,25 @@ const Media: FC<{
   // AUDIO
   if (extension === 'wav' || extension === 'mp3') {
     return (
-      <audio className="mb-4" controls src={animation_url}>
-        Your browser does not support the
-        <code>audio</code> element.
-      </audio>
+      <div>
+        <img className="mb-4 w-[533px] rounded-2xl" src={tokenImage} />
+        <audio className="mb-4 w-full" controls src={animation_url}>
+          Your browser does not support the
+          <code>audio</code> element.
+        </audio>
+      </div>
     )
   }
 
   // HTML
   if (extension === 'html' || extension === undefined) {
     return (
-      <div className="relative h-[500px] w-full overflow-hidden pt-[56.25%]">
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src={animation_url}
-        ></iframe>
-      </div>
+      <iframe
+        className="mb-6 aspect-square w-full"
+        height="533"
+        width="533"
+        src={animation_url}
+      ></iframe>
     )
   }
 
