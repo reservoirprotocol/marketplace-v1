@@ -12,14 +12,22 @@ type Attributes =
 export default function useCollectionAttributes(
   apiBase: string | undefined,
   router: NextRouter,
-  collectionId: string
+  collectionId: string | undefined
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(
-    `/collections/${router.query.id || collectionId}/attributes/v1`,
-    apiBase
-  )
+  function getUrl() {
+    if (collectionId) return undefined
+
+    const url = new URL(
+      `/collections/${router.query.id || collectionId}/attributes/v1`,
+      apiBase
+    )
+
+    return url
+  }
+
+  const url = getUrl()
 
   const collectionAttributes = useSWRInfinite<Attributes>(
     (index, previousPageData) => getKey(url, router, index, previousPageData),
@@ -40,11 +48,11 @@ export default function useCollectionAttributes(
 }
 
 const getKey: (
-  url: URL,
+  url: URL | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL,
+  url: URL | undefined,
   router: NextRouter,
   index: number,
   previousPageData: Attributes
@@ -53,6 +61,8 @@ const getKey: (
   if (previousPageData && previousPageData?.attributes?.length === 0) {
     return null
   }
+
+  if (!url) return null
 
   let query: paths['/collections/{collection}/attributes/v1']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
@@ -63,15 +73,15 @@ const getKey: (
       query.sortBy = 'topBidValue'
     }
 
-    if (`${router.query?.sort}` === 'name') {
-      query.sortBy = 'value'
-    }
+    // if (`${router.query?.sort}` === 'name') {
+    //   query.sortBy = 'value'
+    // }
   } else {
     query.sortBy = 'floorAskPrice'
   }
 
   if (router.query.attribute_key) {
-    query.attribute = router.query.attribute_key.toString()
+    query.attributeKey = router.query.attribute_key.toString()
   }
 
   setParams(url, query)

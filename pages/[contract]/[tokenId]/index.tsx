@@ -88,9 +88,9 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   }, [])
 
   const details = useDetails(apiBase, {
-    contract,
-    token,
+    token: `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
   })
+
   const collection = useCollection(apiBase, undefined, collectionId)
 
   if (details.error || !apiBase || !chainId) {
@@ -126,7 +126,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 mt-9 grid  grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
+      <div className="mb-2 mt-9 grid grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
         {/* <Link href={`/collections/${collectionId}`}>
           <a className="reservoir-capitalized mt-9 flex items-center justify-self-start sm:col-span-2">
             <FiArrowLeft /> Back
@@ -169,13 +169,15 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
             <div className="reservoir-h6 mb-2">Collection</div>
             <Link
               href={
-                mode === 'collection' ? '/' : `/collections/${collectionId}`
+                mode === 'collection'
+                  ? '/'
+                  : `/collections/${collection.data?.collection?.slug}`
               }
             >
               <a className="reservoir-body mb-1 flex items-center gap-2">
                 <img
                   src={optimizeImage(
-                    collection.data?.collection?.collection?.image,
+                    collection.data?.collection?.metadata?.imageUrl,
                     50
                   )}
                   alt="collection avatar"
@@ -321,10 +323,10 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, params }) => {
   const { mode } = getMode(req, communityEnv, collectionEnv)
 
-  const url = new URL('/tokens/details', apiBase)
+  const url = new URL('/tokens/details/v1', apiBase)
 
   const query: paths['/tokens/details/v1']['get']['parameters']['query'] = {
-    contract: params?.contract?.toString(),
+    token: `${params?.contract?.toString()}:${params?.tokenId?.toString()}`,
   }
 
   setParams(url, query)
@@ -344,9 +346,6 @@ export const getServerSideProps: GetServerSideProps<{
 
   return { props: { collectionId, mode } }
 }
-
-import React from 'react'
-import { FiArrowLeft } from 'react-icons/fi'
 
 const Media: FC<{
   tokenOpenSea: {

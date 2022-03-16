@@ -50,7 +50,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       }}
     >
       <TokensMain
-        collectionId={router.query.id?.toString() || ''}
+        slug={router.query.id?.toString()}
         apiBase={apiBase}
         chainId={+chainId as ChainId}
         fallback={fallback}

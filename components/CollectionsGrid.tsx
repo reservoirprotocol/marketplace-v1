@@ -47,19 +47,32 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
         : mappedCollections?.map((collection, idx) => (
             <Link
               key={`${collection?.name}${idx}`}
-              href={`/collections/${collection?.id}`}
+              href={`/collections/${collection?.slug}`}
             >
               <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
-                <img
-                  className="aspect-video w-full"
-                  src={optimizeImage(collection?.metadata?.bannerImageUrl, 150)}
-                  alt={collection?.name}
-                />
-                <div className="mt-3 flex items-center gap-2">
+                {collection?.metadata?.bannerImageUrl ? (
                   <img
-                    src={optimizeImage(collection?.metadata?.imageUrl, 40)}
-                    className="h-12 w-12 rounded-full"
+                    className="aspect-video w-full object-cover"
+                    src={optimizeImage(
+                      collection?.metadata?.bannerImageUrl,
+                      250
+                    )}
+                    alt={collection?.name}
                   />
+                ) : (
+                  <div className="aspect-video w-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
+                )}
+
+                <div className="mt-3 flex items-center gap-2">
+                  {collection?.metadata?.imageUrl ? (
+                    <img
+                      src={optimizeImage(collection?.metadata?.imageUrl, 40)}
+                      className="h-12 w-12 rounded-full"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 flex-none rounded-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
+                  )}
+
                   <div className="reservoir-subtitle">{collection?.name}</div>
                 </div>
               </a>

@@ -7,10 +7,23 @@ type OpenSeaResponse = {
   }
 }
 
-export default function useGetOpenSeaMetadata(collectionId: string) {
-  const url = new URL(collectionId, 'https://api.opensea.io/api/v1/collection/')
+export default function useGetOpenSeaMetadata(
+  collectionId: string | undefined
+) {
+  function getUrl() {
+    if (!collectionId) return undefined
 
-  const swr = useSWR<OpenSeaResponse>(url.href, fetcher, {
+    const url = new URL(
+      `/api/v1/collection/${collectionId}`,
+      'https://api.opensea.io'
+    )
+
+    return url
+  }
+
+  const url = getUrl()
+
+  const swr = useSWR<OpenSeaResponse>(url?.href, fetcher, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
   })

@@ -2,7 +2,7 @@ import useAttributes from 'hooks/useAttributes'
 import useCollection from 'hooks/useCollection'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
-import useFiltersApplied from 'hooks/useFiltersApplied'
+// import useFiltersApplied from 'hooks/useFiltersApplied'
 import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
@@ -32,7 +32,7 @@ import { CgSpinner } from 'react-icons/cg'
 type Props = {
   apiBase: string
   chainId: ChainId
-  collectionId: string
+  slug: string | undefined
   fallback: {
     tokens: paths['/tokens/v1']['get']['responses']['200']['schema']
     collection: paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
@@ -44,7 +44,7 @@ type Props = {
 const TokensMain: FC<Props> = ({
   apiBase,
   chainId,
-  collectionId,
+  slug,
   fallback,
   openSeaApiKey,
   setToast,
@@ -64,7 +64,21 @@ const TokensMain: FC<Props> = ({
     value: undefined,
   })
 
+  const collection = useCollection(apiBase, fallback.collection, slug)
+
+  const collectionId = collection.data?.collection?.id
+
   const stats = useCollectionStats(apiBase, router, collectionId)
+
+  // const [stats, setStats] = useState(
+  //   useCollectionStats(apiBase, router, collectionId)
+  // )
+
+  // useEffect(() => {
+  //   if (collectionId) {
+  //     setStats(useCollectionStats(apiBase, router, collectionId))
+  //   }
+  // }, [collectionId])
 
   const { tokens, ref: refTokens } = useTokens(
     apiBase,
@@ -76,13 +90,11 @@ const TokensMain: FC<Props> = ({
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(apiBase, router, collectionId)
 
-  const collection = useCollection(apiBase, fallback.collection, collectionId)
-
   const attributes = useAttributes(apiBase, collectionId)
 
-  const filtersApplied = useFiltersApplied(router)
+  // const filtersApplied = useFiltersApplied(router)
 
-  const { data: openSeaMeta } = useGetOpenSeaMetadata(collectionId || '')
+  const { data: openSeaMeta } = useGetOpenSeaMetadata(slug)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -126,7 +138,7 @@ const TokensMain: FC<Props> = ({
     vol24: 10,
     count: stats?.data?.stats?.tokenCount ?? 0,
     topOffer: stats?.data?.stats?.market?.topBid?.value,
-    floor: floor?.value,
+    floor: floor?.price,
   }
 
   const header = {
@@ -176,12 +188,12 @@ const TokensMain: FC<Props> = ({
 
   const dataSteps = {
     token: {
-      image: stats.data?.stats?.market?.floorAsk?.token?.image,
-      name: stats.data?.stats?.market?.floorAsk?.token?.name,
-      id: stats.data?.stats?.market?.floorAsk?.token?.tokenId,
-      contract: stats.data?.stats?.market?.floorAsk?.token?.contract,
+      image: stats?.data?.stats?.market?.floorAsk?.token?.image,
+      name: stats?.data?.stats?.market?.floorAsk?.token?.name,
+      id: stats?.data?.stats?.market?.floorAsk?.token?.tokenId,
+      contract: stats?.data?.stats?.market?.floorAsk?.token?.contract,
       topBuyValue: undefined,
-      floorSellValue: stats.data?.stats?.market?.floorAsk?.value,
+      floorSellValue: stats?.data?.stats?.market?.floorAsk?.price,
     },
     collection: {
       name: collection?.data?.collection?.name,
@@ -216,7 +228,7 @@ const TokensMain: FC<Props> = ({
   }
 
   const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
-    stats.mutate()
+    stats?.mutate()
 
   const checkWallet = async () => {
     if (!signer) {
@@ -232,6 +244,7 @@ const TokensMain: FC<Props> = ({
   }
 
   const execute = async () => {
+    await checkWallet()
     if (isOwner) {
       setToast({
         kind: 'error',
@@ -243,8 +256,8 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
-      tokenId: floor?.token?.tokenId,
-      contract: floor?.token?.contract,
+      token: floor?.token?.tokenId,
+      // contract: floor?.token?.contract,
       signer,
       apiBase,
       setSteps,
@@ -268,14 +281,14 @@ const TokensMain: FC<Props> = ({
       <Hero stats={statsObj} header={header}>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
-            disabled={floor?.value === null || waitingTx || isInTheWrongNetwork}
+            disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
             onClick={execute}
             className="btn-primary-fill"
           >
             {waitingTx ? (
               <CgSpinner className="h-4 w-4 animate-spin" />
             ) : (
-              `Buy for ${formatBN(floor?.value, 4)} ETH`
+              `Buy for ${formatBN(floor?.price, 4)} ETH`
             )}
           </Dialog.Trigger>
           {steps && (

@@ -59,7 +59,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
 
   let tabs = [
     { name: 'Portfolio', id: 'portfolio' },
-    { name: 'History', id: 'history' },
+    // { name: 'History', id: 'history' },
   ]
 
   if (isOwner) {
@@ -67,7 +67,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
       { name: 'Portfolio', id: 'portfolio' },
       { name: 'Buying', id: 'buying' },
       { name: 'Selling', id: 'selling' },
-      { name: 'History', id: 'history' },
+      // { name: 'History', id: 'history' },
     ]
   }
 

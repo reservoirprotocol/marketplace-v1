@@ -1,22 +1,30 @@
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
+import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
-import { useEffect } from 'react'
 import useSWR from 'swr'
 
 export default function useCollectionStats(
   apiBase: string | undefined,
   router: NextRouter,
-  collectionId: string
+  collectionId: string | undefined
 ) {
-  useEffect(() => {
-    stats.mutate()
-  }, [router.query])
+  // useEffect(() => {
+  //   stats.mutate()
+  // }, [router.query])
 
   function getUrl() {
-    const url = new URL('/stats/v1', apiBase)
-    url.searchParams.set('collection', collectionId)
+    if (!collectionId) return undefined
 
+    const url = new URL('/stats/v1', apiBase)
+
+    const query: paths['/stats/v1']['get']['parameters']['query'] = {
+      collection: collectionId,
+    }
+
+    setParams(url, query)
+
+    // Extract all queries of attribute type
     const attributes = Object.keys(router.query).filter(
       (key) =>
         key.startsWith('attributes[') &&
@@ -24,6 +32,7 @@ export default function useCollectionStats(
         router.query[key] !== ''
     )
 
+    // Add all selected attributes to the query
     if (attributes.length > 0) {
       attributes.forEach((key) => {
         const value = router.query[key]?.toString()
@@ -33,11 +42,13 @@ export default function useCollectionStats(
       })
     }
 
-    return url
+    return url.href
   }
 
+  const href = getUrl()
+
   const stats = useSWR<paths['/stats/v1']['get']['responses']['200']['schema']>(
-    getUrl().href,
+    href,
     fetcher
   )
 

@@ -16,7 +16,15 @@ export default function useTokens(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL('/tokens/v1', apiBase)
+  function getUrl() {
+    if (!collectionId) return undefined
+
+    const url = new URL('/tokens/v1', apiBase)
+
+    return url
+  }
+
+  const url = getUrl()
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
@@ -39,12 +47,12 @@ export default function useTokens(
 }
 
 const getKey: (
-  url: URL,
+  url: URL | undefined,
   collectionId: string | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL,
+  url: URL | undefined,
   collectionId: string | undefined,
   router: NextRouter,
   index: number,
@@ -52,6 +60,8 @@ const getKey: (
 ) => {
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
+
+  if (!url) return null
 
   let query: paths['/tokens/v1']['get']['parameters']['query'] = {
     limit: 20,

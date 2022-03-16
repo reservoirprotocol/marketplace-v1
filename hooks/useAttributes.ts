@@ -7,17 +7,25 @@ export default function useAttributes(
   apiBase: string | undefined,
   collectionId: string | undefined
 ) {
-  const url = new URL('/attributes/v1', apiBase)
+  function getUrl() {
+    if (!collectionId) return undefined
 
-  const query: paths['/attributes/v1']['get']['parameters']['query'] = {
-    collection: collectionId || '',
+    const url = new URL('/attributes/v1', apiBase)
+
+    const query: paths['/attributes/v1']['get']['parameters']['query'] = {
+      collection: collectionId,
+    }
+
+    setParams(url, query)
+
+    return url
   }
 
-  setParams(url, query)
+  const url = getUrl()
 
   const attributes = useSWR<
     paths['/attributes/v1']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
+  >(url?.href, fetcher)
 
   return attributes
 }

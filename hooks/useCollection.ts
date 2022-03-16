@@ -10,9 +10,17 @@ export default function useCollection(
   fallbackData: Collection | undefined,
   collectionId: string | undefined
 ) {
-  const url = new URL(`/collections/${collectionId}/v1`, apiBase)
+  function getUrl() {
+    if (!collectionId) return undefined
 
-  const collection = useSWR<Collection>(url.href, fetcher, {
+    const url = new URL(`/collections/${collectionId}/v1`, apiBase)
+
+    return url.href
+  }
+
+  const href = getUrl()
+
+  const collection = useSWR<Collection>(href, fetcher, {
     fallbackData,
   })
 
