@@ -82,16 +82,16 @@ export const getStaticProps: GetStaticProps<{
     // Pass in fallback data to prevent loading screens
     // Reference: https://swr.vercel.app/docs/options
     // -------------- COLLECTION --------------
-    const url1 = new URL(`/collections/${params?.id}`, apiBase)
+    const url1 = new URL(`/collections/${params?.id}/v1`, apiBase)
 
     const res1 = await fetch(url1.href)
     const collection: Props['fallback']['collection'] = await res1.json()
 
     // -------------- TOKENS --------------
-    const url2 = new URL('/tokens', apiBase)
+    const url2 = new URL('/tokens/v1', apiBase)
 
     const query2: paths['/tokens/v1']['get']['parameters']['query'] = {
-      collection: params?.id?.toString(),
+      collection: collection.collection?.id,
     }
 
     setParams(url2, query2)

@@ -3,7 +3,7 @@ import useCollection from 'hooks/useCollection'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
 // import useFiltersApplied from 'hooks/useFiltersApplied'
-import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
+// import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
 import { Execute } from 'lib/executeSteps'
@@ -94,7 +94,7 @@ const TokensMain: FC<Props> = ({
 
   // const filtersApplied = useFiltersApplied(router)
 
-  const { data: openSeaMeta } = useGetOpenSeaMetadata(slug)
+  // const { data: openSeaMeta } = useGetOpenSeaMetadata(slug)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -142,7 +142,7 @@ const TokensMain: FC<Props> = ({
   }
 
   const header = {
-    banner: openSeaMeta?.collection?.banner_image_url,
+    banner: collection?.data?.collection?.metadata?.bannerImageUrl,
     image: collection?.data?.collection?.metadata?.imageUrl,
     name: collection?.data?.collection?.name,
   }
