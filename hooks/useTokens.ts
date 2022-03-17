@@ -65,9 +65,10 @@ const getKey: (
 
   let query: paths['/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,
-    // offset: index * 20,
     collection: collectionId,
   }
+
+  if (index !== 0) query.continuation = previousPageData.continuation
 
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {
