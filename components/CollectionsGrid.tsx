@@ -55,7 +55,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                     className="aspect-video w-full object-cover"
                     src={optimizeImage(
                       collection?.metadata?.bannerImageUrl,
-                      250
+                      300
                     )}
                     alt={collection?.name}
                   />
