@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-type Tokens = paths['/tokens/v1']['get']['responses']['200']['schema']
+type Tokens = paths['/tokens/v2']['get']['responses']['200']['schema']
 
 export default function useTokens(
   apiBase: string | undefined,
@@ -19,7 +19,7 @@ export default function useTokens(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL('/tokens/v1', apiBase)
+    const url = new URL('/tokens/v2', apiBase)
 
     return url
   }
@@ -56,16 +56,16 @@ const getKey: (
   collectionId: string | undefined,
   router: NextRouter,
   index: number,
-  previousPageData: paths['/tokens/v1']['get']['responses']['200']['schema']
+  previousPageData: paths['/tokens/v2']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
   if (!url) return null
 
-  let query: paths['/tokens/v1']['get']['parameters']['query'] = {
+  let query: paths['/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,
-    offset: index * 20,
+    // offset: index * 20,
     collection: collectionId,
   }
 
@@ -73,16 +73,16 @@ const getKey: (
   if (router.query?.sort) {
     if (`${router.query?.sort}` === 'highest_offer') {
       query.sortBy = 'topBidValue'
-      query.sortDirection = 'desc'
+      // query.sortDirection = 'desc'
     }
 
-    if (`${router.query?.sort}` === 'token_id') {
-      query.sortBy = 'tokenId'
-      query.sortDirection = 'asc'
-    }
+    // if (`${router.query?.sort}` === 'token_id') {
+    //   query.sortBy = 'tokenId'
+    //   query.sortDirection = 'asc'
+    // }
   } else {
     query.sortBy = 'floorAskPrice'
-    query.sortDirection = 'asc'
+    // query.sortDirection = 'asc'
   }
 
   Object.keys(router.query).forEach((key) => {

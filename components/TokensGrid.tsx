@@ -10,7 +10,7 @@ import Masonry from 'react-masonry-css'
 
 type Props = {
   tokens: SWRInfiniteResponse<
-    paths['/tokens/v1']['get']['responses']['200']['schema'],
+    paths['/tokens/v2']['get']['responses']['200']['schema'],
     any
   >
   viewRef: ReturnType<typeof useInView>['ref']

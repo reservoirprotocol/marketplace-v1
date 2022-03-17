@@ -126,8 +126,8 @@ const CancelOffer: FC<Props> = ({
   const handleSuccess: Parameters<
     typeof cancelOrder
   >[0]['handleSuccess'] = async () => {
-    details && 'mutate' in details && (await details.mutate())
-    mutate && (await mutate())
+    details && 'mutate' in details && details.mutate()
+    mutate && mutate()
   }
 
   const checkWallet = async () => {
