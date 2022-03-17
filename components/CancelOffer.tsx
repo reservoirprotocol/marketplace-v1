@@ -27,7 +27,7 @@ type Props = {
         collectionId: string | undefined
         contract?: string | undefined
         tokenId?: string | undefined
-        hash?: string | undefined
+        id?: string | undefined
       }
   isInTheWrongNetwork: boolean | undefined
   maker?: string
@@ -143,15 +143,21 @@ const CancelOffer: FC<Props> = ({
     }
   }
 
+  let id: string | undefined = undefined
+
+  if ('details' in data) {
+    id = data.details.data?.tokens?.[0]?.market?.topBid?.id
+  }
+
+  if ('id' in data) {
+    id = data?.id
+  }
+
   const execute = async () => {
     await checkWallet()
     setWaitingTx(true)
     await cancelOrder({
-      hash:
-        ('hash' in data && data?.hash) ||
-        ('details' in data &&
-          data?.details.data?.tokens?.[0].market?.topBuy?.hash) ||
-        '',
+      id,
       maker,
       signer,
       apiBase,

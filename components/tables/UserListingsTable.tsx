@@ -68,7 +68,7 @@ const UserListingsTable: FC<Props> = ({
               collectionName,
               contract,
               expiration,
-              hash,
+              id,
               image,
               name,
               tokenHref,
@@ -121,7 +121,7 @@ const UserListingsTable: FC<Props> = ({
                       apiBase={modal.apiBase}
                       data={{
                         collectionId: modal?.collectionId,
-                        hash,
+                        id,
                         contract,
                         tokenId,
                       }}
@@ -166,7 +166,7 @@ function processPosition(
         : DateTime.fromMillis(
             +`${position?.primaryOrder?.expiration}000`
           ).toRelative(),
-    hash: position?.primaryOrder?.hash,
+    id: position?.primaryOrder?.id,
     // @ts-ignore
     collectionName: position?.set?.metadata?.collectionName,
     value: position?.primaryOrder?.value,

@@ -63,6 +63,7 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
                         <div className="flex-grow"></div>
                         <ExploreImagesGrid
                           sample_images={attribute?.sampleImages}
+                          // @ts-ignore
                           value={attribute?.value}
                         />
                         <div className="flex-grow"></div>

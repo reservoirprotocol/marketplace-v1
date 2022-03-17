@@ -11,8 +11,7 @@ export async function getDetails(
   let url = new URL('/tokens/details/v1', apiBase)
 
   let query: paths['/tokens/details/v1']['get']['parameters']['query'] = {
-    contract,
-    token,
+    token: `${contract}:${token}`,
   }
 
   setParams(url, query)

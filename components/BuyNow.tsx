@@ -151,7 +151,7 @@ const BuyNow: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
-      token: token?.token?.tokenId,
+      token: `${token?.token?.contract}:${token?.token?.tokenId}`,
       // contract: token?.token?.contract,
       signer,
       apiBase,

@@ -256,7 +256,7 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
-      token: floor?.token?.tokenId,
+      token: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
       // contract: floor?.token?.contract,
       signer,
       apiBase,

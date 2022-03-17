@@ -150,13 +150,22 @@ const AcceptOffer: FC<Props> = ({
     }
   }
 
+  let tokenString: string | undefined = undefined
+
+  if (contract && tokenId) {
+    tokenString = `${contract}:${tokenId}`
+  }
+  if (token?.token?.contract && token?.token?.tokenId) {
+    tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
+  }
+
   const execute = async () => {
     await checkWallet()
 
     setWaitingTx(true)
     await acceptOffer({
       apiBase,
-      token: tokenId || token?.token?.tokenId,
+      token: tokenString,
       // contract: contract || token?.token?.contract,
       setSteps,
       signer,

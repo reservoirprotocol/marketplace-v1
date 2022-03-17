@@ -39,6 +39,10 @@ export interface paths {
     /** This API is optimized for quickly fetching a list of tokens in a collection, sorted by price, with only the most important information returned. If you need more metadata, use the `tokens/details` API */
     get: operations['getTokensV1']
   }
+  '/tokens/v2': {
+    /** This API is optimized for quickly fetching a list of tokens in a collection, sorted by price, with only the most important information returned. If you need more metadata, use the `tokens/details` API */
+    get: operations['getTokensV2']
+  }
   '/transfers/v1': {
     /** Get recent transfers for a contract or token. */
     get: operations['getTransfersV1']
@@ -80,6 +84,10 @@ export interface paths {
   '/tokens/details/v1': {
     /** Get a list of tokens with full metadata. This is useful for showing a single token page, or scenarios that require more metadata. If you don't need this metadata, you should use the <a href='#/tokens/getTokensV1'>tokens</a> API, which is much faster. */
     get: operations['getTokensDetailsV1']
+  }
+  '/tokens/details/v2': {
+    /** Get a list of tokens with full metadata. This is useful for showing a single token page, or scenarios that require more metadata. If you don't need this metadata, you should use the <a href='#/tokens/getTokensV1'>tokens</a> API, which is much faster. */
+    get: operations['getTokensDetailsV2']
   }
   '/tokens/floor/v1': {
     /** This API will return the bestt price of every token in a collection that is currently on sale */
@@ -318,6 +326,10 @@ export interface definitions {
   getTokensV1Response: {
     tokens?: definitions['tokens']
   }
+  getTokensV2Response: {
+    tokens?: definitions['tokens']
+    continuation?: string
+  }
   Model12: {
     token?: definitions['token']
     from?: string
@@ -473,6 +485,10 @@ export interface definitions {
   Model28: definitions['Model27'][]
   getTokensDetailsV1Response: {
     tokens?: definitions['Model28']
+  }
+  getTokensDetailsV2Response: {
+    tokens?: definitions['Model28']
+    continuation?: string
   }
   getTokensFloorV1Response: {
     tokens?: {
@@ -871,6 +887,27 @@ export interface operations {
       }
     }
   }
+  /** This API is optimized for quickly fetching a list of tokens in a collection, sorted by price, with only the most important information returned. If you need more metadata, use the `tokens/details` API */
+  getTokensV2: {
+    parameters: {
+      query: {
+        collection?: string
+        contract?: string
+        token?: string
+        tokenSetId?: string
+        attributes?: string
+        sortBy?: 'floorAskPrice' | 'topBidValue'
+        limit?: number
+        continuation?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getTokensV2Response']
+      }
+    }
+  }
   /** Get recent transfers for a contract or token. */
   getTransfersV1: {
     parameters: {
@@ -1083,6 +1120,27 @@ export interface operations {
       /** Successful */
       200: {
         schema: definitions['getTokensDetailsV1Response']
+      }
+    }
+  }
+  /** Get a list of tokens with full metadata. This is useful for showing a single token page, or scenarios that require more metadata. If you don't need this metadata, you should use the <a href='#/tokens/getTokensV1'>tokens</a> API, which is much faster. */
+  getTokensDetailsV2: {
+    parameters: {
+      query: {
+        collection?: string
+        contract?: string
+        token?: string
+        tokenSetId?: string
+        attributes?: string
+        sortBy?: 'floorAskPrice' | 'topBidValue'
+        limit?: number
+        continuation?: string
+      }
+    }
+    responses: {
+      /** Successful */
+      200: {
+        schema: definitions['getTokensDetailsV2Response']
       }
     }
   }

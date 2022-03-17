@@ -41,7 +41,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   useDataDog(accountData)
   const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
-  const userActivity = useUserActivity(apiBase, [], address)
+  // const userActivity = useUserActivity(apiBase, [], address)
   const sellPositions = useUserPositions(apiBase, [], 'sell', address)
   const buyPositions = useUserPositions(apiBase, [], 'buy', address)
 
@@ -103,7 +103,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             mutate={() => {
               buyPositions.positions.mutate()
               userTokens.tokens.mutate()
-              userActivity.transfers.mutate()
+              // userActivity.transfers.mutate()
               sellPositions.positions.mutate()
             }}
             isOwner={isOwner}
@@ -119,10 +119,10 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
         <Tabs.Content value="history">
-          <UserActivityTable
+          {/* <UserActivityTable
             data={userActivity}
             chainId={+chainId as ChainId}
-          />
+          /> */}
         </Tabs.Content>
         {isOwner && (
           <>

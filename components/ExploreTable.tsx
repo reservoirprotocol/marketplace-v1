@@ -59,7 +59,8 @@ const ExploreTable = ({
               </Link>
             </td>
             <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
-            <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
+            <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
+            {/* <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td> */}
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.floorAskPrices?.[0]}
@@ -90,6 +91,7 @@ const ExploreTable = ({
                 <a>
                   <ExploreImages
                     sample_images={attribute?.sampleImages}
+                    // @ts-ignore
                     value={attribute?.value}
                   />
                 </a>
