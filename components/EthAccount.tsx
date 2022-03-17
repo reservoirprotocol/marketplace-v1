@@ -42,30 +42,28 @@ type Props = {
 const EthAccount: FC<Props> = ({ address, ens, title }) => {
   return (
     <div className="flex items-center gap-2">
+      {title && (
+        <p className="reservoir-label-l capitalize text-gray-400">{title}</p>
+      )}
+      {ens?.name ? (
+        <div title={address}>{shrinkEns(ens.name)}</div>
+      ) : (
+        <div
+          className="reservoir-label-l block whitespace-nowrap font-mono"
+          title={address}
+        >
+          {shrinkAddress(address)}
+        </div>
+      )}
       {ens?.avatar ? (
         <img
-          className="block h-8 w-8 rounded-full"
+          className="block h-6 w-6 rounded-full"
           src={ens.avatar}
           alt="ENS Avatar"
         />
       ) : (
-        <Jazzicon diameter={32} seed={jsNumberForAddress(address)} />
+        <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
       )}
-      <div>
-        {title && (
-          <p className="reservoir-label-l capitalize text-gray-400">{title}</p>
-        )}
-        {ens?.name ? (
-          <div title={address}>{shrinkEns(ens.name)}</div>
-        ) : (
-          <div
-            className="reservoir-label-l block whitespace-nowrap font-mono"
-            title={address}
-          >
-            {shrinkAddress(address)}
-          </div>
-        )}
-      </div>
     </div>
   )
 }

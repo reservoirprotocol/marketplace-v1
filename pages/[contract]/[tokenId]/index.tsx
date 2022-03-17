@@ -174,7 +174,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
                   : `/collections/${collection.data?.collection?.slug}`
               }
             >
-              <a className="reservoir-body mb-1 flex items-center gap-2">
+              <a className="reservoir-body mb-1 inline-flex items-center gap-2">
                 <img
                   src={optimizeImage(
                     collection.data?.collection?.metadata?.imageUrl,
