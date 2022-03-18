@@ -53,11 +53,14 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                 >
                   <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
                     <ImagesGrid
+                      // @ts-ignore
                       sample_images={community?.set?.sampleImages}
+                      // @ts-ignore
                       value={community?.name}
                     />
                     <div className="mt-3 flex items-center gap-2">
                       <img
+                        // @ts-ignore
                         src={optimizeImage(community?.metadata?.imageUrl, 40)}
                         className="h-12 w-12 rounded-full"
                       />

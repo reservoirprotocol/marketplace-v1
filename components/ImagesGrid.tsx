@@ -4,10 +4,10 @@ import React, { FC } from 'react'
 
 type Props = {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }
 
@@ -19,7 +19,6 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
           {sample_images.length > 1 ? (
             // SMALLER IMAGE, HAS SIDE IMAGES
             <img
-              alt={`${value}`}
               src={optimizeImage(sample_images[0], 250)}
               className="col-span-2 w-full rounded object-cover"
               width="224"
@@ -28,7 +27,6 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
           ) : (
             // BIG IMAGE, NO SIDE IMAGES
             <img
-              alt={`${value}`}
               src={optimizeImage(sample_images[0], 300)}
               className="col-span-2 w-full rounded object-contain"
               width="300"
@@ -41,7 +39,6 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
                 <img
                   key={image}
                   src={optimizeImage(image, 70)}
-                  alt={`${value}`}
                   width="70"
                   height="70"
                   className="w-[70px] rounded"
@@ -52,12 +49,7 @@ const ImagesGrid: FC<Props> = ({ sample_images, value }) => {
         </div>
       ) : (
         <div className="aspect-w-1 aspect-h-1 relative">
-          <img
-            src="https://via.placeholder.com/250"
-            alt={`${value}`}
-            width="250"
-            height="250"
-          />
+          <img src="https://via.placeholder.com/250" width="250" height="250" />
         </div>
       )}
     </>

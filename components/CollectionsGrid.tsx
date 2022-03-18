@@ -44,40 +44,53 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                 className="h-[310px] w-full animate-pulse bg-white shadow-md"
               ></div>
             ))
-        : mappedCollections?.map((collection, idx) => (
-            <Link
-              key={`${collection?.name}${idx}`}
-              href={`/collections/${collection?.slug}`}
-            >
-              <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
-                {collection?.metadata?.bannerImageUrl ? (
-                  <img
-                    className="aspect-video w-full object-cover"
-                    src={optimizeImage(
-                      collection?.metadata?.bannerImageUrl,
-                      600
-                    )}
-                    alt={collection?.name}
+        : mappedCollections
+            ?.filter((collection) => {
+              if (collection?.tokenCount) {
+                return +collection.tokenCount < 30000
+              }
+              return false
+            })
+            .map((collection, idx) => (
+              <Link
+                key={`${collection?.name}${idx}`}
+                href={`/collections/${collection?.id}`}
+              >
+                <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                  <ImagesGrid
+                    sample_images={collection?.sampleImages}
+                    value={collection?.name || ''}
                   />
-                ) : (
-                  <div className="aspect-video w-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
-                )}
-
-                <div className="mt-3 flex items-center gap-2">
-                  {collection?.metadata?.imageUrl ? (
+                  {/* {collection?.metadata?.bannerImageUrl ? (
                     <img
-                      src={optimizeImage(collection?.metadata?.imageUrl, 40)}
-                      className="h-12 w-12 rounded-full"
+                      className="aspect-video w-full object-cover"
+                      src={optimizeImage(
+                        collection?.metadata?.bannerImageUrl,
+                        600
+                      )}
+                      alt={collection?.name}
                     />
                   ) : (
-                    <div className="h-12 w-12 flex-none rounded-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
-                  )}
+                    <div className="aspect-video w-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
+                  )} */}
 
-                  <div className="reservoir-subtitle">{collection?.name}</div>
-                </div>
-              </a>
-            </Link>
-          ))}
+                  <div className="mt-3 flex items-center gap-2">
+                    {/* @ts-ignore */}
+                    {collection?.metadata?.imageUrl ? (
+                      <img
+                        // @ts-ignore
+                        src={optimizeImage(collection?.metadata?.imageUrl, 40)}
+                        className="h-12 w-12 rounded-full"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 flex-none rounded-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
+                    )}
+
+                    <div className="reservoir-subtitle">{collection?.name}</div>
+                  </div>
+                </a>
+              </Link>
+            ))}
       {!didReactEnd &&
         Array(20)
           .fill(null)

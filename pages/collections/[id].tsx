@@ -50,7 +50,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       }}
     >
       <TokensMain
-        slug={router.query.id?.toString()}
+        collectionId={router.query.id?.toString()}
         apiBase={apiBase}
         chainId={+chainId as ChainId}
         fallback={fallback}
@@ -75,14 +75,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   fallback: {
     tokens: paths['/tokens/v2']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
+    collection: paths['/collection/v1']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   try {
     // Pass in fallback data to prevent loading screens
     // Reference: https://swr.vercel.app/docs/options
     // -------------- COLLECTION --------------
-    const url1 = new URL(`/collections/${params?.id}/v1`, apiBase)
+    const url1 = new URL('/collection/v1', apiBase)
+
+    let query: paths['/collection/v1']['get']['parameters']['query'] = {
+      id: params?.id?.toString(),
+    }
+
+    setParams(url1, query)
 
     const res1 = await fetch(url1.href)
     const collection: Props['fallback']['collection'] = await res1.json()

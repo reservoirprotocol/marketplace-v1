@@ -1,9 +1,9 @@
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
+import setParams from 'lib/params'
 import useSWR from 'swr'
 
-type Collection =
-  paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 export default function useCollection(
   apiBase: string | undefined,
@@ -13,7 +13,13 @@ export default function useCollection(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL(`/collections/${collectionId}/v1`, apiBase)
+    const url = new URL('/collection/v1', apiBase)
+
+    let query: paths['/collection/v1']['get']['parameters']['query'] = {
+      id: collectionId,
+    }
+
+    setParams(url, query)
 
     return url.href
   }

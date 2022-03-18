@@ -58,7 +58,7 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
         <TokensMain
           apiBase={apiBase}
           chainId={+chainId as ChainId}
-          slug={collectionId}
+          collectionId={collectionId}
           fallback={fallback}
           openSeaApiKey={openSeaApiKey}
           setToast={(data) =>

@@ -4,7 +4,7 @@ import { paths } from 'interfaces/apiTypes'
 
 type Props = {
   token: NonNullable<
-    paths['/tokens/details/v1']['get']['responses']['200']['schema']['tokens']
+    paths['/tokens/details/v2']['get']['responses']['200']['schema']['tokens']
   >[0]['token']
 }
 

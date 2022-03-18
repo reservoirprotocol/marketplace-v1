@@ -49,6 +49,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
     animation_url: null,
     extension: null,
   })
+  const collection = useCollection(apiBase, undefined, collectionId)
 
   const contract = router.query?.contract?.toString()
   const tokenId = router.query?.tokenId?.toString()
@@ -91,8 +92,6 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
     token: `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
   })
 
-  const collection = useCollection(apiBase, undefined, collectionId)
-
   if (details.error || !apiBase || !chainId) {
     console.debug({ apiBase, chainId })
     return <div>There was an error</div>
@@ -121,6 +120,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         </title>
         <meta
           name="description"
+          // @ts-ignore
           content={collection.data?.collection?.metadata?.description}
         />
         <meta name="twitter:image" content={token?.token?.image} />
@@ -171,12 +171,13 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               href={
                 mode === 'collection'
                   ? '/'
-                  : `/collections/${collection.data?.collection?.slug}`
+                  : `/collections/${collection.data?.collection?.id}`
               }
             >
               <a className="reservoir-body mb-1 inline-flex items-center gap-2">
                 <img
                   src={optimizeImage(
+                    // @ts-ignore
                     collection.data?.collection?.metadata?.imageUrl,
                     50
                   )}
@@ -323,9 +324,9 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, params }) => {
   const { mode } = getMode(req, communityEnv, collectionEnv)
 
-  const url = new URL('/tokens/details/v1', apiBase)
+  const url = new URL('/tokens/details/v2', apiBase)
 
-  const query: paths['/tokens/details/v1']['get']['parameters']['query'] = {
+  const query: paths['/tokens/details/v2']['get']['parameters']['query'] = {
     token: `${params?.contract?.toString()}:${params?.tokenId?.toString()}`,
   }
 
@@ -334,7 +335,7 @@ export const getServerSideProps: GetServerSideProps<{
   const res = await fetch(url.href)
 
   const tokenDetails =
-    (await res.json()) as paths['/tokens/details/v1']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v2']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
 

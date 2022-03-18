@@ -15,9 +15,8 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 
-type Details = paths['/tokens/details/v1']['get']['responses']['200']['schema']
-type Collection =
-  paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {
   apiBase: string

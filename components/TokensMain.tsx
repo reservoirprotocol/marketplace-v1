@@ -32,10 +32,10 @@ import { CgSpinner } from 'react-icons/cg'
 type Props = {
   apiBase: string
   chainId: ChainId
-  slug: string | undefined
+  collectionId: string | undefined
   fallback: {
     tokens: paths['/tokens/v2']['get']['responses']['200']['schema']
-    collection: paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
+    collection: paths['/collection/v1']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -44,7 +44,7 @@ type Props = {
 const TokensMain: FC<Props> = ({
   apiBase,
   chainId,
-  slug,
+  collectionId,
   fallback,
   openSeaApiKey,
   setToast,
@@ -64,9 +64,7 @@ const TokensMain: FC<Props> = ({
     value: undefined,
   })
 
-  const collection = useCollection(apiBase, fallback.collection, slug)
-
-  const collectionId = collection.data?.collection?.id
+  const collection = useCollection(apiBase, fallback.collection, collectionId)
 
   const stats = useCollectionStats(apiBase, router, collectionId)
 
@@ -142,7 +140,9 @@ const TokensMain: FC<Props> = ({
   }
 
   const header = {
+    // @ts-ignore
     banner: collection?.data?.collection?.metadata?.bannerImageUrl,
+    // @ts-ignore
     image: collection?.data?.collection?.metadata?.imageUrl,
     name: collection?.data?.collection?.name,
   }
@@ -175,6 +175,7 @@ const TokensMain: FC<Props> = ({
   const attributeData: AttibuteModalProps['data'] = {
     collection: {
       id: collection.data?.collection?.id,
+      // @ts-ignore
       image: collection?.data?.collection?.metadata?.imageUrl,
       name: collection?.data?.collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
@@ -273,6 +274,7 @@ const TokensMain: FC<Props> = ({
         <title>{collection.data?.collection?.name} | Reservoir Market</title>
         <meta
           name="description"
+          // @ts-ignore
           content={collection.data?.collection?.metadata?.description}
         />
         <meta name="twitter:image" content={header.banner} />

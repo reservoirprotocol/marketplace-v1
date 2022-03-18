@@ -8,9 +8,9 @@ export async function getDetails(
   token: string | undefined,
   setDetails: Dispatch<any>
 ) {
-  let url = new URL('/tokens/details/v1', apiBase)
+  let url = new URL('/tokens/details/v2', apiBase)
 
-  let query: paths['/tokens/details/v1']['get']['parameters']['query'] = {
+  let query: paths['/tokens/details/v2']['get']['parameters']['query'] = {
     token: `${contract}:${token}`,
   }
 
@@ -19,7 +19,7 @@ export async function getDetails(
   const res = await fetch(url.href)
 
   const json =
-    (await res.json()) as paths['/tokens/details/v1']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v2']['get']['responses']['200']['schema']
 
   setDetails(json)
 }
@@ -29,12 +29,18 @@ export async function getCollection(
   collectionId: string | undefined,
   setCollection: Dispatch<any>
 ) {
-  const url = new URL(`/collections/${collectionId}/v1`, apiBase)
+  const url = new URL('/collection/v1', apiBase)
+
+  let query: paths['/collection/v1']['get']['parameters']['query'] = {
+    id: collectionId,
+  }
+
+  setParams(url, query)
 
   const res = await fetch(url.href)
 
   const json =
-    (await res.json()) as paths['/collections/{collectionOrSlug}/v1']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
 
   setCollection(json)
 }

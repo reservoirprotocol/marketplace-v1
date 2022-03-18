@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 type Attributes =
-  paths['/collections/{collection}/attributes/v1']['get']['responses']['200']['schema']
+  paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']
 
 export default function useCollectionAttributes(
   apiBase: string | undefined,
@@ -20,7 +20,7 @@ export default function useCollectionAttributes(
     if (collectionId) return undefined
 
     const url = new URL(
-      `/collections/${router.query.id || collectionId}/attributes/v1`,
+      `/collections/${router.query.id || collectionId}/attributes/explore/v1`,
       apiBase
     )
 
@@ -64,7 +64,7 @@ const getKey: (
 
   if (!url) return null
 
-  let query: paths['/collections/{collection}/attributes/v1']['get']['parameters']['query'] =
+  let query: paths['/collections/{collection}/attributes/explore/v1']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
 
   // Convert the client sort query into the API sort query

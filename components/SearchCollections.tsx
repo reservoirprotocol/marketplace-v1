@@ -152,7 +152,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
-                      href={`/collections/${collection?.slug}`}
+                      href={`/collections/${collection?.id}`}
                     >
                       <a
                         {...getItemProps({
@@ -170,6 +170,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                       >
                         <img
                           src={
+                            // @ts-ignore
                             collection?.metadata?.imageUrl ??
                             'https://via.placeholder.com/30'
                           }
@@ -200,7 +201,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
               {results?.collections?.slice(0, 6).map((collection, index) => (
                 <Link
                   key={collection?.name}
-                  href={`/collections/${collection?.slug}`}
+                  href={`/collections/${collection?.id}`}
                 >
                   <a
                     {...getItemProps({
@@ -218,6 +219,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                   >
                     <img
                       src={
+                        // @ts-ignore
                         collection?.metadata?.imageUrl ??
                         'https://via.placeholder.com/30'
                       }

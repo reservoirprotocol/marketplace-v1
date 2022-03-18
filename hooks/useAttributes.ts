@@ -1,6 +1,5 @@
 import { paths } from 'interfaces/apiTypes'
 import fetcher from 'lib/fetcher'
-import setParams from 'lib/params'
 import useSWR from 'swr'
 
 export default function useAttributes(
@@ -10,13 +9,10 @@ export default function useAttributes(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL('/attributes/v1', apiBase)
-
-    const query: paths['/attributes/v1']['get']['parameters']['query'] = {
-      collection: collectionId,
-    }
-
-    setParams(url, query)
+    const url = new URL(
+      `/collections/${collectionId}/attributes/all/v1`,
+      apiBase
+    )
 
     return url
   }
@@ -24,7 +20,7 @@ export default function useAttributes(
   const url = getUrl()
 
   const attributes = useSWR<
-    paths['/attributes/v1']['get']['responses']['200']['schema']
+    paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']
   >(url?.href, fetcher)
 
   return attributes
