@@ -150,7 +150,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                 {initialResults?.collections
                   ?.filter((collection) => {
                     if (collection.tokenCount) {
-                      return +collection.tokenCount < 30000
+                      return +collection.tokenCount <= 30000
                     }
                     return false
                   })
@@ -207,7 +207,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
               {results?.collections
                 ?.filter((collection) => {
                   if (collection.tokenCount) {
-                    return +collection.tokenCount < 30000
+                    return +collection.tokenCount <= 30000
                   }
                   return false
                 })

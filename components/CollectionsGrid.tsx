@@ -47,7 +47,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
         : mappedCollections
             ?.filter((collection) => {
               if (collection?.tokenCount) {
-                return +collection.tokenCount < 30000
+                return +collection.tokenCount <= 30000
               }
               return false
             })
