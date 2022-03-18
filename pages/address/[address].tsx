@@ -76,11 +76,14 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
       <Head>
         <title>{address} Profile | Reservoir Market</title>
       </Head>
-      <div className="mt-4 mb-10 flex items-center justify-center">
+      <div className="col-span-full mt-4 mb-10 justify-self-center">
         {address && <EthAccount address={address} />}
       </div>
-      <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
-        <Tabs.List className="mb-3 flex justify-center gap-4 md:mb-4 lg:mb-5">
+      <Tabs.Root
+        value={router.query?.tab?.toString() || 'portfolio'}
+        className="col-span-full grid grid-cols-4 gap-4 md:grid-cols-8 lg:grid-cols-12"
+      >
+        <Tabs.List className="col-span-full mb-3 md:col-span-4 md:col-start-3 md:mb-4 lg:col-span-4 lg:col-start-5 lg:mb-5">
           <nav className="flex overflow-hidden rounded-lg shadow">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
@@ -97,7 +100,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             ))}
           </nav>
         </Tabs.List>
-        <Tabs.Content value="portfolio">
+        <Tabs.Content value="portfolio" className="col-span-full">
           <UserTokensTable
             data={userTokens}
             mutate={() => {

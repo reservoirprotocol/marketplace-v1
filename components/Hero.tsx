@@ -24,22 +24,22 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
   }, [])
 
   return (
-    <div>
+    <>
       {header.banner ? (
         <img
           src={optimizeImage(header.banner, 1000)}
           alt={`${header.name} banner image`}
           height="200px"
-          className="h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
+          className="col-span-full h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
         />
       ) : (
         <div
-          className={`h-[100px] ${
+          className={`col-span-full h-[100px] w-full ${
             delay ? '' : 'bg-gradient-to-r from-violet-500 to-fuchsia-500'
           } sm:h-[200px] sm:rounded-xl`}
         ></div>
       )}
-      <div className="grid w-full place-items-center gap-5 px-2 pt-4 pb-8 sm:pb-6 lg:flex lg:items-center lg:justify-between">
+      <div className="col-span-full grid place-items-center gap-5 pt-4 pb-8 sm:pb-6 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
@@ -57,7 +57,7 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
         </div>
         <div className="flex gap-3">{children}</div>
       </div>
-    </div>
+    </>
   )
 }
 

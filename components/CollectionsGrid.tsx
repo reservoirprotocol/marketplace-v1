@@ -32,7 +32,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
         640: 2,
         500: 1,
       }}
-      className="masonry-grid"
+      className="masonry-grid col-span-full"
       columnClassName="masonry-grid_column"
     >
       {!data && isValidating

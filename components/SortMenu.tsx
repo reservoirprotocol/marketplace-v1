@@ -9,12 +9,11 @@ type Props = {
   setSize: any
 }
 
-type Options = 'Lowest Price' | 'Highest Offer' | 'Token ID'
+type Options = 'Lowest Price' | 'Highest Offer'
 
 const options: { [x: string]: Options } = {
   lowest_price: 'Lowest Price',
   highest_offer: 'Highest Offer',
-  token_id: 'Token ID',
 }
 
 const SortMenu: FC<Props> = ({ setSize }) => {
@@ -59,7 +58,7 @@ const SortMenu: FC<Props> = ({ setSize }) => {
               }
             }}
             disabled={sortSelection === options[key]}
-            className={`reservoir-gray-dropdown-item reservoir-h6 rounded-none ${
+            className={`reservoir-h6 reservoir-gray-dropdown-item rounded-none ${
               sortSelection === options[key]
                 ? 'cursor-not-allowed bg-gray-100'
                 : ''

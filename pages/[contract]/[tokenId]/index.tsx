@@ -126,179 +126,167 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
       </Head>
-      <div className="mb-2 mt-9 grid grid-cols-1 place-items-center gap-6 sm:mb-12 sm:grid-cols-2">
-        {/* <Link href={`/collections/${collectionId}`}>
-          <a className="reservoir-capitalized mt-9 flex items-center justify-self-start sm:col-span-2">
-            <FiArrowLeft /> Back
-          </a>
-        </Link> */}
-        <div className="ml-auto self-start">
-          {/* TOKEN IMAGE */}
-          {/* <img
-            className="mb-4 w-[533px] rounded-2xl"
+      {/* TOKEN IMAGE */}
+      <article className="col-span-full grid content-start items-start gap-4 md:col-span-4 lg:col-span-5 lg:col-start-2">
+        {tokenOpenSea?.extension === null ? (
+          <img
+            className="w-full rounded-2xl"
             src={optimizeImage(token?.token?.image, 533)}
-          /> */}
-          {tokenOpenSea?.extension === null ? (
-            <img
-              className="mb-4 w-[533px] rounded-2xl"
-              src={optimizeImage(token?.token?.image, 533)}
-            />
-          ) : (
-            <Media
-              tokenOpenSea={tokenOpenSea}
-              tokenImage={optimizeImage(token?.token?.image, 533)}
-            />
-          )}
-          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
-            <div className="reservoir-h6 mb-4">Owner</div>
-            {token?.token?.owner && (
-              <Link href={`/address/${token.token.owner}`}>
-                <a className="inline-block">
-                  <EthAccount address={token.token.owner} />
-                </a>
-              </Link>
-            )}
-          </article>
-        </div>
-
-        <div className=" mb-8 self-start sm:mr-auto">
-          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
-            <div className="reservoir-h2 mb-3 overflow-hidden">
-              {token?.token?.name || `#${token?.token?.tokenId}`}
-            </div>
-            <div className="reservoir-h6 mb-2">Collection</div>
-            <Link
-              href={
-                mode === 'collection'
-                  ? '/'
-                  : `/collections/${collection.data?.collection?.id}`
-              }
-            >
-              <a className="reservoir-body mb-1 inline-flex items-center gap-2">
-                <img
-                  src={optimizeImage(
-                    // @ts-ignore
-                    collection.data?.collection?.metadata?.imageUrl,
-                    50
-                  )}
-                  alt="collection avatar"
-                  className="h-9 w-9 rounded-full"
-                />
-                <span className="reservoir-body">
-                  {token?.token?.collection?.name}
-                </span>
+          />
+        ) : (
+          <Media
+            tokenOpenSea={tokenOpenSea}
+            tokenImage={optimizeImage(token?.token?.image, 533)}
+          />
+        )}
+        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+          <div className="reservoir-h6 mb-4">Owner</div>
+          {token?.token?.owner && (
+            <Link href={`/address/${token.token.owner}`}>
+              <a className="inline-block">
+                <EthAccount address={token.token.owner} />
               </a>
             </Link>
-          </article>
-          <article className="mb-6 max-w-[533px] overflow-hidden rounded-2xl border-[1px] border-gray-300 bg-white p-6">
-            <div className="grid grid-cols-2 gap-8">
-              <Price
-                title="List Price"
-                price={
-                  <FormatEth
-                    amount={token?.market?.floorAsk?.price}
-                    maximumFractionDigits={4}
-                    logoWidth={20}
-                  />
-                }
-              >
-                {isOwner && (
-                  <ListModal
-                    apiBase={apiBase}
-                    data={{
-                      collection: collection.data,
-                      details,
-                    }}
-                    isInTheWrongNetwork={isInTheWrongNetwork}
-                    maker={accountData?.address}
-                    setToast={setToast}
-                    signer={signer}
-                  />
+          )}
+        </article>
+      </article>
+      <div className="col-span-full grid gap-4 md:col-span-4 lg:col-span-5">
+        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+          <div className="reservoir-h2 mb-3 overflow-hidden">
+            {token?.token?.name || `#${token?.token?.tokenId}`}
+          </div>
+          <div className="reservoir-h6 mb-2">Collection</div>
+          <Link
+            href={
+              mode === 'collection'
+                ? '/'
+                : `/collections/${collection.data?.collection?.id}`
+            }
+          >
+            <a className="reservoir-body mb-1 inline-flex items-center gap-2">
+              <img
+                src={optimizeImage(
+                  // @ts-ignore
+                  collection.data?.collection?.metadata?.imageUrl,
+                  50
                 )}
-                <BuyNow
-                  apiBase={apiBase}
-                  data={{
-                    collection: collection.data,
-                    details,
-                  }}
-                  signer={signer}
-                  isInTheWrongNetwork={isInTheWrongNetwork}
-                  setToast={setToast}
-                  show={!isOwner}
+                alt="collection avatar"
+                className="h-9 w-9 rounded-full"
+              />
+              <span className="reservoir-body">
+                {token?.token?.collection?.name}
+              </span>
+            </a>
+          </Link>
+        </article>
+        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+          <div className="grid grid-cols-2 gap-8">
+            <Price
+              title="List Price"
+              price={
+                <FormatEth
+                  amount={token?.market?.floorAsk?.price}
+                  maximumFractionDigits={4}
+                  logoWidth={20}
                 />
-              </Price>
-              <Price
-                title="Top Offer"
-                price={
-                  <FormatEth
-                    amount={token?.market?.topBid?.value}
-                    maximumFractionDigits={4}
-                    logoWidth={20}
-                  />
-                }
-              >
-                <AcceptOffer
+              }
+            >
+              {isOwner && (
+                <ListModal
                   apiBase={apiBase}
                   data={{
                     collection: collection.data,
                     details,
                   }}
                   isInTheWrongNetwork={isInTheWrongNetwork}
+                  maker={accountData?.address}
                   setToast={setToast}
-                  show={isOwner}
                   signer={signer}
                 />
-                {!isOwner && (
-                  <TokenOfferModal
-                    signer={signer}
-                    data={{
-                      collection: collection.data,
-                      details,
-                    }}
-                    royalties={{
-                      bps: collection.data?.collection?.royalties?.bps,
-                      recipient:
-                        collection.data?.collection?.royalties?.recipient,
-                    }}
-                    env={{
-                      apiBase,
-                      chainId: +chainId as ChainId,
-                      openSeaApiKey,
-                    }}
-                    setToast={setToast}
-                  />
-                )}
-              </Price>
-            </div>
-            <div className="flex justify-center">
-              <CancelOffer
+              )}
+              <BuyNow
                 apiBase={apiBase}
                 data={{
                   collection: collection.data,
                   details,
                 }}
-                maker={accountData?.address.toLowerCase()}
                 signer={signer}
-                show={isTopBidder}
                 isInTheWrongNetwork={isInTheWrongNetwork}
                 setToast={setToast}
+                show={!isOwner}
               />
-              <CancelListing
+            </Price>
+            <Price
+              title="Top Offer"
+              price={
+                <FormatEth
+                  amount={token?.market?.topBid?.value}
+                  maximumFractionDigits={4}
+                  logoWidth={20}
+                />
+              }
+            >
+              <AcceptOffer
                 apiBase={apiBase}
                 data={{
                   collection: collection.data,
                   details,
                 }}
-                maker={accountData?.address.toLowerCase()}
-                signer={signer}
-                show={isOwner && isListed}
                 isInTheWrongNetwork={isInTheWrongNetwork}
                 setToast={setToast}
+                show={isOwner}
+                signer={signer}
               />
-            </div>
-          </article>
-          <TokenAttributes token={token?.token} />
-        </div>
+              {!isOwner && (
+                <TokenOfferModal
+                  signer={signer}
+                  data={{
+                    collection: collection.data,
+                    details,
+                  }}
+                  royalties={{
+                    bps: collection.data?.collection?.royalties?.bps,
+                    recipient:
+                      collection.data?.collection?.royalties?.recipient,
+                  }}
+                  env={{
+                    apiBase,
+                    chainId: +chainId as ChainId,
+                    openSeaApiKey,
+                  }}
+                  setToast={setToast}
+                />
+              )}
+            </Price>
+          </div>
+          <div className="flex justify-center">
+            <CancelOffer
+              apiBase={apiBase}
+              data={{
+                collection: collection.data,
+                details,
+              }}
+              maker={accountData?.address.toLowerCase()}
+              signer={signer}
+              show={isTopBidder}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+              setToast={setToast}
+            />
+            <CancelListing
+              apiBase={apiBase}
+              data={{
+                collection: collection.data,
+                details,
+              }}
+              maker={accountData?.address.toLowerCase()}
+              signer={signer}
+              show={isOwner && isListed}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+              setToast={setToast}
+            />
+          </div>
+        </article>
+        <TokenAttributes token={token?.token} />
       </div>
     </Layout>
   )

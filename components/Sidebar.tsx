@@ -21,7 +21,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="mb-3 hidden w-[220px] flex-none border-r-[1px] border-gray-300 md:block lg:w-[260px] xl:w-[374px]"
+      className="hidden border-r-[1px] border-gray-300 md:col-span-3 md:block lg:col-span-4 xl:col-span-3"
     >
       <div className="overflow-hidden">
         <button

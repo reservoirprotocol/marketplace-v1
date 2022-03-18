@@ -21,12 +21,12 @@ const Homepage: FC<Props> = ({ apiBase }) => {
           content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
         />
       </Head>
-      <header className="mb-10 mt-40 flex items-center justify-center gap-5">
+      <header className="col-span-full mb-10 mt-40">
         <h1 className="reservoir-h1 text-center">
           Discover, buy and sell NFTs
         </h1>
       </header>
-      <div className="mb-12 grid justify-center">
+      <div className="col-span-full mb-12 md:col-span-4 md:col-start-3 lg:col-span-4 lg:col-start-5">
         <SearchCollection />
       </div>
       <CollectionsGrid collections={collections} />
