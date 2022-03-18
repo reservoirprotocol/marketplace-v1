@@ -359,6 +359,8 @@ const TokensMain: FC<Props> = ({
               tokenCount={statsObj.count}
               tokens={tokens}
               viewRef={refTokens}
+              // @ts-ignore
+              collectionImage={collection.data?.collection?.metadata?.imageUrl}
             />
           )}
         </div>
