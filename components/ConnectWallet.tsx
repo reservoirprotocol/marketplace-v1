@@ -67,7 +67,7 @@ const ConnectWallet: FC = () => {
     <button
       key={wallet.id}
       onClick={() => connect(wallet)}
-      className="btn-primary-fill"
+      className="btn-primary-fill col-span-2 col-start-3 ml-auto md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
     >
       Connect Wallet
     </button>

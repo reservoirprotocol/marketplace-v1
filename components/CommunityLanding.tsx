@@ -46,9 +46,9 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
           }
         />
       </Head>
-      <header className="mt-40 mb-14 flex items-center justify-center gap-5">
+      <header className="col-span-full mb-10 mt-40 flex items-center justify-center">
         <img
-          className="h-[50px] w-[50px] rounded-full"
+          className="mr-4 h-[50px] w-[50px] rounded-full"
           src={
             communities.communities.data?.[0].collections?.[0]?.metadata
               // prettier-ignore
@@ -61,7 +61,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
         </h1>
       </header>
       {isBigCommunity && (
-        <div className="mb-12 grid justify-center">
+        <div className="col-span-full mb-12 md:col-span-4 md:col-start-3 lg:col-span-4 lg:col-start-5">
           <SearchCollections communityId={collectionId} />
         </div>
       )}

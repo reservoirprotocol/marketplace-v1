@@ -148,7 +148,13 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                 {...getMenuProps()}
               >
                 {initialResults?.collections
-                  ?.slice(0, 6)
+                  ?.filter((collection) => {
+                    if (collection.tokenCount) {
+                      return +collection.tokenCount < 30000
+                    }
+                    return false
+                  })
+                  .slice(0, 6)
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
@@ -198,40 +204,48 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
               className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
               {...getMenuProps()}
             >
-              {results?.collections?.slice(0, 6).map((collection, index) => (
-                <Link
-                  key={collection?.name}
-                  href={`/collections/${collection?.id}`}
-                >
-                  <a
-                    {...getItemProps({
-                      key: collection?.name,
-                      index,
-                      item: collection,
-                    })}
-                    onClick={() => {
-                      reset()
-                      setFocused(false)
-                    }}
-                    className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
-                      highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
-                    }`}
+              {results?.collections
+                ?.filter((collection) => {
+                  if (collection.tokenCount) {
+                    return +collection.tokenCount < 30000
+                  }
+                  return false
+                })
+                .slice(0, 6)
+                .map((collection, index) => (
+                  <Link
+                    key={collection?.name}
+                    href={`/collections/${collection?.id}`}
                   >
-                    <img
-                      src={
-                        // @ts-ignore
-                        collection?.metadata?.imageUrl ??
-                        'https://via.placeholder.com/30'
-                      }
-                      alt={`${collection?.name}'s logo.`}
-                      className="h-9 w-9 overflow-hidden rounded-full"
-                    />
-                    <span className="reservoir-subtitle ml-2">
-                      {collection?.name}
-                    </span>
-                  </a>
-                </Link>
-              ))}
+                    <a
+                      {...getItemProps({
+                        key: collection?.name,
+                        index,
+                        item: collection,
+                      })}
+                      onClick={() => {
+                        reset()
+                        setFocused(false)
+                      }}
+                      className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
+                        highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
+                      }`}
+                    >
+                      <img
+                        src={
+                          // @ts-ignore
+                          collection?.metadata?.imageUrl ??
+                          'https://via.placeholder.com/30'
+                        }
+                        alt={`${collection?.name}'s logo.`}
+                        className="h-9 w-9 overflow-hidden rounded-full"
+                      />
+                      <span className="reservoir-subtitle ml-2">
+                        {collection?.name}
+                      </span>
+                    </a>
+                  </Link>
+                ))}
             </div>
           )}
         </div>

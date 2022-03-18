@@ -27,7 +27,7 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
     <>
       {header.banner ? (
         <img
-          src={optimizeImage(header.banner, 1000)}
+          src={optimizeImage(header.banner, 1500)}
           alt={`${header.name} banner image`}
           height="200px"
           className="col-span-full h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"

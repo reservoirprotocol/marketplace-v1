@@ -83,22 +83,20 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         value={router.query?.tab?.toString() || 'portfolio'}
         className="col-span-full grid grid-cols-4 gap-4 md:grid-cols-8 lg:grid-cols-12"
       >
-        <Tabs.List className="col-span-full mb-3 md:col-span-4 md:col-start-3 md:mb-4 lg:col-span-4 lg:col-start-5 lg:mb-5">
-          <nav className="flex overflow-hidden rounded-lg shadow">
-            {tabs.map(({ name, id }) => (
-              <Tabs.Trigger
-                key={id}
-                id={id}
-                value={id}
-                className={
-                  'group reservoir-label-l relative min-w-0 overflow-hidden  whitespace-nowrap border-b-2 border-transparent bg-white py-4 px-12 text-center hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
-                }
-                onClick={() => toggleOnItem(router, 'tab', id)}
-              >
-                <span>{name}</span>
-              </Tabs.Trigger>
-            ))}
-          </nav>
+        <Tabs.List className="col-span-full mb-4 flex overflow-hidden rounded-lg shadow md:col-span-4 md:col-start-3 lg:col-span-4 lg:col-start-5">
+          {tabs.map(({ name, id }) => (
+            <Tabs.Trigger
+              key={id}
+              id={id}
+              value={id}
+              className={
+                'group reservoir-label-l relative w-full min-w-0 whitespace-nowrap border-b-2 border-transparent bg-white py-4 px-12 text-center hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
+              }
+              onClick={() => toggleOnItem(router, 'tab', id)}
+            >
+              <span>{name}</span>
+            </Tabs.Trigger>
+          ))}
         </Tabs.List>
         <Tabs.Content value="portfolio" className="col-span-full">
           <UserTokensTable
@@ -121,7 +119,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           />
           {/* <UserTokensGrid data={userTokens} /> */}
         </Tabs.Content>
-        <Tabs.Content value="history">
+        <Tabs.Content value="history" className="col-span-full">
           {/* <UserActivityTable
             data={userActivity}
             chainId={+chainId as ChainId}
@@ -129,7 +127,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
         </Tabs.Content>
         {isOwner && (
           <>
-            <Tabs.Content value="buying">
+            <Tabs.Content value="buying" className="col-span-full">
               <UserOffersTable
                 data={buyPositions}
                 mutate={() => {
@@ -148,7 +146,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 }}
               />
             </Tabs.Content>
-            <Tabs.Content value="selling">
+            <Tabs.Content value="selling" className="col-span-full">
               <UserListingsTable
                 data={sellPositions}
                 mutate={() => {
