@@ -23,7 +23,7 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
   const { data, isValidating, size } = attributes
 
   const mappedAttributes = data
-    ? data.map(({ attributes }) => attributes).flat()
+    ? data.flatMap(({ attributes }) => attributes)
     : []
   const isEmpty = mappedAttributes.length === 0
   const isReachingEnd =

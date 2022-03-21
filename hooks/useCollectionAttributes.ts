@@ -17,7 +17,7 @@ export default function useCollectionAttributes(
   const { ref, inView } = useInView()
 
   function getUrl() {
-    if (collectionId) return undefined
+    if (!collectionId) return undefined
 
     const url = new URL(
       `/collections/${router.query.id || collectionId}/attributes/explore/v1`,

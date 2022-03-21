@@ -74,16 +74,13 @@ const getKey: (
   if (router.query?.sort) {
     if (`${router.query?.sort}` === 'highest_offer') {
       query.sortBy = 'topBidValue'
-      // query.sortDirection = 'desc'
     }
 
     // if (`${router.query?.sort}` === 'token_id') {
     //   query.sortBy = 'tokenId'
-    //   query.sortDirection = 'asc'
     // }
   } else {
     query.sortBy = 'floorAskPrice'
-    // query.sortDirection = 'asc'
   }
 
   Object.keys(router.query).forEach((key) => {
