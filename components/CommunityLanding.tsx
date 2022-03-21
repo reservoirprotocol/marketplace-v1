@@ -39,9 +39,9 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
         <meta
           name="description"
           content={
-            communities.communities.data?.[0].collections?.[0]?.metadata
             // prettier-ignore
             // @ts-ignore
+            communities.communities.data?.[0].collections?.[0]?.metadata
             ?.description
           }
         />
@@ -50,9 +50,9 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
         <img
           className="mr-4 h-[50px] w-[50px] rounded-full"
           src={
+            // prettier-ignore
+            // @ts-ignore
             communities.communities.data?.[0].collections?.[0]?.metadata
-              // prettier-ignore
-              // @ts-ignore
               ?.imageUrl
           }
         />

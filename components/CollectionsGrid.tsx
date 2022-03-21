@@ -17,8 +17,9 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
   } = collections
 
   const mappedCollections = data
-    ? data.map(({ collections }) => collections).flat()
-    : []
+    ? data.flatMap(({ collections }) => collections)
+    : // .filter((collection) => collection?.sampleImages?.[0] !== null)
+      []
   const didReactEnd = data && data[data.length - 1].collections?.length === 0
 
   return (

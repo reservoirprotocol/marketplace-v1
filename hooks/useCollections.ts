@@ -5,12 +5,12 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-type Collections = paths['/collections/v1']['get']['responses']['200']['schema']
+type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
 
 export default function useCollections(apiBase: string | undefined) {
   const { ref, inView } = useInView()
 
-  const collectionsUrl = new URL('/collections/v1', apiBase)
+  const collectionsUrl = new URL('/collections/v2', apiBase)
 
   const collections = useSWRInfinite<Collections>(
     (index, previousPageData) =>
@@ -37,13 +37,13 @@ const getKey: (
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   url: URL,
   index: number,
-  previousPageData: paths['/collections/v1']['get']['responses']['200']['schema']
+  previousPageData: paths['/collections/v2']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
 
-  let query: paths['/collections/v1']['get']['parameters']['query'] = {
+  let query: paths['/collections/v2']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
     sortBy: 'allTimeVolume',

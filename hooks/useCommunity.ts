@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-type Collections = paths['/collections/v1']['get']['responses']['200']['schema']
+type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
 
 export default function useCommunity(
   apiBase: string | undefined,
@@ -13,7 +13,7 @@ export default function useCommunity(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL('/collections/v1', apiBase)
+  const url = new URL('/collections/v2', apiBase)
 
   const communities = useSWRInfinite<Collections>(
     (index, previousPageData) =>
@@ -48,7 +48,7 @@ const getKey: (
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
 
-  let query: paths['/collections/v1']['get']['parameters']['query'] = {
+  let query: paths['/collections/v2']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
     community: collectionId,

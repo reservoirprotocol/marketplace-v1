@@ -17,19 +17,19 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
-    paths['/collections/v1']['get']['responses']['200']['schema']
+    paths['/collections/v2']['get']['responses']['200']['schema']
   >({})
   const [initialResults, setInitialResults] = useState<
-    paths['/collections/v1']['get']['responses']['200']['schema']
+    paths['/collections/v2']['get']['responses']['200']['schema']
   >({})
 
   // LOAD INITIAL RESULTS
   useEffect(() => {
     if (!apiBase) return
 
-    const url = new URL('/collections/v1', apiBase)
+    const url = new URL('/collections/v2', apiBase)
 
-    const query: paths['/collections/v1']['get']['parameters']['query'] = {
+    const query: paths['/collections/v2']['get']['parameters']['query'] = {
       sortBy: 'allTimeVolume',
     }
 
@@ -42,7 +42,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       const res = await fetch(url.href)
 
       const json =
-        (await res.json()) as paths['/collections/v1']['get']['responses']['200']['schema']
+        (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
 
       setResults({ collections: json.collections })
       setInitialResults({ collections: json.collections })
@@ -76,7 +76,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
         const res = await fetch(url.href)
 
         const data =
-          (await res.json()) as paths['/collections/v1']['get']['responses']['200']['schema']
+          (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
@@ -88,9 +88,9 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     []
   )
 
-  const url = new URL('/collections/v1', apiBase)
+  const url = new URL('/collections/v2', apiBase)
 
-  const query: paths['/collections/v1']['get']['parameters']['query'] = {
+  const query: paths['/collections/v2']['get']['parameters']['query'] = {
     sortBy: 'allTimeVolume',
   }
 
