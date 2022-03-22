@@ -257,7 +257,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
               )}
             </Price>
           </div>
-          <div className="flex justify-center">
+          <div className="mt-6 flex justify-center">
             <CancelOffer
               apiBase={apiBase}
               data={{

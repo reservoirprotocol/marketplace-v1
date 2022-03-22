@@ -173,7 +173,7 @@ const CancelOffer: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
           onClick={execute}
-          className="btn-primary-outline mt-6"
+          className="btn-primary-outline"
         >
           {waitingTx ? (
             <CgSpinner className="h-4 w-4 animate-spin" />
