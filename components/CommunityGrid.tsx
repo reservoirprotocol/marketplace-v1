@@ -17,7 +17,10 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
   } = communities
 
   const mappedCollections = data
-    ? data.map(({ collections }) => collections).flat()
+    ? data
+        .flatMap(({ collections }) => collections)
+        // @ts-ignore
+        .filter((collection) => !collection?.sampleImages?.includes(null))
     : []
   const didReactEnd = data && data[data.length - 1].collections?.length === 0
 
