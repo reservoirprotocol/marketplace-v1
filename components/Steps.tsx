@@ -1,4 +1,4 @@
-import { Execute } from '@ramosdiego/reservoir-sdk-test'
+import { Execute } from '@reservoir0x/client-sdk'
 import React, { FC } from 'react'
 import { HiCheckCircle, HiXCircle } from 'react-icons/hi'
 import { CgSpinner } from 'react-icons/cg'

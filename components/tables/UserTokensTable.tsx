@@ -73,7 +73,7 @@ const UserTokensTable: FC<Props> = ({
               <tr
                 key={`${contract}:${tokenId}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group bg-white even:bg-gray-50"
+                className="group min-h-[100px] bg-white even:bg-gray-50"
               >
                 {/* ITEM */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
