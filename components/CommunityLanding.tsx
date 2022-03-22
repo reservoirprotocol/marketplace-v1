@@ -22,17 +22,6 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
   return (
     <>
       <Head>
-        {/* {mode === 'global' ? (
-          <title>
-            {collectionId.toUpperCase()} Community Marketplace | Reservoir
-            Market
-          </title>
-        ) : (
-          <title>
-            {collectionId.toUpperCase()} Community Marketplace | Powered by
-            Reservoir
-          </title>
-        )} */}
         <title>
           Reservoir Market | Open source NFT marketplace powered by Reservoir
         </title>

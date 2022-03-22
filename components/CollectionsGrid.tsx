@@ -64,25 +64,10 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                     sample_images={collection?.sampleImages}
                     value={collection?.name || ''}
                   />
-                  {/* {collection?.metadata?.bannerImageUrl ? (
-                    <img
-                      className="aspect-video w-full object-cover"
-                      src={optimizeImage(
-                        collection?.metadata?.bannerImageUrl,
-                        600
-                      )}
-                      alt={collection?.name}
-                    />
-                  ) : (
-                    <div className="aspect-video w-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
-                  )} */}
-
                   <div className="mt-3 flex items-center gap-2">
-                    {/* @ts-ignore */}
-                    {collection?.metadata?.imageUrl ? (
+                    {collection?.image ? (
                       <img
-                        // @ts-ignore
-                        src={optimizeImage(collection?.metadata?.imageUrl, 40)}
+                        src={optimizeImage(collection?.image, 40)}
                         className="h-12 w-12 rounded-full"
                       />
                     ) : (
