@@ -152,12 +152,13 @@ function processPosition(
       >[0]
     | undefined
 ) {
+  const tokenId = position?.set?.id?.split(':')[2]
+  const contract = position?.set?.id?.split(':')[1]
+
   const data = {
-    // @ts-ignore
-    contract: position?.set?.metadata?.data?.contract,
-    // @ts-ignore
-    tokenId: position?.set?.metadata?.data?.tokenId,
-    image: position?.set?.image,
+    contract,
+    tokenId,
+    image: position?.set?.metadata?.data?.image,
     name: position?.set?.metadata?.data?.tokenName,
     expiration:
       position?.primaryOrder?.expiration === 0
