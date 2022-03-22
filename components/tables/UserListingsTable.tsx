@@ -80,7 +80,7 @@ const UserListingsTable: FC<Props> = ({
               <tr
                 key={`${position?.set?.id}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group even:bg-neutral-100 dark:even:bg-neutral-900"
+                className="group h-[80px] even:bg-neutral-100 dark:even:bg-neutral-900"
               >
                 {/* ITEM */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">

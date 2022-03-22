@@ -73,7 +73,7 @@ const UserTokensTable: FC<Props> = ({
               <tr
                 key={`${contract}:${tokenId}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group min-h-[100px] bg-white even:bg-gray-50"
+                className="group h-[80px] bg-white even:bg-gray-50"
               >
                 {/* ITEM */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
@@ -101,7 +101,7 @@ const UserTokensTable: FC<Props> = ({
 
                 {/* LIST PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
-                  <div className="min-w-[140px]">
+                  <div className="min-w-[160px]">
                     <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
                       <FormatEth amount={listPrice} maximumFractionDigits={4} />
                     </span>
@@ -129,7 +129,7 @@ const UserTokensTable: FC<Props> = ({
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   {topOffer ? (
                     isOwner ? (
-                      <div className="min-w-[140px]">
+                      <div className="min-w-[160px]">
                         <span className="group-hover:hidden">
                           <FormatEth
                             amount={topOffer}

@@ -64,7 +64,7 @@ const UserActivityTable: FC<Props> = ({
               <tr
                 key={`${transfer?.token?.tokenId}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group bg-white even:bg-gray-50"
+                className="group h-[80px] bg-white even:bg-gray-50"
               >
                 {/* TYPE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
