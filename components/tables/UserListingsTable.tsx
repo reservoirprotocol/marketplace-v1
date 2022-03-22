@@ -154,12 +154,11 @@ function processPosition(
 ) {
   const data = {
     // @ts-ignore
-    contract: position?.set?.schema?.data?.contract,
+    contract: position?.set?.metadata?.data?.contract,
     // @ts-ignore
-    tokenId: position?.set?.schema?.data?.tokenId,
+    tokenId: position?.set?.metadata?.data?.tokenId,
     image: position?.set?.image,
-    // @ts-ignore
-    name: position?.set?.metadata?.tokenName,
+    name: position?.set?.metadata?.data?.tokenName,
     expiration:
       position?.primaryOrder?.expiration === 0
         ? 'Never'
@@ -167,8 +166,7 @@ function processPosition(
             +`${position?.primaryOrder?.expiration}000`
           ).toRelative(),
     id: position?.primaryOrder?.id,
-    // @ts-ignore
-    collectionName: position?.set?.metadata?.collectionName,
+    collectionName: position?.set?.metadata?.data?.collectionName,
     value: position?.primaryOrder?.value,
   }
 

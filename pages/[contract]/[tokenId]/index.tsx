@@ -120,8 +120,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
         </title>
         <meta
           name="description"
-          // @ts-ignore
-          content={collection.data?.collection?.metadata?.description}
+          content={collection.data?.collection?.metadata?.description as string}
         />
         <meta name="twitter:image" content={token?.token?.image} />
         <meta property="og:image" content={token?.token?.image} />
@@ -166,8 +165,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
             <a className="reservoir-body mb-1 inline-flex items-center gap-2">
               <img
                 src={optimizeImage(
-                  // @ts-ignore
-                  collection.data?.collection?.metadata?.imageUrl,
+                  collection.data?.collection?.metadata?.imageUrl as string,
                   50
                 )}
                 alt="collection avatar"

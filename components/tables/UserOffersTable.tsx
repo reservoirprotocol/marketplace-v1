@@ -166,23 +166,22 @@ function processPosition(
 ) {
   const href =
     // @ts-ignore
-    position?.set?.schema?.kind === 'collection'
+    position?.set?.metadata?.kind === 'collection'
       ? // @ts-ignore
-        `/collections/${position?.set?.schema?.data?.collection}`
+        `/collections/${position?.set?.metadata?.data?.collection}`
       : // @ts-ignore
-        `/${position?.set?.schema?.data?.contract}/${position?.set?.schema?.data?.tokenId}`
+        `/${position?.set?.metadata?.data?.contract}/${position?.set?.metadata?.data?.tokenId}`
 
   const data = {
     // @ts-ignore
-    key: position?.set?.schema?.data?.attribute?.key,
+    key: position?.set?.metadata?.data?.attribute?.key,
     // @ts-ignore
-    value: position?.set?.schema?.data?.attribute?.value,
+    value: position?.set?.metadata?.data?.attribute?.value,
+    kind: position?.set?.metadata?.kind,
     // @ts-ignore
-    kind: position?.set?.schema?.kind,
+    contract: position?.set?.metadata?.data?.contract,
     // @ts-ignore
-    contract: position?.set?.schema?.data?.contract,
-    // @ts-ignore
-    tokenId: position?.set?.schema?.data?.tokenId,
+    tokenId: position?.set?.metadata?.data?.tokenId,
     image: position?.set?.image,
     // @ts-ignore
     tokenName: position?.set?.metadata?.tokenName,

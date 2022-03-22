@@ -62,7 +62,7 @@ const UserTokensGrid: FC<Props> = ({ data: { tokens, ref } }) => {
                     </div>
                     <div>
                       <FormatEth
-                        amount={token?.ownership?.floorSellValue}
+                        amount={token?.ownership?.floorAskPrice}
                         maximumFractionDigits={4}
                         logoWidth={7}
                       />

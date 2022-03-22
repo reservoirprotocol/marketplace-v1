@@ -25,6 +25,7 @@
     "@radix-ui/react-tabs": "^0.1.5",
     "@radix-ui/react-toggle-group": "^0.1.4",
     "@ramosdiego/reservoir": "^0.0.15",
+    "@ramosdiego/reservoir-sdk-test": "^0.0.1",
     "@ramosdiego/ui": "^0.0.10",
     "@reservoir0x/sdk": "^0.0.25",
     "@types/lodash.debounce": "^4.0.6",

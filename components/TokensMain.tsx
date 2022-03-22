@@ -140,10 +140,8 @@ const TokensMain: FC<Props> = ({
   }
 
   const header = {
-    // @ts-ignore
-    banner: collection?.data?.collection?.metadata?.bannerImageUrl,
-    // @ts-ignore
-    image: collection?.data?.collection?.metadata?.imageUrl,
+    banner: collection?.data?.collection?.metadata?.bannerImageUrl as string,
+    image: collection?.data?.collection?.metadata?.imageUrl as string,
     name: collection?.data?.collection?.name,
   }
 
@@ -175,8 +173,7 @@ const TokensMain: FC<Props> = ({
   const attributeData: AttibuteModalProps['data'] = {
     collection: {
       id: collection.data?.collection?.id,
-      // @ts-ignore
-      image: collection?.data?.collection?.metadata?.imageUrl,
+      image: collection?.data?.collection?.metadata?.imageUrl as string,
       name: collection?.data?.collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
@@ -274,8 +271,7 @@ const TokensMain: FC<Props> = ({
         <title>{collection.data?.collection?.name} | Reservoir Market</title>
         <meta
           name="description"
-          // @ts-ignore
-          content={collection.data?.collection?.metadata?.description}
+          content={collection.data?.collection?.metadata?.description as string}
         />
         <meta name="twitter:image" content={header.banner} />
         <meta property="og:image" content={header.banner} />
@@ -359,8 +355,9 @@ const TokensMain: FC<Props> = ({
               tokenCount={statsObj.count}
               tokens={tokens}
               viewRef={refTokens}
-              // @ts-ignore
-              collectionImage={collection.data?.collection?.metadata?.imageUrl}
+              collectionImage={
+                collection.data?.collection?.metadata?.imageUrl as string
+              }
             />
           )}
         </div>

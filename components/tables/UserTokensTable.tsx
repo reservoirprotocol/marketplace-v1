@@ -186,7 +186,7 @@ function processToken(
     collectionName: token?.token?.collection?.name,
     collectionId: token?.token?.collection?.id,
     tokenName: token?.token?.name,
-    listPrice: token?.ownership?.floorSellValue,
+    listPrice: token?.ownership?.floorAskPrice,
     topOffer: token?.token?.topBid?.value,
   }
 
