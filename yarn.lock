@@ -1450,10 +1450,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@ramosdiego/reservoir-sdk-test@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@ramosdiego/reservoir-sdk-test/-/reservoir-sdk-test-0.0.1.tgz#f0e90cfbf6a176cb63417026e94ea0dcbb9c504c"
-  integrity sha512-X6J/PU0cAPKWZnVal+HzArqPN/NKKgC7Y4MFI2wpeLCLMEsFXJ4vBS+QLJtfmISI8f+1kVEfduEfti/Sf0E4dg==
+"@ramosdiego/reservoir-sdk-test@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@ramosdiego/reservoir-sdk-test/-/reservoir-sdk-test-0.0.2.tgz#4891be29edf4330e04fdaee229260ff64505057c"
+  integrity sha512-6eIC4pbEe5PMzLDb+SOav4PRxSNbmkyTgFQw3vCbB6TZe3Z5kfdjRBIjSgo6dOeanACGP4eZVBQep5RimeKbZQ==
   dependencies:
     ethers "^5.6.1"
 

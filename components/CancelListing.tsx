@@ -1,6 +1,6 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { Execute } from 'lib/executeSteps'
+import { Execute } from '@ramosdiego/reservoir-sdk-test'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'

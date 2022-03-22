@@ -1,6 +1,6 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import executeSteps, { Execute } from 'lib/executeSteps'
+import executeSteps, { Execute } from '@ramosdiego/reservoir-sdk-test'
 import setParams from 'lib/params'
 
 type Data = {
