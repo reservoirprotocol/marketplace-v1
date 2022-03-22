@@ -7,6 +7,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
+import setParams from 'lib/params'
 
 type Props = {
   data: ReturnType<typeof useUserPositions>
@@ -86,13 +87,13 @@ const UserOffersTable: FC<Props> = ({
                 className="group bg-white even:bg-gray-50"
               >
                 {/* TYPE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 capitalize">
                   {kind}
                 </td>
 
                 {/* ITEM */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
-                  <Link href={href}>
+                  <Link href={href || '#'}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-10 w-10">
                         {image && (
@@ -109,8 +110,9 @@ const UserOffersTable: FC<Props> = ({
                       <span className="whitespace-nowrap">
                         <div className="reservoir-body">{collectionName}</div>
                         <div>
-                          <span className="reservoir-body">{key}</span>
-                          <span className="reservoir-body">{value}</span>
+                          <span className="reservoir-body">
+                            {key} {value}
+                          </span>
                         </div>
                         <div className="reservoir-h6">{tokenName}</div>
                       </span>
@@ -164,27 +166,54 @@ function processPosition(
       >[0]
     | undefined
 ) {
-  const href =
+  const kind = position?.set?.metadata?.kind
+  // @ts-ignore
+  const key = position?.set?.metadata?.data?.attributes?.[0]?.key
+  // @ts-ignore
+  const value = position?.set?.metadata?.data?.attributes?.[0]?.value
+
+  let tokenId
+  let contract
+  let href
+
+  switch (kind) {
+    case 'token':
+      tokenId = position?.set?.id?.split(':')[2]
+      contract = position?.set?.id?.split(':')[1]
+      href = `/${contract}/${tokenId}`
+      break
     // @ts-ignore
-    position?.set?.metadata?.kind === 'collection'
-      ? // @ts-ignore
-        `/collections/${position?.set?.metadata?.data?.collection}`
-      : // @ts-ignore
-        `/${position?.set?.metadata?.data?.contract}/${position?.set?.metadata?.data?.tokenId}`
+    case 'attribute':
+      tokenId = undefined
+      contract = position?.set?.id?.split(':')[1]
+
+      // const url = new URL(`/collections/${position?.set?.id?.split(':')[1]}`)
+
+      // setParams(url, {`attributes[${key}]`: value})
+
+      href = `/collections/${
+        position?.set?.id?.split(':')[1]
+      }?attributes[${key}]=${value}`
+      break
+    // @ts-ignore
+    case 'collection':
+      tokenId = undefined
+      contract = position?.set?.id?.split(':')[1]
+      href = `/collections/${position?.set?.id?.split(':')[1]}`
+      break
+
+    default:
+      break
+  }
 
   const data = {
-    // @ts-ignore
-    key: position?.set?.metadata?.data?.attribute?.key,
-    // @ts-ignore
-    value: position?.set?.metadata?.data?.attribute?.value,
-    kind: position?.set?.metadata?.kind,
-    // @ts-ignore
-    contract: position?.set?.metadata?.data?.contract,
-    // @ts-ignore
-    tokenId: position?.set?.metadata?.data?.tokenId,
-    image: position?.set?.image,
-    // @ts-ignore
-    tokenName: position?.set?.metadata?.tokenName,
+    key,
+    value,
+    kind,
+    contract,
+    tokenId,
+    image: position?.set?.metadata?.data?.image,
+    tokenName: position?.set?.metadata?.data?.tokenName,
     expiration:
       position?.primaryOrder?.expiration === 0
         ? 'Never'
@@ -192,8 +221,7 @@ function processPosition(
             +`${position?.primaryOrder?.expiration}000`
           ).toRelative(),
     id: position?.primaryOrder?.id,
-    // @ts-ignore
-    collectionName: position?.set?.metadata?.collectionName,
+    collectionName: position?.set?.metadata?.data?.collectionName,
     price: position?.primaryOrder?.value,
   }
 
