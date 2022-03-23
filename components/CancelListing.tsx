@@ -1,11 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { Execute } from '@reservoir0x/client-sdk'
+import { cancelOrder, Execute } from '@reservoir0x/client-sdk'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import cancelOrder from 'lib/actions/cancelOrder'
 import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
@@ -160,7 +159,7 @@ const CancelListing: FC<Props> = ({
       maker,
       signer,
       apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })

@@ -1,6 +1,6 @@
 import { paths } from 'interfaces/apiTypes'
 import formatUrl from 'lib/formatUrl'
-import { formatBN, formatNumber } from 'lib/numbers'
+import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

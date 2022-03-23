@@ -6,7 +6,7 @@ import useCollectionStats from 'hooks/useCollectionStats'
 // import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { paths } from 'interfaces/apiTypes'
-import { Execute } from '@reservoir0x/client-sdk'
+import { buyToken, Execute } from '@reservoir0x/client-sdk'
 import { formatBN } from 'lib/numbers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -25,7 +25,6 @@ import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import buyToken from 'lib/actions/buyToken'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 
@@ -258,7 +257,7 @@ const TokensMain: FC<Props> = ({
       // contract: floor?.token?.contract,
       signer,
       apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })

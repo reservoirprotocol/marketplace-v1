@@ -7,13 +7,12 @@ import { paths } from 'interfaces/apiTypes'
 import { useConnect } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
-import { Execute } from '@reservoir0x/client-sdk'
-import listToken from 'lib/actions/listToken'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
+import { Execute, listToken } from '@reservoir0x/client-sdk'
 
 type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -194,7 +193,7 @@ const ListModal: FC<Props> = ({
       },
       signer,
       apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })
@@ -229,7 +228,7 @@ const ListModal: FC<Props> = ({
         },
         signer,
         apiBase,
-        setSteps,
+        setState: setSteps,
         handleSuccess,
         handleError,
       })

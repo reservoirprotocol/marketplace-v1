@@ -1,11 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { Execute } from '@reservoir0x/client-sdk'
+import { buyToken, Execute } from '@reservoir0x/client-sdk'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import buyToken from 'lib/actions/buyToken'
 import Toast from './Toast'
 import { useConnect } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
@@ -154,7 +153,7 @@ const BuyNow: FC<Props> = ({
       // contract: token?.token?.contract,
       signer,
       apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })

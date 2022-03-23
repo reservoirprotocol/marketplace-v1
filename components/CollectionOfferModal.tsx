@@ -16,9 +16,8 @@ import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
-import { Execute } from '@reservoir0x/client-sdk'
+import { Execute, placeBid } from '@reservoir0x/client-sdk'
 import ModalCard from './modal/ModalCard'
-import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 
@@ -167,7 +166,7 @@ const CollectionOfferModal: FC<Props> = ({
       },
       signer,
       apiBase: env.apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })

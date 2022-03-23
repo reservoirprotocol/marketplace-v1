@@ -16,9 +16,8 @@ import expirationPresets from 'lib/offerExpirationPresets'
 import { paths } from 'interfaces/apiTypes'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
-import { Execute } from '@reservoir0x/client-sdk'
+import { Execute, placeBid } from '@reservoir0x/client-sdk'
 import ModalCard from './modal/ModalCard'
-import placeBid from 'lib/actions/placeBid'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
@@ -220,7 +219,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       },
       signer,
       apiBase: env.apiBase,
-      setSteps,
+      setState: setSteps,
       handleSuccess,
       handleError,
     })
@@ -256,7 +255,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         },
         signer,
         apiBase: env.apiBase,
-        setSteps,
+        setState: setSteps,
         handleSuccess,
         handleError,
       })

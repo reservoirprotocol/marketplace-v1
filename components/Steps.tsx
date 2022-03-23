@@ -1,7 +1,7 @@
-import { Execute } from '@reservoir0x/client-sdk'
 import React, { FC } from 'react'
 import { HiCheckCircle, HiXCircle } from 'react-icons/hi'
 import { CgSpinner } from 'react-icons/cg'
+import { Execute } from '@reservoir0x/client-sdk'
 
 type Props = {
   steps: Execute['steps']

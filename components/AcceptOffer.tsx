@@ -1,11 +1,10 @@
 import { Signer } from 'ethers'
 import { paths } from 'interfaces/apiTypes'
-import { Execute } from '@reservoir0x/client-sdk'
+import { acceptOffer, Execute } from '@reservoir0x/client-sdk'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import acceptOffer from 'lib/actions/acceptOffer'
 import { useConnect } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
@@ -166,7 +165,7 @@ const AcceptOffer: FC<Props> = ({
       apiBase,
       token: tokenString,
       // contract: contract || token?.token?.contract,
-      setSteps,
+      setState: setSteps,
       signer,
       handleSuccess,
       handleError,
