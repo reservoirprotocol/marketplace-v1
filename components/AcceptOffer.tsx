@@ -109,10 +109,10 @@ const AcceptOffer: FC<Props> = ({
   const handleError: Parameters<typeof acceptOffer>[0]['handleError'] = (
     err
   ) => {
+    setOpen(false)
+    setSteps(undefined)
     // Handle user rejection
     if (err?.code === 4001) {
-      setOpen(false)
-      setSteps(undefined)
       setToast({
         kind: 'error',
         message: 'You have canceled the transaction.',

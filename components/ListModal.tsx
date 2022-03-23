@@ -135,9 +135,10 @@ const ListModal: FC<Props> = ({
   const handleError: Parameters<typeof listToken>[0]['handleError'] = (
     err: any
   ) => {
+    setOpen(false)
+    setSteps(undefined)
     // Handle user rejection
     if (err?.code === 4001) {
-      setSteps(undefined)
       setToast({
         kind: 'error',
         message: 'You have canceled the transaction.',
