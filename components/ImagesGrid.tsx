@@ -1,4 +1,4 @@
-import { paths } from 'interfaces/apiTypes'
+import { paths } from '@reservoir0x/client-sdk'
 import { optimizeImage } from 'lib/optmizeImage'
 import React, { FC } from 'react'
 

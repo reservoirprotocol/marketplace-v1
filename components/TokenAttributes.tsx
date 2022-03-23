@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import formatUrl from 'lib/formatUrl'
-import { paths } from 'interfaces/apiTypes'
+import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   token: NonNullable<

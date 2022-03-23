@@ -3,9 +3,9 @@ import AttributeButton from 'components/AttributeButton'
 import { DebounceInput } from 'react-debounce-input'
 import { matchSorter } from 'match-sorter'
 import { sortAttributes } from './functions'
-import { paths } from 'interfaces/apiTypes'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
+import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   attribute: NonNullable<

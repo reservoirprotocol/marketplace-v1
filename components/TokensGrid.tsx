@@ -1,4 +1,3 @@
-import { paths } from 'interfaces/apiTypes'
 import { FC } from 'react'
 import LoadingCard from './LoadingCard'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
@@ -7,6 +6,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
+import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   tokens: SWRInfiniteResponse<

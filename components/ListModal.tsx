@@ -3,7 +3,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
-import { paths } from 'interfaces/apiTypes'
 import { useConnect } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
@@ -12,7 +11,7 @@ import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { Execute, listToken } from '@reservoir0x/client-sdk'
+import { Execute, listToken, paths } from '@reservoir0x/client-sdk'
 
 type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']

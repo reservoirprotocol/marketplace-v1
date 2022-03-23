@@ -1,4 +1,4 @@
-import { paths } from 'interfaces/apiTypes'
+import { paths } from '@reservoir0x/client-sdk'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import { useEffect } from 'react'

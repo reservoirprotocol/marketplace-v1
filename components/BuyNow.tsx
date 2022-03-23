@@ -1,6 +1,5 @@
 import { Signer } from 'ethers'
-import { paths } from 'interfaces/apiTypes'
-import { buyToken, Execute } from '@reservoir0x/client-sdk'
+import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'

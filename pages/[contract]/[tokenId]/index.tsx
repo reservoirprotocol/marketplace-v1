@@ -1,5 +1,4 @@
 import Layout from 'components/Layout'
-import { paths } from 'interfaces/apiTypes'
 import { optimizeImage } from 'lib/optmizeImage'
 import setParams from 'lib/params'
 import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
@@ -23,6 +22,7 @@ import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
+import { paths } from '@reservoir0x/client-sdk'
 
 // Environment variables
 // For more information about these variables

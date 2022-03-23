@@ -1,4 +1,3 @@
-import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
 import type {
   GetStaticPaths,
@@ -13,6 +12,7 @@ import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
+import { paths } from '@reservoir0x/client-sdk'
 
 // Environment variables
 // For more information about these variables

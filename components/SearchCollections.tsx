@@ -2,10 +2,10 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
 import { useRouter } from 'next/router'
-import { paths } from 'interfaces/apiTypes'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
+import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   communityId?: string
