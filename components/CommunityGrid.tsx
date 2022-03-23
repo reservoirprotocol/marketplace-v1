@@ -62,7 +62,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
                     />
                     <div className="mt-3 flex items-center gap-2">
                       <img
-                        src={optimizeImage(community?.image, 40)}
+                        src={optimizeImage(community?.image, 80)}
                         className="h-12 w-12 rounded-full"
                       />
                       <div className="reservoir-subtitle">

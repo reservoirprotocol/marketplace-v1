@@ -67,7 +67,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                   <div className="mt-3 flex items-center gap-2">
                     {collection?.image ? (
                       <img
-                        src={optimizeImage(collection?.image, 40)}
+                        src={optimizeImage(collection?.image, 80)}
                         className="h-12 w-12 rounded-full"
                       />
                     ) : (
