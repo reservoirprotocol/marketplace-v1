@@ -26,6 +26,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
+import { FiRefreshCcw } from 'react-icons/fi'
 
 type Props = {
   apiBase: string
@@ -55,6 +56,7 @@ const TokensMain: FC<Props> = ({
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const [refreshLoading, setRefreshLoading] = useState(false)
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
   >({
@@ -263,6 +265,56 @@ const TokensMain: FC<Props> = ({
     setWaitingTx(false)
   }
 
+  async function refreshCollection(collectionId: string | undefined) {
+    function handleError(message?: string) {
+      setToast({
+        kind: 'error',
+        message: message || 'Request to refresh collection was rejected.',
+        title: 'Refresh collection failed',
+      })
+
+      setRefreshLoading(false)
+    }
+
+    try {
+      if (!collectionId) throw new Error('No collection ID')
+
+      const data = {
+        collection: collectionId,
+      }
+
+      const { href } = new URL('/collections/refresh/v1', apiBase)
+
+      setRefreshLoading(true)
+
+      const res = await fetch(href, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const json = await res.json()
+        handleError(json?.message)
+        return
+      }
+
+      setToast({
+        kind: 'success',
+        message: 'Request to refresh collection was accepted.',
+        title: 'Refresh collection',
+      })
+    } catch (err) {
+      handleError()
+      console.error(err)
+      return
+    }
+
+    setRefreshLoading(false)
+  }
+
   return (
     <>
       <Head>
@@ -341,6 +393,17 @@ const TokensMain: FC<Props> = ({
               ) : (
                 <SortMenu setSize={tokens.setSize} />
               )}
+              <div
+                className="btn-primary-outline"
+                title="Refresh collection"
+                onClick={() => refreshCollection(collectionId)}
+              >
+                <FiRefreshCcw
+                  className={`h-5 w-5 ${
+                    refreshLoading ? 'animate-spin-reverse' : ''
+                  }`}
+                />
+              </div>
             </div>
           </div>
           {router.query?.attribute_key || router.query?.attribute_key === '' ? (

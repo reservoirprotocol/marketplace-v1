@@ -19,6 +19,8 @@ module.exports = {
       },
       animation: {
         'slide-down': 'slide-down 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+
+        'spin-reverse': 'spin 1s reverse linear infinite',
       },
       colors: {
         primary: {
