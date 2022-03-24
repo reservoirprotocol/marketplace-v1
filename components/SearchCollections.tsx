@@ -30,7 +30,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     const url = new URL('/collections/v2', apiBase)
 
     const query: paths['/collections/v2']['get']['parameters']['query'] = {
-      sortBy: 'allTimeVolume',
+      sortBy: '1DayVolume',
     }
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost')
@@ -91,7 +91,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
   const url = new URL('/collections/v2', apiBase)
 
   const query: paths['/collections/v2']['get']['parameters']['query'] = {
-    sortBy: 'allTimeVolume',
+    sortBy: '1DayVolume',
   }
 
   const isEmpty = results?.collections?.length === 0

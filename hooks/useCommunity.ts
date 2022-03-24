@@ -52,7 +52,7 @@ const getKey: (
     limit: 20,
     offset: index * 20,
     community: collectionId,
-    sortBy: 'allTimeVolume',
+    sortBy: '1DayVolume',
   }
 
   setParams(url, query)
