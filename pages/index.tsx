@@ -13,6 +13,7 @@ import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
+import { paths, setParams } from '@reservoir0x/client-sdk'
 
 // Environment variables
 // For more information about these variables
@@ -29,7 +30,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ mode, collectionId }) => {
+const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
   const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
@@ -58,7 +59,7 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
         <TokensMain
           apiBase={apiBase}
           chainId={+chainId as ChainId}
-          collectionId={collectionId}
+          collectionId={contractAddress}
           fallback={fallback}
           openSeaApiKey={openSeaApiKey}
           setToast={(data) =>
@@ -75,8 +76,30 @@ export default Home
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   mode: ReturnType<typeof getMode>['mode']
+  contractAddress?: string
 }> = async ({ req }) => {
   const { mode, collectionId } = getMode(req, communityEnv, collectionEnv)
+
+  let contractAddress: string | undefined = undefined
+
+  if (mode === 'collection') {
+    const url = new URL('/collection/v1', apiBase)
+
+    const query: paths['/collection/v1']['get']['parameters']['query'] = {
+      slug: collectionId,
+    }
+
+    setParams(url, query)
+
+    const res = await fetch(url.href)
+
+    const json =
+      (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
+
+    contractAddress = json.collection?.id
+
+    return { props: { mode, collectionId, contractAddress } }
+  }
 
   return { props: { mode, collectionId } }
 }
