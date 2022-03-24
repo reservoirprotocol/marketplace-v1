@@ -393,9 +393,10 @@ const TokensMain: FC<Props> = ({
               ) : (
                 <SortMenu setSize={tokens.setSize} />
               )}
-              <div
+              <button
                 className="btn-primary-outline"
                 title="Refresh collection"
+                disabled={refreshLoading}
                 onClick={() => refreshCollection(collectionId)}
               >
                 <FiRefreshCcw
@@ -403,7 +404,7 @@ const TokensMain: FC<Props> = ({
                     refreshLoading ? 'animate-spin-reverse' : ''
                   }`}
                 />
-              </div>
+              </button>
             </div>
           </div>
           {router.query?.attribute_key || router.query?.attribute_key === '' ? (
