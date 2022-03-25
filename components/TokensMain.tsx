@@ -28,6 +28,8 @@ import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { FiRefreshCcw } from 'react-icons/fi'
 
+const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
+
 type Props = {
   apiBase: string
   chainId: ChainId
@@ -139,8 +141,11 @@ const TokensMain: FC<Props> = ({
     floor: floor?.price,
   }
 
+  const bannerImage =
+    envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
+
   const header = {
-    banner: collection?.data?.collection?.metadata?.bannerImageUrl as string,
+    banner: bannerImage as string,
     image: collection?.data?.collection?.metadata?.imageUrl as string,
     name: collection?.data?.collection?.name,
   }

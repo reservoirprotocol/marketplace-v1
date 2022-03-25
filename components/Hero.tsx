@@ -3,6 +3,8 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { FC, useEffect, useState } from 'react'
 import FormatEth from './FormatEth'
 
+const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
+
 type Props = {
   stats: {
     vol24: number | undefined
@@ -23,11 +25,13 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
     setTimeout(() => setDelay(false), 1500)
   }, [])
 
+  const bannerImage = optimizeImage(envBannerImage || header.banner, 1500)
+
   return (
     <>
-      {header.banner ? (
+      {bannerImage ? (
         <img
-          src={optimizeImage(header.banner, 1500)}
+          src={bannerImage}
           alt={`${header.name} banner image`}
           height="200px"
           className="col-span-full h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
