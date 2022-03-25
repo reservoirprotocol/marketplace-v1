@@ -4,7 +4,7 @@ This repo is designed to help you quickly get started building on top of [Reserv
 
 ## Modes
 
-The marketplace supports 3 different modes:
+The marketplace supports 3 different modes :
 
 - Single collection (e.g. [Crypto Coven](https://cryptocoven.reservoir.market))
 - Multi collection community (e.g. [BAYC](https://bayc.reservoir.market))
