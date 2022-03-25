@@ -234,8 +234,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                       <img
                         src={
                           // @ts-ignore
-                          collection?.metadata?.imageUrl ??
-                          'https://via.placeholder.com/30'
+                          collection?.image ?? 'https://via.placeholder.com/30'
                         }
                         alt={`${collection?.name}'s logo.`}
                         className="h-9 w-9 overflow-hidden rounded-full"
