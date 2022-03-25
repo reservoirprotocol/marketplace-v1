@@ -9,19 +9,19 @@ type Props = {
 }
 
 const title = process.env.NEXT_PUBLIC_NAVBAR_TITLE
-const logo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
+const envLogo = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 
 const Navbar: FC<Props> = ({ communityId }) => {
   const router = useRouter()
+
+  const logo = envLogo || '/reservoir.svg'
+  const logoAlt = `${title} Logo` || 'Reservoir Logo'
+
   return (
     <nav className="col-span-full grid grid-cols-4 gap-2 py-3 sm:py-4 md:grid-cols-8 lg:grid-cols-12">
       <Link href="/">
         <a className="col-span-2 mr-auto inline-flex items-center justify-between gap-3 lg:col-span-4">
-          <img
-            src={logo || '/reservoir.svg'}
-            alt={`${title} Logo` || 'Reservoir Logo'}
-            className="w-[25px] sm:block"
-          />
+          <img src={logo} alt={logoAlt} className="w-6 sm:block" />
           {title ? (
             <span className="font-semibold">{title}</span>
           ) : (

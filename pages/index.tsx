@@ -98,6 +98,12 @@ export const getServerSideProps: GetServerSideProps<{
 
     contractAddress = json.collection?.id
 
+    if (!contractAddress) {
+      return {
+        notFound: true,
+      }
+    }
+
     return { props: { mode, collectionId, contractAddress } }
   }
 
