@@ -30,7 +30,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     const url = new URL('/collections/v2', apiBase)
 
     const query: paths['/collections/v2']['get']['parameters']['query'] = {
-      sortBy: '1DayVolume',
+      sortBy: '7DayVolume',
     }
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost')
@@ -91,7 +91,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
   const url = new URL('/collections/v2', apiBase)
 
   const query: paths['/collections/v2']['get']['parameters']['query'] = {
-    sortBy: '1DayVolume',
+    sortBy: '7DayVolume',
   }
 
   const isEmpty = results?.collections?.length === 0
@@ -177,7 +177,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         <img
                           src={
                             // @ts-ignore
-                            collection?.metadata?.imageUrl ??
+                            collection?.image ??
                             'https://via.placeholder.com/30'
                           }
                           alt={`${collection?.name}'s logo.`}
