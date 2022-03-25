@@ -4,6 +4,7 @@ import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { FC } from 'react'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import ClearFilters from './ClearFilters'
 import ExploreTable from './ExploreTable'
@@ -17,17 +18,32 @@ type Props = {
   >
 }
 
-const ExploreTokens = ({ viewRef, attributes }: Props) => {
+const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
   const router = useRouter()
 
-  const { data, isValidating, size } = attributes
+  const { data, isValidating, size, error } = attributes
 
   const mappedAttributes = data
     ? data.flatMap(({ attributes }) => attributes)
     : []
+  const isLoadingInitialData = !data && !error
   const isEmpty = mappedAttributes.length === 0
   const isReachingEnd =
     isEmpty || (data && data && data[data.length - 1]?.attributes?.length === 0)
+
+  if (isLoadingInitialData) {
+    return (
+      <div className="mx-auto mb-10 max-w-[2400px]">
+        <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+          {Array(20)
+            .fill(null)
+            .map((_, index) => (
+              <LoadingCard key={`loading-card-${index}`} />
+            ))}
+        </div>
+      </div>
+    )
+  }
 
   if (!isEmpty) {
     return (
@@ -37,73 +53,67 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
         ) : (
           <div className="mx-auto mb-10 max-w-[2400px]">
             <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
-              {size === 1 && isValidating
-                ? Array(20)
-                    .fill(null)
-                    .map((_, index) => (
-                      <LoadingCard key={`loading-card-${index}`} />
-                    ))
-                : mappedAttributes.map((attribute, idx, arr) => (
-                    <Link
-                      key={`${attribute?.value}${idx}`}
-                      href={
-                        router.query.id
-                          ? `/collections/${router.query.id}?${formatUrl(
-                              `attributes[${attribute?.key}]`
-                            )}=${formatUrl(`${attribute?.value}`)}`
-                          : `?${formatUrl(
-                              `attributes[${attribute?.key}]`
-                            )}=${formatUrl(`${attribute?.value}`)}`
-                      }
-                    >
-                      <a
-                        ref={idx === arr.length - 1 ? viewRef : null}
-                        className="flex flex-col rounded-[16px] border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
-                      >
-                        <div className="flex-grow"></div>
-                        <ExploreImagesGrid
-                          sample_images={attribute?.sampleImages}
-                          // @ts-ignore
-                          value={attribute?.value}
-                        />
-                        <div className="flex-grow"></div>
-                        <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
-                          <span className="truncate" title={attribute?.value}>
-                            {attribute?.value}
-                          </span>
-                          <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 dark:bg-neutral-800">
-                            {formatNumber(attribute?.tokenCount)}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="grid">
-                            <span className="reservoir-subtitle text-gray-400">
-                              Offer
-                            </span>
-                            <span className="reservoir-h6">
-                              <FormatEth
-                                amount={attribute?.topBid?.value}
-                                maximumFractionDigits={4}
-                                logoWidth={7}
-                              />
-                            </span>
-                          </div>
-                          <div className="grid text-right">
-                            <span className="reservoir-subtitle text-gray-400">
-                              Price
-                            </span>
-                            <span className="reservoir-h6">
-                              <FormatEth
-                                amount={attribute?.floorAskPrices?.[0]}
-                                maximumFractionDigits={4}
-                                logoWidth={5}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </a>
-                    </Link>
-                  ))}
+              {mappedAttributes.map((attribute, idx, arr) => (
+                <Link
+                  key={`${attribute?.value}${idx}`}
+                  href={
+                    router.query.id
+                      ? `/collections/${router.query.id}?${formatUrl(
+                          `attributes[${attribute?.key}]`
+                        )}=${formatUrl(`${attribute?.value}`)}`
+                      : `?${formatUrl(
+                          `attributes[${attribute?.key}]`
+                        )}=${formatUrl(`${attribute?.value}`)}`
+                  }
+                >
+                  <a
+                    ref={idx === arr.length - 1 ? viewRef : null}
+                    className="flex flex-col rounded-[16px] border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
+                  >
+                    <div className="flex-grow"></div>
+                    <ExploreImagesGrid
+                      sample_images={attribute?.sampleImages}
+                      // @ts-ignore
+                      value={attribute?.value}
+                    />
+                    <div className="flex-grow"></div>
+                    <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
+                      <span className="truncate" title={attribute?.value}>
+                        {attribute?.value}
+                      </span>
+                      <span className="flex items-center justify-center rounded-full bg-neutral-200 px-2 dark:bg-neutral-800">
+                        {formatNumber(attribute?.tokenCount)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="grid">
+                        <span className="reservoir-subtitle text-gray-400">
+                          Offer
+                        </span>
+                        <span className="reservoir-h6">
+                          <FormatEth
+                            amount={attribute?.topBid?.value}
+                            maximumFractionDigits={4}
+                            logoWidth={7}
+                          />
+                        </span>
+                      </div>
+                      <div className="grid text-right">
+                        <span className="reservoir-subtitle text-gray-400">
+                          Price
+                        </span>
+                        <span className="reservoir-h6">
+                          <FormatEth
+                            amount={attribute?.floorAskPrices?.[0]}
+                            maximumFractionDigits={4}
+                            logoWidth={5}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                </Link>
+              ))}
               {!isReachingEnd && (
                 <>
                   {Array(20)
@@ -123,7 +133,19 @@ const ExploreTokens = ({ viewRef, attributes }: Props) => {
     )
   }
 
-  return <ClearFilters router={router} />
+  return (
+    <div className="grid place-items-center gap-3">
+      <p className="text-center">No tokens found.</p>
+      <Link
+        href={{
+          pathname: '/collections/[id]',
+          query: { id: router.query.id },
+        }}
+      >
+        <a className="btn-primary-outline">Clear filters</a>
+      </Link>
+    </div>
+  )
 }
 
 export default ExploreTokens
@@ -248,12 +270,7 @@ const ExploreImagesGrid = ({
       </div>
     ) : (
       <div className="aspect-w-1 aspect-h-1 relative">
-        <img
-          src="https://via.placeholder.com/250"
-          alt={`${value}`}
-          width="250"
-          height="250"
-        />
+        <div className="h-[250px] w-[250px]"></div>
       </div>
     )}
   </>

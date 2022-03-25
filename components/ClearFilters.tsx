@@ -10,6 +10,7 @@ const ClearFilters = ({ router }: { router: NextRouter }) => {
           if (router.query.pathname === '/collections/[id]') {
             router.push(
               {
+                pathname: '/collections/[id]',
                 query: { id: router.query.id },
               },
               undefined,
