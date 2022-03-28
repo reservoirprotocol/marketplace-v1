@@ -4,6 +4,9 @@ import React, { FC } from 'react'
 import CommunityGrid from './CommunityGrid'
 import SearchCollections from './SearchCollections'
 
+const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
+const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
+
 type Props = {
   apiBase: string
   collectionId: string
@@ -19,21 +22,32 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
 
   const isBigCommunity = size > 8
 
+  const title = metaTitle ? (
+    <title>{metaTitle}</title>
+  ) : (
+    <title>
+      Reservoir Market | Open source NFT marketplace powered by Reservoir
+    </title>
+  )
+  const description = metaDescription ? (
+    <meta name="description" content={metaDescription} />
+  ) : (
+    <meta
+      name="description"
+      content={
+        // prettier-ignore
+        // @ts-ignore
+        communities.communities.data?.[0].collections?.[0]?.metadata
+        ?.description
+      }
+    />
+  )
+
   return (
     <>
       <Head>
-        <title>
-          Reservoir Market | Open source NFT marketplace powered by Reservoir
-        </title>
-        <meta
-          name="description"
-          content={
-            // prettier-ignore
-            // @ts-ignore
-            communities.communities.data?.[0].collections?.[0]?.metadata
-            ?.description
-          }
-        />
+        {title}
+        {description}
       </Head>
       <header className="col-span-full mb-10 mt-40 flex items-center justify-center">
         <img

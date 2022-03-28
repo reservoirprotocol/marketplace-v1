@@ -31,6 +31,8 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 
+const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
+
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ mode, collectionId }) => {
@@ -71,11 +73,15 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
     ]
   }
 
+  const title = metaTitle ? (
+    <title>{metaTitle}</title>
+  ) : (
+    <title>{address} Profile | Reservoir Market</title>
+  )
+
   return (
     <Layout>
-      <Head>
-        <title>{address} Profile | Reservoir Market</title>
-      </Head>
+      <Head>{title}</Head>
       <div className="col-span-full mt-4 mb-10 justify-self-center">
         {address && <EthAccount address={address} />}
       </div>

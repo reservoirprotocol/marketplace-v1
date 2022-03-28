@@ -37,6 +37,10 @@ const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
+const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
+const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
+
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Index: NextPage<Props> = ({ collectionId, mode }) => {
@@ -111,19 +115,40 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
+  const title = metaTitle ? (
+    <title>{metaTitle}</title>
+  ) : (
+    <title>
+      {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
+      {collection.data?.collection?.name} | Reservoir Market
+    </title>
+  )
+  const description = metaDescription ? (
+    <meta name="description" content={metaDescription} />
+  ) : (
+    <meta
+      name="description"
+      content={collection.data?.collection?.metadata?.description as string}
+    />
+  )
+  const image = metaImage ? (
+    <>
+      <meta name="twitter:image" content={metaImage} />
+      <meta name="og:image" content={metaImage} />
+    </>
+  ) : (
+    <>
+      <meta name="twitter:image" content={token?.token?.image} />
+      <meta property="og:image" content={token?.token?.image} />
+    </>
+  )
+
   return (
     <Layout>
       <Head>
-        <title>
-          {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-          {collection.data?.collection?.name} | Reservoir Market
-        </title>
-        <meta
-          name="description"
-          content={collection.data?.collection?.metadata?.description as string}
-        />
-        <meta name="twitter:image" content={token?.token?.image} />
-        <meta property="og:image" content={token?.token?.image} />
+        {title}
+        {description}
+        {image}
       </Head>
       {/* TOKEN IMAGE */}
       <article className="col-span-full grid content-start items-start gap-4 md:col-span-4 lg:col-span-5 lg:col-start-2">

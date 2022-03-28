@@ -30,6 +30,10 @@ import { FiRefreshCcw } from 'react-icons/fi'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
+const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
+const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
+
 type Props = {
   apiBase: string
   chainId: ChainId
@@ -320,16 +324,37 @@ const TokensMain: FC<Props> = ({
     setRefreshLoading(false)
   }
 
+  const title = metaTitle ? (
+    <title>{metaTitle}</title>
+  ) : (
+    <title>{collection.data?.collection?.name} | Reservoir Market</title>
+  )
+  const description = metaDescription ? (
+    <meta name="description" content={metaDescription} />
+  ) : (
+    <meta
+      name="description"
+      content={collection.data?.collection?.metadata?.description as string}
+    />
+  )
+  const image = metaImage ? (
+    <>
+      <meta name="twitter:image" content={metaImage} />
+      <meta name="og:image" content={metaImage} />
+    </>
+  ) : (
+    <>
+      <meta name="twitter:image" content={header.banner} />
+      <meta property="og:image" content={header.banner} />
+    </>
+  )
+
   return (
     <>
       <Head>
-        <title>{collection.data?.collection?.name} | Reservoir Market</title>
-        <meta
-          name="description"
-          content={collection.data?.collection?.metadata?.description as string}
-        />
-        <meta name="twitter:image" content={header.banner} />
-        <meta property="og:image" content={header.banner} />
+        {title}
+        {description}
+        {image}
       </Head>
       <Hero stats={statsObj} header={header}>
         <Dialog.Root open={open} onOpenChange={setOpen}>
