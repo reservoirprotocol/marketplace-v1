@@ -4,8 +4,8 @@
 
 @font-face {
   font-family: 'Obvia';
-  src: url('/fonts/obvia_medium-webfont.woff2') format('woff2'),
-    url('/fonts/obvia_bold-webfont.woff2') format('woff2');
+  src: url('/fonts/obvia/obvia_medium-webfont.woff2') format('woff2'),
+    url('/fonts/obvia/obvia_bold-webfont.woff2') format('woff2');
   font-display: swap;
   font-weight: 400 500 700;
 }
