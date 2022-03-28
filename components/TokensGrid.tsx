@@ -64,7 +64,7 @@ const TokensGrid: FC<Props> = ({
                   />
                 ) : (
                   <div className="relative w-full">
-                    <div className="absolute inset-0 z-10 grid place-items-center backdrop-blur-lg">
+                    <div className="absolute inset-0 grid place-items-center backdrop-blur-lg">
                       <div>
                         <img
                           src={optimizeImage(collectionImage, 250)}
