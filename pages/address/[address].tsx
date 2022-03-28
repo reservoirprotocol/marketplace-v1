@@ -18,6 +18,7 @@ import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
+import { paths, setParams } from '@reservoir0x/client-sdk'
 
 // Environment variables
 // For more information about these variables
@@ -184,7 +185,30 @@ export const getServerSideProps: GetServerSideProps<{
   mode: string
   collectionId: string
 }> = async ({ req }) => {
-  const { collectionId, mode } = getMode(req, communityEnv, collectionEnv)
+  let { collectionId, mode } = getMode(req, communityEnv, collectionEnv)
+
+  if (mode === 'collection') {
+    const url = new URL('/collection/v1', apiBase)
+
+    const query: paths['/collection/v1']['get']['parameters']['query'] = {
+      slug: collectionId,
+    }
+
+    setParams(url, query)
+
+    const res = await fetch(url.href)
+
+    const json =
+      (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
+
+    if (!json.collection?.id) {
+      return {
+        notFound: true,
+      }
+    }
+
+    collectionId = json.collection?.id
+  }
 
   return { props: { collectionId, mode } }
 }
