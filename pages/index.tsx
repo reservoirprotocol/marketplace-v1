@@ -7,7 +7,7 @@ import type {
 import Homepage from 'components/Homepage'
 import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
-import { ComponentProps } from 'react'
+import { ComponentProps, useState } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
 import { paths, setParams } from '@reservoir0x/client-sdk'
 import BuildMarketplace from 'components/BuildMarketplace'
+import SidebarSelector from 'components/SidebarSelector'
 
 // Environment variables
 // For more information about these variables
@@ -38,6 +39,7 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
+  const [open, setOpen] = useState(false)
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
@@ -48,7 +50,8 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
 
   return (
     <Layout>
-      {/* <BuildMarketplace /> */}
+      <SidebarSelector open={open} setOpen={setOpen} />
+      <BuildMarketplace open={open} />
       {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
       ) : mode === 'community' ? (

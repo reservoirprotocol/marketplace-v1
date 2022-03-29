@@ -24,7 +24,7 @@ type Inputs = {
   'header-font': string
 }
 
-const BuildMarketplace = () => {
+const BuildMarketplace: FC<{ open: boolean }> = ({ open }) => {
   const { register, handleSubmit } = useForm<Inputs>()
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     fetch('/api/build', {
@@ -36,131 +36,135 @@ const BuildMarketplace = () => {
     })
   }
 
-  return (
-    <form
-      className="fixed left-0 top-0 z-20 h-screen w-[400px] overflow-y-auto bg-white p-4"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <h1 className="reservoir-h4 mb-14">Design your marketplace</h1>
-      <Fieldset>
-        <Label htmlFor="name">Name</Label>
-        <input
-          className="input-primary-outline"
-          type="text"
-          id="name"
-          placeholder="Name your marketplace"
-          {...register('name')}
-        />
-      </Fieldset>
+  if (open) {
+    return (
+      <form
+        className="fixed left-14 top-0 z-20 h-screen w-[400px] overflow-y-auto bg-white p-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <h1 className="reservoir-h4 mb-14">Design your marketplace</h1>
+        <Fieldset>
+          <Label htmlFor="name">Name</Label>
+          <input
+            className="input-primary-outline"
+            type="text"
+            id="name"
+            placeholder="Name your marketplace"
+            {...register('name')}
+          />
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="logo">Logo</Label>
-        <input
-          className="input-primary-outline"
-          type="text"
-          id="logo"
-          placeholder="Logo URL"
-          {...register('logo')}
-        />
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="logo">Logo</Label>
+          <input
+            className="input-primary-outline"
+            type="text"
+            id="logo"
+            placeholder="Logo URL"
+            {...register('logo')}
+          />
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="theme">Theme</Label>
-        <select
-          className="input-primary-outline"
-          id="theme"
-          {...register('theme')}
-        >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="theme">Theme</Label>
+          <select
+            className="input-primary-outline"
+            id="theme"
+            {...register('theme')}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="header-font">Header Font</Label>
+        <Fieldset>
+          <Label htmlFor="header-font">Header Font</Label>
 
-        <select
-          className="input-primary-outline"
-          id="header-font"
-          {...register('header-font')}
-        >
-          <option value="inter">Inter</option>
-          <option value="montserrat">Montserrat</option>
-          <option value="open-sans">Open Sans</option>
-          <option value="playfair-display">Playfair Display</option>
-          <option value="roboto">Roboto</option>
-        </select>
-      </Fieldset>
+          <select
+            className="input-primary-outline"
+            id="header-font"
+            {...register('header-font')}
+          >
+            <option value="inter">Inter</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="open-sans">Open Sans</option>
+            <option value="playfair-display">Playfair Display</option>
+            <option value="roboto">Roboto</option>
+          </select>
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="body-font">Body Font</Label>
-        <select
-          className="input-primary-outline"
-          id="body-font"
-          {...register('body-font')}
-        >
-          <option value="inter">Inter</option>
-          <option value="montserrat">Montserrat</option>
-          <option value="open-sans">Open Sans</option>
-          <option value="playfair-display">Playfair Display</option>
-          <option value="roboto">Roboto</option>
-        </select>
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="body-font">Body Font</Label>
+          <select
+            className="input-primary-outline"
+            id="body-font"
+            {...register('body-font')}
+          >
+            <option value="inter">Inter</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="open-sans">Open Sans</option>
+            <option value="playfair-display">Playfair Display</option>
+            <option value="roboto">Roboto</option>
+          </select>
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="colors">Colors</Label>
-        <input
-          className="input-primary-outline mb-2"
-          type="text"
-          id="primary-color"
-          placeholder="Primary Color"
-          {...register('primary-color')}
-        />
-        <input
-          className="input-primary-outline"
-          type="text"
-          id="secondary-color"
-          placeholder="Secondary Color"
-          {...register('secondary-color')}
-        />
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="colors">Colors</Label>
+          <input
+            className="input-primary-outline mb-2"
+            type="text"
+            id="primary-color"
+            placeholder="Primary Color"
+            {...register('primary-color')}
+          />
+          <input
+            className="input-primary-outline"
+            type="text"
+            id="secondary-color"
+            placeholder="Secondary Color"
+            {...register('secondary-color')}
+          />
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="marketplace-type">Marketplace Type</Label>
-        <select
-          className="input-primary-outline"
-          id="marketplace-type"
-          {...register('marketplace-type')}
-        >
-          <option value="collection">Collection</option>
-          <option value="community">Community</option>
-        </select>
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="marketplace-type">Marketplace Type</Label>
+          <select
+            className="input-primary-outline"
+            id="marketplace-type"
+            {...register('marketplace-type')}
+          >
+            <option value="collection">Collection</option>
+            <option value="community">Community</option>
+          </select>
+        </Fieldset>
 
-      <Fieldset>
-        <Label htmlFor="marketplace-fees">Marketplace Fees</Label>
-        <input
-          className="input-primary-outline mb-2"
-          type="text"
-          id="marketplace-fees"
-          placeholder="% Amount"
-          {...register('marketplace-fees')}
-        />
-        <input
-          className="input-primary-outline"
-          type="text"
-          id="wallet-address"
-          placeholder="Your Wallet Address"
-          {...register('wallet-address')}
-        />
-      </Fieldset>
+        <Fieldset>
+          <Label htmlFor="marketplace-fees">Marketplace Fees</Label>
+          <input
+            className="input-primary-outline mb-2"
+            type="text"
+            id="marketplace-fees"
+            placeholder="% Amount"
+            {...register('marketplace-fees')}
+          />
+          <input
+            className="input-primary-outline"
+            type="text"
+            id="wallet-address"
+            placeholder="Your Wallet Address"
+            {...register('wallet-address')}
+          />
+        </Fieldset>
 
-      <div className="flex gap-3">
-        <button className="btn-primary-fill">Save &amp; Preview</button>
-        <button className="btn-primary-outline">Publish</button>
-      </div>
-    </form>
-  )
+        <div className="flex gap-3">
+          <button className="btn-primary-fill">Save &amp; Preview</button>
+          <button className="btn-primary-outline">Publish</button>
+        </div>
+      </form>
+    )
+  }
+
+  return null
 }
 
 export default BuildMarketplace
