@@ -156,9 +156,9 @@ const BuildMarketplace: FC<{ open: boolean }> = ({ open }) => {
           />
         </Fieldset>
 
-        <div className="flex gap-3">
-          <button className="btn-primary-fill">Save &amp; Preview</button>
-          <button className="btn-primary-outline">Publish</button>
+        <div className="flex justify-end gap-3">
+          <button className="btn-primary-outline ">Save &amp; Preview</button>
+          <button className="btn-primary-fill">Publish</button>
         </div>
       </form>
     )
