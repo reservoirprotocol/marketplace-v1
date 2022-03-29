@@ -57,12 +57,15 @@ const BuildMarketplace: FC<{ open: boolean }> = ({ open }) => {
         <Fieldset>
           <Label htmlFor="logo">Logo</Label>
           <input
-            className="input-primary-outline"
+            className="input-primary-outline mb-2"
             type="text"
             id="logo"
             placeholder="Logo URL"
             {...register('logo')}
           />
+          <div className="reservoir-small">
+            Recommended image size 50 x 50 pixels
+          </div>
         </Fieldset>
 
         <Fieldset>
@@ -140,6 +143,9 @@ const BuildMarketplace: FC<{ open: boolean }> = ({ open }) => {
 
         <Fieldset>
           <Label htmlFor="marketplace-fee">Marketplace Fees</Label>
+          <div className="reservoir-subtitle mb-2">
+            Set a fee for transactions that are filled on your marketplace.
+          </div>
           <input
             className="input-primary-outline mb-2"
             type="text"
