@@ -18,7 +18,7 @@ type Inputs = {
   'primary-color': string
   'secondary-color': string
   'marketplace-type': string
-  'marketplace-fees': string
+  'marketplace-fee': string
   'wallet-address': string
   'body-font': string
   'header-font': string
@@ -139,16 +139,16 @@ const BuildMarketplace: FC<{ open: boolean }> = ({ open }) => {
         </Fieldset>
 
         <Fieldset>
-          <Label htmlFor="marketplace-fees">Marketplace Fees</Label>
+          <Label htmlFor="marketplace-fee">Marketplace Fees</Label>
           <input
             className="input-primary-outline mb-2"
             type="text"
-            id="marketplace-fees"
+            id="marketplace-fee"
             placeholder="% Amount"
-            {...register('marketplace-fees')}
+            {...register('marketplace-fee')}
           />
           <input
-            className="input-primary-outline"
+            className="input-primary-outline mb-4"
             type="text"
             id="wallet-address"
             placeholder="Your Wallet Address"
