@@ -52,12 +52,7 @@ const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
       <header className="col-span-full mb-10 mt-40 flex items-center justify-center">
         <img
           className="mr-4 h-[50px] w-[50px] rounded-full"
-          src={
-            // prettier-ignore
-            // @ts-ignore
-            communities.communities.data?.[0].collections?.[0]?.metadata
-              ?.imageUrl
-          }
+          src={communities.communities.data?.[0].collections?.[0]?.image}
         />
         <h1 className="reservoir-h1">
           {communityIds[collectionId] || collectionId} Community
