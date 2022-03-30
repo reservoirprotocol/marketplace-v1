@@ -62,7 +62,12 @@ const Navbar: FC<Props> = ({ communityId }) => {
       {hasExternalLinks && (
         <div className="col-start-3 ml-5 hidden items-center gap-3 md:flex lg:col-span-3 lg:col-start-7">
           {externalLinks.map(({ name, url }) => (
-            <a key={url} href={url} rel="noopener noferrer">
+            <a
+              key={url}
+              href={url}
+              rel="noopener noferrer"
+              className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
+            >
               {name}
             </a>
           ))}
