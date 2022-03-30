@@ -46,33 +46,29 @@ const Navbar: FC<Props> = ({ communityId }) => {
           )}
         </a>
       </Link>
-      {router.pathname !== '/' &&
-        router.pathname !== '/[contract]/[tokenId]' &&
-        router.pathname !== '/[address]' && (
-          <div
-            className={`hidden lg:block ${
-              hasExternalLinks
-                ? 'lg:col-span-3 lg:col-start-4'
-                : 'lg:col-span-4 lg:col-start-5'
-            }`}
-          >
-            <SearchCollections communityId={communityId} />
+      <div className="col-span-2 col-start-3 hidden items-center md:flex lg:col-span-2">
+        {router.pathname !== '/' &&
+          router.pathname !== '/[contract]/[tokenId]' &&
+          router.pathname !== '/[address]' && (
+            <div className="hidden w-[250px] flex-none lg:block">
+              <SearchCollections communityId={communityId} />
+            </div>
+          )}
+        {hasExternalLinks && (
+          <div className="ml-5 hidden items-center gap-3 md:flex">
+            {externalLinks.map(({ name, url }) => (
+              <a
+                key={url}
+                href={url}
+                rel="noopener noferrer"
+                className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
+              >
+                {name}
+              </a>
+            ))}
           </div>
         )}
-      {hasExternalLinks && (
-        <div className="col-start-3 ml-5 hidden items-center gap-3 md:flex lg:col-span-3 lg:col-start-7">
-          {externalLinks.map(({ name, url }) => (
-            <a
-              key={url}
-              href={url}
-              rel="noopener noferrer"
-              className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
-            >
-              {name}
-            </a>
-          ))}
-        </div>
-      )}
+      </div>
       <ConnectWallet />
     </nav>
   )
