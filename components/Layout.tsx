@@ -8,6 +8,7 @@ import NetworkWarning from './NetworkWarning'
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
+const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 
 type Props = {
   navbar?: ComponentProps<typeof Navbar>
@@ -24,6 +25,11 @@ const Layout: FC<Props> = ({ children, navbar }) => {
       <meta name="og:image" content={metaImage} />
     </>
   ) : null
+  const favicon = NAVBAR_LOGO ? (
+    <link rel="shortcut icon" type="image/svg" href={NAVBAR_LOGO} />
+  ) : (
+    <link rel="shortcut icon" type="image/svg" href="/reservoir.svg" />
+  )
 
   return (
     <>
@@ -34,6 +40,7 @@ const Layout: FC<Props> = ({ children, navbar }) => {
         {title}
         {description}
         {image}
+        {favicon}
       </Head>
       <main className="mx-auto grid max-w-screen-2xl grid-cols-4 gap-4 px-3 pb-4 md:grid-cols-8 md:px-4 lg:grid-cols-12 lg:px-6">
         <Navbar {...navbar} />
