@@ -40,6 +40,7 @@ const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
+const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
@@ -333,7 +334,7 @@ export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   mode: ReturnType<typeof getMode>['mode']
 }> = async ({ req, params }) => {
-  const { mode } = getMode(req, communityEnv, collectionEnv)
+  const { mode } = getMode(req, USE_WILDCARD, communityEnv, collectionEnv)
 
   const url = new URL('/tokens/details/v2', apiBase)
 

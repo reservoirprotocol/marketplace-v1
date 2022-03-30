@@ -18,10 +18,13 @@ import getWildcard from './getWildcard'
  */
 export default function getMode(
   req: IncomingMessage,
+  USE_WILDCARD: string | undefined,
   communityEnv?: string,
   collectionEnv?: string
 ) {
   let mode: 'global' | 'community' | 'collection' = 'global'
+
+  if (!USE_WILDCARD) return { mode, collectionId: '' }
 
   if (communityEnv) {
     mode = 'community'

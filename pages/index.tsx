@@ -7,7 +7,7 @@ import type {
 import Homepage from 'components/Homepage'
 import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
@@ -27,6 +27,7 @@ const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
@@ -37,7 +38,6 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
   }
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
-  const [open, setOpen] = useState(false)
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
@@ -50,7 +50,7 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
     <Layout>
       {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
-      ) : mode === 'community' ? (
+      ) : mode === 'community' && collectionId ? (
         <CommunityLanding
           apiBase={apiBase}
           collectionId={collectionId}
@@ -75,11 +75,16 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps<{
-  collectionId: string
+  collectionId?: string
   mode: ReturnType<typeof getMode>['mode']
   contractAddress?: string
 }> = async ({ req }) => {
-  const { mode, collectionId } = getMode(req, communityEnv, collectionEnv)
+  const { mode, collectionId } = getMode(
+    req,
+    USE_WILDCARD,
+    communityEnv,
+    collectionEnv
+  )
 
   let contractAddress: string | undefined = undefined
 

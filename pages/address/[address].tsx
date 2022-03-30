@@ -31,7 +31,7 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE
 // OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
 const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
-
+const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -185,7 +185,12 @@ export const getServerSideProps: GetServerSideProps<{
   mode: string
   collectionId: string
 }> = async ({ req }) => {
-  let { collectionId, mode } = getMode(req, communityEnv, collectionEnv)
+  let { collectionId, mode } = getMode(
+    req,
+    USE_WILDCARD,
+    communityEnv,
+    collectionEnv
+  )
 
   if (mode === 'collection') {
     const url = new URL('/collection/v1', apiBase)
