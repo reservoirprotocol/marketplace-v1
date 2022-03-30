@@ -14,8 +14,6 @@ import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
 import { paths, setParams } from '@reservoir0x/client-sdk'
-import BuildMarketplace from 'components/BuildMarketplace'
-import SidebarSelector from 'components/SidebarSelector'
 
 // Environment variables
 // For more information about these variables
@@ -50,8 +48,6 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
 
   return (
     <Layout>
-      <SidebarSelector open={open} setOpen={setOpen} />
-      <BuildMarketplace open={open} />
       {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
       ) : mode === 'community' ? (
