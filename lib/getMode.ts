@@ -24,8 +24,6 @@ export default function getMode(
 ) {
   let mode: 'global' | 'community' | 'collection' = 'global'
 
-  if (!USE_WILDCARD) return { mode, collectionId: '' }
-
   if (communityEnv) {
     mode = 'community'
     return { mode, collectionId: communityEnv, isCommunity: true }
@@ -39,6 +37,8 @@ export default function getMode(
       isCommunity: false,
     }
   }
+
+  if (!USE_WILDCARD) return { mode, collectionId: '' }
 
   // Handle wildcard
   const collectionId = getWildcard(req)
