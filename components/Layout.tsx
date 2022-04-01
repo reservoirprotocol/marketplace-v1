@@ -11,7 +11,7 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 
 type Props = {
-  navbar?: ComponentProps<typeof Navbar>
+  navbar: ComponentProps<typeof Navbar>
 }
 
 const Layout: FC<Props> = ({ children, navbar }) => {

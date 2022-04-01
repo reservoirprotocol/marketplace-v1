@@ -30,7 +30,7 @@ const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ mode, contractAddress }) => {
+const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
   const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
@@ -46,7 +46,7 @@ const Home: NextPage<Props> = ({ mode, contractAddress }) => {
   }
 
   return (
-    <Layout>
+    <Layout navbar={{ mode, communityId: collectionId }}>
       {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
       ) : (
@@ -70,6 +70,7 @@ export default Home
 export const getServerSideProps: GetServerSideProps<{
   mode: ReturnType<typeof getMode>['mode']
   contractAddress?: string
+  collectionId?: string
 }> = async ({ req }) => {
   if (!USE_WILDCARD) return { props: { mode: 'global' } }
 

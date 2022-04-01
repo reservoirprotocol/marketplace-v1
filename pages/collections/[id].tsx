@@ -47,6 +47,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
     <Layout
       navbar={{
         communityId,
+        mode: 'global',
       }}
     >
       <TokensMain
