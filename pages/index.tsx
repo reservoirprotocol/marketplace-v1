@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<{
   contractAddress?: string
   collectionId?: string
 }> = async ({ req }) => {
-  if (!USE_WILDCARD) return { props: { mode: 'global' } }
+  if (USE_WILDCARD) return { props: { mode: 'global' } }
 
   const { mode, collectionId } = getMode(req, communityEnv, collectionEnv)
 
