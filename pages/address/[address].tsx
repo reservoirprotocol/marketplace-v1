@@ -81,7 +81,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   )
 
   return (
-    <Layout>
+    <Layout navbar={{ mode, communityId: collectionId }}>
       <Head>{title}</Head>
       <div className="col-span-full mt-4 mb-10 justify-self-center">
         {address && <EthAccount address={address} />}
@@ -182,7 +182,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
 export default Address
 
 export const getServerSideProps: GetServerSideProps<{
-  mode: string
+  mode: ReturnType<typeof getMode>['mode']
   collectionId: string
 }> = async ({ req }) => {
   let { collectionId, mode } = getMode(

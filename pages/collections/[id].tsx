@@ -1,8 +1,7 @@
 import setParams from 'lib/params'
 import type {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
+  GetServerSideProps,
+  InferGetServerSidePropsType,
   NextPage,
 } from 'next'
 import { useRouter } from 'next/router'
@@ -13,6 +12,7 @@ import useDataDog from 'hooks/useAnalytics'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import { paths } from '@reservoir0x/client-sdk'
+import getMode from 'lib/getMode'
 
 // Environment variables
 // For more information about these variables
@@ -24,10 +24,13 @@ const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ fallback }) => {
+const Home: NextPage<Props> = ({ fallback, mode, collectionId }) => {
   const router = useRouter()
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
@@ -46,7 +49,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
   return (
     <Layout
       navbar={{
-        communityId,
+        communityId: collectionId,
+        mode,
       }}
     >
       <TokensMain
@@ -65,19 +69,20 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
 export default Home
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps<{
+export const getServerSideProps: GetServerSideProps<{
   fallback: {
     tokens: paths['/tokens/v2']['get']['responses']['200']['schema']
     collection: paths['/collection/v1']['get']['responses']['200']['schema']
   }
-}> = async ({ params }) => {
+  mode: ReturnType<typeof getMode>['mode']
+  collectionId?: string
+}> = async ({ req, params }) => {
+  const { mode, collectionId } = getMode(
+    req,
+    USE_WILDCARD,
+    COMMUNITY,
+    COLLECTION
+  )
   try {
     // Pass in fallback data to prevent loading screens
     // Reference: https://swr.vercel.app/docs/options
@@ -107,6 +112,8 @@ export const getStaticProps: GetStaticProps<{
 
     return {
       props: {
+        mode,
+        collectionId,
         fallback: {
           collection,
           tokens,

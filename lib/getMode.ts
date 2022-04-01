@@ -38,7 +38,11 @@ export default function getMode(
     }
   }
 
-  if (!USE_WILDCARD) return { mode, collectionId: '' }
+  if (!USE_WILDCARD)
+    return {
+      mode,
+      collectionId: '',
+    }
 
   // Handle wildcard
   const collectionId = getWildcard(req)

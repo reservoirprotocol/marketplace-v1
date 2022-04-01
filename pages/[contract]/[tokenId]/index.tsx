@@ -44,7 +44,7 @@ const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Index: NextPage<Props> = ({ collectionId, mode }) => {
+const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
   const [{ data: accountData }] = useAccount()
   const [{ data: signer }] = useSigner()
   const [{ data: network }] = useNetwork()
@@ -145,7 +145,7 @@ const Index: NextPage<Props> = ({ collectionId, mode }) => {
   )
 
   return (
-    <Layout>
+    <Layout navbar={{ mode, communityId }}>
       <Head>
         {title}
         {description}
@@ -333,8 +333,14 @@ const Price: FC<{ title: string; price: ReactNode }> = ({
 export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   mode: ReturnType<typeof getMode>['mode']
+  communityId?: string
 }> = async ({ req, params }) => {
-  const { mode } = getMode(req, USE_WILDCARD, communityEnv, collectionEnv)
+  const { mode, collectionId: communityId } = getMode(
+    req,
+    USE_WILDCARD,
+    communityEnv,
+    collectionEnv
+  )
 
   const url = new URL('/tokens/details/v2', apiBase)
 
@@ -357,7 +363,7 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  return { props: { collectionId, mode } }
+  return { props: { collectionId, mode, communityId } }
 }
 
 const Media: FC<{

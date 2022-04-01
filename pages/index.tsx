@@ -5,7 +5,6 @@ import type {
   NextPage,
 } from 'next'
 import Homepage from 'components/Homepage'
-import CommunityLanding from 'components/CommunityLanding'
 import TokensMain from 'components/TokensMain'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
@@ -31,7 +30,7 @@ const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
+const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
   const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
@@ -47,15 +46,9 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
   }
 
   return (
-    <Layout>
+    <Layout navbar={{ mode, communityId: collectionId }}>
       {mode === 'global' ? (
         <Homepage apiBase={apiBase} />
-      ) : mode === 'community' && collectionId ? (
-        <CommunityLanding
-          apiBase={apiBase}
-          collectionId={collectionId}
-          mode={mode}
-        />
       ) : (
         <TokensMain
           apiBase={apiBase}
@@ -75,9 +68,9 @@ const Home: NextPage<Props> = ({ mode, collectionId, contractAddress }) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps<{
-  collectionId?: string
   mode: ReturnType<typeof getMode>['mode']
   contractAddress?: string
+  collectionId?: string
 }> = async ({ req }) => {
   const { mode, collectionId } = getMode(
     req,
@@ -87,6 +80,34 @@ export const getServerSideProps: GetServerSideProps<{
   )
 
   let contractAddress: string | undefined = undefined
+
+  if (mode === 'community') {
+    const url = new URL('/collections/v2', apiBase)
+
+    let query: paths['/collections/v2']['get']['parameters']['query'] = {
+      limit: 20,
+      offset: 0,
+      community: collectionId,
+      sortBy: '7DayVolume',
+    }
+
+    setParams(url, query)
+
+    const res = await fetch(url.href)
+
+    const json =
+      (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
+
+    contractAddress = json.collections?.[0].id
+
+    if (!contractAddress) {
+      return {
+        notFound: true,
+      }
+    }
+
+    return { props: { mode, collectionId, contractAddress } }
+  }
 
   if (mode === 'collection') {
     const url = new URL('/collection/v1', apiBase)
@@ -110,8 +131,8 @@ export const getServerSideProps: GetServerSideProps<{
       }
     }
 
-    return { props: { mode, collectionId, contractAddress } }
+    return { props: { mode, contractAddress } }
   }
 
-  return { props: { mode, collectionId } }
+  return { props: { mode } }
 }
