@@ -185,12 +185,9 @@ export const getServerSideProps: GetServerSideProps<{
   mode: string
   collectionId: string
 }> = async ({ req }) => {
-  let { collectionId, mode } = getMode(
-    req,
-    USE_WILDCARD,
-    communityEnv,
-    collectionEnv
-  )
+  if (!USE_WILDCARD) return { props: { mode: 'global', collectionId: '' } }
+
+  let { collectionId, mode } = getMode(req, communityEnv, collectionEnv)
 
   if (mode === 'collection') {
     const url = new URL('/collection/v1', apiBase)

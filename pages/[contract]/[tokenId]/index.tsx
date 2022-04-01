@@ -334,7 +334,9 @@ export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   mode: ReturnType<typeof getMode>['mode']
 }> = async ({ req, params }) => {
-  const { mode } = getMode(req, USE_WILDCARD, communityEnv, collectionEnv)
+  if (!USE_WILDCARD) return { props: { mode: 'global', collectionId: '' } }
+
+  const { mode } = getMode(req, communityEnv, collectionEnv)
 
   const url = new URL('/tokens/details/v2', apiBase)
 
