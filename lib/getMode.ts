@@ -18,6 +18,7 @@ import getWildcard from './getWildcard'
  */
 export default function getMode(
   req: IncomingMessage,
+  USE_WILDCARD: string | undefined,
   communityEnv?: string,
   collectionEnv?: string
 ) {
@@ -36,6 +37,12 @@ export default function getMode(
       isCommunity: false,
     }
   }
+
+  if (!USE_WILDCARD)
+    return {
+      mode,
+      collectionId: '',
+    }
 
   // Handle wildcard
   const collectionId = getWildcard(req)
