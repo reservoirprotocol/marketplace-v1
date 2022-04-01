@@ -9,6 +9,7 @@ const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
+const FAVICON = process.env.NEXT_PUBLIC_FAVICON
 
 type Props = {
   navbar: ComponentProps<typeof Navbar>
@@ -25,8 +26,8 @@ const Layout: FC<Props> = ({ children, navbar }) => {
       <meta name="og:image" content={metaImage} />
     </>
   ) : null
-  const favicon = NAVBAR_LOGO ? (
-    <link rel="shortcut icon" type="image/svg" href={NAVBAR_LOGO} />
+  const favicon = FAVICON ? (
+    <link rel="shortcut icon" type="image/svg" href={FAVICON} />
   ) : (
     <link rel="shortcut icon" type="image/svg" href="/reservoir.svg" />
   )
