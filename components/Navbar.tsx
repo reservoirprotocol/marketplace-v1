@@ -35,9 +35,9 @@ const Navbar: FC<Props> = ({ communityId }) => {
   const hasExternalLinks = externalLinks.length > 0
 
   return (
-    <nav className="col-span-full grid grid-cols-4 gap-2 py-3 sm:py-4 md:grid-cols-8 lg:grid-cols-12">
+    <nav className="col-span-full flex gap-2 py-3 sm:py-4">
       <Link href="/">
-        <a className="col-span-2 mr-auto inline-flex items-center justify-between gap-3">
+        <a className="mr-4 inline-flex items-center gap-3">
           <img src={logo} alt={logoAlt} className="w-6 sm:block" />
           {title ? (
             <span className="font-semibold">{title}</span>
@@ -46,16 +46,16 @@ const Navbar: FC<Props> = ({ communityId }) => {
           )}
         </a>
       </Link>
-      <div className="col-span-2 col-start-3 hidden items-center md:flex lg:col-span-2">
+      <div className="hidden items-center md:inline-flex">
         {router.pathname !== '/' &&
           router.pathname !== '/[contract]/[tokenId]' &&
           router.pathname !== '/[address]' && (
-            <div className="hidden w-[250px] flex-none lg:block">
+            <div className="hidden h-full w-[350px] flex-none lg:block">
               <SearchCollections communityId={communityId} />
             </div>
           )}
         {hasExternalLinks && (
-          <div className="ml-5 hidden items-center gap-3 md:flex">
+          <div className="ml-5 hidden items-center gap-6 md:flex">
             {externalLinks.map(({ name, url }) => (
               <a
                 key={url}
