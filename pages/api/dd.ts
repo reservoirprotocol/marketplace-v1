@@ -17,7 +17,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       headers: {
         "Accept-Language": req.headers["accept-language"] || "",
         "User-Agent": req.headers["user-agent"] || "",
-        "Content-Type": req.headers["content-type"] || "application/json",
         "X-Forwarded-For": ip,
       },
       body: req.body,
