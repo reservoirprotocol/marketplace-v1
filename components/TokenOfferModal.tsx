@@ -20,6 +20,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
+import { checkWallet } from 'lib/wallet'
 
 type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -183,21 +184,8 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     details && 'mutate' in details && details.mutate()
   }
 
-  const checkWallet = async () => {
-    if (!signer) {
-      const data = await connect(connectData.connectors[0])
-      if (data?.data) {
-        setToast({
-          kind: 'success',
-          message: 'Connected your wallet successfully.',
-          title: 'Wallet connected',
-        })
-      }
-    }
-  }
-
   const execute = async () => {
-    await checkWallet()
+    await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
 
@@ -270,7 +258,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         onClick={async () => {
           setPostOnOpenSea(false)
           setOrderbook(['reservoir'])
-          await checkWallet()
+          await checkWallet(signer, setToast, connect, connectData)
         }}
         className="btn-primary-outline w-full"
       >

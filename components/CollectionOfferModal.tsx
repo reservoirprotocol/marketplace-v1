@@ -20,6 +20,7 @@ import { Execute, placeBid } from '@reservoir0x/client-sdk'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
+import { checkWallet } from 'lib/wallet'
 
 type Props = {
   env: {
@@ -133,21 +134,8 @@ const CollectionOfferModal: FC<Props> = ({
     tokens.mutate()
   }
 
-  const checkWallet = async () => {
-    if (!signer) {
-      const data = await connect(connectData.connectors[0])
-      if (data?.data) {
-        setToast({
-          kind: 'success',
-          message: 'Connected your wallet successfully.',
-          title: 'Wallet connected',
-        })
-      }
-    }
-  }
-
   const execute = async () => {
-    await checkWallet()
+    await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
 
@@ -177,7 +165,9 @@ const CollectionOfferModal: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () => await checkWallet()}
+        onClick={async () =>
+          await checkWallet(signer, setToast, connect, connectData)
+        }
         className="btn-primary-outline"
       >
         Make a Collection Offer

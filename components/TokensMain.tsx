@@ -27,6 +27,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { FiRefreshCcw } from 'react-icons/fi'
+import { checkWallet } from 'lib/wallet'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -237,21 +238,8 @@ const TokensMain: FC<Props> = ({
   const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
     stats?.mutate()
 
-  const checkWallet = async () => {
-    if (!signer) {
-      const data = await connect(connectData.connectors[0])
-      if (data?.data) {
-        setToast({
-          kind: 'success',
-          message: 'Connected your wallet successfully.',
-          title: 'Wallet connected',
-        })
-      }
-    }
-  }
-
   const execute = async () => {
-    await checkWallet()
+    await checkWallet(signer, setToast, connect, connectData)
     if (isOwner) {
       setToast({
         kind: 'error',
