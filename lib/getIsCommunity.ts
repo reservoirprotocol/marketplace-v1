@@ -4,9 +4,13 @@
  * @returns `true` if the community ID corresponds to a community, `false` otherwise
  */
 export default function getIsCommunity(communityId: string) {
-  const isCommunity = ['loot', 'bayc', 'forgottenrunes', 'artblocks'].includes(
-    communityId
-  )
+  const isCommunity = [
+    'loot',
+    'bayc',
+    'forgottenrunes',
+    'artblocks',
+    'feltzine',
+  ].includes(communityId)
 
   return isCommunity
 }
