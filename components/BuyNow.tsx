@@ -9,6 +9,7 @@ import { useConnect } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
+import { checkWallet } from 'lib/wallet'
 
 type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -130,21 +131,8 @@ const BuyNow: FC<Props> = ({
     mutate && mutate()
   }
 
-  const checkWallet = async () => {
-    if (!signer) {
-      const data = await connect(connectData.connectors[0])
-      if (data?.data) {
-        setToast({
-          kind: 'success',
-          message: 'Connected your wallet successfully.',
-          title: 'Wallet connected',
-        })
-      }
-    }
-  }
-
   const execute = async () => {
-    await checkWallet()
+    await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
     await buyToken({

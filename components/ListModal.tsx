@@ -12,6 +12,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { Execute, listToken, paths } from '@reservoir0x/client-sdk'
+import { checkWallet } from 'lib/wallet'
 
 type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -135,7 +136,9 @@ const ListModal: FC<Props> = ({
   const handleError: Parameters<typeof listToken>[0]['handleError'] = (
     err: any
   ) => {
+    // Close modal
     setOpen(false)
+    // Reset steps
     setSteps(undefined)
     // Handle user rejection
     if (err?.code === 4001) {
@@ -160,21 +163,8 @@ const ListModal: FC<Props> = ({
     mutate && mutate()
   }
 
-  const checkWallet = async () => {
-    if (!signer) {
-      const data = await connect(connectData.connectors[0])
-      if (data?.data) {
-        setToast({
-          kind: 'success',
-          message: 'Connected your wallet successfully.',
-          title: 'Wallet connected',
-        })
-      }
-    }
-  }
-
   const execute = async () => {
-    await checkWallet()
+    await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
 
@@ -184,7 +174,6 @@ const ListModal: FC<Props> = ({
 
     await listToken({
       query: {
-        // contract: token_?.contract,
         orderbook: 'reservoir',
         maker,
         weiPrice: ethers.utils.parseEther(listingPrice).toString(),
@@ -203,11 +192,6 @@ const ListModal: FC<Props> = ({
   const onContinue = async () => {
     setWaitingTx(true)
 
-    // setOrderbook((orderbook) => {
-    //   orderbook.shift()
-    //   return orderbook
-    // })
-
     setOrderbook(['opensea'])
 
     const expirationValue = expirationPresets
@@ -219,7 +203,6 @@ const ListModal: FC<Props> = ({
     if (postOnOpenSea) {
       await listToken({
         query: {
-          // contract: token_?.contract,
           orderbook: 'opensea',
           maker,
           weiPrice: ethers.utils.parseEther(listingPrice).toString(),
@@ -245,7 +228,7 @@ const ListModal: FC<Props> = ({
           onClick={async () => {
             setPostOnOpenSea(false)
             setOrderbook(['reservoir'])
-            await checkWallet()
+            await checkWallet(signer, setToast, connect, connectData)
           }}
           className="btn-primary-fill w-full"
         >
