@@ -5,11 +5,12 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 type Tokens =
   paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 
 export default function useUserTokens(
-  apiBase: string | undefined,
   collectionId: string | undefined,
   fallbackData: Tokens[],
   mode: string | undefined,
@@ -17,11 +18,15 @@ export default function useUserTokens(
 ) {
   const { ref, inView } = useInView()
 
-  const url = new URL(`/users/${user}/tokens/v2`, apiBase)
+  const pathname = `${PROXY_API_BASE}/users/${user}/tokens/v2`
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey({ url, mode, collectionId, apiBase }, index, previousPageData),
+      getKey(
+        { pathname, mode, collectionId, proxyApi: PROXY_API_BASE },
+        index,
+        previousPageData
+      ),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -41,27 +46,29 @@ export default function useUserTokens(
 
 type InfiniteKeyLoader = (
   custom: {
-    url: URL
+    pathname: string
     collectionId: string | undefined
     mode: string | undefined
-    apiBase: string | undefined
+    proxyApi: string | undefined
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
   custom: {
-    url: URL
+    pathname: string
     collectionId: string | undefined
     mode: string | undefined
-    apiBase: string | undefined
+    proxyApi: string | undefined
   },
   index: number,
   previousPageData: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 ) => {
-  const { url, collectionId, mode, apiBase } = custom
-  if (!apiBase) {
-    console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
+  const { pathname, collectionId, mode, proxyApi } = custom
+  if (!proxyApi) {
+    console.debug(
+      'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
+    )
     return null
   }
 
@@ -81,7 +88,7 @@ const getKey: InfiniteKeyLoader = (
     query.collection = collectionId
   }
 
-  setParams(url, query)
+  const href = setParams(pathname, query)
 
-  return url.href
+  return href
 }

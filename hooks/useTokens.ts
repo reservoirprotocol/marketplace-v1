@@ -6,10 +6,11 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 type Tokens = paths['/tokens/v2']['get']['responses']['200']['schema']
 
 export default function useTokens(
-  apiBase: string | undefined,
   collectionId: string | undefined,
   fallbackData: Tokens[],
   router: NextRouter
@@ -19,16 +20,16 @@ export default function useTokens(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL('/tokens/v2', apiBase)
+    const pathname = `${PROXY_API_BASE}/tokens/v2`
 
-    return url
+    return pathname
   }
 
-  const url = getUrl()
+  const pathname = getUrl()
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey(url, collectionId, router, index, previousPageData),
+      getKey(pathname, collectionId, router, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -47,12 +48,12 @@ export default function useTokens(
 }
 
 const getKey: (
-  url: URL | undefined,
+  pathname: string | undefined,
   collectionId: string | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL | undefined,
+  pathname: string | undefined,
   collectionId: string | undefined,
   router: NextRouter,
   index: number,
@@ -61,7 +62,7 @@ const getKey: (
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  if (!url) return null
+  if (!pathname) return null
 
   let query: paths['/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,
@@ -75,22 +76,31 @@ const getKey: (
     if (`${router.query?.sort}` === 'highest_offer') {
       query.sortBy = 'topBidValue'
     }
-
-    // if (`${router.query?.sort}` === 'token_id') {
-    //   query.sortBy = 'tokenId'
-    // }
   } else {
     query.sortBy = 'floorAskPrice'
   }
 
-  Object.keys(router.query).forEach((key) => {
-    key.startsWith('attributes[') &&
+  // Extract all queries of attribute type
+  const attributes = Object.keys(router.query).filter(
+    (key) =>
+      key.startsWith('attributes[') &&
       key.endsWith(']') &&
-      router.query[key] !== '' &&
-      url.searchParams.set(key, `${router.query[key]}`)
-  })
+      router.query[key] !== ''
+  )
 
-  setParams(url, query)
+  const query2: { [key: string]: any } = {}
 
-  return url.href
+  // Add all selected attributes to the query
+  if (attributes.length > 0) {
+    attributes.forEach((key) => {
+      const value = router.query[key]?.toString()
+      if (value) {
+        query2[key] = value
+      }
+    })
+  }
+
+  const href = setParams(pathname, { ...query, ...query2 })
+
+  return href
 }

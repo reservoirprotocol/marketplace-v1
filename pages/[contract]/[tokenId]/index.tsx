@@ -29,8 +29,9 @@ import { paths } from '@reservoir0x/client-sdk'
 // refer to the README.md file on this repository
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
-const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 // OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
@@ -54,7 +55,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     animation_url: null,
     extension: null,
   })
-  const collection = useCollection(apiBase, undefined, collectionId)
+  const collection = useCollection(undefined, collectionId)
 
   const contract = router.query?.contract?.toString()
   const tokenId = router.query?.tokenId?.toString()
@@ -93,12 +94,14 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     getOpenSeaData(urlOpenSea)
   }, [])
 
-  const details = useDetails(apiBase, {
-    token: `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
+  const details = useDetails({
+    tokens: [
+      `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
+    ],
   })
 
-  if (details.error || !apiBase || !chainId) {
-    console.debug({ apiBase, chainId })
+  if (details.error || !chainId) {
+    console.debug({ chainId })
     return <div>There was an error</div>
   }
 
@@ -217,7 +220,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
             >
               {isOwner && (
                 <ListModal
-                  apiBase={apiBase}
                   data={{
                     collection: collection.data,
                     details,
@@ -229,7 +231,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 />
               )}
               <BuyNow
-                apiBase={apiBase}
                 data={{
                   collection: collection.data,
                   details,
@@ -251,7 +252,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               }
             >
               <AcceptOffer
-                apiBase={apiBase}
                 data={{
                   collection: collection.data,
                   details,
@@ -274,7 +274,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                       collection.data?.collection?.royalties?.recipient,
                   }}
                   env={{
-                    apiBase,
                     chainId: +chainId as ChainId,
                     openSeaApiKey,
                   }}
@@ -285,7 +284,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
           </div>
           <div className="mt-6 flex justify-center">
             <CancelOffer
-              apiBase={apiBase}
               data={{
                 collection: collection.data,
                 details,
@@ -297,7 +295,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               setToast={setToast}
             />
             <CancelListing
-              apiBase={apiBase}
               data={{
                 collection: collection.data,
                 details,
@@ -335,6 +332,16 @@ export const getServerSideProps: GetServerSideProps<{
   mode: ReturnType<typeof getMode>['mode']
   communityId?: string
 }> = async ({ req, params }) => {
+  if (!RESERVOIR_API_KEY) {
+    throw 'Missing RESERVOIR_API_KEY'
+  }
+
+  const options: RequestInit | undefined = {
+    headers: {
+      'x-api-key': RESERVOIR_API_KEY,
+    },
+  }
+
   const { mode, collectionId: communityId } = getMode(
     req,
     USE_WILDCARD,
@@ -342,18 +349,18 @@ export const getServerSideProps: GetServerSideProps<{
     collectionEnv
   )
 
-  const url = new URL('/tokens/details/v2', apiBase)
+  const url = new URL('/tokens/details/v3', RESERVOIR_API_BASE)
 
-  const query: paths['/tokens/details/v2']['get']['parameters']['query'] = {
-    token: `${params?.contract?.toString()}:${params?.tokenId?.toString()}`,
+  const query: paths['/tokens/details/v3']['get']['parameters']['query'] = {
+    tokens: [`${params?.contract?.toString()}:${params?.tokenId?.toString()}`],
   }
 
-  setParams(url, query)
+  const href = setParams(url, query)
 
-  const res = await fetch(url.href)
+  const res = await fetch(href, options)
 
   const tokenDetails =
-    (await res.json()) as paths['/tokens/details/v2']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v3']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
 

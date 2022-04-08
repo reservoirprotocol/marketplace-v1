@@ -3,17 +3,18 @@ import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import useSWR from 'swr'
 
-export default function useDetails(
-  apiBase: string | undefined,
-  query: paths['/tokens/details/v2']['get']['parameters']['query']
-) {
-  const url = new URL('/tokens/details/v2', apiBase)
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-  setParams(url, query)
+export default function useDetails(
+  query: paths['/tokens/details/v3']['get']['parameters']['query']
+) {
+  const pathname = `${PROXY_API_BASE}/tokens/details/v3`
+
+  const href = setParams(pathname, query)
 
   const details = useSWR<
-    paths['/tokens/details/v2']['get']['responses']['200']['schema']
-  >(url.href, fetcher)
+    paths['/tokens/details/v3']['get']['responses']['200']['schema']
+  >(href, fetcher)
 
   return details
 }

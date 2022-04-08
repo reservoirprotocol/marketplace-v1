@@ -18,7 +18,8 @@ import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
-import { paths, setParams } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk'
+import setParams from 'lib/params'
 
 // Environment variables
 // For more information about these variables
@@ -26,7 +27,8 @@ import { paths, setParams } from '@reservoir0x/client-sdk'
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
-const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 // OPTIONAL
 const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
@@ -43,13 +45,13 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const router = useRouter()
   useDataDog(accountData)
   const address = router.query?.address?.toString()?.toLowerCase()
-  const userTokens = useUserTokens(apiBase, collectionId, [], mode, address)
-  // const userActivity = useUserActivity(apiBase, [], address)
-  const sellPositions = useUserPositions(apiBase, [], 'sell', address)
-  const buyPositions = useUserPositions(apiBase, [], 'buy', address)
+  const userTokens = useUserTokens(collectionId, [], mode, address)
+  // const userActivity = useUserActivity([], address)
+  const sellPositions = useUserPositions([], 'sell', address)
+  const buyPositions = useUserPositions([], 'buy', address)
 
-  if (!apiBase || !chainId) {
-    console.debug({ apiBase, chainId })
+  if (!chainId) {
+    console.debug({ chainId })
     return <div>There was an error</div>
   }
 
@@ -117,7 +119,6 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             isOwner={isOwner}
             modal={{
               accountData,
-              apiBase,
               isInTheWrongNetwork,
               collectionId,
               setToast,
@@ -145,7 +146,6 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 maker={address || ''}
                 modal={{
                   accountData,
-                  apiBase,
                   isInTheWrongNetwork,
                   collectionId,
                   setToast,
@@ -164,7 +164,6 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 maker={address || ''}
                 modal={{
                   accountData,
-                  apiBase,
                   isInTheWrongNetwork,
                   collectionId,
                   setToast,
@@ -185,6 +184,16 @@ export const getServerSideProps: GetServerSideProps<{
   mode: ReturnType<typeof getMode>['mode']
   collectionId: string
 }> = async ({ req }) => {
+  if (!RESERVOIR_API_KEY) {
+    throw 'Missing RESERVOIR_API_KEY'
+  }
+
+  const options: RequestInit | undefined = {
+    headers: {
+      'x-api-key': RESERVOIR_API_KEY,
+    },
+  }
+
   let { collectionId, mode } = getMode(
     req,
     USE_WILDCARD,
@@ -193,15 +202,15 @@ export const getServerSideProps: GetServerSideProps<{
   )
 
   if (mode === 'collection') {
-    const url = new URL('/collection/v1', apiBase)
+    const url = new URL('/collection/v1', RESERVOIR_API_BASE)
 
     const query: paths['/collection/v1']['get']['parameters']['query'] = {
       slug: collectionId,
     }
 
-    setParams(url, query)
+    const href = setParams(url, query)
 
-    const res = await fetch(url.href)
+    const res = await fetch(href, options)
 
     const json =
       (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']

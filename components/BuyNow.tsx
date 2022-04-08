@@ -11,11 +11,12 @@ import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
-type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+
+type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {
-  apiBase: string
   data:
     | {
         details: SWRResponse<Details, any>
@@ -34,7 +35,6 @@ type Props = {
 }
 
 const BuyNow: FC<Props> = ({
-  apiBase,
   data,
   isInTheWrongNetwork,
   mutate,
@@ -57,8 +57,8 @@ const BuyNow: FC<Props> = ({
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(apiBase, contract, tokenId, setDetails)
-        getCollection(apiBase, collectionId, setCollection)
+        getDetails(contract, tokenId, setDetails)
+        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
@@ -137,9 +137,8 @@ const BuyNow: FC<Props> = ({
     setWaitingTx(true)
     await buyToken({
       token: `${token?.token?.contract}:${token?.token?.tokenId}`,
-      // contract: token?.token?.contract,
       signer,
-      apiBase,
+      apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
       handleSuccess,
       handleError,

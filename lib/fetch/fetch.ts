@@ -2,42 +2,42 @@ import { paths } from '@reservoir0x/client-sdk'
 import setParams from 'lib/params'
 import { Dispatch } from 'react'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 export async function getDetails(
-  apiBase: string,
   contract: string | undefined,
   token: string | undefined,
   setDetails: Dispatch<any>
 ) {
-  let url = new URL('/tokens/details/v2', apiBase)
+  let pathname = `${PROXY_API_BASE}/tokens/details/v3`
 
-  let query: paths['/tokens/details/v2']['get']['parameters']['query'] = {
-    token: `${contract}:${token}`,
+  let query: paths['/tokens/details/v3']['get']['parameters']['query'] = {
+    tokens: [`${contract}:${token}`],
   }
 
-  setParams(url, query)
+  const href = setParams(pathname, query)
 
-  const res = await fetch(url.href)
+  const res = await fetch(href)
 
   const json =
-    (await res.json()) as paths['/tokens/details/v2']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v3']['get']['responses']['200']['schema']
 
   setDetails(json)
 }
 
 export async function getCollection(
-  apiBase: string,
   collectionId: string | undefined,
   setCollection: Dispatch<any>
 ) {
-  const url = new URL('/collection/v1', apiBase)
+  const pathname = `${PROXY_API_BASE}/collection/v1`
 
   let query: paths['/collection/v1']['get']['parameters']['query'] = {
     id: collectionId,
   }
 
-  setParams(url, query)
+  const href = setParams(pathname, query)
 
-  const res = await fetch(url.href)
+  const res = await fetch(href)
 
   const json =
     (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
