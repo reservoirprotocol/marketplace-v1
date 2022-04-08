@@ -12,11 +12,10 @@ type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
 export default function useCollections() {
   const { ref, inView } = useInView()
 
-  const collectionsUrl = `${PROXY_API_BASE}/collections/v2`
+  const pathname = `${PROXY_API_BASE}/collections/v2`
 
   const collections = useSWRInfinite<Collections>(
-    (index, previousPageData) =>
-      getKey(collectionsUrl, index, previousPageData),
+    (index, previousPageData) => getKey(pathname, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -34,10 +33,10 @@ export default function useCollections() {
 }
 
 const getKey: (
-  url: string,
+  pathname: string,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: string,
+  pathname: string,
   index: number,
   previousPageData: paths['/collections/v2']['get']['responses']['200']['schema']
 ) => {
@@ -51,7 +50,7 @@ const getKey: (
     sortBy: '7DayVolume',
   }
 
-  const href = setParams(url, query)
+  const href = setParams(pathname, query)
 
   return href
 }
