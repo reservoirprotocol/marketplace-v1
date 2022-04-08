@@ -22,13 +22,12 @@ import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-
-type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {
   env: {
+    apiBase: string
     chainId: ChainId
     openSeaApiKey: string | undefined
   }
@@ -122,8 +121,8 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(contract, tokenId, setDetails)
-        getCollection(collectionId, setCollection)
+        getDetails(env.apiBase, contract, tokenId, setDetails)
+        getCollection(env.apiBase, collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
@@ -206,7 +205,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         token: `${token.token?.contract}:${token.token?.tokenId}`,
       },
       signer,
-      apiBase: RESERVOIR_API_BASE,
+      apiBase: env.apiBase,
       setState: setSteps,
       handleSuccess,
       handleError,
@@ -242,7 +241,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
           token: `${token.token?.contract}:${token.token?.tokenId}`,
         },
         signer,
-        apiBase: RESERVOIR_API_BASE,
+        apiBase: env.apiBase,
         setState: setSteps,
         handleSuccess,
         handleError,

@@ -14,6 +14,7 @@ type Props = {
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
+    apiBase: string
     collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -108,6 +109,7 @@ const UserTokensTable: FC<Props> = ({
                       <div className="hidden group-hover:inline-block">
                         <ListModal
                           signer={modal.signer}
+                          apiBase={modal.apiBase}
                           isInTheWrongNetwork={modal.isInTheWrongNetwork}
                           maker={modal.accountData?.address}
                           data={{
@@ -136,6 +138,7 @@ const UserTokensTable: FC<Props> = ({
                         </span>
                         <div className="hidden group-hover:inline-block">
                           <AcceptOffer
+                            apiBase={modal.apiBase}
                             data={{
                               contract,
                               tokenId,

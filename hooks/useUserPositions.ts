@@ -5,27 +5,22 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
 type Positions =
   paths['/users/{user}/positions/v1']['get']['responses']['200']['schema']
 
 export default function useUserPositions(
+  apiBase: string | undefined,
   fallbackData: Positions[],
   side: 'buy' | 'sell',
   user: string | undefined
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/users/${user}/positions/v1`
+  const url = new URL(`/users/${user}/positions/v1`, apiBase)
 
   const positions = useSWRInfinite<Positions>(
     (index, previousPageData) =>
-      getKey(
-        { pathname, proxyApi: PROXY_API_BASE, side },
-        index,
-        previousPageData
-      ),
+      getKey({ url, apiBase, side }, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -45,8 +40,8 @@ export default function useUserPositions(
 
 type InfiniteKeyLoader = (
   custom: {
-    pathname: string
-    proxyApi: string | undefined
+    url: URL
+    apiBase: string | undefined
     side: 'buy' | 'sell'
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
@@ -54,18 +49,16 @@ type InfiniteKeyLoader = (
 
 const getKey: InfiniteKeyLoader = (
   custom: {
-    pathname: string
-    proxyApi: string | undefined
+    url: URL
+    apiBase: string | undefined
     side: 'buy' | 'sell'
   },
   index: number,
   previousPageData: Positions
 ) => {
-  const { pathname, proxyApi, side } = custom
-  if (!proxyApi) {
-    console.debug(
-      'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
-    )
+  const { url, apiBase, side } = custom
+  if (!apiBase) {
+    console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
   }
 
@@ -80,7 +73,7 @@ const getKey: InfiniteKeyLoader = (
       offset: index * 20,
     }
 
-  const href = setParams(pathname, query)
+  setParams(url, query)
 
-  return href
+  return url.href
 }

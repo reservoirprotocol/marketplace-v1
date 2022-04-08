@@ -11,7 +11,7 @@ type Props = {
   communityId?: string
 }
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
 
 const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
@@ -25,9 +25,9 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
 
   // LOAD INITIAL RESULTS
   useEffect(() => {
-    if (!PROXY_API_BASE) return
+    if (!apiBase) return
 
-    const pathname = `${PROXY_API_BASE}/collections/v2`
+    const url = new URL('/collections/v2', apiBase)
 
     const query: paths['/collections/v2']['get']['parameters']['query'] = {
       sortBy: '7DayVolume',
@@ -36,10 +36,10 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     if (communityId && communityId !== 'www' && communityId !== 'localhost')
       query['community'] = communityId
 
-    const href = setParams(pathname, query)
+    setParams(url, query)
 
-    async function initialData(href: string) {
-      const res = await fetch(href)
+    async function initialData(url: URL) {
+      const res = await fetch(url.href)
 
       const json =
         (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
@@ -48,8 +48,8 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       setInitialResults({ collections: json.collections })
     }
 
-    initialData(href)
-  }, [communityId])
+    initialData(url)
+  }, [apiBase, communityId])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
@@ -70,10 +70,10 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
 
       query.name = value
 
-      const href = setParams(pathname, query)
+      setParams(url, query)
 
       try {
-        const res = await fetch(href)
+        const res = await fetch(url.href)
 
         const data =
           (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
@@ -88,7 +88,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     []
   )
 
-  const pathname = `${PROXY_API_BASE}/collections/v2`
+  const url = new URL('/collections/v2', apiBase)
 
   const query: paths['/collections/v2']['get']['parameters']['query'] = {
     sortBy: '7DayVolume',

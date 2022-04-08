@@ -8,8 +8,12 @@ const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 
-const Homepage: FC = () => {
-  const collections = useCollections()
+type Props = {
+  apiBase: string
+}
+
+const Homepage: FC<Props> = ({ apiBase }) => {
+  const collections = useCollections(apiBase)
 
   const title = metaTitle ? (
     <title>{metaTitle}</title>

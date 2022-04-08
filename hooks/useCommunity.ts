@@ -5,18 +5,19 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
 type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
 
-export default function useCommunity(collectionId: string) {
+export default function useCommunity(
+  apiBase: string | undefined,
+  collectionId: string
+) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/collections/v2`
+  const url = new URL('/collections/v2', apiBase)
 
   const communities = useSWRInfinite<Collections>(
     (index, previousPageData) =>
-      getKey(pathname, collectionId, index, previousPageData),
+      getKey(url, collectionId, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -34,11 +35,11 @@ export default function useCommunity(collectionId: string) {
 }
 
 const getKey: (
-  pathname: string,
+  url: URL,
   collectionId: string,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  pathname: string,
+  url: URL,
   collectionId: string,
   index: number,
   previousPageData: Collections
@@ -54,7 +55,7 @@ const getKey: (
     sortBy: '7DayVolume',
   }
 
-  const href = setParams(pathname, query)
+  setParams(url, query)
 
-  return href
+  return url.href
 }

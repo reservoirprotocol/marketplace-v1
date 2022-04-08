@@ -5,25 +5,20 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
 type Transfers = paths['/transfers/v2']['get']['responses']['200']['schema']
 
 export default function useUserActivity(
+  apiBase: string | undefined,
   fallbackData: Transfers[],
   user: string | undefined
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/transfers/v2`
+  const url = new URL(`/transfers/v2`, apiBase)
 
   const transfers = useSWRInfinite<Transfers>(
     (index, previousPageData) =>
-      getKey(
-        { pathname, user, proxyApi: PROXY_API_BASE },
-        index,
-        previousPageData
-      ),
+      getKey({ url, user, apiBase }, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -43,24 +38,24 @@ export default function useUserActivity(
 
 type InfiniteKeyLoader = (
   custom: {
-    pathname: string
+    url: URL
     user: string | undefined
-    proxyApi: string | undefined
+    apiBase: string | undefined
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
 
 const getKey: InfiniteKeyLoader = (
   custom: {
-    pathname: string
+    url: URL
     user: string | undefined
-    proxyApi: string | undefined
+    apiBase: string | undefined
   },
   index: number,
   previousPageData: Transfers
 ) => {
-  const { pathname, user, proxyApi } = custom
-  if (!proxyApi) {
+  const { url, user, apiBase } = custom
+  if (!apiBase) {
     console.debug('Environment variable NEXT_PUBLIC_API_BASE is undefined.')
     return null
   }
@@ -74,7 +69,7 @@ const getKey: InfiniteKeyLoader = (
     // user,
   }
 
-  const href = setParams(pathname, query)
+  setParams(url, query)
 
-  return href
+  return url.href
 }

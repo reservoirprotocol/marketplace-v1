@@ -5,14 +5,12 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
 type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
 
-export default function useCollections() {
+export default function useCollections(apiBase: string | undefined) {
   const { ref, inView } = useInView()
 
-  const collectionsUrl = `${PROXY_API_BASE}/collections/v2`
+  const collectionsUrl = new URL('/collections/v2', apiBase)
 
   const collections = useSWRInfinite<Collections>(
     (index, previousPageData) =>
@@ -34,10 +32,10 @@ export default function useCollections() {
 }
 
 const getKey: (
-  url: string,
+  url: URL,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: string,
+  url: URL,
   index: number,
   previousPageData: paths['/collections/v2']['get']['responses']['200']['schema']
 ) => {
@@ -51,7 +49,7 @@ const getKey: (
     sortBy: '7DayVolume',
   }
 
-  const href = setParams(url, query)
+  setParams(url, query)
 
-  return href
+  return url.href
 }

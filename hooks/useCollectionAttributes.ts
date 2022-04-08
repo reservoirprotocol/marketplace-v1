@@ -6,12 +6,11 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
 type Attributes =
   paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']
 
 export default function useCollectionAttributes(
+  apiBase: string | undefined,
   router: NextRouter,
   collectionId: string | undefined
 ) {
@@ -20,18 +19,18 @@ export default function useCollectionAttributes(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const pathname = `${PROXY_API_BASE}/collections/${
-      router.query.id || collectionId
-    }/attributes/explore/v1`
+    const url = new URL(
+      `/collections/${router.query.id || collectionId}/attributes/explore/v1`,
+      apiBase
+    )
 
-    return pathname
+    return url
   }
 
-  const pathname = getUrl()
+  const url = getUrl()
 
   const collectionAttributes = useSWRInfinite<Attributes>(
-    (index, previousPageData) =>
-      getKey(pathname, router, index, previousPageData),
+    (index, previousPageData) => getKey(url, router, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -49,11 +48,11 @@ export default function useCollectionAttributes(
 }
 
 const getKey: (
-  pathname: string | undefined,
+  url: URL | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  pathname: string | undefined,
+  url: URL | undefined,
   router: NextRouter,
   index: number,
   previousPageData: Attributes
@@ -63,7 +62,7 @@ const getKey: (
     return null
   }
 
-  if (!pathname) return null
+  if (!url) return null
 
   let query: paths['/collections/{collection}/attributes/explore/v1']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
@@ -85,7 +84,7 @@ const getKey: (
     query.attributeKey = router.query.attribute_key.toString()
   }
 
-  const href = setParams(pathname, query)
+  setParams(url, query)
 
-  return href
+  return url.href
 }

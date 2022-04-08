@@ -15,6 +15,7 @@ type Props = {
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
+    apiBase: string
     collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -117,6 +118,7 @@ const UserListingsTable: FC<Props> = ({
                 {isOwner && (
                   <td className="reservoir-body whitespace-nowrap px-6 py-4">
                     <CancelListing
+                      apiBase={modal.apiBase}
                       data={{
                         collectionId: modal?.collectionId,
                         id,

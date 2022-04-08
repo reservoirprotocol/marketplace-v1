@@ -22,10 +22,9 @@ import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-
 type Props = {
   env: {
+    apiBase: string
     chainId: ChainId
     openSeaApiKey: string | undefined
   }
@@ -154,7 +153,7 @@ const CollectionOfferModal: FC<Props> = ({
         collection: data.collection.id,
       },
       signer,
-      apiBase: RESERVOIR_API_BASE,
+      apiBase: env.apiBase,
       setState: setSteps,
       handleSuccess,
       handleError,

@@ -19,8 +19,7 @@ import getMode from 'lib/getMode'
 // refer to the README.md file on this repository
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const apiBase = process.env.NEXT_PUBLIC_API_BASE
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
@@ -36,8 +35,8 @@ const Home: NextPage<Props> = ({ fallback, mode, collectionId }) => {
   const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
 
-  if (!chainId) {
-    console.debug({ chainId })
+  if (!apiBase || !chainId) {
+    console.debug({ apiBase, chainId })
     return <div>There was an error</div>
   }
 
@@ -56,6 +55,7 @@ const Home: NextPage<Props> = ({ fallback, mode, collectionId }) => {
     >
       <TokensMain
         collectionId={router.query.id?.toString()}
+        apiBase={apiBase}
         chainId={+chainId as ChainId}
         fallback={fallback}
         openSeaApiKey={openSeaApiKey}
@@ -77,48 +77,37 @@ export const getServerSideProps: GetServerSideProps<{
   mode: ReturnType<typeof getMode>['mode']
   collectionId?: string
 }> = async ({ req, params }) => {
-  if (!RESERVOIR_API_KEY) {
-    throw 'Missing RESERVOIR_API_KEY'
-  }
-
-  const options: RequestInit | undefined = {
-    headers: {
-      'x-api-key': RESERVOIR_API_KEY,
-    },
-  }
-
   const { mode, collectionId } = getMode(
     req,
     USE_WILDCARD,
     COMMUNITY,
     COLLECTION
   )
-
   try {
     // Pass in fallback data to prevent loading screens
     // Reference: https://swr.vercel.app/docs/options
     // -------------- COLLECTION --------------
-    const url1 = new URL('/collection/v1', RESERVOIR_API_BASE)
+    const url1 = new URL('/collection/v1', apiBase)
 
     let query: paths['/collection/v1']['get']['parameters']['query'] = {
       id: params?.id?.toString(),
     }
 
-    const href = setParams(url1, query)
+    setParams(url1, query)
 
-    const res1 = await fetch(href, options)
+    const res1 = await fetch(url1.href)
     const collection: Props['fallback']['collection'] = await res1.json()
 
     // -------------- TOKENS --------------
-    const url2 = new URL('/tokens/v2', RESERVOIR_API_BASE)
+    const url2 = new URL('/tokens/v2', apiBase)
 
     const query2: paths['/tokens/v2']['get']['parameters']['query'] = {
       collection: collection.collection?.id,
     }
 
-    const href2 = setParams(url2, query2)
+    setParams(url2, query2)
 
-    const res2 = await fetch(href2, options)
+    const res2 = await fetch(url2.href)
     const tokens: Props['fallback']['tokens'] = await res2.json()
 
     return {

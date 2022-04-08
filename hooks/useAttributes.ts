@@ -2,22 +2,26 @@ import { paths } from '@reservoir0x/client-sdk'
 import fetcher from 'lib/fetcher'
 import useSWR from 'swr'
 
-const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-
-export default function useAttributes(collectionId: string | undefined) {
+export default function useAttributes(
+  apiBase: string | undefined,
+  collectionId: string | undefined
+) {
   function getUrl() {
     if (!collectionId) return undefined
 
-    const pathname = `${PROXY_API_BASE}/collections/${collectionId}/attributes/all/v1`
+    const url = new URL(
+      `/collections/${collectionId}/attributes/all/v1`,
+      apiBase
+    )
 
-    return pathname
+    return url
   }
 
-  const pathname = getUrl()
+  const url = getUrl()
 
   const attributes = useSWR<
     paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']
-  >(pathname, fetcher)
+  >(url?.href, fetcher)
 
   return attributes
 }
