@@ -31,12 +31,14 @@ import { checkWallet } from 'lib/wallet'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 type Props = {
-  apiBase: string
   chainId: ChainId
   collectionId: string | undefined
   fallback: {
@@ -48,7 +50,6 @@ type Props = {
 }
 
 const TokensMain: FC<Props> = ({
-  apiBase,
   chainId,
   collectionId,
   fallback,
@@ -71,31 +72,20 @@ const TokensMain: FC<Props> = ({
     value: undefined,
   })
 
-  const collection = useCollection(apiBase, fallback.collection, collectionId)
+  const collection = useCollection(fallback.collection, collectionId)
 
-  const stats = useCollectionStats(apiBase, router, collectionId)
-
-  // const [stats, setStats] = useState(
-  //   useCollectionStats(apiBase, router, collectionId)
-  // )
-
-  // useEffect(() => {
-  //   if (collectionId) {
-  //     setStats(useCollectionStats(apiBase, router, collectionId))
-  //   }
-  // }, [collectionId])
+  const stats = useCollectionStats(router, collectionId)
 
   const { tokens, ref: refTokens } = useTokens(
-    apiBase,
     collectionId,
     [fallback.tokens],
     router
   )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
-    useCollectionAttributes(apiBase, router, collectionId)
+    useCollectionAttributes(router, collectionId)
 
-  const attributes = useAttributes(apiBase, collectionId)
+  const attributes = useAttributes(collectionId)
 
   // const filtersApplied = useFiltersApplied(router)
 
@@ -161,7 +151,6 @@ const TokensMain: FC<Props> = ({
   }
 
   const env: ModalProps['env'] = {
-    apiBase,
     chainId: +chainId as ChainId,
     openSeaApiKey,
   }
@@ -254,7 +243,7 @@ const TokensMain: FC<Props> = ({
       token: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
       // contract: floor?.token?.contract,
       signer,
-      apiBase,
+      apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
       handleSuccess,
       handleError,
@@ -280,11 +269,11 @@ const TokensMain: FC<Props> = ({
         collection: collectionId,
       }
 
-      const { href } = new URL('/collections/refresh/v1', apiBase)
+      const pathname = `${PROXY_API_BASE}/collections/refresh/v1`
 
       setRefreshLoading(true)
 
-      const res = await fetch(href, {
+      const res = await fetch(pathname, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

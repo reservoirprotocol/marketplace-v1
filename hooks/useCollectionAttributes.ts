@@ -6,11 +6,12 @@ import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 type Attributes =
   paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']
 
 export default function useCollectionAttributes(
-  apiBase: string | undefined,
   router: NextRouter,
   collectionId: string | undefined
 ) {
@@ -19,18 +20,18 @@ export default function useCollectionAttributes(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL(
-      `/collections/${router.query.id || collectionId}/attributes/explore/v1`,
-      apiBase
-    )
+    const pathname = `${PROXY_API_BASE}/collections/${
+      router.query.id || collectionId
+    }/attributes/explore/v1`
 
-    return url
+    return pathname
   }
 
-  const url = getUrl()
+  const pathname = getUrl()
 
   const collectionAttributes = useSWRInfinite<Attributes>(
-    (index, previousPageData) => getKey(url, router, index, previousPageData),
+    (index, previousPageData) =>
+      getKey(pathname, router, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -48,11 +49,11 @@ export default function useCollectionAttributes(
 }
 
 const getKey: (
-  url: URL | undefined,
+  pathname: string | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
-  url: URL | undefined,
+  pathname: string | undefined,
   router: NextRouter,
   index: number,
   previousPageData: Attributes
@@ -62,7 +63,7 @@ const getKey: (
     return null
   }
 
-  if (!url) return null
+  if (!pathname) return null
 
   let query: paths['/collections/{collection}/attributes/explore/v1']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
@@ -84,7 +85,7 @@ const getKey: (
     query.attributeKey = router.query.attribute_key.toString()
   }
 
-  setParams(url, query)
+  const href = setParams(pathname, query)
 
-  return url.href
+  return href
 }

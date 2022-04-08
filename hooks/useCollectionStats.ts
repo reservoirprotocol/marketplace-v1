@@ -4,25 +4,20 @@ import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
 import useSWR from 'swr'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+
 export default function useCollectionStats(
-  apiBase: string | undefined,
   router: NextRouter,
   collectionId: string | undefined
 ) {
-  // useEffect(() => {
-  //   stats.mutate()
-  // }, [router.query])
-
   function getUrl() {
     if (!collectionId) return undefined
 
-    const url = new URL('/stats/v1', apiBase)
+    const pathname = `${PROXY_API_BASE}/stats/v1`
 
     const query: paths['/stats/v1']['get']['parameters']['query'] = {
       collection: collectionId,
     }
-
-    setParams(url, query)
 
     // Extract all queries of attribute type
     const attributes = Object.keys(router.query).filter(
@@ -32,17 +27,21 @@ export default function useCollectionStats(
         router.query[key] !== ''
     )
 
+    const query2: { [key: string]: any } = {}
+
     // Add all selected attributes to the query
     if (attributes.length > 0) {
       attributes.forEach((key) => {
         const value = router.query[key]?.toString()
         if (value) {
-          url.searchParams.set(key, value)
+          query2[key] = value
         }
       })
     }
 
-    return url.href
+    const href = setParams(pathname, { ...query, ...query2 })
+
+    return href
   }
 
   const href = getUrl()
