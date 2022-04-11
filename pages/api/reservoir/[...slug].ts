@@ -33,13 +33,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   setParams(url, query)
 
   try {
-    if (!RESERVOIR_API_KEY) throw 'NO API KEY'
-
     const options: RequestInit | undefined = {
       method,
-      headers: {
+    }
+
+    if (RESERVOIR_API_KEY) {
+      options.headers = {
         'x-api-key': RESERVOIR_API_KEY,
-      },
+      }
     }
 
     if (body) options.body = body

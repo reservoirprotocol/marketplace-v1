@@ -77,14 +77,12 @@ export const getServerSideProps: GetServerSideProps<{
   mode: ReturnType<typeof getMode>['mode']
   collectionId?: string
 }> = async ({ req, params }) => {
-  if (!RESERVOIR_API_KEY) {
-    throw 'Missing RESERVOIR_API_KEY'
-  }
+  const options: RequestInit | undefined = {}
 
-  const options: RequestInit | undefined = {
-    headers: {
+  if (RESERVOIR_API_KEY) {
+    options.headers = {
       'x-api-key': RESERVOIR_API_KEY,
-    },
+    }
   }
 
   const { mode, collectionId } = getMode(
