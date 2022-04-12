@@ -2,8 +2,6 @@ import useAttributes from 'hooks/useAttributes'
 import useCollection from 'hooks/useCollection'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
-// import useFiltersApplied from 'hooks/useFiltersApplied'
-// import useGetOpenSeaMetadata from 'hooks/useGetOpenSeaMetadata'
 import useTokens from 'hooks/useTokens'
 import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
 import { formatBN } from 'lib/numbers'
@@ -86,10 +84,6 @@ const TokensMain: FC<Props> = ({
     useCollectionAttributes(router, collectionId)
 
   const attributes = useAttributes(collectionId)
-
-  // const filtersApplied = useFiltersApplied(router)
-
-  // const { data: openSeaMeta } = useGetOpenSeaMetadata(slug)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -183,20 +177,6 @@ const TokensMain: FC<Props> = ({
 
   const hasTokenSetId = !!collection.data?.collection?.tokenSetId
 
-  const dataSteps = {
-    token: {
-      image: stats?.data?.stats?.market?.floorAsk?.token?.image,
-      name: stats?.data?.stats?.market?.floorAsk?.token?.name,
-      id: stats?.data?.stats?.market?.floorAsk?.token?.tokenId,
-      contract: stats?.data?.stats?.market?.floorAsk?.token?.contract,
-      topBuyValue: undefined,
-      floorSellValue: stats?.data?.stats?.market?.floorAsk?.price,
-    },
-    collection: {
-      name: collection?.data?.collection?.name,
-    },
-  }
-
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
     if (err?.message === 'Not enough ETH balance') {
       setToast({
@@ -241,7 +221,6 @@ const TokensMain: FC<Props> = ({
     setWaitingTx(true)
     await buyToken({
       token: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
-      // contract: floor?.token?.contract,
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,

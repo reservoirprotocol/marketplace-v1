@@ -20,14 +20,14 @@ import setParams from 'lib/params'
 // refer to the README.md file on this repository
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
-const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 // OPTIONAL
-const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
-const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
-const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -42,8 +42,8 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
-  if (!chainId) {
-    console.debug({ chainId })
+  if (!CHAIN_ID) {
+    console.debug({ CHAIN_ID })
     return <div>There was an error</div>
   }
 
@@ -53,10 +53,10 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
         <Homepage />
       ) : (
         <TokensMain
-          chainId={+chainId as ChainId}
+          chainId={+CHAIN_ID as ChainId}
           collectionId={contractAddress}
           fallback={fallback}
-          openSeaApiKey={openSeaApiKey}
+          openSeaApiKey={OPENSEA_API_KEY}
           setToast={(data) =>
             toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
           }
@@ -84,8 +84,8 @@ export const getServerSideProps: GetServerSideProps<{
   const { mode, collectionId } = getMode(
     req,
     USE_WILDCARD,
-    communityEnv,
-    collectionEnv
+    COMMUNITY,
+    COLLECTION
   )
 
   let contractAddress: string | undefined = undefined
