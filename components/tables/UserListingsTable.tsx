@@ -1,15 +1,15 @@
 import { ComponentProps, FC } from 'react'
 import { DateTime } from 'luxon'
-import useUserPositions from 'hooks/useUserPositions'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from 'components/FormatEth'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import CancelListing from 'components/CancelListing'
+import useUserAsks from 'hooks/useUserAsks'
 
 type Props = {
-  data: ReturnType<typeof useUserPositions>
+  data: ReturnType<typeof useUserAsks>
   isOwner: boolean
   maker: string
   mutate: () => any
@@ -27,12 +27,12 @@ const UserListingsTable: FC<Props> = ({
   modal,
   mutate,
   isOwner,
-  data: { positions, ref },
+  data: { orders, ref },
 }) => {
-  const { data } = positions
-  const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
+  const { data } = orders
+  const ordersFlat = data ? data.flatMap(({ orders }) => orders) : []
 
-  if (positionsFlat.length === 0) {
+  if (ordersFlat.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center">
         You don&apos;t have any items listed for sale.
@@ -62,7 +62,7 @@ const UserListingsTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {positionsFlat?.map((position, index, arr) => {
+          {ordersFlat?.map((position, index, arr) => {
             const {
               collectionName,
               contract,
@@ -77,7 +77,7 @@ const UserListingsTable: FC<Props> = ({
 
             return (
               <tr
-                key={`${position?.set?.id}-${index}`}
+                key={`${position?.id}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
                 className="group h-[80px] even:bg-neutral-100 dark:even:bg-neutral-900"
               >
@@ -145,28 +145,24 @@ export default UserListingsTable
 
 function processPosition(
   position:
-    | NonNullable<
-        NonNullable<Props['data']['positions']['data']>[0]['positions']
-      >[0]
+    | NonNullable<NonNullable<Props['data']['orders']['data']>[0]['orders']>[0]
     | undefined
 ) {
-  const tokenId = position?.set?.id?.split(':')[2]
-  const contract = position?.set?.id?.split(':')[1]
+  const tokenId = position?.tokenSetId?.split(':')[2]
+  const contract = position?.tokenSetId?.split(':')[1]
 
   const data = {
     contract,
     tokenId,
-    image: position?.set?.metadata?.data?.image,
-    name: position?.set?.metadata?.data?.tokenName,
+    image: position?.metadata?.data?.image,
+    name: position?.metadata?.data?.tokenName,
     expiration:
-      position?.primaryOrder?.expiration === 0
+      position?.expiration === 0
         ? 'Never'
-        : DateTime.fromMillis(
-            +`${position?.primaryOrder?.expiration}000`
-          ).toRelative(),
-    id: position?.primaryOrder?.id,
-    collectionName: position?.set?.metadata?.data?.collectionName,
-    value: position?.primaryOrder?.value,
+        : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
+    id: position?.id,
+    collectionName: position?.metadata?.data?.collectionName,
+    value: position?.value,
   }
 
   const tokenHref =

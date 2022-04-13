@@ -8,11 +8,8 @@ import getMode from 'lib/getMode'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import useUserTokens from 'hooks/useUserTokens'
-import useUserActivity from 'hooks/useUserActivity'
-import useUserPositions from 'hooks/useUserPositions'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
-import UserActivityTable from 'components/tables/UserActivityTable'
 import UserTokensTable from 'components/tables/UserTokensTable'
 import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
@@ -20,6 +17,8 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import { paths } from '@reservoir0x/client-sdk'
 import setParams from 'lib/params'
+import useUserAsks from 'hooks/useUserAsks'
+import useUserBids from 'hooks/useUserBids'
 
 // Environment variables
 // For more information about these variables
@@ -47,8 +46,8 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(collectionId, [], mode, address)
   // const userActivity = useUserActivity([], address)
-  const sellPositions = useUserPositions([], 'sell', address)
-  const buyPositions = useUserPositions([], 'buy', address)
+  const sellPositions = useUserAsks([], address)
+  const buyPositions = useUserBids([], address)
 
   if (!chainId) {
     console.debug({ chainId })
@@ -111,10 +110,10 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
           <UserTokensTable
             data={userTokens}
             mutate={() => {
-              buyPositions.positions.mutate()
+              buyPositions.orders.mutate()
               userTokens.tokens.mutate()
               // userActivity.transfers.mutate()
-              sellPositions.positions.mutate()
+              sellPositions.orders.mutate()
             }}
             isOwner={isOwner}
             modal={{
@@ -139,7 +138,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
               <UserOffersTable
                 data={buyPositions}
                 mutate={() => {
-                  buyPositions.positions.mutate()
+                  buyPositions.orders.mutate()
                   userTokens.tokens.mutate()
                 }}
                 isOwner={isOwner}
@@ -158,7 +157,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 data={sellPositions}
                 mutate={() => {
                   userTokens.tokens.mutate()
-                  sellPositions.positions.mutate()
+                  sellPositions.orders.mutate()
                 }}
                 isOwner={isOwner}
                 maker={address || ''}
