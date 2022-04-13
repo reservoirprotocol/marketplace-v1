@@ -11,29 +11,29 @@ import getWildcard from './getWildcard'
  * - https://lootproject.reservoir.market -> `collection` (Displays collection tokens)
  * - https://loot.reservoir.market -> `community` (Displays community collections)
  * @param req Client's incoming request object
- * @param communityEnv Optional environment variable for the community id
- * @param collectionEnv Optional environment variable for the collection id
+ * @param community Optional environment variable for the community id
+ * @param collection Optional environment variable for the collection id
  * @returns The current wildcard (subdomain) and whether it corresponds to
  * a community or not
  */
 export default function getMode(
   req: IncomingMessage,
   USE_WILDCARD: string | undefined,
-  communityEnv?: string,
-  collectionEnv?: string
+  community?: string,
+  collection?: string
 ) {
   let mode: 'global' | 'community' | 'collection' = 'global'
 
-  if (communityEnv) {
+  if (community) {
     mode = 'community'
-    return { mode, collectionId: communityEnv, isCommunity: true }
+    return { mode, collectionId: community, isCommunity: true }
   }
 
-  if (collectionEnv) {
+  if (collection) {
     mode = 'collection'
     return {
       mode,
-      collectionId: collectionEnv,
+      collectionId: collection,
       isCommunity: false,
     }
   }

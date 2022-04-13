@@ -34,13 +34,13 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 // OPTIONAL
-const collectionEnv = process.env.NEXT_PUBLIC_COLLECTION
-const communityEnv = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const openSeaApiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
-const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
-const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
-const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
+const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -119,26 +119,26 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
-  const title = metaTitle ? (
-    <title>{metaTitle}</title>
+  const title = META_TITLE ? (
+    <title>{META_TITLE}</title>
   ) : (
     <title>
       {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
       {collection.data?.collection?.name} | Reservoir Market
     </title>
   )
-  const description = metaDescription ? (
-    <meta name="description" content={metaDescription} />
+  const description = META_DESCRIPTION ? (
+    <meta name="description" content={META_DESCRIPTION} />
   ) : (
     <meta
       name="description"
       content={collection.data?.collection?.metadata?.description as string}
     />
   )
-  const image = metaImage ? (
+  const image = META_OG_IMAGE ? (
     <>
-      <meta name="twitter:image" content={metaImage} />
-      <meta name="og:image" content={metaImage} />
+      <meta name="twitter:image" content={META_OG_IMAGE} />
+      <meta name="og:image" content={META_OG_IMAGE} />
     </>
   ) : (
     <>
@@ -343,8 +343,8 @@ export const getServerSideProps: GetServerSideProps<{
   const { mode, collectionId: communityId } = getMode(
     req,
     USE_WILDCARD,
-    communityEnv,
-    collectionEnv
+    COMMUNITY,
+    COLLECTION
   )
 
   const url = new URL('/tokens/details/v3', RESERVOIR_API_BASE)

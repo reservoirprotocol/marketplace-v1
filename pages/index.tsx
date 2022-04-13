@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps<{
     const url = new URL('/collection/v1', RESERVOIR_API_BASE)
 
     const query: paths['/collection/v1']['get']['parameters']['query'] = {
-      slug: collectionId,
+      id: collectionId,
     }
 
     const href = setParams(url, query)
