@@ -39,10 +39,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const headers = new Headers()
 
-    if (RESERVOIR_API_KEY) headers.append('x-api-key', RESERVOIR_API_KEY)
+    if (RESERVOIR_API_KEY) headers.set('x-api-key', RESERVOIR_API_KEY)
 
     if (typeof body === 'object') {
-      headers.append('Content-Type', 'application/json')
+      headers.set('Content-Type', 'application/json')
       options.body = JSON.stringify(body)
     }
 
