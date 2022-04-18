@@ -14,11 +14,13 @@ import { CgSpinner } from 'react-icons/cg'
 import { Execute, listToken, paths } from '@reservoir0x/client-sdk'
 import { checkWallet } from 'lib/wallet'
 
-type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
+
+type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {
-  apiBase: string
   data:
     | {
         details: SWRResponse<Details, any>
@@ -40,7 +42,6 @@ const ListModal: FC<Props> = ({
   data,
   maker,
   isInTheWrongNetwork,
-  apiBase,
   signer,
   mutate,
   setToast,
@@ -83,8 +84,8 @@ const ListModal: FC<Props> = ({
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(apiBase, contract, tokenId, setDetails)
-        getCollection(apiBase, collectionId, setCollection)
+        getDetails(contract, tokenId, setDetails)
+        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
@@ -172,16 +173,22 @@ const ListModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
+    if (!maker) throw 'maker is undefined'
+
+    const query: Parameters<typeof listToken>['0']['query'] = {
+      orderbook: 'reservoir',
+      maker,
+      weiPrice: ethers.utils.parseEther(listingPrice).toString(),
+      token: `${token_?.contract}:${token_?.tokenId}`,
+      expirationTime: expirationValue,
+    }
+
+    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
+
     await listToken({
-      query: {
-        orderbook: 'reservoir',
-        maker,
-        weiPrice: ethers.utils.parseEther(listingPrice).toString(),
-        token: `${token_?.contract}:${token_?.tokenId}`,
-        expirationTime: expirationValue,
-      },
+      query,
       signer,
-      apiBase,
+      apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
       handleSuccess,
       handleError,
@@ -198,19 +205,23 @@ const ListModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    if (!signer) return
+    if (!maker) throw 'maker is undefined'
+
+    const query: Parameters<typeof listToken>['0']['query'] = {
+      orderbook: 'opensea',
+      maker,
+      weiPrice: ethers.utils.parseEther(listingPrice).toString(),
+      token: `${token_?.contract}:${token_?.tokenId}`,
+      expirationTime: expirationValue,
+    }
+
+    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
 
     if (postOnOpenSea) {
       await listToken({
-        query: {
-          orderbook: 'opensea',
-          maker,
-          weiPrice: ethers.utils.parseEther(listingPrice).toString(),
-          token: `${token_?.contract}:${token_?.tokenId}`,
-          expirationTime: expirationValue,
-        },
+        query,
         signer,
-        apiBase,
+        apiBase: RESERVOIR_API_BASE,
         setState: setSteps,
         handleSuccess,
         handleError,

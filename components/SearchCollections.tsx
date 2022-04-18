@@ -11,7 +11,7 @@ type Props = {
   communityId?: string
 }
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
@@ -20,36 +20,44 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     paths['/collections/v2']['get']['responses']['200']['schema']
   >({})
   const [initialResults, setInitialResults] = useState<
-    paths['/collections/v2']['get']['responses']['200']['schema']
-  >({})
+    paths['/collections/v2']['get']['responses']['200']['schema'] | undefined
+  >(undefined)
 
-  // LOAD INITIAL RESULTS
-  useEffect(() => {
-    if (!apiBase) return
-
-    const url = new URL('/collections/v2', apiBase)
+  function getHref(search?: string) {
+    const pathname = `${PROXY_API_BASE}/collections/v2`
 
     const query: paths['/collections/v2']['get']['parameters']['query'] = {
       sortBy: '7DayVolume',
     }
 
-    if (communityId && communityId !== 'www' && communityId !== 'localhost')
-      query['community'] = communityId
-
-    setParams(url, query)
-
-    async function initialData(url: URL) {
-      const res = await fetch(url.href)
-
-      const json =
-        (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
-
-      setResults({ collections: json.collections })
-      setInitialResults({ collections: json.collections })
+    if (communityId && communityId !== 'www' && communityId !== 'localhost') {
+      query.community = communityId
     }
 
-    initialData(url)
-  }, [apiBase, communityId])
+    if (search) query.name = search
+
+    const href = setParams(pathname, query)
+
+    return href
+  }
+
+  async function loadInitialResults(href: string) {
+    const res = await fetch(href)
+
+    const json =
+      (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
+
+    setResults(json)
+    setInitialResults(json)
+  }
+
+  // LOAD INITIAL RESULTS
+  useEffect(() => {
+    if (focused && !initialResults) {
+      const href = getHref()
+      loadInitialResults(href)
+    }
+  }, [focused])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
@@ -57,42 +65,32 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
 
   const debouncedSearch = useCallback(
     debounce(async (value) => {
+      // Do not search empty string
       if (value === '') {
         setResults({})
         return
       }
+
       // Fetch new results
       setCount(countRef.current)
 
-      if (communityId && communityId !== 'www' && communityId !== 'localhost') {
-        query.community = communityId
-      }
-
-      query.name = value
-
-      setParams(url, query)
+      const href = getHref(value)
 
       try {
-        const res = await fetch(url.href)
+        const res = await fetch(href)
 
         const data =
           (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
-        setResults({ collections: data.collections })
+        setResults(data)
       } catch (err) {
         console.error(err)
       }
     }, 700),
     []
   )
-
-  const url = new URL('/collections/v2', apiBase)
-
-  const query: paths['/collections/v2']['get']['parameters']['query'] = {
-    sortBy: '7DayVolume',
-  }
 
   const isEmpty = results?.collections?.length === 0
 

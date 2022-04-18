@@ -22,12 +22,14 @@ import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
-type Details = paths['/tokens/details/v2']['get']['responses']['200']['schema']
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
+
+type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {
   env: {
-    apiBase: string
     chainId: ChainId
     openSeaApiKey: string | undefined
   }
@@ -121,8 +123,8 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(env.apiBase, contract, tokenId, setDetails)
-        getCollection(env.apiBase, collectionId, setCollection)
+        getDetails(contract, tokenId, setDetails)
+        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
@@ -193,19 +195,22 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    if (!signer) return
+    if (!signer) throw 'signer is undefined'
+
+    const query: Parameters<typeof placeBid>['0']['query'] = {
+      maker: await signer.getAddress(),
+      weiPrice: calculations.total.toString(),
+      orderbook: 'reservoir',
+      expirationTime: expirationValue,
+      token: `${token.token?.contract}:${token.token?.tokenId}`,
+    }
+
+    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
 
     await placeBid({
-      query: {
-        maker: await signer.getAddress(),
-        weiPrice: calculations.total.toString(),
-        orderbook: 'reservoir',
-        expirationTime: expirationValue,
-        // contract: token.token?.contract,
-        token: `${token.token?.contract}:${token.token?.tokenId}`,
-      },
+      query,
       signer,
-      apiBase: env.apiBase,
+      apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
       handleSuccess,
       handleError,
@@ -228,20 +233,23 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    if (!signer) return
+    if (!signer) throw 'signer is undefined'
+
+    const query: Parameters<typeof placeBid>['0']['query'] = {
+      maker: await signer.getAddress(),
+      weiPrice: calculations.total.toString(),
+      orderbook: 'opensea',
+      expirationTime: expirationValue,
+      token: `${token.token?.contract}:${token.token?.tokenId}`,
+    }
+
+    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
 
     if (postOnOpenSea) {
       await placeBid({
-        query: {
-          maker: await signer.getAddress(),
-          weiPrice: calculations.total.toString(),
-          orderbook: 'opensea',
-          expirationTime: expirationValue,
-          // contract: token.token?.contract,
-          token: `${token.token?.contract}:${token.token?.tokenId}`,
-        },
+        query,
         signer,
-        apiBase: env.apiBase,
+        apiBase: RESERVOIR_API_BASE,
         setState: setSteps,
         handleSuccess,
         handleError,

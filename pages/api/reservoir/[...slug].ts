@@ -33,16 +33,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   setParams(url, query)
 
   try {
-    if (!RESERVOIR_API_KEY) throw 'NO API KEY'
-
     const options: RequestInit | undefined = {
       method,
-      headers: {
-        'x-api-key': RESERVOIR_API_KEY,
-      },
     }
 
-    if (body) options.body = body
+    const headers = new Headers()
+
+    if (RESERVOIR_API_KEY) headers.set('x-api-key', RESERVOIR_API_KEY)
+
+    if (typeof body === 'object') {
+      headers.set('Content-Type', 'application/json')
+      options.body = JSON.stringify(body)
+    }
+
+    options.headers = headers
 
     const response = await fetch(url.href, options)
 

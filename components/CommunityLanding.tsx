@@ -8,13 +8,12 @@ const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 
 type Props = {
-  apiBase: string
   collectionId: string
   mode: string
 }
 
-const CommunityLanding: FC<Props> = ({ apiBase, collectionId, mode }) => {
-  const communities = useCommunity(apiBase, collectionId)
+const CommunityLanding: FC<Props> = ({ collectionId, mode }) => {
+  const communities = useCommunity(collectionId)
 
   const { data } = communities.communities
 

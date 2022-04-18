@@ -1,22 +1,20 @@
 import { ComponentProps, FC } from 'react'
 import { DateTime } from 'luxon'
-import useUserPositions from 'hooks/useUserPositions'
 import FormatEth from 'components/FormatEth'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
-import setParams from 'lib/params'
+import useUserBids from 'hooks/useUserBids'
 
 type Props = {
-  data: ReturnType<typeof useUserPositions>
+  data: ReturnType<typeof useUserBids>
   isOwner: boolean
   maker: string
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>[0]['data']
-    apiBase: string
     collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -25,16 +23,16 @@ type Props = {
 }
 
 const UserOffersTable: FC<Props> = ({
-  data: { positions, ref },
+  data: { orders, ref },
   maker,
   mutate,
   modal,
   isOwner,
 }) => {
-  const { data } = positions
-  const positionsFlat = data ? data.flatMap(({ positions }) => positions) : []
+  const { data } = orders
+  const ordersFlat = data ? data.flatMap(({ orders }) => orders) : []
 
-  if (positionsFlat.length === 0) {
+  if (ordersFlat.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center">
         You have not made any offers.
@@ -64,7 +62,7 @@ const UserOffersTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {positionsFlat?.map((position, index, arr) => {
+          {ordersFlat?.map((position, index, arr) => {
             const {
               collectionName,
               contract,
@@ -132,7 +130,6 @@ const UserOffersTable: FC<Props> = ({
                 {isOwner && (
                   <td className="reservoir-body whitespace-nowrap px-6 py-4">
                     <CancelOffer
-                      apiBase={modal.apiBase}
                       data={{
                         collectionId: modal?.collectionId,
                         id,
@@ -161,45 +158,33 @@ export default UserOffersTable
 
 function processPosition(
   position:
-    | NonNullable<
-        NonNullable<Props['data']['positions']['data']>[0]['positions']
-      >[0]
+    | NonNullable<NonNullable<Props['data']['orders']['data']>[0]['orders']>[0]
     | undefined
 ) {
-  const kind = position?.set?.metadata?.kind
+  const kind = position?.metadata?.kind
   // @ts-ignore
-  const key = position?.set?.metadata?.data?.attributes?.[0]?.key
+  const key = position?.metadata?.data?.attributes?.[0]?.key
   // @ts-ignore
-  const value = position?.set?.metadata?.data?.attributes?.[0]?.value
+  const value = position?.metadata?.data?.attributes?.[0]?.value
 
   let tokenId
-  let contract
+  let contract = position?.tokenSetId?.split(':')[1]
   let href
 
   switch (kind) {
     case 'token':
-      tokenId = position?.set?.id?.split(':')[2]
-      contract = position?.set?.id?.split(':')[1]
+      tokenId = position?.tokenSetId?.split(':')[2]
       href = `/${contract}/${tokenId}`
       break
     // @ts-ignore
     case 'attribute':
       tokenId = undefined
-      contract = position?.set?.id?.split(':')[1]
-
-      // const url = new URL(`/collections/${position?.set?.id?.split(':')[1]}`)
-
-      // setParams(url, {`attributes[${key}]`: value})
-
-      href = `/collections/${
-        position?.set?.id?.split(':')[1]
-      }?attributes[${key}]=${value}`
+      href = `/collections/${contract}?attributes[${key}]=${value}`
       break
     // @ts-ignore
     case 'collection':
       tokenId = undefined
-      contract = position?.set?.id?.split(':')[1]
-      href = `/collections/${position?.set?.id?.split(':')[1]}`
+      href = `/collections/${contract}`
       break
 
     default:
@@ -212,17 +197,15 @@ function processPosition(
     kind,
     contract,
     tokenId,
-    image: position?.set?.metadata?.data?.image,
-    tokenName: position?.set?.metadata?.data?.tokenName,
+    image: position?.metadata?.data?.image,
+    tokenName: position?.metadata?.data?.tokenName,
     expiration:
-      position?.primaryOrder?.expiration === 0
+      position?.expiration === 0
         ? 'Never'
-        : DateTime.fromMillis(
-            +`${position?.primaryOrder?.expiration}000`
-          ).toRelative(),
-    id: position?.primaryOrder?.id,
-    collectionName: position?.set?.metadata?.data?.collectionName,
-    price: position?.primaryOrder?.value,
+        : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
+    id: position?.id,
+    collectionName: position?.metadata?.data?.collectionName,
+    price: position?.value,
   }
 
   return { ...data, href }

@@ -4,26 +4,22 @@ import React, { FC } from 'react'
 import CollectionsGrid from './CollectionsGrid'
 import SearchCollection from './SearchCollections'
 
-const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
-const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
+const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 
-type Props = {
-  apiBase: string
-}
+const Homepage: FC = () => {
+  const collections = useCollections()
 
-const Homepage: FC<Props> = ({ apiBase }) => {
-  const collections = useCollections(apiBase)
-
-  const title = metaTitle ? (
-    <title>{metaTitle}</title>
+  const title = META_TITLE ? (
+    <title>{META_TITLE}</title>
   ) : (
     <title>
       Reservoir Market | Open source NFT marketplace powered by Reservoir
     </title>
   )
-  const description = metaDescription ? (
-    <meta name="description" content={metaDescription} />
+  const description = META_DESCRIPTION ? (
+    <meta name="description" content={META_DESCRIPTION} />
   ) : (
     <meta
       name="description"
