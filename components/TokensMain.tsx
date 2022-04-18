@@ -207,7 +207,7 @@ const TokensMain: FC<Props> = ({
   const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
     stats?.mutate()
 
-  const execute = async () => {
+  const execute = async (token: string, taker: string) => {
     await checkWallet(signer, setToast, connect, connectData)
     if (isOwner) {
       setToast({
@@ -220,7 +220,7 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
-      token: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
+      query: { token, taker },
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
@@ -305,6 +305,9 @@ const TokensMain: FC<Props> = ({
     </>
   )
 
+  const token = `${floor?.token?.contract}:${floor?.token?.tokenId}`
+  const taker = accountData?.address
+
   return (
     <>
       <Head>
@@ -316,7 +319,7 @@ const TokensMain: FC<Props> = ({
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
-            onClick={execute}
+            onClick={() => token && taker && execute(token, taker)}
             className="btn-primary-fill"
           >
             {waitingTx ? (

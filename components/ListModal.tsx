@@ -16,6 +16,8 @@ import { checkWallet } from 'lib/wallet'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 
 type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -184,6 +186,7 @@ const ListModal: FC<Props> = ({
     }
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
+    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
 
     await listToken({
       query,
@@ -216,6 +219,7 @@ const ListModal: FC<Props> = ({
     }
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
+    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
 
     if (postOnOpenSea) {
       await listToken({
