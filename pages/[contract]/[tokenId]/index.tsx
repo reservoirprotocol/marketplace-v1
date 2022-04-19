@@ -147,6 +147,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     </>
   )
 
+  const owner =
+    token?.token?.kind === 'erc1155' && token?.market?.floorAsk?.maker
+      ? token?.market?.floorAsk?.maker
+      : token?.token?.owner
+
   return (
     <Layout navbar={{ mode, communityId }}>
       <Head>
@@ -190,10 +195,10 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
         )}
         <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
           <div className="reservoir-h6 mb-4">Owner</div>
-          {token?.token?.owner && (
-            <Link href={`/address/${token.token.owner}`}>
+          {owner && (
+            <Link href={`/address/${owner}`}>
               <a className="inline-block">
-                <EthAccount address={token.token.owner} />
+                <EthAccount address={owner} />
               </a>
             </Link>
           )}
