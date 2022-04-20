@@ -3,5 +3,5 @@
   font-style: normal;
   font-weight: 100;
   font-display: swap;
-  src: url('/fonts/AldotheApache/AldotheApache.woff?v=3.19') format('woff');
+  src: url('/fonts/AldotheApache/AldotheApache.woff') format('woff');
 }
