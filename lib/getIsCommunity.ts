@@ -10,6 +10,7 @@ export default function getIsCommunity(communityId: string) {
     'forgottenrunes',
     'artblocks',
     'feltzine',
+    'afrodroids',
   ].includes(communityId)
 
   return isCommunity
