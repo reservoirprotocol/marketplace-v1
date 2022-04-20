@@ -50,13 +50,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const response = await fetch(url.href, options)
 
-    const json = await response.json()
+    let data: any
 
-    if (!response.ok) throw json
+    const contentType = response.headers.get('content-type')
+
+    if (contentType?.includes('application/json')) {
+      data = await response.json()
+    } else {
+      data = await response.text()
+    }
+
+    if (!response.ok) throw data
 
     // 200 OK
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
-    res.status(200).json(json)
+    res.status(200).json(data)
   } catch (error) {
     // 400 Bad Request
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
