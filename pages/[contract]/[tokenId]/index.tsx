@@ -29,6 +29,8 @@ import {
   FiRefreshCcw,
   FiUsers,
 } from 'react-icons/fi'
+import useAsks from 'hooks/useAsks'
+import Listings from 'components/token/Listings'
 
 // Environment variables
 // For more information about these variables
@@ -107,6 +109,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
   })
+  const asks = useAsks(
+    undefined,
+    details.data?.tokens?.[0]?.token?.kind,
+    `${details.data?.tokens?.[0]?.token?.contract}:${details.data?.tokens?.[0]?.token?.tokenId}`
+  )
 
   if (details.error || !chainId) {
     console.debug({ chainId })
@@ -230,22 +237,6 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
         ></script> */}
       </Head>
       {/* TOKEN IMAGE */}
-      <div className="col-span-full">
-        <button
-          className="btn-primary-outline ml-auto p-4"
-          title="Refresh token"
-          disabled={refreshLoading}
-          onClick={() =>
-            refreshToken(`${token?.token?.contract}:${token?.token?.tokenId}`)
-          }
-        >
-          <FiRefreshCcw
-            className={`h-5 w-5 ${
-              refreshLoading ? 'animate-spin-reverse' : ''
-            }`}
-          />
-        </button>
-      </div>
       <article className="col-span-full grid content-start gap-4 md:col-span-4 lg:col-span-5 lg:col-start-2">
         {/* TEST MODEL-VIEWER WITH LOCAL FILES */}
         {/* <model-viewer
@@ -280,7 +271,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 : `/collections/${collection.data?.collection?.id}`
             }
           >
-            <a className="mb-4 inline-flex items-center gap-2">
+            <a className="inline-flex items-center gap-2">
               <img
                 src={optimizeImage(
                   collection.data?.collection?.metadata?.imageUrl as string,
@@ -294,7 +285,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               </span>
             </a>
           </Link>
-          <div className="reservoir-body-2">{token?.token?.description}</div>
+          {token?.token?.description && (
+            <div className="reservoir-body-2 mt-4">
+              {token?.token?.description}
+            </div>
+          )}
         </article>
         <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
@@ -346,19 +341,41 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
             <div className="reservoir-subtitle">Token ID</div>
             <div className="reservoir-h6">{token?.token?.tokenId}</div>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
             <div className="reservoir-subtitle">Token Standard</div>
             <div className="reservoir-h6 uppercase">{token?.token?.kind}</div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="reservoir-subtitle">Metadata Refresh</div>
+            <div className="reservoir-h6 flex items-center gap-2">
+              refresh{' '}
+              <button
+                className="btn-primary-outline ml-auto p-2"
+                title="Refresh token"
+                disabled={refreshLoading}
+                onClick={() =>
+                  refreshToken(
+                    `${token?.token?.contract}:${token?.token?.tokenId}`
+                  )
+                }
+              >
+                <FiRefreshCcw
+                  className={`h-4 w-4 ${
+                    refreshLoading ? 'animate-spin-reverse' : ''
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </article>
       </article>
       <div className="col-span-full grid content-start gap-4 md:col-span-4 lg:col-span-5">
         <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
-          <div className="reservoir-h2 mb-6 overflow-hidden">
+          <div className="reservoir-h3 mb-6 overflow-hidden">
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </div>
 
-          {token?.token?.kind === 'erc1155' && (
+          {/* {token?.token?.kind === 'erc1155' && (
             <div className="mb-4 flex justify-evenly">
               <div className="flex items-center gap-2">
                 <FiUsers className="h-4 w-4" />
@@ -369,7 +386,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 <span className="reservoir-h5">Total</span>
               </div>
             </div>
-          )}
+          )} */}
 
           <div className="reservoir-h6 mb-2">Owner</div>
           {owner && (
@@ -405,7 +422,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 <FormatEth
                   amount={token?.market?.floorAsk?.price}
                   maximumFractionDigits={4}
-                  logoWidth={20}
+                  logoWidth={16}
                 />
               }
             >
@@ -438,7 +455,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 <FormatEth
                   amount={token?.market?.topBid?.value}
                   maximumFractionDigits={4}
-                  logoWidth={20}
+                  logoWidth={16}
                 />
               }
             >
@@ -473,7 +490,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               )}
             </Price>
           </div>
-          <div className="mt-6 flex justify-center">
+          <div
+            className={`${
+              (isOwner && isListed) || isTopBidder ? 'mt-6' : ''
+            } flex justify-center`}
+          >
             <CancelOffer
               data={{
                 collection: collection.data,
@@ -498,6 +519,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
             />
           </div>
         </article>
+        <Listings asks={asks} />
         <TokenAttributes token={token?.token} />
       </div>
     </Layout>
@@ -512,10 +534,12 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
   source,
   children,
 }) => (
-  <div className="grid space-y-5">
-    <div className="reservoir-h5">{title}</div>
-    {source}
-    <div className="reservoir-h1">{price}</div>
+  <div className="flex flex-col space-y-5">
+    <div className="flex-grow">
+      <div className="reservoir-h5">{title}</div>
+      <div>{source}</div>
+    </div>
+    <div className="reservoir-h3">{price}</div>
     {children}
   </div>
 )

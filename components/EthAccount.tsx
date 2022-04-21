@@ -38,18 +38,27 @@ type Props = {
   }
   title?: string
   side?: 'left' | 'right'
+  hideIcon?: boolean
 }
 
-const EthAccount: FC<Props> = ({ address, ens, title, side = 'right' }) => {
-  const icon = ens?.avatar ? (
-    <img
-      className="block h-6 w-6 rounded-full"
-      src={ens.avatar}
-      alt="ENS Avatar"
-    />
-  ) : (
-    <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
-  )
+const EthAccount: FC<Props> = ({
+  address,
+  ens,
+  title,
+  side = 'right',
+  hideIcon,
+}) => {
+  const icon =
+    !hideIcon &&
+    (ens?.avatar ? (
+      <img
+        className="block h-6 w-6 rounded-full"
+        src={ens.avatar}
+        alt="ENS Avatar"
+      />
+    ) : (
+      <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
+    ))
 
   return (
     <div className="flex items-center gap-2">
