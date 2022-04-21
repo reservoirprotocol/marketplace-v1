@@ -10,7 +10,7 @@ import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   tokens: SWRInfiniteResponse<
-    paths['/tokens/v2']['get']['responses']['200']['schema'],
+    paths['/tokens/v4']['get']['responses']['200']['schema'],
     any
   >
   collectionImage: string | undefined
@@ -53,7 +53,12 @@ const TokensGrid: FC<Props> = ({
               key={`${token?.collection?.name}${idx}`}
               href={`/${token?.contract}/${token?.tokenId}`}
             >
-              <a className="group mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg">
+              <a className="group relative mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg">
+                <img
+                  className="absolute top-4 left-4 h-8 w-8"
+                  src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
+                  alt=""
+                />
                 {token?.image ? (
                   <img
                     src={optimizeImage(token?.image, 250)}
