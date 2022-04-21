@@ -7,8 +7,6 @@ import Link from 'next/link'
 import { FC } from 'react'
 import Card from './Card'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-
 type Props = {
   asks: ReturnType<typeof useAsks>
 }
@@ -108,11 +106,11 @@ function processOrder(
       ? 'Never'
       : DateTime.fromMillis(+`${order?.validUntil}000`).toRelative()
 
-  const url = new URL('/redirect/logo/v1', RESERVOIR_API_BASE)
+  const url = new URL('/redirect/logo/v1', 'https://api.reservoir.tools')
 
   const query: paths['/redirect/logo/v1']['get']['parameters']['query'] = {
     // @ts-ignore
-    source: order?.source?.id,
+    source: order?.source?.name,
   }
 
   setParams(url, query)
