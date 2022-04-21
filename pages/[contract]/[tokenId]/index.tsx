@@ -23,12 +23,7 @@ import Toast from 'components/Toast'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
 import { paths } from '@reservoir0x/client-sdk'
-import {
-  FiDatabase,
-  FiExternalLink,
-  FiRefreshCcw,
-  FiUsers,
-} from 'react-icons/fi'
+import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import useAsks from 'hooks/useAsks'
 import Listings from 'components/token/Listings'
 

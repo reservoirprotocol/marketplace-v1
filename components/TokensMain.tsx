@@ -40,7 +40,7 @@ type Props = {
   chainId: ChainId
   collectionId: string | undefined
   fallback: {
-    tokens: paths['/tokens/v2']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
     collection: paths['/collection/v1']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
