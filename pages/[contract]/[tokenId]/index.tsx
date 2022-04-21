@@ -326,7 +326,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               <div className="reservoir-subtitle">Contract Address</div>
               <div>
                 <a
-                  className="reservoir-h6 flex items-center gap-2"
+                  className="reservoir-h6 flex items-center gap-2 text-primary-700"
                   target="_blank"
                   rel="noopener noreferrer"
                   href={`https://etherscan.io/address/${token?.token?.contract}`}
@@ -347,25 +347,23 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
           </div>
           <div className="flex items-center justify-between">
             <div className="reservoir-subtitle">Metadata Refresh</div>
-            <div className="reservoir-h6 flex items-center gap-2">
+            <button
+              className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700"
+              title="Refresh token"
+              disabled={refreshLoading}
+              onClick={() =>
+                refreshToken(
+                  `${token?.token?.contract}:${token?.token?.tokenId}`
+                )
+              }
+            >
               refresh{' '}
-              <button
-                className="btn-primary-outline ml-auto p-2"
-                title="Refresh token"
-                disabled={refreshLoading}
-                onClick={() =>
-                  refreshToken(
-                    `${token?.token?.contract}:${token?.token?.tokenId}`
-                  )
-                }
-              >
-                <FiRefreshCcw
-                  className={`h-4 w-4 ${
-                    refreshLoading ? 'animate-spin-reverse' : ''
-                  }`}
-                />
-              </button>
-            </div>
+              <FiRefreshCcw
+                className={`h-4 w-4 ${
+                  refreshLoading ? 'animate-spin-reverse' : ''
+                }`}
+              />
+            </button>
           </div>
         </article>
       </article>

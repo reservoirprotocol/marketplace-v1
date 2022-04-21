@@ -1,5 +1,5 @@
 import { paths, setParams } from '@reservoir0x/client-sdk'
-import EthAccount from 'components/EthAccount'
+import EthAccount, { shrinkAddress } from 'components/EthAccount'
 import FormatEth from 'components/FormatEth'
 import useAsks from 'hooks/useAsks'
 import { DateTime } from 'luxon'
@@ -22,14 +22,14 @@ const Listings: FC<Props> = ({ asks }) => {
     <Card>
       <div className="reservoir-h5 mb-4">Listings</div>
       <div className="max-h-96 overflow-hidden overflow-y-auto rounded-2xl">
-        <table className="min-w-full table-auto divide-y divide-gray-200 overflow-y-auto">
-          <thead className="bg-gray-50">
+        <table className="min-w-full table-auto overflow-y-auto">
+          <thead>
             <tr>
               {['Unit Price', 'Expiration', 'From'].map((item) => (
                 <th
                   key={item}
                   scope="col"
-                  className="reservoir-label-l px-6 py-3 text-left"
+                  className="reservoir-subtitle px-6 py-3 text-left"
                 >
                   {item}
                 </th>
@@ -48,12 +48,12 @@ const Listings: FC<Props> = ({ asks }) => {
                   className="group h-[80px] bg-white even:bg-gray-50"
                 >
                   {/* UNIT PRICE */}
-                  <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                  <td className="reservoir-h6 whitespace-nowrap px-6 py-4">
                     <FormatEth amount={unitPrice} maximumFractionDigits={4} />
                   </td>
 
                   {/* TIME */}
-                  <td className="whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                  <td className="reservoir-small whitespace-nowrap px-6 py-4 capitalize text-gray-500">
                     {expiration}
                   </td>
 
@@ -72,11 +72,8 @@ const Listings: FC<Props> = ({ asks }) => {
                           <img src={source?.logo} alt="" />
                         </a>
                         <Link href={from.href}>
-                          <a>
-                            <EthAccount
-                              address={from.address}
-                              hideIcon={true}
-                            />
+                          <a className="reservoir-subtitle text-primary-700">
+                            {shrinkAddress(from.address)}
                           </a>
                         </Link>
                       </div>
