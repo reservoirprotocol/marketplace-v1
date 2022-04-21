@@ -21,6 +21,7 @@ export default function useAsks(
 
     let query: paths['/orders/asks/v1']['get']['parameters']['query'] = {
       token,
+      sortBy: 'price',
     }
 
     const href = setParams(pathname, query)
