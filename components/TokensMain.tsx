@@ -207,7 +207,7 @@ const TokensMain: FC<Props> = ({
   const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
     stats?.mutate()
 
-  const execute = async () => {
+  const execute = async (token: string, taker: string) => {
     await checkWallet(signer, setToast, connect, connectData)
     if (isOwner) {
       setToast({
@@ -220,7 +220,7 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
-      token: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
+      query: { token, taker },
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
@@ -305,6 +305,15 @@ const TokensMain: FC<Props> = ({
     </>
   )
 
+  const token = `${floor?.token?.contract}:${floor?.token?.tokenId}`
+  const taker = accountData?.address
+
+  const social = {
+    twitterUsername: collection.data?.collection?.metadata?.twitterUsername,
+    externalUrl: collection.data?.collection?.metadata?.externalUrl,
+    discordUrl: collection.data?.collection?.metadata?.discordUrl,
+  }
+
   return (
     <>
       <Head>
@@ -312,11 +321,11 @@ const TokensMain: FC<Props> = ({
         {description}
         {image}
       </Head>
-      <Hero stats={statsObj} header={header}>
+      <Hero social={social} stats={statsObj} header={header}>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
-            onClick={execute}
+            onClick={() => token && taker && execute(token, taker)}
             className="btn-primary-fill"
           >
             {waitingTx ? (

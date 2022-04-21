@@ -138,12 +138,11 @@ const CancelOffer: FC<Props> = ({
     id = data?.id
   }
 
-  const execute = async () => {
+  const execute = async (id: string, maker: string) => {
     await checkWallet(signer, setToast, connect, connectData)
     setWaitingTx(true)
     await cancelOrder({
-      id,
-      maker,
+      query: { id, maker },
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
@@ -158,7 +157,7 @@ const CancelOffer: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
-          onClick={execute}
+          onClick={() => id && maker && execute(id, maker)}
           className="btn-primary-outline"
         >
           {waitingTx ? (

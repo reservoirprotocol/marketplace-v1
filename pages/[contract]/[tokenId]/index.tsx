@@ -13,7 +13,7 @@ import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
-import EthAccount from 'components/EthAccount'
+import EthAccount, { shrinkAddress } from 'components/EthAccount'
 import Link from 'next/link'
 import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
@@ -23,6 +23,14 @@ import Toast from 'components/Toast'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
 import { paths } from '@reservoir0x/client-sdk'
+import {
+  FiDatabase,
+  FiExternalLink,
+  FiRefreshCcw,
+  FiUsers,
+} from 'react-icons/fi'
+import useAsks from 'hooks/useAsks'
+import Listings from 'components/token/Listings'
 
 // Environment variables
 // For more information about these variables
@@ -32,6 +40,7 @@ import { paths } from '@reservoir0x/client-sdk'
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 // OPTIONAL
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
@@ -56,6 +65,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     extension: null,
   })
   const collection = useCollection(undefined, collectionId)
+  const [refreshLoading, setRefreshLoading] = useState(false)
 
   const contract = router.query?.contract?.toString()
   const tokenId = router.query?.tokenId?.toString()
@@ -99,6 +109,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
   })
+  const asks = useAsks(
+    undefined,
+    details.data?.tokens?.[0]?.token?.kind,
+    `${details.data?.tokens?.[0]?.token?.contract}:${details.data?.tokens?.[0]?.token?.tokenId}`
+  )
 
   if (details.error || !chainId) {
     console.debug({ chainId })
@@ -114,6 +129,10 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
       accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
+
+  const sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.name}`
+
+  const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
 
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
     data
@@ -147,6 +166,61 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     </>
   )
 
+  const owner =
+    token?.token?.kind === 'erc1155' && token?.market?.floorAsk?.maker
+      ? token?.market?.floorAsk?.maker
+      : token?.token?.owner
+
+  async function refreshToken(token: string | undefined) {
+    function handleError(message?: string) {
+      setToast({
+        kind: 'error',
+        message: message || 'Request to refresh collection was rejected.',
+        title: 'Refresh collection failed',
+      })
+
+      setRefreshLoading(false)
+    }
+
+    try {
+      if (!token) throw new Error('No token')
+
+      const data = {
+        token,
+      }
+
+      const pathname = `${PROXY_API_BASE}/tokens/refresh/v1`
+
+      setRefreshLoading(true)
+
+      const res = await fetch(pathname, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const json = await res.json()
+        handleError(json?.message)
+        return
+      }
+
+      setToast({
+        kind: 'success',
+        message: 'Request to refresh collection was accepted.',
+        title: 'Refresh collection',
+      })
+    } catch (err) {
+      handleError()
+      console.error(err)
+      return
+    }
+
+    setRefreshLoading(false)
+  }
+
   return (
     <Layout navbar={{ mode, communityId }}>
       <Head>
@@ -163,7 +237,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
         ></script> */}
       </Head>
       {/* TOKEN IMAGE */}
-      <article className="col-span-full grid content-start items-start gap-4 md:col-span-4 lg:col-span-5 lg:col-start-2">
+      <article className="col-span-full grid content-start gap-4 md:col-span-4 lg:col-span-5 lg:col-start-2">
         {/* TEST MODEL-VIEWER WITH LOCAL FILES */}
         {/* <model-viewer
           alt="Neil Armstrong's Spacesuit from the Smithsonian Digitization Programs Office and National Air and Space Museum"
@@ -188,23 +262,8 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
             tokenImage={optimizeImage(token?.token?.image, 533)}
           />
         )}
-        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
-          <div className="reservoir-h6 mb-4">Owner</div>
-          {token?.token?.owner && (
-            <Link href={`/address/${token.token.owner}`}>
-              <a className="inline-block">
-                <EthAccount address={token.token.owner} />
-              </a>
-            </Link>
-          )}
-        </article>
-      </article>
-      <div className="col-span-full grid gap-4 md:col-span-4 lg:col-span-5">
-        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
-          <div className="reservoir-h2 mb-3 overflow-hidden">
-            {token?.token?.name || `#${token?.token?.tokenId}`}
-          </div>
-          <div className="reservoir-h6 mb-2">Collection</div>
+        <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
+          <div className="reservoir-h5 mb-4">Collection Info</div>
           <Link
             href={
               mode === 'collection'
@@ -212,7 +271,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 : `/collections/${collection.data?.collection?.id}`
             }
           >
-            <a className="reservoir-body mb-1 inline-flex items-center gap-2">
+            <a className="inline-flex items-center gap-2">
               <img
                 src={optimizeImage(
                   collection.data?.collection?.metadata?.imageUrl as string,
@@ -221,21 +280,147 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 alt="collection avatar"
                 className="h-9 w-9 rounded-full"
               />
-              <span className="reservoir-body">
+              <span className="reservoir-h6">
                 {token?.token?.collection?.name}
               </span>
             </a>
           </Link>
+          {token?.token?.description && (
+            <div className="reservoir-body-2 mt-4">
+              {token?.token?.description}
+            </div>
+          )}
         </article>
-        <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6">
+        <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="reservoir-h5">Token Info</div>
+            <div className="flex items-center gap-2">
+              <a
+                className="reservoir-h6"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://looksrare.org/collections/${token?.token?.contract}/${token?.token?.tokenId}`}
+              >
+                <img
+                  src="/icons/LooksRare.svg"
+                  alt="LooksRare Icon"
+                  className="h-6 w-6"
+                />
+              </a>
+              <a
+                className="reservoir-h6"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://opensea.io/assets/${token?.token?.contract}/${token?.token?.tokenId}`}
+              >
+                <img
+                  src="/icons/OpenSea.svg"
+                  alt="OpenSea Icon"
+                  className="h-6 w-6"
+                />
+              </a>
+            </div>
+          </div>
+          {token?.token?.contract && (
+            <div className="mb-4 flex items-center justify-between">
+              <div className="reservoir-subtitle">Contract Address</div>
+              <div>
+                <a
+                  className="reservoir-h6 flex items-center gap-2 text-primary-700"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://etherscan.io/address/${token?.token?.contract}`}
+                >
+                  {shrinkAddress(token?.token?.contract)}
+                  <FiExternalLink className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          )}
+          <div className="mb-4 flex items-center justify-between">
+            <div className="reservoir-subtitle">Token ID</div>
+            <div className="reservoir-h6">{token?.token?.tokenId}</div>
+          </div>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="reservoir-subtitle">Token Standard</div>
+            <div className="reservoir-h6 uppercase">{token?.token?.kind}</div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="reservoir-subtitle">Metadata Refresh</div>
+            <button
+              className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700"
+              title="Refresh token"
+              disabled={refreshLoading}
+              onClick={() =>
+                refreshToken(
+                  `${token?.token?.contract}:${token?.token?.tokenId}`
+                )
+              }
+            >
+              Refresh{' '}
+              <FiRefreshCcw
+                className={`h-4 w-4 ${
+                  refreshLoading ? 'animate-spin-reverse' : ''
+                }`}
+              />
+            </button>
+          </div>
+        </article>
+      </article>
+      <div className="col-span-full grid content-start gap-4 md:col-span-4 lg:col-span-5">
+        <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
+          <div className="reservoir-h3 mb-6 overflow-hidden">
+            {token?.token?.name || `#${token?.token?.tokenId}`}
+          </div>
+
+          {/* {token?.token?.kind === 'erc1155' && (
+            <div className="mb-4 flex justify-evenly">
+              <div className="flex items-center gap-2">
+                <FiUsers className="h-4 w-4" />
+                <span className="reservoir-h5">Owners</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FiDatabase className="h-4 w-4" />
+                <span className="reservoir-h5">Total</span>
+              </div>
+            </div>
+          )} */}
+
+          <div className="reservoir-h6 mb-2">Owner</div>
+          {owner && (
+            <Link href={`/address/${owner}`}>
+              <a className="inline-block">
+                <EthAccount address={owner} side="left" />
+              </a>
+            </Link>
+          )}
+        </article>
+        <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
           <div className="grid grid-cols-2 gap-8">
             <Price
               title="List Price"
+              source={
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={sourceRedirect}
+                  className="reservoir-body flex items-center gap-2"
+                >
+                  on {token?.market?.floorAsk?.source?.name}
+                  {
+                    <img
+                      className="h-6 w-6"
+                      src={sourceLogo}
+                      alt="Source Logo"
+                    />
+                  }
+                </a>
+              }
               price={
                 <FormatEth
                   amount={token?.market?.floorAsk?.price}
                   maximumFractionDigits={4}
-                  logoWidth={20}
+                  logoWidth={16}
                 />
               }
             >
@@ -268,7 +453,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 <FormatEth
                   amount={token?.market?.topBid?.value}
                   maximumFractionDigits={4}
-                  logoWidth={20}
+                  logoWidth={16}
                 />
               }
             >
@@ -303,7 +488,11 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               )}
             </Price>
           </div>
-          <div className="mt-6 flex justify-center">
+          <div
+            className={`${
+              (isOwner && isListed) || isTopBidder ? 'mt-6' : ''
+            } flex justify-center`}
+          >
             <CancelOffer
               data={{
                 collection: collection.data,
@@ -328,6 +517,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
             />
           </div>
         </article>
+        <Listings asks={asks} />
         <TokenAttributes token={token?.token} />
       </div>
     </Layout>
@@ -336,14 +526,18 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
 
 export default Index
 
-const Price: FC<{ title: string; price: ReactNode }> = ({
+const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
   title,
   price,
+  source,
   children,
 }) => (
-  <div className="grid space-y-5">
-    <div className="reservoir-h5">{title}</div>
-    <div className="reservoir-h1">{price}</div>
+  <div className="flex flex-col space-y-5">
+    <div className="flex-grow">
+      <div className="reservoir-h5">{title}</div>
+      <div>{source}</div>
+    </div>
+    <div className="reservoir-h3">{price}</div>
     {children}
   </div>
 )

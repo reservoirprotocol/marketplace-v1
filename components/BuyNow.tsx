@@ -5,7 +5,7 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
@@ -44,6 +44,7 @@ const BuyNow: FC<Props> = ({
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [{ data: connectData }, connect] = useConnect()
+  const [{ data: accountData }] = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -131,12 +132,15 @@ const BuyNow: FC<Props> = ({
     mutate && mutate()
   }
 
-  const execute = async () => {
+  const execute = async (token: string, taker: string) => {
     await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
     await buyToken({
-      token: `${token?.token?.contract}:${token?.token?.tokenId}`,
+      query: {
+        taker,
+        token,
+      },
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
@@ -145,6 +149,10 @@ const BuyNow: FC<Props> = ({
     })
     setWaitingTx(false)
   }
+
+  const tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
+
+  const taker = accountData?.address
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -155,7 +163,7 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={execute}
+          onClick={() => taker && tokenString && execute(tokenString, taker)}
           className="btn-primary-fill w-full"
         >
           {waitingTx ? (

@@ -1,6 +1,7 @@
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
 import { FC, useEffect, useState } from 'react'
+import { FiGlobe } from 'react-icons/fi'
 import FormatEth from './FormatEth'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
@@ -17,9 +18,14 @@ type Props = {
     image: string | undefined
     name: string | undefined
   }
+  social: {
+    twitterUsername: unknown
+    externalUrl: unknown
+    discordUrl: unknown
+  }
 }
 
-const Hero: FC<Props> = ({ stats, header, children }) => {
+const Hero: FC<Props> = ({ stats, header, children, social }) => {
   const [delay, setDelay] = useState(true)
   useEffect(() => {
     setTimeout(() => setDelay(false), 1500)
@@ -47,7 +53,47 @@ const Hero: FC<Props> = ({ stats, header, children }) => {
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
-            <h1 className="reservoir-h4 mb-1">{header.name}</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="reservoir-h4 mb-1">{header.name}</h1>
+              {typeof social.discordUrl === 'string' && (
+                <a
+                  className="reservoir-h6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={social.discordUrl}
+                >
+                  <img
+                    src="/icons/Discord.svg"
+                    alt="Discord Icon"
+                    className="h-6 w-6"
+                  />
+                </a>
+              )}
+              {typeof social.twitterUsername === 'string' && (
+                <a
+                  className="reservoir-h6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://twitter.com/${social.twitterUsername}`}
+                >
+                  <img
+                    src="/icons/Twitter.svg"
+                    alt="Twitter Icon"
+                    className="h-6 w-6"
+                  />
+                </a>
+              )}
+              {typeof social.externalUrl === 'string' && (
+                <a
+                  className="reservoir-h6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={social.externalUrl}
+                >
+                  <FiGlobe className="h-6 w-6" />
+                </a>
+              )}
+            </div>
             <div className="flex items-center gap-5">
               <Stat name="Top Offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />

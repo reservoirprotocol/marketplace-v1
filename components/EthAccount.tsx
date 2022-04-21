@@ -10,7 +10,7 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
  * @returns A shrinked version of the Ethereum address
  * with the middle characters removed.
  */
-function shrinkAddress(address: string, shrinkInidicator?: string) {
+export function shrinkAddress(address: string, shrinkInidicator?: string) {
   return address.slice(0, 4) + (shrinkInidicator || '…') + address.slice(-4)
 }
 
@@ -37,14 +37,35 @@ type Props = {
     name: string | null | undefined
   }
   title?: string
+  side?: 'left' | 'right'
+  hideIcon?: boolean
 }
 
-const EthAccount: FC<Props> = ({ address, ens, title }) => {
+const EthAccount: FC<Props> = ({
+  address,
+  ens,
+  title,
+  side = 'right',
+  hideIcon,
+}) => {
+  const icon =
+    !hideIcon &&
+    (ens?.avatar ? (
+      <img
+        className="block h-6 w-6 rounded-full"
+        src={ens.avatar}
+        alt="ENS Avatar"
+      />
+    ) : (
+      <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
+    ))
+
   return (
     <div className="flex items-center gap-2">
       {title && (
         <p className="reservoir-label-l capitalize text-gray-400">{title}</p>
       )}
+      {side === 'left' && icon}
       {ens?.name ? (
         <div title={address}>{shrinkEns(ens.name)}</div>
       ) : (
@@ -55,15 +76,7 @@ const EthAccount: FC<Props> = ({ address, ens, title }) => {
           {shrinkAddress(address)}
         </div>
       )}
-      {ens?.avatar ? (
-        <img
-          className="block h-6 w-6 rounded-full"
-          src={ens.avatar}
-          alt="ENS Avatar"
-        />
-      ) : (
-        <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
-      )}
+      {side === 'right' && icon}
     </div>
   )
 }
