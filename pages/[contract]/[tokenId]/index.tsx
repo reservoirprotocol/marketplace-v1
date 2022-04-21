@@ -130,9 +130,9 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
   const isListed = token?.market?.floorAsk?.price !== null
   const isInTheWrongNetwork = signer && network.chain?.id !== +chainId
 
-  const sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.id}`
+  const sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.name}`
 
-  const sourceRedirect = `${RESERVOIR_API_BASE}redirect/token/v1?source=${token?.market?.floorAsk?.source?.id}&token=${token?.token?.contract}:${token?.token?.tokenId}`
+  const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
 
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
     data
@@ -357,7 +357,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
                 )
               }
             >
-              refresh{' '}
+              Refresh{' '}
               <FiRefreshCcw
                 className={`h-4 w-4 ${
                   refreshLoading ? 'animate-spin-reverse' : ''

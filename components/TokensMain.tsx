@@ -308,6 +308,12 @@ const TokensMain: FC<Props> = ({
   const token = `${floor?.token?.contract}:${floor?.token?.tokenId}`
   const taker = accountData?.address
 
+  const social = {
+    twitterUsername: collection.data?.collection?.metadata?.twitterUsername,
+    externalUrl: collection.data?.collection?.metadata?.externalUrl,
+    discordUrl: collection.data?.collection?.metadata?.discordUrl,
+  }
+
   return (
     <>
       <Head>
@@ -315,7 +321,7 @@ const TokensMain: FC<Props> = ({
         {description}
         {image}
       </Head>
-      <Hero stats={statsObj} header={header}>
+      <Hero social={social} stats={statsObj} header={header}>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger
             disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
