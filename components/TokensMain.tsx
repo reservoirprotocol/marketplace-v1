@@ -322,52 +322,56 @@ const TokensMain: FC<Props> = ({
         {image}
       </Head>
       <Hero social={social} stats={statsObj} header={header}>
-        <Dialog.Root open={open} onOpenChange={setOpen}>
-          <Dialog.Trigger
-            disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
-            onClick={() => token && taker && execute(token, taker)}
-            className="btn-primary-fill"
-          >
-            {waitingTx ? (
-              <CgSpinner className="h-4 w-4 animate-spin" />
-            ) : (
-              `Buy for ${formatBN(floor?.price, 4)} ETH`
+        <div className="grid gap-4 md:flex">
+          <Dialog.Root open={open} onOpenChange={setOpen}>
+            <Dialog.Trigger
+              disabled={
+                floor?.price === null || waitingTx || isInTheWrongNetwork
+              }
+              onClick={() => token && taker && execute(token, taker)}
+              className="btn-primary-fill"
+            >
+              {waitingTx ? (
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                `Buy for ${formatBN(floor?.price, 4)} ETH`
+              )}
+            </Dialog.Trigger>
+            {steps && (
+              <Dialog.Portal>
+                <Dialog.Overlay>
+                  <ModalCard
+                    title="Buy token"
+                    loading={waitingTx}
+                    steps={steps}
+                  />
+                </Dialog.Overlay>
+              </Dialog.Portal>
             )}
-          </Dialog.Trigger>
-          {steps && (
-            <Dialog.Portal>
-              <Dialog.Overlay>
-                <ModalCard
-                  title="Buy token"
-                  loading={waitingTx}
-                  steps={steps}
-                />
-              </Dialog.Overlay>
-            </Dialog.Portal>
-          )}
-        </Dialog.Root>
-        {hasTokenSetId &&
-          (isAttributeModal ? (
-            <AttributeOfferModal
-              royalties={royalties}
-              signer={signer}
-              data={attributeData}
-              env={env}
-              stats={stats}
-              tokens={tokens}
-              setToast={setToast}
-            />
-          ) : (
-            <CollectionOfferModal
-              royalties={royalties}
-              signer={signer}
-              data={data}
-              env={env}
-              stats={stats}
-              tokens={tokens}
-              setToast={setToast}
-            />
-          ))}
+          </Dialog.Root>
+          {hasTokenSetId &&
+            (isAttributeModal ? (
+              <AttributeOfferModal
+                royalties={royalties}
+                signer={signer}
+                data={attributeData}
+                env={env}
+                stats={stats}
+                tokens={tokens}
+                setToast={setToast}
+              />
+            ) : (
+              <CollectionOfferModal
+                royalties={royalties}
+                signer={signer}
+                data={data}
+                env={env}
+                stats={stats}
+                tokens={tokens}
+                setToast={setToast}
+              />
+            ))}
+        </div>
       </Hero>
       <div className="col-span-full grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12">
         <hr className="col-span-full border-gray-300" />

@@ -49,50 +49,52 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
           } sm:h-[200px] sm:rounded-xl`}
         ></div>
       )}
-      <div className="col-span-full grid place-items-center gap-5 pt-4 pb-8 sm:pb-6 lg:flex lg:items-center lg:justify-between">
+      <div className="col-span-full grid place-items-center gap-5 px-4 pt-4 pb-8 sm:pb-6 md:px-0 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3">
-            <div className="flex items-center gap-4">
-              <h1 className="reservoir-h4 mb-1">{header.name}</h1>
-              {typeof social.discordUrl === 'string' && (
-                <a
-                  className="reservoir-h6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={social.discordUrl}
-                >
-                  <img
-                    src="/icons/Discord.svg"
-                    alt="Discord Icon"
-                    className="h-6 w-6"
-                  />
-                </a>
-              )}
-              {typeof social.twitterUsername === 'string' && (
-                <a
-                  className="reservoir-h6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://twitter.com/${social.twitterUsername}`}
-                >
-                  <img
-                    src="/icons/Twitter.svg"
-                    alt="Twitter Icon"
-                    className="h-6 w-6"
-                  />
-                </a>
-              )}
-              {typeof social.externalUrl === 'string' && (
-                <a
-                  className="reservoir-h6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={social.externalUrl}
-                >
-                  <FiGlobe className="h-6 w-6" />
-                </a>
-              )}
+            <div className="grid items-center lg:flex lg:gap-4">
+              <h1 className="reservoir-h4">{header.name}</h1>
+              <div className="flex gap-4">
+                {typeof social.discordUrl === 'string' && (
+                  <a
+                    className="reservoir-h6 flex-none"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={social.discordUrl}
+                  >
+                    <img
+                      src="/icons/Discord.svg"
+                      alt="Discord Icon"
+                      className="h-6 w-6"
+                    />
+                  </a>
+                )}
+                {typeof social.twitterUsername === 'string' && (
+                  <a
+                    className="reservoir-h6 flex-none"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://twitter.com/${social.twitterUsername}`}
+                  >
+                    <img
+                      src="/icons/Twitter.svg"
+                      alt="Twitter Icon"
+                      className="h-6 w-6"
+                    />
+                  </a>
+                )}
+                {typeof social.externalUrl === 'string' && (
+                  <a
+                    className="reservoir-h6 flex-none"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={social.externalUrl}
+                  >
+                    <FiGlobe className="h-6 w-6" />
+                  </a>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-5">
               <Stat name="Top Offer">
