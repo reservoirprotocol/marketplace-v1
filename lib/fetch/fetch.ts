@@ -9,9 +9,9 @@ export async function getDetails(
   token: string | undefined,
   setDetails: Dispatch<any>
 ) {
-  let pathname = `${PROXY_API_BASE}/tokens/details/v3`
+  let pathname = `${PROXY_API_BASE}/tokens/details/v4`
 
-  let query: paths['/tokens/details/v3']['get']['parameters']['query'] = {
+  let query: paths['/tokens/details/v4']['get']['parameters']['query'] = {
     tokens: [`${contract}:${token}`],
   }
 
@@ -20,7 +20,7 @@ export async function getDetails(
   const res = await fetch(href)
 
   const json =
-    (await res.json()) as paths['/tokens/details/v3']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
   setDetails(json)
 }

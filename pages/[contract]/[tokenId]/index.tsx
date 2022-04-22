@@ -557,9 +557,9 @@ export const getServerSideProps: GetServerSideProps<{
     COLLECTION
   )
 
-  const url = new URL('/tokens/details/v3', RESERVOIR_API_BASE)
+  const url = new URL('/tokens/details/v4', RESERVOIR_API_BASE)
 
-  const query: paths['/tokens/details/v3']['get']['parameters']['query'] = {
+  const query: paths['/tokens/details/v4']['get']['parameters']['query'] = {
     tokens: [`${params?.contract?.toString()}:${params?.tokenId?.toString()}`],
   }
 
@@ -568,7 +568,7 @@ export const getServerSideProps: GetServerSideProps<{
   const res = await fetch(href, options)
 
   const tokenDetails =
-    (await res.json()) as paths['/tokens/details/v3']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
   const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
 
