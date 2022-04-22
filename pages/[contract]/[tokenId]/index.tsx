@@ -216,6 +216,10 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
     setRefreshLoading(false)
   }
 
+  const tokenDescription =
+    token?.token?.description ||
+    collection.data?.collection?.metadata?.description
+
   return (
     <Layout navbar={{ mode, communityId }}>
       <Head>
@@ -280,9 +284,10 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
               </span>
             </a>
           </Link>
-          {token?.token?.description && (
+          {tokenDescription && (
             <div className="reservoir-body-2 mt-4">
-              {token?.token?.description}
+              {/* @ts-ignore */}
+              {tokenDescription}
             </div>
           )}
         </article>

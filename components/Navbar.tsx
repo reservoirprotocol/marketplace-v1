@@ -3,6 +3,7 @@ import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
 import SearchCollections from './SearchCollections'
 import { useRouter } from 'next/router'
+import { FiMenu } from 'react-icons/fi'
 
 type Props = {
   communityId?: string
@@ -48,12 +49,14 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
         <a className="relative mr-4 inline-flex items-center gap-3">
           <img src={logo} alt={logoAlt} className="w-6 sm:block" />
           {NAVBAR_TITLE ? (
-            <div className="font-semibold">{NAVBAR_TITLE}</div>
+            <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
           ) : (
-            <div className="font-['Obvia'] text-lg">reservoir.market</div>
+            <div className="hidden font-['Obvia'] text-lg md:block">
+              reservoir.market
+            </div>
           )}
           {CHAIN_ID === '4' && (
-            <div className="reservoir-tiny absolute left-[133px] top-9 inline-block rounded-[4px] bg-[#EFC45C] py-[2px] px-1">
+            <div className="reservoir-tiny inline-block rounded-[4px] bg-[#EFC45C] py-[2px] px-1 md:absolute md:left-[133px] md:top-9">
               Testnet
             </div>
           )}
@@ -80,6 +83,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           </div>
         )}
       </div>
+      {/* <FiMenu className="h-4 w-4" /> */}
       <ConnectWallet />
     </nav>
   )
