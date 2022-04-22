@@ -4,7 +4,7 @@ import { paths } from '@reservoir0x/client-sdk'
 
 type Props = {
   token: NonNullable<
-    paths['/tokens/details/v3']['get']['responses']['200']['schema']['tokens']
+    paths['/tokens/details/v4']['get']['responses']['200']['schema']['tokens']
   >[0]['token']
 }
 

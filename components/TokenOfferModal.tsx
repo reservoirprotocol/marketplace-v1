@@ -27,7 +27,7 @@ const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 
-type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {

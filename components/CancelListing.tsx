@@ -13,7 +13,7 @@ import { checkWallet } from 'lib/wallet'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
-type Details = paths['/tokens/details/v3']['get']['responses']['200']['schema']
+type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Props = {

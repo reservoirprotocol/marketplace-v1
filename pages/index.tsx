@@ -107,7 +107,7 @@ export const getServerSideProps: GetServerSideProps<{
     const json =
       (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
 
-    contractAddress = json.collections?.[0].id
+    contractAddress = json.collections?.[0]?.id
 
     if (!contractAddress) {
       return {
@@ -121,8 +121,12 @@ export const getServerSideProps: GetServerSideProps<{
   if (mode === 'collection') {
     const url = new URL('/collection/v1', RESERVOIR_API_BASE)
 
-    const query: paths['/collection/v1']['get']['parameters']['query'] = {
-      slug: collectionId,
+    const query: paths['/collection/v1']['get']['parameters']['query'] = {}
+
+    if (COLLECTION) {
+      query.id = COLLECTION
+    } else {
+      query.slug = collectionId
     }
 
     const href = setParams(url, query)
