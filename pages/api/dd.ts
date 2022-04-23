@@ -4,6 +4,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
  * Proxy Real User Monitoring Data (DataDog)
  * https://docs.datadoghq.com/real_user_monitoring/faq/proxy_rum_data/?tab=npm
  */
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const xff = req.headers["X-Forwarded-For"]?.toString();
