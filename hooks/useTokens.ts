@@ -8,7 +8,7 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-type Tokens = paths['/tokens/v2']['get']['responses']['200']['schema']
+type Tokens = paths['/tokens/v4']['get']['responses']['200']['schema']
 
 export default function useTokens(
   collectionId: string | undefined,
@@ -20,7 +20,7 @@ export default function useTokens(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const pathname = `${PROXY_API_BASE}/tokens/v2`
+    const pathname = `${PROXY_API_BASE}/tokens/v4`
 
     return pathname
   }
@@ -57,14 +57,14 @@ const getKey: (
   collectionId: string | undefined,
   router: NextRouter,
   index: number,
-  previousPageData: paths['/tokens/v2']['get']['responses']['200']['schema']
+  previousPageData: paths['/tokens/v4']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
   if (!pathname) return null
 
-  let query: paths['/tokens/v2']['get']['parameters']['query'] = {
+  let query: paths['/tokens/v4']['get']['parameters']['query'] = {
     limit: 20,
     collection: collectionId,
   }
