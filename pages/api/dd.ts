@@ -15,6 +15,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let datadogResponse = await fetch(req.query.ddforward.toString(), {
       method: "POST",
       headers: {
+        "Accept-Language": req.headers["accept-language"] || "",
+        "User-Agent": req.headers["user-agent"] || "",
+        "Content-Type": req.headers["content-type"] || "application/json",
         "X-Forwarded-For": ip,
       },
       body: req.body,
