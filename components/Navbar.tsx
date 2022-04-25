@@ -61,23 +61,25 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           )}
         </a>
       </Link>
-      {displaySearch && (
-        <div className="mx-auto h-full w-full max-w-md flex-grow">{search}</div>
-      )}
-      {hasExternalLinks && (
-        <div className="ml-5 hidden items-center gap-6 md:flex">
-          {externalLinks.map(({ name, url }) => (
-            <a
-              key={url}
-              href={url}
-              rel="noopener noferrer"
-              className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
-            >
-              {name}
-            </a>
-          ))}
-        </div>
-      )}
+      <div className="mx-auto flex w-[500px] gap-4">
+        {displaySearch && (
+          <div className="mx-auto h-full w-full flex-grow">{search}</div>
+        )}
+        {hasExternalLinks && (
+          <div className="hidden items-center gap-6 md:flex">
+            {externalLinks.map(({ name, url }) => (
+              <a
+                key={url}
+                href={url}
+                rel="noopener noferrer"
+                className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
+              >
+                {name}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
       <HamburgerMenu search={search} externalLinks={externalLinks} />
       <div className="ml-auto hidden md:block">
         <ConnectWallet />
