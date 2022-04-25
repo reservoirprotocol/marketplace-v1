@@ -98,7 +98,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
         {description}
         {image}
       </Head>
-      <div className="col-span-full content-start space-y-4 md:col-span-4 lg:col-span-5 lg:col-start-2">
+      <div className="col-span-full content-start space-y-4 md:col-span-4 lg:col-span-5 lg:col-start-2 2xl:col-span-4 2xl:col-start-3">
         <TokenMedia details={details} />
         <div className="hidden space-y-4 md:block">
           <CollectionInfo
@@ -109,7 +109,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
           <TokenInfo details={details} />
         </div>
       </div>
-      <div className="col-span-full space-y-4 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7">
+      <div className="col-span-full space-y-4 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 2xl:col-span-4 2xl:col-start-7">
         <Owner details={details} />
         <PriceData details={details} collection={collection} />
         <Listings asks={asks} />
