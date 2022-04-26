@@ -40,19 +40,19 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
           src={bannerImage}
           alt={`${header.name} banner image`}
           height="200px"
-          className="col-span-full h-[100px] w-full object-cover sm:h-[200px] sm:rounded-xl"
+          className="col-span-full h-[135px] w-full object-cover sm:h-[237px]"
         />
       ) : (
         <div
-          className={`col-span-full h-[100px] w-full ${
+          className={`col-span-full h-[135px] w-full ${
             delay ? '' : 'bg-gradient-to-r from-violet-500 to-fuchsia-500'
-          } sm:h-[200px] sm:rounded-xl`}
+          } sm:h-[237px]`}
         ></div>
       )}
-      <div className="col-span-full grid place-items-center gap-5 px-4 pt-4 pb-8 sm:pb-6 md:px-0 lg:flex lg:items-center lg:justify-between">
+      <div className="col-span-full grid gap-5 px-4 py-6 md:place-items-center md:py-11 md:px-16 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
-          <div className="ml-3">
+          <div className="ml-3  flex-grow ">
             <div className="grid items-center lg:flex lg:gap-4">
               <h1 className="reservoir-h4">{header.name}</h1>
               <div className="flex gap-4">
@@ -96,7 +96,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center justify-between gap-4">
               <Stat name="Top Offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
               </Stat>
@@ -107,7 +107,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-3">{children}</div>
+        <div className="flex gap-4">{children}</div>
       </div>
     </>
   )

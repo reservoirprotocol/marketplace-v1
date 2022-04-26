@@ -43,10 +43,10 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
   const search = <SearchCollections communityId={communityId} />
 
   return (
-    <nav className="col-span-full flex items-center gap-4 py-3 px-4 sm:py-4">
+    <nav className="col-span-full flex items-center gap-4 px-6 py-4 md:py-6 md:px-16">
       <Link href="/">
-        <a className="relative mr-4 inline-flex items-center gap-3">
-          <img src={logo} alt={logoAlt} className="w-6 sm:block" />
+        <a className="relative mr-4 inline-flex items-center gap-1">
+          <img src={logo} alt={logoAlt} className="h-8 sm:block" />
           {NAVBAR_TITLE ? (
             <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
           ) : (
@@ -55,13 +55,13 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
             </div>
           )}
           {CHAIN_ID === '4' && (
-            <div className="reservoir-tiny inline-block rounded-[4px] bg-[#EFC45C] py-[2px] px-1 md:absolute md:left-[133px] md:top-7">
+            <div className="reservoir-tiny rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
               Testnet
             </div>
           )}
         </a>
       </Link>
-      <div className="mx-auto flex w-[500px] gap-4">
+      <div className="mx-auto flex gap-4">
         {displaySearch && (
           <div className="mx-auto h-full w-full flex-grow">{search}</div>
         )}

@@ -33,8 +33,8 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
       </Dialog.Trigger>
 
       <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md">
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 p-4">
-          <img src={logo} alt="" className="w-6 sm:block" />
+        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4">
+          <img src={logo} alt="" className="h-8 sm:block" />
           <div className="mx-auto h-full w-full max-w-md flex-grow">
             {search}
           </div>
@@ -58,7 +58,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
         )}
         {accountData ? (
           <>
-            <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937]">
+            <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937]">
               <EthAccount
                 address={accountData.address}
                 ens={{
@@ -93,13 +93,15 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
             </button>
           </>
         ) : (
-          <button
-            key={wallet.id}
-            onClick={() => connect(wallet)}
-            className="btn-primary-fill col-span-2 col-start-3 ml-auto md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
-          >
-            Connect Wallet
-          </button>
+          <div className="mt-12 px-4">
+            <button
+              key={wallet.id}
+              onClick={() => connect(wallet)}
+              className="btn-primary-fill col-span-2 col-start-3 w-full md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
+            >
+              Connect Wallet
+            </button>
+          </div>
         )}
 
         {/* <a

@@ -56,6 +56,14 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      gridTemplateColumns: {
+        16: 'repeat(16, minmax(0, 1fr))',
+        21: 'repeat(21, minmax(0, 1fr))',
+      },
+      screens: {
+        '3xl': '1920px',
+        '4xl': '2560px',
+      },
       fontFamily: {
         sans: [`"${FONT_FAMILY}"`, ...defaultTheme.fontFamily.sans],
       },
