@@ -123,7 +123,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           <input
             type="text"
             tabIndex={-1}
-            className="reservoir-label-l input-primary-outline w-full pl-9"
+            className="reservoir-label-l input-primary-outline w-full pl-9 lg:w-[400px]"
             placeholder="Search for a collection"
             {...getInputProps()}
           />

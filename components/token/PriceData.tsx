@@ -44,7 +44,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-6">
           <Price
             title="List Price"
             source={
@@ -65,7 +65,18 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 logoWidth={16}
               />
             }
-          >
+          />
+          <Price
+            title="Top Offer"
+            price={
+              <FormatEth
+                amount={token?.market?.topBid?.value}
+                maximumFractionDigits={4}
+                logoWidth={16}
+              />
+            }
+          />
+          <div className="col-span-2 grid gap-4 md:grid-cols-2 md:gap-6">
             {isOwner && (
               <ListModal
                 data={{
@@ -88,17 +99,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               setToast={setToast}
               show={!isOwner}
             />
-          </Price>
-          <Price
-            title="Top Offer"
-            price={
-              <FormatEth
-                amount={token?.market?.topBid?.value}
-                maximumFractionDigits={4}
-                logoWidth={16}
-              />
-            }
-          >
             <AcceptOffer
               data={{
                 collection: collection.data,
@@ -127,7 +127,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 setToast={setToast}
               />
             )}
-          </Price>
+          </div>
         </div>
         <div
           className={`${
@@ -168,7 +168,6 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
   title,
   price,
   source,
-  children,
 }) => (
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
@@ -176,6 +175,5 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
       <div>{source}</div>
     </div>
     <div className="reservoir-h3">{price}</div>
-    {children}
   </div>
 )
