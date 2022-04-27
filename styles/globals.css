@@ -10,6 +10,11 @@
   font-weight: 400 500 700;
 }
 
+model-viewer {
+  width: 100%;
+  min-height: 500px;
+}
+
 .masonry-grid {
   display: -webkit-box; /* Not needed if autoprefixing */
   display: -ms-flexbox; /* Not needed if autoprefixing */
