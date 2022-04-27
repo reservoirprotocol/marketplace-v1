@@ -181,7 +181,7 @@ const AttributeOfferModal: FC<Props> = ({
         onClick={async () =>
           await checkWallet(signer, setToast, connect, connectData)
         }
-        className="btn-primary-outline whitespace-nowrap"
+        className="btn-primary-outline whitespace-nowrap dark:text-white"
       >
         Make an Attribute Offer
       </Dialog.Trigger>

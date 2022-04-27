@@ -66,9 +66,9 @@ const TokenInfo: FC<Props> = ({ details }) => {
   }
 
   return (
-    <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
+    <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
       <div className="mb-4 flex items-center justify-between">
-        <div className="reservoir-h5">Token Info</div>
+        <div className="reservoir-h5 dark:text-white">Token Info</div>
         <div className="flex items-center gap-2">
           <a
             className="reservoir-h6"
@@ -98,10 +98,12 @@ const TokenInfo: FC<Props> = ({ details }) => {
       </div>
       {token?.token?.contract && (
         <div className="mb-4 flex items-center justify-between">
-          <div className="reservoir-subtitle">Contract Address</div>
+          <div className="reservoir-subtitle dark:text-white">
+            Contract Address
+          </div>
           <div>
             <a
-              className="reservoir-h6 flex items-center gap-2 text-primary-700"
+              className="reservoir-h6 flex items-center gap-2 text-primary-700 dark:text-primary-100"
               target="_blank"
               rel="noopener noreferrer"
               href={`https://etherscan.io/address/${token?.token?.contract}`}
@@ -113,17 +115,23 @@ const TokenInfo: FC<Props> = ({ details }) => {
         </div>
       )}
       <div className="mb-4 flex items-center justify-between">
-        <div className="reservoir-subtitle">Token ID</div>
-        <div className="reservoir-h6">{token?.token?.tokenId}</div>
+        <div className="reservoir-subtitle dark:text-white">Token ID</div>
+        <div className="reservoir-h6 dark:text-white">
+          {token?.token?.tokenId}
+        </div>
       </div>
       <div className="mb-4 flex items-center justify-between">
-        <div className="reservoir-subtitle">Token Standard</div>
-        <div className="reservoir-h6 uppercase">{token?.token?.kind}</div>
+        <div className="reservoir-subtitle dark:text-white">Token Standard</div>
+        <div className="reservoir-h6 uppercase dark:text-white">
+          {token?.token?.kind}
+        </div>
       </div>
       <div className="flex items-center justify-between">
-        <div className="reservoir-subtitle">Metadata Refresh</div>
+        <div className="reservoir-subtitle dark:text-white">
+          Metadata Refresh
+        </div>
         <button
-          className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700"
+          className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700 dark:text-primary-100"
           title="Refresh token"
           disabled={refreshLoading}
           onClick={() =>

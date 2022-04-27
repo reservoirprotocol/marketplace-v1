@@ -19,8 +19,8 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
     collection.data?.collection?.metadata?.description
 
   return (
-    <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
-      <div className="reservoir-h5 mb-4">Collection Info</div>
+    <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
+      <div className="reservoir-h5 mb-4 dark:text-white">Collection Info</div>
       <Link
         href={
           mode === 'collection'
@@ -37,11 +37,13 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
             alt="collection avatar"
             className="h-9 w-9 rounded-full"
           />
-          <span className="reservoir-h6">{token?.token?.collection?.name}</span>
+          <span className="reservoir-h6 dark:text-white">
+            {token?.token?.collection?.name}
+          </span>
         </a>
       </Link>
       {tokenDescription && (
-        <div className="reservoir-body-2 mt-4">
+        <div className="reservoir-body-2 mt-4 dark:text-white">
           {/* @ts-ignore */}
           {tokenDescription}
         </div>

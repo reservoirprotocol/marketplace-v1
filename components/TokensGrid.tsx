@@ -55,7 +55,7 @@ const TokensGrid: FC<Props> = ({
               key={`${token?.collection?.name}${idx}`}
               href={`/${token?.contract}/${token?.tokenId}`}
             >
-              <a className="group relative mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg">
+              <a className="group relative mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
                 <img
                   className="absolute top-4 left-4 h-8 w-8"
                   src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
@@ -96,7 +96,7 @@ const TokensGrid: FC<Props> = ({
                 )}
 
                 <p
-                  className="reservoir-subtitle mb-3 overflow-hidden truncate px-6 pt-4 lg:pt-3"
+                  className="reservoir-subtitle mb-3 overflow-hidden truncate px-6 pt-4 dark:text-white lg:pt-3"
                   title={token?.name || token?.tokenId}
                 >
                   {token?.name || `#${token?.tokenId}`}
@@ -106,7 +106,7 @@ const TokensGrid: FC<Props> = ({
                     <div className="reservoir-subtitle text-gray-400">
                       Offer
                     </div>
-                    <div className="reservoir-h6">
+                    <div className="reservoir-h6 dark:text-white">
                       <FormatEth
                         amount={token?.topBidValue}
                         maximumFractionDigits={4}
@@ -118,7 +118,7 @@ const TokensGrid: FC<Props> = ({
                     <div className="reservoir-subtitle text-gray-400">
                       Price
                     </div>
-                    <div className="reservoir-h6">
+                    <div className="reservoir-h6 dark:text-white">
                       <FormatEth
                         amount={token?.floorAskPrice}
                         maximumFractionDigits={4}

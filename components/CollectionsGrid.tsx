@@ -44,7 +44,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
             .map((_, index) => (
               <div
                 key={`loading-card-${index}`}
-                className="h-[310px] w-full animate-pulse bg-white shadow-md"
+                className="h-[310px] w-full animate-pulse bg-white shadow-md dark:bg-neutral-900"
               ></div>
             ))
         : mappedCollections
@@ -59,7 +59,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                 key={`${collection?.name}${idx}`}
                 href={`/collections/${collection?.id}`}
               >
-                <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg">
+                <a className="group mb-6 block overflow-hidden rounded-[16px] bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
                   <ImagesGrid
                     sample_images={collection?.sampleImages}
                     value={collection?.name || ''}
@@ -74,7 +74,9 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                       <div className="h-12 w-12 flex-none rounded-full bg-gradient-to-br from-primary-500 to-primary-900"></div>
                     )}
 
-                    <div className="reservoir-subtitle">{collection?.name}</div>
+                    <div className="reservoir-subtitle dark:text-white">
+                      {collection?.name}
+                    </div>
                   </div>
                 </a>
               </Link>

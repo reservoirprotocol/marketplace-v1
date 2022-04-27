@@ -43,7 +43,7 @@ const AttributeSelector: FC<Props> = ({
           }`}
         />
         <DebounceInput
-          className="reservoir-label-l input-primary-outline w-full pl-9"
+          className="reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:ring-primary-900"
           type="text"
           autoFocus
           value={query}
@@ -68,8 +68,8 @@ const AttributeSelector: FC<Props> = ({
               key={`${value}${index}`}
               setTokensSize={setTokensSize}
             >
-              <span className="reservoir-body">{value}</span>
-              <span className="reservoir-body">{count}</span>
+              <span className="reservoir-body dark:text-white">{value}</span>
+              <span className="reservoir-body dark:text-white">{count}</span>
             </AttributeButton>
           )
         })}

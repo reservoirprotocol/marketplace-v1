@@ -72,7 +72,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
                 key={url}
                 href={url}
                 rel="noopener noferrer"
-                className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937]"
+                className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937] dark:text-neutral-300"
               >
                 {name}
               </a>

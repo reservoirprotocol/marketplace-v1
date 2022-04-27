@@ -19,7 +19,7 @@ const Listings: FC<Props> = ({ asks }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <Card>
-        <div className="reservoir-h5 mb-4">Listings</div>
+        <div className="reservoir-h5 mb-4 dark:text-white">Listings</div>
         <div className="max-h-96 overflow-auto rounded-2xl">
           <table className="min-w-full table-auto overflow-y-auto">
             <thead>
@@ -28,7 +28,7 @@ const Listings: FC<Props> = ({ asks }) => {
                   <th
                     key={item}
                     scope="col"
-                    className="reservoir-subtitle px-6 py-3 text-left"
+                    className="reservoir-subtitle px-6 py-3 text-left dark:text-white"
                   >
                     {item}
                   </th>

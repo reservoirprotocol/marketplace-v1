@@ -34,7 +34,7 @@ const Homepage: FC = () => {
         {description}
       </Head>
       <header className="col-span-full mb-12 mt-[66px] md:mt-40">
-        <h1 className="reservoir-h1 text-center">{tagline}</h1>
+        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
       </header>
       <CollectionsGrid collections={collections} />
     </>

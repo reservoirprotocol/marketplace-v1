@@ -43,7 +43,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6">
+      <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
         <div className="grid grid-cols-2 gap-6">
           <Price
             title="List Price"
@@ -52,7 +52,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 href={sourceRedirect}
-                className="reservoir-body flex items-center gap-2"
+                className="reservoir-body flex items-center gap-2 dark:text-white"
               >
                 on {token?.market?.floorAsk?.source?.name}
                 {<img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />}
@@ -171,9 +171,9 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
 }) => (
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
-      <div className="reservoir-h5">{title}</div>
+      <div className="reservoir-h5 dark:text-white">{title}</div>
       <div>{source}</div>
     </div>
-    <div className="reservoir-h3">{price}</div>
+    <div className="reservoir-h3 dark:text-white">{price}</div>
   </div>
 )

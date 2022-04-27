@@ -1,6 +1,7 @@
 import useDetails from 'hooks/useDetails'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 import { FC, useEffect, useState } from 'react'
 
 type Props = {
@@ -39,7 +40,11 @@ const TokenMedia: FC<Props> = ({ details }) => {
         // Extract the file extension from `lastPartOfUrl`, example: 'wav'
         let extension = null
         if (lastPartOfUrl) {
-          extension = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
+          const ext = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
+          // This makes a strong assumption and it's not reliable
+          if (ext?.length && ext.length > 10) {
+            extension = 'glb'
+          }
         }
 
         result = { animation_url, extension }
@@ -55,29 +60,14 @@ const TokenMedia: FC<Props> = ({ details }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      {/* <Head>
-        <script
-          type="module"
-          src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-        ></script>
-        <script
-          noModule
-          src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"
-        ></script>
-      </Head> */}
-      {/* TEST MODEL-VIEWER WITH LOCAL FILES */}
-      {/* <model-viewer
-          alt="Neil Armstrong's Spacesuit from the Smithsonian Digitization Programs Office and National Air and Space Museum"
-          src="/NeilArmstrong.glb"
-          ar
-          ar-modes="webxr scene-viewer quick-look"
-          environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
-          poster="/NeilArmstrong.webp"
-          seamless-poster
-          shadow-intensity="1"
-          camera-controls
-          enable-pan
-        ></model-viewer> */}
+      <Script
+        type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+      ></Script>
+      <Script
+        noModule
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"
+      ></Script>
       {tokenOpenSea?.extension === null ? (
         <img
           className="w-full rounded-2xl"
@@ -136,8 +126,8 @@ const Media: FC<{
   //         src={animation_url}
   //         ar
   //         ar-modes="webxr scene-viewer quick-look"
-  //         environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
-  //         poster="/NeilArmstrong.webp"
+  //         // environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
+  //         // poster="/NeilArmstrong.webp"
   //         seamless-poster
   //         shadow-intensity="1"
   //         camera-controls
@@ -148,7 +138,12 @@ const Media: FC<{
   // }
 
   // HTML
-  if (extension === 'html' || extension === undefined) {
+  if (
+    extension === 'html' ||
+    extension === undefined ||
+    extension === 'gltf' ||
+    extension === 'glb'
+  ) {
     return (
       <iframe
         className="mb-6 aspect-square w-full"
