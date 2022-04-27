@@ -43,7 +43,7 @@ const TokenMedia: FC<Props> = ({ details }) => {
           const ext = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
           // This makes a strong assumption and it's not reliable
           if (ext?.length && ext.length > 10) {
-            extension = 'glb'
+            extension = 'other'
           } else {
             extension = ext
           }
@@ -121,30 +121,29 @@ const Media: FC<{
   }
 
   // 3D
-  // if (extension === 'gltf' || extension === 'glb') {
-  //   return (
-  //     <div>
-  //       <model-viewer
-  //         src={animation_url}
-  //         ar
-  //         ar-modes="webxr scene-viewer quick-look"
-  //         // environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
-  //         // poster="/NeilArmstrong.webp"
-  //         seamless-poster
-  //         shadow-intensity="1"
-  //         camera-controls
-  //         enable-pan
-  //       ></model-viewer>
-  //     </div>
-  //   )
-  // }
+  if (extension === 'gltf' || extension === 'glb') {
+    return (
+      <div>
+        <model-viewer
+          src={animation_url}
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          // environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
+          // poster="/NeilArmstrong.webp"
+          seamless-poster
+          shadow-intensity="1"
+          camera-controls
+          enable-pan
+        ></model-viewer>
+      </div>
+    )
+  }
 
   // HTML
   if (
     extension === 'html' ||
     extension === undefined ||
-    extension === 'gltf' ||
-    extension === 'glb'
+    extension === 'other'
   ) {
     return (
       <iframe
