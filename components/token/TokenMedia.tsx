@@ -44,6 +44,8 @@ const TokenMedia: FC<Props> = ({ details }) => {
           // This makes a strong assumption and it's not reliable
           if (ext?.length && ext.length > 10) {
             extension = 'glb'
+          } else {
+            extension = ext
           }
         }
 
