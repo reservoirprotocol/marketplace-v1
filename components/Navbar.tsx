@@ -61,9 +61,9 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           )}
         </a>
       </Link>
-      <div className="mx-auto flex gap-4">
+      <div className="flex w-full gap-4 md:w-auto">
         {displaySearch && (
-          <div className="mx-auto h-full w-full flex-grow">{search}</div>
+          <div className="h-full w-full flex-grow">{search}</div>
         )}
         {hasExternalLinks && (
           <div className="hidden items-center gap-6 md:flex">
