@@ -326,7 +326,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   step={0.01}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-primary-outline w-[160px]"
+                  className="input-primary-outline w-[160px] dark:bg-neutral-900"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -344,7 +344,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   type="checkbox"
                   name="postOpenSea"
                   id="postOpenSea"
-                  className="scale-125 transform"
+                  className="scale-125 transform "
                   checked={postOnOpenSea}
                   onChange={(e) => {
                     setPostOnOpenSea(e.target.checked)
