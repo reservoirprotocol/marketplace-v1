@@ -19,8 +19,8 @@ const TokenInfo: FC<Props> = ({ details }) => {
     function handleError(message?: string) {
       setToast({
         kind: 'error',
-        message: message || 'Request to refresh collection was rejected.',
-        title: 'Refresh collection failed',
+        message: message || 'Request to refresh this token was rejected.',
+        title: 'Refresh token failed',
       })
 
       setRefreshLoading(false)
@@ -53,8 +53,8 @@ const TokenInfo: FC<Props> = ({ details }) => {
 
       setToast({
         kind: 'success',
-        message: 'Request to refresh collection was accepted.',
-        title: 'Refresh collection',
+        message: 'Request to refresh this token was accepted.',
+        title: 'Refresh token',
       })
     } catch (err) {
       handleError()

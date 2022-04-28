@@ -11,7 +11,7 @@ const ViewMenu = () => {
       type="single"
       defaultValue="grid"
       aria-label="Change view"
-      className="flex divide-x-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB]"
+      className="flex divide-x-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] dark:border-neutral-600"
     >
       <ToggleGroup.Item
         onClick={() => toggleOffItem(router, 'view')}

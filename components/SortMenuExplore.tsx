@@ -45,7 +45,7 @@ const SortMenuExplore: FC<Props> = ({ setSize }) => {
       <DropdownMenu.Content
         align="end"
         sideOffset={12}
-        className="w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:bg-neutral-900 md:w-56"
+        className="w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:border-neutral-600 dark:bg-neutral-900 md:w-56"
       >
         {Object.keys(options).map((key) => (
           <DropdownMenu.Item
