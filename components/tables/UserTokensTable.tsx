@@ -39,15 +39,15 @@ const UserTokensTable: FC<Props> = ({
   }
 
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
+        <thead className="bg-gray-50 dark:bg-neutral-900">
           <tr>
             {['Item', 'List Price', 'Top Offer', 'Floor'].map((item) => (
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left"
+                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
               >
                 {item}
               </th>
@@ -72,7 +72,7 @@ const UserTokensTable: FC<Props> = ({
               <tr
                 key={`${contract}:${tokenId}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] bg-white even:bg-gray-50"
+                className="group h-[80px] bg-white even:bg-gray-50 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
               >
                 {/* ITEM */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
@@ -91,15 +91,19 @@ const UserTokensTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div className="reservoir-body">{collectionName}</div>
-                        <div className="reservoir-h6">{tokenName}</div>
+                        <div className="reservoir-body dark:text-white">
+                          {collectionName}
+                        </div>
+                        <div className="reservoir-h6 dark:text-white">
+                          {tokenName}
+                        </div>
                       </span>
                     </a>
                   </Link>
                 </td>
 
                 {/* LIST PRICE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <div className="min-w-[160px]">
                     <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
                       <FormatEth amount={listPrice} maximumFractionDigits={4} />
@@ -124,7 +128,7 @@ const UserTokensTable: FC<Props> = ({
                 </td>
 
                 {/* TOP OFFER */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {topOffer ? (
                     isOwner ? (
                       <div className="min-w-[160px]">
@@ -157,7 +161,7 @@ const UserTokensTable: FC<Props> = ({
                 </td>
 
                 {/* FLOOR */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth amount={listPrice} maximumFractionDigits={4} />
                 </td>
               </tr>
