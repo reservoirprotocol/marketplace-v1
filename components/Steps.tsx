@@ -22,23 +22,31 @@ const Steps: FC<Props> = ({ steps }) => {
             ) : status === 'complete' ? (
               <HiCheckCircle className="mx-auto -mt-1 h-10 w-10 flex-none text-green-600" />
             ) : firstIncomplete === index ? (
-              <CgSpinner className="mr-1 ml-1 -mt-0.5 h-8 w-8 flex-none animate-spin text-black" />
+              <CgSpinner className="mr-1 ml-1 -mt-0.5 h-8 w-8 flex-none animate-spin text-black dark:text-white" />
             ) : (
-              <div className="reservoir-h6 mr-1 ml-1 flex h-8 w-8 items-center justify-center rounded-full text-center ring-2 ring-inset ring-neutral-900">
+              <div className="reservoir-h6 mr-1 ml-1 flex h-8 w-8 items-center justify-center rounded-full text-center ring-2 ring-inset ring-neutral-900 dark:text-white  dark:ring-white">
                 <div>{index + 1}</div>
               </div>
             )}
           </div>
           <div>
-            <div className="reservoir-h6 mb-1 mt-0.5">{action}</div>
+            <div className="reservoir-h6 mb-1 mt-0.5 dark:text-white">
+              {action}
+            </div>
             {error && (
-              <div className="reservoir-h6 mb-2.5 text-red-800">{error}</div>
+              <div className="reservoir-h6 mb-2.5 text-red-800 dark:text-white">
+                {error}
+              </div>
             )}
             {firstIncomplete === index && (
               <>
-                <div className="reservoir-body mb-2.5">{description}</div>
+                <div className="reservoir-body mb-2.5 dark:text-white">
+                  {description}
+                </div>
                 {message && (
-                  <div className="reservoir-body italic">{message}</div>
+                  <div className="reservoir-body italic dark:text-white">
+                    {message}
+                  </div>
                 )}
               </>
             )}

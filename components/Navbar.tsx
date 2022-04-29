@@ -50,7 +50,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           {NAVBAR_TITLE ? (
             <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
           ) : (
-            <div className="hidden font-['Obvia'] text-lg md:block">
+            <div className="hidden font-['Obvia'] text-lg dark:text-white md:block">
               reservoir.market
             </div>
           )}

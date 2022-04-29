@@ -86,7 +86,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.externalUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none"
+                    className="reservoir-h6 flex-none dark:text-white"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.externalUrl}

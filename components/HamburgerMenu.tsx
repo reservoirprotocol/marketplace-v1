@@ -33,8 +33,8 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
         <FiMenu className="h-6 w-6" />
       </Dialog.Trigger>
 
-      <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md">
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4">
+      <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md dark:bg-black">
+        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <div className="relative mr-4 inline-flex items-center gap-1">
             <img src={logo} alt="" className="h-8 sm:block" />
             {CHAIN_ID === '4' && (
@@ -46,7 +46,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
           <div className="mx-auto h-full w-full max-w-md flex-grow">
             {search}
           </div>
-          <Dialog.Close className="btn-primary-outline py-1.5 px-[5px]">
+          <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
@@ -57,7 +57,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
                 key={url}
                 href={url}
                 rel="noopener noferrer"
-                className="reservoir-label-l border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937]"
+                className="reservoir-label-l border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
               >
                 {name}
               </a>
@@ -66,7 +66,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
         )}
         {accountData ? (
           <>
-            <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937]">
+            <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
               <EthAccount
                 address={accountData.address}
                 ens={{
@@ -76,7 +76,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
               />
             </div>
 
-            <div className="reservoir-label-l flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937]">
+            <div className="reservoir-label-l flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white">
               <span>Balance </span>
               <span>
                 {accountData.address && (
@@ -86,7 +86,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
             </div>
 
             <Link href={`/address/${accountData.address}`}>
-              <a className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100">
+              <a className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600">
                 Portfolio
               </a>
             </Link>
@@ -94,7 +94,7 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
             <button
               key={wallet.id}
               onClick={() => disconnect()}
-              className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100"
+              className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
             >
               <span>Disconnect</span>
               <HiOutlineLogout className="h-6 w-7" />

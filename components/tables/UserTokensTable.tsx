@@ -32,7 +32,7 @@ const UserTokensTable: FC<Props> = ({
 
   if (tokensFlat.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center">
+      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         No items to display.
       </div>
     )

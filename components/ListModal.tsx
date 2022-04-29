@@ -273,7 +273,7 @@ const ListModal: FC<Props> = ({
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
                 onClick={execute}
-                className="btn-primary-fill w-full"
+                className="btn-primary-fill w-full dark:text-white"
               >
                 {waitingTx ? (
                   <CgSpinner className="h-4 w-4 animate-spin" />
@@ -285,7 +285,7 @@ const ListModal: FC<Props> = ({
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label htmlFor="price" className="reservoir-h6">
+                <label htmlFor="price" className="reservoir-h6 dark:text-white">
                   Price (ETH)
                 </label>
                 <input
@@ -296,7 +296,7 @@ const ListModal: FC<Props> = ({
                   step={0.01}
                   value={listingPrice}
                   onChange={(e) => setListingPrice(e.target.value)}
-                  className="input-primary-outline w-[160px]"
+                  className="input-primary-outline w-[160px] dark:bg-neutral-900 dark:text-white"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -307,7 +307,10 @@ const ListModal: FC<Props> = ({
                 />
               </div>
               <div className="flex items-center gap-3">
-                <label htmlFor="postOpenSea" className="reservoir-h6">
+                <label
+                  htmlFor="postOpenSea"
+                  className="reservoir-h6 dark:text-white"
+                >
                   Post listing to OpenSea
                 </label>
                 <input
@@ -327,8 +330,8 @@ const ListModal: FC<Props> = ({
                 />
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6">Fees</div>
-                <div className="reservoir-body text-right">
+                <div className="reservoir-h6 dark:text-white">Fees</div>
+                <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
                   {postOnOpenSea && (
                     <div>
@@ -338,8 +341,8 @@ const ListModal: FC<Props> = ({
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6">You get</div>
-                <div className="reservoir-h6">
+                <div className="reservoir-h6 dark:text-white">You get</div>
+                <div className="reservoir-h6 dark:text-white">
                   <FormatEth
                     amount={youGet}
                     maximumFractionDigits={4}
@@ -348,7 +351,7 @@ const ListModal: FC<Props> = ({
                 </div>
               </div>
               {postOnOpenSea && (
-                <div className="reservoir-small">
+                <div className="reservoir-small dark:text-white">
                   <sup>*</sup>OpenSea fee is taken out of the above amount if
                   item is sold on OpenSea.
                 </div>
