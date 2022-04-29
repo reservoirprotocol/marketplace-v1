@@ -69,7 +69,9 @@ const EthAccount: FC<Props> = ({
       )}
       {side === 'left' && icon}
       {ens?.name ? (
-        <div title={address}>{shrinkEns(ens.name)}</div>
+        <div title={address} className="dark:text-white">
+          {shrinkEns(ens.name)}
+        </div>
       ) : (
         <div
           className="reservoir-label-l block whitespace-nowrap font-mono dark:text-white"
