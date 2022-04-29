@@ -26,6 +26,8 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
+const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -207,8 +209,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       token: `${token.token?.contract}:${token.token?.tokenId}`,
     }
 
+    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
+
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     await placeBid({
       query,
@@ -246,8 +252,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       token: `${token.token?.contract}:${token.token?.tokenId}`,
     }
 
+    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
+
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     if (postOnOpenSea) {
       await placeBid({
@@ -272,7 +282,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
           setOrderbook(['reservoir'])
           await checkWallet(signer, setToast, connect, connectData)
         }}
-        className="btn-primary-outline w-full"
+        className="btn-primary-outline w-full dark:text-white"
       >
         Make Offer
       </Dialog.Trigger>
@@ -316,7 +326,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   step={0.01}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-primary-outline w-[160px]"
+                  className="input-primary-outline w-[160px] dark:bg-neutral-900"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -334,7 +344,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   type="checkbox"
                   name="postOpenSea"
                   id="postOpenSea"
-                  className="scale-125 transform"
+                  className="scale-125 transform "
                   checked={postOnOpenSea}
                   onChange={(e) => {
                     setPostOnOpenSea(e.target.checked)

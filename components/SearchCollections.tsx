@@ -116,13 +116,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           className="relative"
         >
           <FiSearch
-            className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
+            className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] dark:text-neutral-300 ${
               focused ? 'text-[#9CA3AF]' : ''
             }`}
           />
           <input
             type="text"
-            className="reservoir-label-l input-primary-outline w-full pl-9"
+            tabIndex={-1}
+            className="reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-600 dark:text-white dark:placeholder:text-neutral-400 lg:w-[447px]"
             placeholder="Search for a collection"
             {...getInputProps()}
           />
@@ -142,7 +143,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
             initialResults?.collections &&
             initialResults?.collections.length > 0 && (
               <div
-                className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+                className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
                 {...getMenuProps()}
               >
                 {initialResults?.collections
@@ -168,8 +169,10 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                           reset()
                           setFocused(false)
                         }}
-                        className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
-                          highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
+                        className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
+                          highlightedIndex === index
+                            ? 'bg-[#F3F4F6] dark:bg-neutral-600'
+                            : ''
                         }`}
                       >
                         <img
@@ -181,7 +184,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                           alt={`${collection?.name}'s logo.`}
                           className="h-9 w-9 overflow-hidden rounded-full"
                         />
-                        <span className="reservoir-subtitle ml-2">
+                        <span className="reservoir-subtitle ml-2 dark:text-white">
                           {collection?.name}
                         </span>
                       </a>
@@ -191,7 +194,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
             )}
           {(focused || isOpen) && inputValue !== '' && isEmpty && (
             <div
-              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
               {...getMenuProps()}
             >
               <div className="flex items-center p-4">No collections found</div>
@@ -199,7 +202,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           )}
           {(focused || isOpen) && inputValue !== '' && !isEmpty && (
             <div
-              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
               {...getMenuProps()}
             >
               {results?.collections
@@ -225,8 +228,10 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         reset()
                         setFocused(false)
                       }}
-                      className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
-                        highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
+                      className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
+                        highlightedIndex === index
+                          ? 'bg-[#F3F4F6] dark:bg-neutral-600'
+                          : ''
                       }`}
                     >
                       <img
@@ -237,7 +242,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                         alt={`${collection?.name}'s logo.`}
                         className="h-9 w-9 overflow-hidden rounded-full"
                       />
-                      <span className="reservoir-subtitle ml-2">
+                      <span className="reservoir-subtitle ml-2 dark:text-white">
                         {collection?.name}
                       </span>
                     </a>

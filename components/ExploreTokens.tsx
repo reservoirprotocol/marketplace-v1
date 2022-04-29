@@ -13,7 +13,7 @@ import FormatEth from './FormatEth'
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
   attributes: SWRInfiniteResponse<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema'],
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema'],
     any
   >
 }
@@ -34,7 +34,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
   if (isLoadingInitialData) {
     return (
       <div className="mx-auto mb-10 max-w-[2400px]">
-        <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
           {Array(20)
             .fill(null)
             .map((_, index) => (
@@ -52,7 +52,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
           <ExploreTable viewRef={viewRef} mappedAttributes={mappedAttributes} />
         ) : (
           <div className="mx-auto mb-10 max-w-[2400px]">
-            <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
               {mappedAttributes.map((attribute, idx, arr) => (
                 <Link
                   key={`${attribute?.value}${idx}`}
@@ -77,7 +77,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                       value={attribute?.value}
                     />
                     <div className="flex-grow"></div>
-                    <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
+                    <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 dark:text-white lg:mt-4">
                       <span className="truncate" title={attribute?.value}>
                         {attribute?.value}
                       </span>
@@ -87,10 +87,10 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="grid">
-                        <span className="reservoir-subtitle text-gray-400">
+                        <span className="reservoir-subtitle text-gray-400 dark:text-white">
                           Offer
                         </span>
-                        <span className="reservoir-h6">
+                        <span className="reservoir-h6 dark:text-white">
                           <FormatEth
                             amount={attribute?.topBid?.value}
                             maximumFractionDigits={4}
@@ -102,7 +102,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                         <span className="reservoir-subtitle text-gray-400">
                           Price
                         </span>
-                        <span className="reservoir-h6">
+                        <span className="reservoir-h6 dark:text-white">
                           <FormatEth
                             amount={attribute?.floorAskPrices?.[0]}
                             maximumFractionDigits={4}
@@ -186,10 +186,10 @@ const ExploreImagesGrid = ({
   value,
 }: {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
   <>

@@ -26,7 +26,7 @@
     "@radix-ui/react-toggle-group": "^0.1.4",
     "@ramosdiego/reservoir": "^0.0.15",
     "@ramosdiego/ui": "^0.0.10",
-    "@reservoir0x/client-sdk": "^0.0.14",
+    "@reservoir0x/client-sdk": "^0.0.16",
     "@reservoir0x/sdk": "^0.0.25",
     "@types/lodash.debounce": "^4.0.6",
     "@types/luxon": "^2.0.9",

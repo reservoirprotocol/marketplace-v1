@@ -9,7 +9,7 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 type Attributes =
-  paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']
+  paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']
 
 export default function useCollectionAttributes(
   router: NextRouter,
@@ -22,7 +22,7 @@ export default function useCollectionAttributes(
 
     const pathname = `${PROXY_API_BASE}/collections/${
       router.query.id || collectionId
-    }/attributes/explore/v1`
+    }/attributes/explore/v2`
 
     return pathname
   }
@@ -65,7 +65,7 @@ const getKey: (
 
   if (!pathname) return null
 
-  let query: paths['/collections/{collection}/attributes/explore/v1']['get']['parameters']['query'] =
+  let query: paths['/collections/{collection}/attributes/explore/v2']['get']['parameters']['query'] =
     { limit: 20, offset: index * 20 }
 
   // Convert the client sort query into the API sort query

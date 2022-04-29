@@ -322,57 +322,61 @@ const TokensMain: FC<Props> = ({
         {image}
       </Head>
       <Hero social={social} stats={statsObj} header={header}>
-        <Dialog.Root open={open} onOpenChange={setOpen}>
-          <Dialog.Trigger
-            disabled={floor?.price === null || waitingTx || isInTheWrongNetwork}
-            onClick={() => token && taker && execute(token, taker)}
-            className="btn-primary-fill"
-          >
-            {waitingTx ? (
-              <CgSpinner className="h-4 w-4 animate-spin" />
-            ) : (
-              `Buy for ${formatBN(floor?.price, 4)} ETH`
+        <div className="grid w-full gap-4 md:flex">
+          <Dialog.Root open={open} onOpenChange={setOpen}>
+            <Dialog.Trigger
+              disabled={
+                floor?.price === null || waitingTx || isInTheWrongNetwork
+              }
+              onClick={() => token && taker && execute(token, taker)}
+              className="btn-primary-fill w-full"
+            >
+              {waitingTx ? (
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                `Buy for ${formatBN(floor?.price, 4)} ETH`
+              )}
+            </Dialog.Trigger>
+            {steps && (
+              <Dialog.Portal>
+                <Dialog.Overlay>
+                  <ModalCard
+                    title="Buy token"
+                    loading={waitingTx}
+                    steps={steps}
+                  />
+                </Dialog.Overlay>
+              </Dialog.Portal>
             )}
-          </Dialog.Trigger>
-          {steps && (
-            <Dialog.Portal>
-              <Dialog.Overlay>
-                <ModalCard
-                  title="Buy token"
-                  loading={waitingTx}
-                  steps={steps}
-                />
-              </Dialog.Overlay>
-            </Dialog.Portal>
-          )}
-        </Dialog.Root>
-        {hasTokenSetId &&
-          (isAttributeModal ? (
-            <AttributeOfferModal
-              royalties={royalties}
-              signer={signer}
-              data={attributeData}
-              env={env}
-              stats={stats}
-              tokens={tokens}
-              setToast={setToast}
-            />
-          ) : (
-            <CollectionOfferModal
-              royalties={royalties}
-              signer={signer}
-              data={data}
-              env={env}
-              stats={stats}
-              tokens={tokens}
-              setToast={setToast}
-            />
-          ))}
+          </Dialog.Root>
+          {hasTokenSetId &&
+            (isAttributeModal ? (
+              <AttributeOfferModal
+                royalties={royalties}
+                signer={signer}
+                data={attributeData}
+                env={env}
+                stats={stats}
+                tokens={tokens}
+                setToast={setToast}
+              />
+            ) : (
+              <CollectionOfferModal
+                royalties={royalties}
+                signer={signer}
+                data={data}
+                env={env}
+                stats={stats}
+                tokens={tokens}
+                setToast={setToast}
+              />
+            ))}
+        </div>
       </Hero>
-      <div className="col-span-full grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12">
-        <hr className="col-span-full border-gray-300" />
+      <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
+        <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
-        <div className="col-span-full mt-4 ml-6 md:col-start-4 md:col-end-[-1] lg:col-start-5 lg:col-end-[-1] xl:col-start-4 xl:col-end-[-1]">
+        <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
           <div className="mb-10 hidden items-center justify-between md:flex">
             <div>
               <AttributesFlex />
@@ -389,7 +393,7 @@ const TokensMain: FC<Props> = ({
                 <SortMenu setSize={tokens.setSize} />
               )}
               <button
-                className="btn-primary-outline"
+                className="btn-primary-outline dark:text-white"
                 title="Refresh collection"
                 disabled={refreshLoading}
                 onClick={() => refreshCollection(collectionId)}

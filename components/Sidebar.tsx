@@ -21,7 +21,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="hidden border-r-[1px] border-gray-300 md:col-span-3 md:block lg:col-span-4 xl:col-span-3"
+      className="col-span-3 hidden border-r-[1px] border-gray-300 dark:border-neutral-600 md:block"
     >
       <div className="overflow-hidden">
         <button
@@ -30,11 +30,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-6 py-5 text-left transition ${
+          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-6 py-5 text-left transition dark:border-neutral-600 dark:text-white ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
-              ? 'bg-primary-100 hover:bg-primary-300'
-              : 'hover:bg-primary-100'
+              ? 'bg-primary-100 hover:bg-primary-300 dark:hover:bg-primary-900'
+              : 'hover:bg-primary-100 dark:hover:bg-primary-900'
           }`}
         >
           Explore All
@@ -47,7 +47,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
           className="overflow-hidden"
         >
           <Accordion.Header
-            className={`flex w-full justify-between border-b-[1px] border-gray-300 ${
+            className={`flex w-full justify-between border-b-[1px] border-gray-300 dark:border-neutral-600 ${
               router.query.attribute_key &&
               router.query.attribute_key.toString() === attribute.key
                 ? 'divide-gray-800 dark:divide-gray-300'
@@ -66,11 +66,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-h6 w-full py-5 px-6 text-left capitalize transition ${
+              className={`reservoir-h6 w-full py-5 px-6 text-left capitalize transition dark:text-white ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 hover:bg-primary-300'
-                  : 'hover:bg-primary-100'
+                  ? 'bg-primary-100 hover:bg-primary-300  dark:hover:bg-primary-900'
+                  : 'hover:bg-primary-100 dark:hover:bg-primary-900'
               }`}
             >
               {attribute.key}
@@ -79,11 +79,11 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               className={`flex items-center ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 hover:bg-primary-300'
-                  : 'hover:bg-primary-100'
+                  ? 'bg-primary-100 hover:bg-primary-300 dark:hover:bg-primary-900'
+                  : 'hover:bg-primary-100 dark:hover:bg-primary-900'
               }`}
             >
-              <div className="h-6 w-px bg-gray-300"></div>
+              <div className="h-6 w-px bg-gray-300 dark:bg-neutral-600"></div>
               <Accordion.Trigger className="p-5 transition">
                 <FiChevronDown className="h-5 w-5" aria-hidden />
               </Accordion.Trigger>

@@ -43,7 +43,7 @@ const Layout: FC<Props> = ({ children, navbar }) => {
         {image}
         {favicon}
       </Head>
-      <main className="mx-auto grid max-w-screen-2xl grid-cols-4 gap-4 px-3 pb-4 md:grid-cols-8 md:px-4 lg:grid-cols-12 lg:px-6">
+      <main className="mx-auto grid max-w-[2560px] grid-cols-4 gap-x-4 pb-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <Navbar {...navbar} />
         {children}
       </main>

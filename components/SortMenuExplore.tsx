@@ -32,7 +32,9 @@ const SortMenuExplore: FC<Props> = ({ setSize }) => {
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
       <DropdownMenu.Trigger className="btn-primary-outline w-[228px] justify-between px-4 py-3">
-        <span className="reservoir-label-l">{sortSelection}</span>
+        <span className="reservoir-label-l dark:text-white">
+          {sortSelection}
+        </span>
         <FiChevronDown
           className={`h-5 w-5 text-[#9CA3AF] transition-transform ${
             open ? 'rotate-180' : ''
@@ -43,7 +45,7 @@ const SortMenuExplore: FC<Props> = ({ setSize }) => {
       <DropdownMenu.Content
         align="end"
         sideOffset={12}
-        className="w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md  radix-side-bottom:animate-slide-down md:w-56"
+        className="w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:border-neutral-600 dark:bg-neutral-900 md:w-56"
       >
         {Object.keys(options).map((key) => (
           <DropdownMenu.Item
@@ -57,9 +59,9 @@ const SortMenuExplore: FC<Props> = ({ setSize }) => {
               }
             }}
             disabled={sortSelection === options[key]}
-            className={`reservoir-gray-dropdown-item reservoir-h6 rounded-none ${
+            className={`reservoir-h6 reservoir-gray-dropdown-item  rounded-none dark:text-white ${
               sortSelection === options[key]
-                ? 'cursor-not-allowed bg-gray-100'
+                ? 'cursor-not-allowed bg-gray-100 dark:bg-neutral-900 dark:text-white'
                 : ''
             }`}
             aria-label={`Sort by ${options[key]}`}

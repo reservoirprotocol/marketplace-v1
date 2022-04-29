@@ -6,6 +6,8 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 
+const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
+
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
@@ -14,7 +16,7 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html className={DARK_MODE ? 'dark' : ''}>
         <Head />
         {/* Must  */}
         <meta charSet="utf-8" />
@@ -82,7 +84,7 @@ class MyDocument extends Document {
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="640" />
         <meta property="og:image:alt" content="Reservoir Market banner" />
-        <body className="bg-white text-neutral-800">
+        <body className="bg-white text-neutral-800 dark:bg-black dark:text-white">
           <Main />
           <NextScript />
         </body>

@@ -181,15 +181,15 @@ const AttributeOfferModal: FC<Props> = ({
         onClick={async () =>
           await checkWallet(signer, setToast, connect, connectData)
         }
-        className="btn-primary-outline"
+        className="btn-primary-outline whitespace-nowrap dark:text-white"
       >
-        Maker an Attribute Offer
+        Make an Attribute Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
             loading={waitingTx}
-            title="Maker an Attribute Offer"
+            title="Make an Attribute Offer"
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={

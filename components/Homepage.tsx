@@ -2,7 +2,6 @@ import useCollections from 'hooks/useCollections'
 import Head from 'next/head'
 import React, { FC } from 'react'
 import CollectionsGrid from './CollectionsGrid'
-import SearchCollection from './SearchCollections'
 
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
@@ -34,12 +33,9 @@ const Homepage: FC = () => {
         {title}
         {description}
       </Head>
-      <header className="col-span-full mb-10 mt-40">
-        <h1 className="reservoir-h1 text-center">{tagline}</h1>
+      <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
+        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
       </header>
-      <div className="col-span-full mb-12 md:col-span-4 md:col-start-3 lg:col-span-4 lg:col-start-5">
-        <SearchCollection />
-      </div>
       <CollectionsGrid collections={collections} />
     </>
   )

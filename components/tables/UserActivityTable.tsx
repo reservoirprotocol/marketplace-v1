@@ -31,15 +31,15 @@ const UserActivityTable: FC<Props> = ({
   }
 
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
+        <thead className="bg-gray-50 dark:bg-neutral-900">
           <tr>
             {['Type', 'Item', 'Price', 'From', 'To', 'Time'].map((item) => (
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left"
+                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
               >
                 {item}
               </th>
@@ -64,15 +64,15 @@ const UserActivityTable: FC<Props> = ({
               <tr
                 key={`${transfer?.token?.tokenId}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] bg-white even:bg-gray-50"
+                className="group h-[80px] bg-white even:bg-gray-50 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
               >
                 {/* TYPE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {type}
                 </td>
 
                 {/* ITEM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {tokenHref && (
                     <Link href={tokenHref}>
                       <a className="flex items-center gap-2">
@@ -98,12 +98,12 @@ const UserActivityTable: FC<Props> = ({
                 </td>
 
                 {/* PRICE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth amount={price} maximumFractionDigits={4} />
                 </td>
 
                 {/* FROM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {from && (
                     <Link href={`/address/${from}`}>
                       <a>

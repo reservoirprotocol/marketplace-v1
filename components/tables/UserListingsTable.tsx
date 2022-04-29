@@ -41,15 +41,15 @@ const UserListingsTable: FC<Props> = ({
   }
 
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
+        <thead className="bg-gray-50 dark:bg-neutral-900">
           <tr>
             {['Item', 'Price', 'Expiration'].map((item) => (
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left"
+                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
               >
                 {item}
               </th>
@@ -79,10 +79,10 @@ const UserListingsTable: FC<Props> = ({
               <tr
                 key={`${position?.id}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] even:bg-neutral-100 dark:even:bg-neutral-900"
+                className="group h-[80px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
               >
                 {/* ITEM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-10 w-10">
@@ -106,16 +106,16 @@ const UserListingsTable: FC<Props> = ({
                 </td>
 
                 {/* PRICE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth amount={value} maximumFractionDigits={4} />
                 </td>
 
                 {/* EXPIRATION */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {expiration}
                 </td>
                 {isOwner && (
-                  <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                  <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                     <CancelListing
                       data={{
                         collectionId: modal?.collectionId,
