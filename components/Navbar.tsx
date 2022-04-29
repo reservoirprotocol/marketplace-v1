@@ -46,7 +46,11 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
     <nav className="col-span-full flex items-center gap-4 px-6 py-4 md:py-6 md:px-16">
       <Link href="/">
         <a className="relative mr-4 inline-flex items-center gap-1">
-          <img src={logo} alt={logoAlt} className="h-9 sm:block sm:h-8" />
+          <img
+            src={logo}
+            alt={logoAlt}
+            className="h-9 flex-none sm:block sm:h-8"
+          />
           {NAVBAR_TITLE ? (
             <div className="hidden font-semibold dark:text-white md:block">
               {NAVBAR_TITLE}
