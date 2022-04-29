@@ -7,6 +7,7 @@ import { useAccount, useConnect } from 'wagmi'
 import { Balance } from './ConnectWallet'
 import EthAccount from './EthAccount'
 
+const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -18,7 +19,7 @@ type Props = {
   }[]
 }
 
-const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
+const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
   const [{ data: connectData }, connect] = useConnect()
   const [{ data: accountData, loading }, disconnect] = useAccount({
     fetchEns: true,
@@ -35,16 +36,22 @@ const HamburgerMenu: FC<Props> = ({ search, externalLinks }) => {
 
       <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md dark:bg-black">
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
-          <div className="relative mr-4 inline-flex items-center gap-1">
+          <div className="relative mr-4 inline-flex h-[42px] items-center  gap-1">
             <img src={logo} alt="" className="h-8 sm:block" />
+            {NAVBAR_TITLE ? (
+              <div className="font-semibold dark:text-white">
+                {NAVBAR_TITLE}
+              </div>
+            ) : (
+              <div className="font-['Obvia'] text-lg dark:text-white md:block">
+                reservoir.market
+              </div>
+            )}
             {CHAIN_ID === '4' && (
               <div className="reservoir-tiny rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
                 Testnet
               </div>
             )}
-          </div>
-          <div className="mx-auto h-full w-full max-w-md flex-grow">
-            {search}
           </div>
           <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />

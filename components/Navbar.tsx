@@ -48,7 +48,9 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
         <a className="relative mr-4 inline-flex items-center gap-1">
           <img src={logo} alt={logoAlt} className="h-8 sm:block" />
           {NAVBAR_TITLE ? (
-            <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
+            <div className="hidden font-semibold dark:text-white md:block">
+              {NAVBAR_TITLE}
+            </div>
           ) : (
             <div className="hidden font-['Obvia'] text-lg dark:text-white md:block">
               reservoir.market
