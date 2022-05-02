@@ -179,6 +179,14 @@ const TokensMain: FC<Props> = ({
   const hasTokenSetId = !!collection.data?.collection?.tokenSetId
 
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Price was greater than expected.',
+        title: 'Could not buy token',
+      })
+      return
+    }
     if (err?.message === 'Not enough ETH balance') {
       setToast({
         kind: 'error',

@@ -113,6 +113,14 @@ const AcceptOffer: FC<Props> = ({
   ) => {
     setOpen(false)
     setSteps(undefined)
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Offer was lower than expected.',
+        title: 'Could not accept offer',
+      })
+      return
+    }
     // Handle user rejection
     if (err?.code === 4001) {
       setToast({
