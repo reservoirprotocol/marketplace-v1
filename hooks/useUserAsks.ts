@@ -70,11 +70,15 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.orders?.length === 0) return null
 
+  if (index !== 0 && previousPageData?.continuation === null) return null
+
   let query: paths['/orders/asks/v1']['get']['parameters']['query'] = {
     status: 'active',
     maker: user,
     limit: 20,
   }
+
+  if (index !== 0) query.continuation = previousPageData.continuation
 
   const href = setParams(pathname, query)
 
