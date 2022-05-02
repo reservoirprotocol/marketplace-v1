@@ -132,11 +132,16 @@ const BuyNow: FC<Props> = ({
     mutate && mutate()
   }
 
-  const execute = async (token: string, taker: string) => {
+  const execute = async (
+    token: string,
+    taker: string,
+    expectedPrice: number
+  ) => {
     await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
     await buyToken({
+      expectedPrice,
       query: {
         taker,
         token,
@@ -154,6 +159,8 @@ const BuyNow: FC<Props> = ({
 
   const taker = accountData?.address
 
+  const expectedPrice = token?.market?.floorAsk?.price
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
@@ -163,7 +170,12 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={() => taker && tokenString && execute(tokenString, taker)}
+          onClick={() =>
+            taker &&
+            tokenString &&
+            expectedPrice &&
+            execute(tokenString, taker, expectedPrice)
+          }
           className="btn-primary-fill w-full"
         >
           {waitingTx ? (
