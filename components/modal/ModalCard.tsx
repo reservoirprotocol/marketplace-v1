@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import { optimizeImage } from 'lib/optmizeImage'
 import Steps from 'components/Steps'
-import { Execute } from '@reservoir0x/client-sdk'
+import { Execute } from '@reservoir0x/client-sdk/dist/types/index'
 import FormatEth from 'components/FormatEth'
 
 type Props = {

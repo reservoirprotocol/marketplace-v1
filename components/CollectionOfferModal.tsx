@@ -12,7 +12,7 @@ import {
 import calculateOffer from 'lib/calculateOffer'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { Common } from '@reservoir0x/sdk'
+import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import getWeth from 'lib/getWeth'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
@@ -75,7 +75,7 @@ const CollectionOfferModal: FC<Props> = ({
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
   const [weth, setWeth] = useState<{
-    weth: Common.Helpers.Weth
+    weth: Weth
     balance: BigNumber
   } | null>(null)
   const [{ data: signer }] = useSigner()

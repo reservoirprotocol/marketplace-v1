@@ -37,7 +37,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
       <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md dark:bg-black">
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <div className="relative mr-4 inline-flex h-[42px] items-center  gap-1">
-            <img src={logo} alt="" className="h-9 sm:block sm:h-8" />
+            <img src={logo} alt="" className="block h-9 flex-none sm:h-8" />
             {NAVBAR_TITLE ? (
               <div className="font-semibold dark:text-white">
                 {NAVBAR_TITLE}

@@ -98,8 +98,12 @@ const UserListingsTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div className="reservoir-body">{collectionName}</div>
-                        <div className="reservoir-h6">{name}</div>
+                        <div className="reservoir-body dark:text-white ">
+                          {collectionName}
+                        </div>
+                        <div className="reservoir-h6 dark:text-white ">
+                          {name}
+                        </div>
                       </span>
                     </a>
                   </Link>

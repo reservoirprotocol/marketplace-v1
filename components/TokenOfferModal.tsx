@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, ethers } from 'ethers'
+import { BigNumber, constants, utils, Signer } from 'ethers'
 import {
   useBalance,
   useConnect,
@@ -13,9 +13,9 @@ import calculateOffer from 'lib/calculateOffer'
 import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { Common } from '@reservoir0x/sdk'
+import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import getWeth from 'lib/getWeth'
-import { Execute, paths, placeBid } from '@reservoir0x/client-sdk'
+import { Execute, paths, placeBid } from '@reservoir0x/client-sdk/dist'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
@@ -51,7 +51,7 @@ type Props = {
     bps: number | undefined
     recipient: string | undefined
   }
-  signer: ethers.Signer | undefined
+  signer: Signer | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
@@ -77,7 +77,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
   const [weth, setWeth] = useState<{
-    weth: Common.Helpers.Weth
+    weth: Weth
     balance: BigNumber
   } | null>(null)
   const [{ data: signer }] = useSigner()
@@ -103,9 +103,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }, [signer])
 
   useEffect(() => {
-    const userInput = ethers.utils.parseEther(
-      offerPrice === '' ? '0' : offerPrice
-    )
+    const userInput = utils.parseEther(offerPrice === '' ? '0' : offerPrice)
     if (weth?.balance && ethBalance?.value) {
       const calculations = calculateOffer(
         userInput,
