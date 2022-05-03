@@ -333,6 +333,12 @@ const ListModal: FC<Props> = ({
                 <div className="reservoir-h6 dark:text-white">Fees</div>
                 <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
+                  {FEE_BPS && (
+                    <div>
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
+                      %
+                    </div>
+                  )}
                   {postOnOpenSea && (
                     <div>
                       OpenSea 2.5%<sup>*</sup>
