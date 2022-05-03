@@ -38,14 +38,14 @@ class MyDocument extends Document {
         {/* The optimal size is 1200 x 630 (1.91:1 ratio). */}
         <meta
           name="twitter:image"
-          content="https://www.reservoir.market/og.png"
+          content="https://www.August Sander 10k Collection/og.png"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:site:domain"
-          content="https://www.reservoir.market/"
+          content="https://www.August Sander 10k Collection/"
         />
-        <meta name="twitter:url" content="https://www.reservoir.market/" />
+        <meta name="twitter:url" content="https://www.August Sander 10k Collection/" />
         {/* should be between 30-60 characters, with a maximum of 70 */}
         <meta
           name="twitter:title"
@@ -74,11 +74,11 @@ class MyDocument extends Document {
           content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
         />
         <meta property="og:site_name" content="Reservoir Market" />
-        <meta property="og:url" content="https://www.reservoir.market/" />
+        <meta property="og:url" content="https://www.August Sander 10k Collection/" />
         {/* The optimal size is 1200 x 630 (1.91:1 ratio). */}
         <meta
           property="og:image"
-          content="https://www.reservoir.market/og.png"
+          content="https://www.August Sander 10k Collection/og.png"
         />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1280" />

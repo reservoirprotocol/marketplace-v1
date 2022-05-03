@@ -6,14 +6,14 @@ This repo is designed to help you quickly get started building on top of [Reserv
 
 The marketplace supports 3 different modes:
 
-- Single collection (e.g. [Crypto Coven](https://cryptocoven.reservoir.market))
-- Multi collection community (e.g. [BAYC](https://bayc.reservoir.market))
-- All collections ([example](https://www.reservoir.market))
+- Single collection (e.g. [Crypto Coven](https://cryptocoven.August Sander 10k Collection))
+- Multi collection community (e.g. [BAYC](https://bayc.August Sander 10k Collection))
+- All collections ([example](https://www.August Sander 10k Collection))
 
 A demo deployment allows you to test any collection, by changing the subdomain:
 
-- [{collection-slug}.reservoir.market](https://cryptocoven.reservoir.market) (if a collection is unsupported, ping us on Discord to get it added)
-- [{community-id}.reservoir.market](https://bayc.reservoir.market) (currently works with `bayc`,`loot`,`forgottenrunes`)
+- [{collection-slug}.August Sander 10k Collection](https://cryptocoven.August Sander 10k Collection) (if a collection is unsupported, ping us on Discord to get it added)
+- [{community-id}.August Sander 10k Collection](https://bayc.August Sander 10k Collection) (currently works with `bayc`,`loot`,`forgottenrunes`)
 
 ## Get started
 
@@ -54,7 +54,7 @@ $ npm install
 | NEXT_PUBLIC_FAVICON            | `false`  | `String`                                                                          | `N/A`                                                             | /favicon.io                                             | A [favicon](https://developer.mozilla.org/en-US/docs/Glossary/Favicon).                                                                                                                        |
 | NEXT_PUBLIC_META_TITLE         | `false`  | `String`                                                                          | `N/A`                                                             | Foo Marketplace                                         | The text used in the [<title> tag](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title).                                                                                           |
 | NEXT_PUBLIC_META_DESCRIPTION   | `false`  | `String`                                                                          | `N/A`                                                             | Trade all Foo NFTs on the one and only Foo Marketplace! | The text used in the meta description <br/>`<meta name="description" content={NEXT_PUBLIC_META_DESCRIPTION} />`                                                                                |
-| NEXT_PUBLIC_META_OG_IMAGE      | `false`  | [URL href](https://developer.mozilla.org/en-US/docs/Web/API/URL/href)             | `N/A`                                                             | `https://example.com/og.png`                            | The image used in the meta og images <br/>`<meta name="twitter:image" content={NEXT_PUBLIC_META_OG_IMAGE}/>`, <br/>`<meta property="og:image" content="https://www.reservoir.market/og.png"/>` |
+| NEXT_PUBLIC_META_OG_IMAGE      | `false`  | [URL href](https://developer.mozilla.org/en-US/docs/Web/API/URL/href)             | `N/A`                                                             | `https://example.com/og.png`                            | The image used in the meta og images <br/>`<meta name="twitter:image" content={NEXT_PUBLIC_META_OG_IMAGE}/>`, <br/>`<meta property="og:image" content="https://www.August Sander 10k Collection/og.png"/>` |
 | NEXT_PUBLIC_BANNER_IMAGE       | `false`  | `String` OR [URL href](https://developer.mozilla.org/en-US/docs/Web/API/URL/href) | `N/A`                                                             | /banner.png                                             | The banner image used in the collection main page.                                                                                                                                             |
 | NEXT_PUBLIC_TAGLINE            | `false`  | `String`                                                                          | `N/A`                                                             | This is our unique tagline!                             | A tagline to be displayed in the homepage. [Only avaiable if `NEXT_PUBLIC_COLLECTION` and `NEXT_PUBLIC_COMMUNITY` are unset]                                                                   |
 | NEXT_PUBLIC_DARK_MODE          | `false`  | `String`                                                                          | `N/A`                                                             | true                                                    | If set, the sample marketplace will use a dark mode                                                                                                                                            |

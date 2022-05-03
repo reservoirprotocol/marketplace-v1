@@ -7,9 +7,9 @@ import getWildcard from './getWildcard'
  *
  * The mode is used to load data and use certain layouts depending on the
  * subdomain
- * - https://www.reservoir.market -> `global` (Displays all collections)
- * - https://lootproject.reservoir.market -> `collection` (Displays collection tokens)
- * - https://loot.reservoir.market -> `community` (Displays community collections)
+ * - https://www.August Sander 10k Collection -> `global` (Displays all collections)
+ * - https://lootproject.August Sander 10k Collection -> `collection` (Displays collection tokens)
+ * - https://loot.August Sander 10k Collection -> `community` (Displays community collections)
  * @param req Client's incoming request object
  * @param community Optional environment variable for the community id
  * @param collection Optional environment variable for the collection id

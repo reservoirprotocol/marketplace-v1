@@ -38,7 +38,7 @@ type Props = {
 
 const orderbooks = {
   opensea: 'OpenSea',
-  reservoir: 'reservoir.market',
+  reservoir: 'August Sander 10k Collection',
 }
 
 const ModalCard: FC<Props> = ({

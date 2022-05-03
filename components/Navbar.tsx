@@ -51,7 +51,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
             <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
           ) : (
             <div className="hidden font-['Obvia'] text-lg md:block">
-              reservoir.market
+              August Sander 10k Collection
             </div>
           )}
           {CHAIN_ID === '4' && (

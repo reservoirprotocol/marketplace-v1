@@ -18,13 +18,13 @@ const InfoModal: FC = () => {
               <div className="reservoir-body space-y-4">
                 <section>
                   <div className="mb-8 flex justify-between">
-                    <p className="reservoir-h4">What is reservoir.market?</p>
+                    <p className="reservoir-h4">What is August Sander 10k Collection?</p>
                     <Dialog.Close className="btn-primary-outline p-1.5">
                       <HiX className="h-5 w-5" />
                     </Dialog.Close>
                   </div>
                   <p>
-                    Reservoir.market is a demo marketplace designed to show how
+                    August Sander 10k Collection is a demo marketplace designed to show how
                     simple it is to build on top of Reservoir, a web3-native
                     order book protocol.
                   </p>
@@ -36,37 +36,37 @@ const InfoModal: FC = () => {
                   <ul>
                     <li>
                       Single collection community:{' '}
-                      <Link href="https://cryptocoven.reservoir.market/">
+                      <Link href="https://cryptocoven.August Sander 10k Collection/">
                         <a
                           className="underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          cryptocoven.reservoir.market
+                          cryptocoven.August Sander 10k Collection
                         </a>
                       </Link>
                     </li>
                     <li>
                       Multi collection community:{' '}
-                      <Link href="https://bayc.reservoir.market/">
+                      <Link href="https://bayc.August Sander 10k Collection/">
                         <a
                           className="underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          bayc.reservoir.market
+                          bayc.August Sander 10k Collection
                         </a>
                       </Link>
                     </li>
                     <li>
                       All collections:{' '}
-                      <Link href="https://www.reservoir.market/">
+                      <Link href="https://www.August Sander 10k Collection/">
                         <a
                           className="underline"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          www.reservoir.market
+                          www.August Sander 10k Collection
                         </a>
                       </Link>
                     </li>
