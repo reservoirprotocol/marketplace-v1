@@ -181,7 +181,7 @@ const AttributeOfferModal: FC<Props> = ({
         onClick={async () =>
           await checkWallet(signer, setToast, connect, connectData)
         }
-        className="btn-primary-outline whitespace-nowrap dark:text-white"
+        className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
         Make an Attribute Offer
       </Dialog.Trigger>
@@ -200,7 +200,7 @@ const AttributeOfferModal: FC<Props> = ({
                   waitingTx
                 }
                 onClick={execute}
-                className="btn-primary-fill w-full"
+                className="btn-primary-fill w-full dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
                   <CgSpinner className="h-4 w-4 animate-spin" />
@@ -213,7 +213,10 @@ const AttributeOfferModal: FC<Props> = ({
             <>
               <div className="mb-8 space-y-5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="price" className="reservoir-h6">
+                  <label
+                    htmlFor="price"
+                    className="reservoir-h6 dark:text-white"
+                  >
                     Price (wETH)
                   </label>
                   <input
@@ -224,7 +227,7 @@ const AttributeOfferModal: FC<Props> = ({
                     step={0.01}
                     value={offerPrice}
                     onChange={(e) => setOfferPrice(e.target.value)}
-                    className="input-primary-outline w-[160px]"
+                    className="input-primary-outline w-[160px] dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4"
                   />
                 </div>
 
@@ -236,14 +239,14 @@ const AttributeOfferModal: FC<Props> = ({
                   />
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6">Fees</div>
-                  <div className="reservoir-body text-right">
+                  <div className="reservoir-h6 dark:text-white">Fees</div>
+                  <div className="reservoir-body text-right dark:text-white">
                     <div>Royalty {royaltyPercentage}</div>
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6">Total Cost</div>
-                  <div className="reservoir-h6 font-bold">
+                  <div className="reservoir-h6 dark:text-white">Total Cost</div>
+                  <div className="reservoir-h6 font-bold dark:text-white">
                     <FormatEth
                       amount={calculations.total}
                       maximumFractionDigits={4}
