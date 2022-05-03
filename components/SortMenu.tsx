@@ -60,9 +60,9 @@ const SortMenu: FC<Props> = ({ setSize }) => {
               }
             }}
             disabled={sortSelection === options[key]}
-            className={`reservoir-h6 reservoir-gray-dropdown-item rounded-none dark:text-white ${
+            className={`reservoir-h6 reservoir-gray-dropdown-item rounded-none dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800 ${
               sortSelection === options[key]
-                ? 'cursor-not-allowed bg-gray-100 dark:bg-neutral-800'
+                ? 'cursor-not-allowed bg-gray-100 dark:bg-neutral-900 dark:text-white'
                 : ''
             }`}
             aria-label={`Sort by ${options[key]}`}
