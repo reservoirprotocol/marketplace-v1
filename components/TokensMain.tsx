@@ -283,7 +283,7 @@ const TokensMain: FC<Props> = ({
   const title = metaTitle ? (
     <title>{metaTitle}</title>
   ) : (
-    <title>{collection.data?.collection?.name} | Reservoir Market</title>
+    <title>{collection.data?.collection?.name} | August Sander 10k Collection</title>
   )
   const description = metaDescription ? (
     <meta name="description" content={metaDescription} />

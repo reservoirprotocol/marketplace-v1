@@ -68,7 +68,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
   ) : (
     <title>
       {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-      {collection.data?.collection?.name} | Reservoir Market
+      {collection.data?.collection?.name} | August Sander 10k Collection
     </title>
   )
   const description = META_DESCRIPTION ? (

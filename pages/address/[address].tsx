@@ -78,7 +78,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const title = META_TITLE ? (
     <title>{META_TITLE}</title>
   ) : (
-    <title>{address} Profile | Reservoir Market</title>
+    <title>{address} Profile | August Sander 10k Collection</title>
   )
 
   return (

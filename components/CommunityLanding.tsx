@@ -25,7 +25,7 @@ const CommunityLanding: FC<Props> = ({ collectionId, mode }) => {
     <title>{metaTitle}</title>
   ) : (
     <title>
-      Reservoir Market | Open source NFT marketplace powered by Reservoir
+      August Sander 10k Collection | Open source NFT marketplace powered by Reservoir
     </title>
   )
   const description = metaDescription ? (
