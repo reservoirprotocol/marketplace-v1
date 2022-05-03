@@ -20,7 +20,9 @@ const Listings: FC<Props> = ({ asks }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <Card>
-        <div className="reservoir-h5 mb-4 dark:text-white">Listings</div>
+        <div className="reservoir-h5 mb-4 dark:bg-black dark:text-white ">
+          Listings
+        </div>
         <div className="max-h-96 overflow-auto rounded-2xl">
           <table className="min-w-full table-auto overflow-y-auto">
             <thead>
@@ -43,15 +45,15 @@ const Listings: FC<Props> = ({ asks }) => {
                 return (
                   <tr
                     key={id}
-                    className="group h-[80px] bg-white even:bg-gray-50"
+                    className="group h-[80px] bg-white even:bg-gray-50 dark:bg-black dark:text-white  dark:even:bg-neutral-900"
                   >
                     {/* UNIT PRICE */}
-                    <td className="reservoir-h6 whitespace-nowrap px-6 py-4">
+                    <td className="reservoir-h6 whitespace-nowrap px-6 py-4 dark:text-white">
                       <FormatEth amount={unitPrice} maximumFractionDigits={4} />
                     </td>
 
                     {/* TIME */}
-                    <td className="reservoir-small whitespace-nowrap px-6 py-4 capitalize text-gray-500">
+                    <td className="reservoir-small whitespace-nowrap px-6 py-4 capitalize text-gray-500 dark:text-white">
                       {expiration}
                     </td>
 
@@ -70,7 +72,7 @@ const Listings: FC<Props> = ({ asks }) => {
                             <img src={source?.logo} alt="" />
                           </a>
                           <Link href={from.href}>
-                            <a className="reservoir-subtitle text-primary-700">
+                            <a className="reservoir-subtitle text-primary-700 dark:text-primary-100">
                               {shrinkAddress(from.address)}
                             </a>
                           </Link>
