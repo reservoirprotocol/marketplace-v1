@@ -57,7 +57,8 @@ const Home: NextPage<Props> = ({ mode, collectionId }) => {
       }}
     >
       <TokensMain
-        collectionId={router.query.id?.toString()}
+        //collectionId={router.query.id?.toString()}
+        collectionId={COLLECTION}
         chainId={+CHAIN_ID as ChainId}
         fallback={fallback}
         openSeaApiKey={OPENSEA_API_KEY}
