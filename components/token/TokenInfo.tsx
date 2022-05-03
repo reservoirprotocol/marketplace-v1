@@ -86,7 +86,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
             className="reservoir-h6"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://opensea.io/assets/${token?.token?.contract}/${token?.token?.tokenId}`}
+            href={`https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`}
           >
             <img
               src="/icons/OpenSea.svg"
