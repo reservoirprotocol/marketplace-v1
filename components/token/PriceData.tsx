@@ -28,12 +28,14 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.name}`
 
-  if(token?.market?.floorAsk?.source?.name == "OpenSea"){
-    const sourceRedirect = `https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`
-  }
-  else {
-    const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
-  }
+  const sourceRedirect = (() => {
+    if(token?.market?.floorAsk?.source?.name == "OpenSea"){
+      return `https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`
+    } else {
+      return `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
+    }
+  })();
+
   if (!CHAIN_ID) return null
 
   const isOwner =
