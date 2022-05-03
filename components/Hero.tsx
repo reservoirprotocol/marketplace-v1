@@ -96,7 +96,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex w-min items-center justify-between gap-4">
               <Stat name="Top Offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
               </Stat>
@@ -117,7 +117,7 @@ export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div className="grid items-center sm:flex sm:gap-1">
-    <div className="reservoir-h6 text-gray-400">{name}</div>
+    <div className="reservoir-h6 whitespace-nowrap text-gray-400">{name}</div>
     <div className="reservoir-h6 dark:text-white">{children}</div>
   </div>
 )
