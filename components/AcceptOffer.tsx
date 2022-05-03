@@ -171,7 +171,7 @@ const AcceptOffer: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
           onClick={() => taker && tokenString && execute(tokenString, taker)}
-          className="btn-primary-outline w-full dark:text-white"
+          className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
         >
           {waitingTx ? (
             <CgSpinner className="h-4 w-4 animate-spin" />

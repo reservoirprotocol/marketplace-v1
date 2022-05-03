@@ -175,7 +175,7 @@ const CollectionOfferModal: FC<Props> = ({
         onClick={async () =>
           await checkWallet(signer, setToast, connect, connectData)
         }
-        className="btn-primary-outline whitespace-nowrap dark:text-white"
+        className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
         Make a Collection Offer
       </Dialog.Trigger>

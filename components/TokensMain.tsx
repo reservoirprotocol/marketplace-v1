@@ -330,7 +330,7 @@ const TokensMain: FC<Props> = ({
                 floor?.price === null || waitingTx || isInTheWrongNetwork
               }
               onClick={() => token && taker && execute(token, taker)}
-              className="btn-primary-fill w-full"
+              className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
             >
               {waitingTx ? (
                 <CgSpinner className="h-4 w-4 animate-spin" />
@@ -394,7 +394,7 @@ const TokensMain: FC<Props> = ({
                 <SortMenu setSize={tokens.setSize} />
               )}
               <button
-                className="btn-primary-outline dark:text-white"
+                className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                 title="Refresh collection"
                 disabled={refreshLoading}
                 onClick={() => refreshCollection(collectionId)}

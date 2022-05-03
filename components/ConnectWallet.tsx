@@ -16,7 +16,7 @@ const ConnectWallet: FC = () => {
   if (accountData) {
     return (
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="btn-primary-outline ml-auto rounded-full border-transparent bg-gray-100 normal-case dark:bg-neutral-900">
+        <DropdownMenu.Trigger className="btn-primary-outline  ml-auto rounded-full border-transparent bg-gray-100 normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
           {loading ? (
             <div className="bg-primary-50 h-[32px] w-[115px] animate-pulse rounded"></div>
           ) : (

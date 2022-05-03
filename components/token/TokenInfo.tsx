@@ -131,7 +131,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
           Metadata Refresh
         </div>
         <button
-          className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700 dark:text-primary-100"
+          className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
           title="Refresh token"
           disabled={refreshLoading}
           onClick={() =>
