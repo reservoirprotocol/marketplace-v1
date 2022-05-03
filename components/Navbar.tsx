@@ -43,28 +43,28 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
   const search = <SearchCollections communityId={communityId} />
 
   return (
-    <nav className="col-span-full flex items-center gap-4 px-6 py-4 md:py-6 md:px-16">
+    <nav className="col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
       <Link href="/">
-        <a className="relative mr-4 inline-flex items-center gap-1">
-          <img src={logo} alt={logoAlt} className="h-8 sm:block" />
+        <a className="relative inline-flex flex-none items-center gap-1">
+          <img src={logo} alt={logoAlt} className="w-8" />
           {NAVBAR_TITLE ? (
-            <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
+            <div className="hidden font-semibold dark:text-white md:block">
+              {NAVBAR_TITLE}
+            </div>
           ) : (
-            <div className="hidden font-['Obvia'] text-lg md:block">
+            <div className="hidden font-['Obvia'] text-lg dark:text-white md:block">
               reservoir.market
             </div>
           )}
           {CHAIN_ID === '4' && (
-            <div className="reservoir-tiny rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
+            <div className="reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
               Testnet
             </div>
           )}
         </a>
       </Link>
-      <div className="flex w-full gap-4 md:w-auto">
-        {displaySearch && (
-          <div className="h-full w-full flex-grow">{search}</div>
-        )}
+      <div className="flex flex-grow gap-4 md:w-auto">
+        {displaySearch && <div className="w-full">{search}</div>}
         {hasExternalLinks && (
           <div className="hidden items-center gap-6 md:flex">
             {externalLinks.map(({ name, url }) => (

@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import ClearFilters from './ClearFilters'
 import ExploreTable from './ExploreTable'
 import FormatEth from './FormatEth'
 

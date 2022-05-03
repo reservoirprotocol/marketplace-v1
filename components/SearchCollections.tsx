@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 
 type Props = {
   communityId?: string

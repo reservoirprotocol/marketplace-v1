@@ -5,7 +5,7 @@ import { matchSorter } from 'match-sorter'
 import { sortAttributes } from './functions'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 
 type Props = {
   attribute: NonNullable<

@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import { NextRouter } from 'next/router'

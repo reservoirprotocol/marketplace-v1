@@ -4,7 +4,7 @@ import useUserActivity from 'hooks/useUserActivity'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import EthAccount from 'components/EthAccount'
-import { ethers } from 'ethers'
+import { constants } from 'ethers'
 import { useAccount } from 'wagmi'
 import FormatEth from 'components/FormatEth'
 
@@ -24,7 +24,7 @@ const UserActivityTable: FC<Props> = ({
 
   if (transfersFlat.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center">
+      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         No trading history yet.
       </div>
     )
@@ -165,7 +165,7 @@ function processTransfer(
       : transfer?.from?.toLowerCase() === address?.toLowerCase() &&
         transfer?.price !== null
       ? 'Sell'
-      : transfer?.from === ethers.constants.AddressZero
+      : transfer?.from === constants.AddressZero
       ? 'Mint'
       : 'Transfer'
 

@@ -1178,10 +1178,10 @@
   resolved "https://registry.npmjs.org/@ramosdiego/ui/-/ui-0.0.10.tgz"
   integrity sha512-V4o+owVvgeVfKvj5oUobm1GyJO2VPKKtIwmGS/WlwPLXGvV470g6D8xUG8AHN6bM9EhALWUl8/QEiDMXwco0wQ==
 
-"@reservoir0x/client-sdk@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/client-sdk/-/client-sdk-0.0.16.tgz#a7ac54428ecd4589db2092dd35628c20b6816978"
-  integrity sha512-NL5SWlpM7+WCO4ysjrqAryQp9NNTyHKQoc+qlzxPTuQSg2HW22iWBXB7DPryqDwKBhpXJc0hLH+mUDUG+0e+xw==
+"@reservoir0x/client-sdk@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/client-sdk/-/client-sdk-0.0.15.tgz#d223747e6c7e835ce8c9e1b431738e9e26ddbfcd"
+  integrity sha512-eJXQ49deZwgjLo+XimxLF+fOyYNn2R/bBcMyTpJQzsA8nNpP/0UxvaKJ8JE8b/E5gJ+f5zUDvG28RU1ZSk3ggA==
   dependencies:
     ethers "^5.6.1"
 

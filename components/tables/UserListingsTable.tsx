@@ -34,7 +34,7 @@ const UserListingsTable: FC<Props> = ({
 
   if (ordersFlat.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center">
+      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         You don&apos;t have any items listed for sale.
       </div>
     )
@@ -98,8 +98,12 @@ const UserListingsTable: FC<Props> = ({
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div className="reservoir-body">{collectionName}</div>
-                        <div className="reservoir-h6">{name}</div>
+                        <div className="reservoir-body dark:text-white ">
+                          {collectionName}
+                        </div>
+                        <div className="reservoir-h6 dark:text-white ">
+                          {name}
+                        </div>
                       </span>
                     </a>
                   </Link>

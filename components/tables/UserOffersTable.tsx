@@ -34,7 +34,7 @@ const UserOffersTable: FC<Props> = ({
 
   if (ordersFlat.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center">
+      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         You have not made any offers.
       </div>
     )
@@ -123,16 +123,16 @@ const UserOffersTable: FC<Props> = ({
                 </td>
 
                 {/* OFFER */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth amount={price} maximumFractionDigits={4} />
                 </td>
 
                 {/* EXPIRATION */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {expiration}
                 </td>
                 {isOwner && (
-                  <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                  <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                     <CancelOffer
                       data={{
                         collectionId: modal?.collectionId,

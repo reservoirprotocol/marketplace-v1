@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import { optimizeImage } from 'lib/optmizeImage'
 import Steps from 'components/Steps'
-import { Execute } from '@reservoir0x/client-sdk'
+import { Execute } from '@reservoir0x/client-sdk/dist/types/index'
 import FormatEth from 'components/FormatEth'
 
 type Props = {
@@ -69,12 +69,14 @@ const ModalCard: FC<Props> = ({
 
   return (
     <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-      <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-11 shadow-md ">
+      <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-11 shadow-md dark:bg-black ">
         <div className="mb-4 flex items-center justify-between">
-          <Dialog.Title className="reservoir-h4">{modalTitle}</Dialog.Title>
+          <Dialog.Title className="reservoir-h4 dark:text-white">
+            {modalTitle}
+          </Dialog.Title>
           <Dialog.Close
             onClick={onCloseCallback}
-            className="btn-primary-outline p-1.5"
+            className="btn-primary-outline p-1.5 dark:text-white"
           >
             <HiX className="h-5 w-5" />
           </Dialog.Close>
@@ -89,8 +91,8 @@ const ModalCard: FC<Props> = ({
               className="w-[50px]"
             />
             <div className="overflow-auto">
-              <div className="reservoir-body">{subTitle}</div>
-              <div className="reservoir-h4 my-1.5">
+              <div className="reservoir-body dark:text-white">{subTitle}</div>
+              <div className="reservoir-h4 my-1.5 dark:text-white">
                 {/* If this is an offer modal, change */}
                 {/* the header based on the type of offer */}
                 {data?.attribute ? (
@@ -105,14 +107,14 @@ const ModalCard: FC<Props> = ({
                 )}
               </div>
               {data?.collection?.tokenCount && (
-                <div className="reservoir-body mb-1.5">
+                <div className="reservoir-body mb-1.5 dark:text-white">
                   {`${data?.collection?.tokenCount} Eligible Tokens`}
                 </div>
               )}
             </div>
           </div>
         )}
-        <div className="reservoir-body mb-5 flex flex-wrap items-stretch gap-1.5">
+        <div className="reservoir-body mb-5 flex flex-wrap items-stretch gap-1.5 dark:text-white">
           <TopOffer topBuyValue={data?.token?.topBuyValue} />
           <ListPrice floorSellValue={data?.token?.floorSellValue} />
         </div>
@@ -125,7 +127,7 @@ const ModalCard: FC<Props> = ({
           ) : (
             <Dialog.Close
               onClick={onCloseCallback}
-              className="btn-primary-outline w-full"
+              className="btn-primary-outline w-full dark:text-white"
             >
               Success, Close this menu
             </Dialog.Close>
@@ -134,7 +136,7 @@ const ModalCard: FC<Props> = ({
           <div className="flex gap-4">
             <Dialog.Close
               onClick={onCloseCallback}
-              className="btn-primary-outline w-full"
+              className="btn-primary-outline w-full dark:text-white"
             >
               Cancel
             </Dialog.Close>
