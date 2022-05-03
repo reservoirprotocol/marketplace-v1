@@ -26,7 +26,7 @@ const TokenAttributes = ({ token }: Props) => {
                   {key}
                 </p>
                 <p
-                  className="reservoir-subtitle truncate bg-primary-100 p-3 text-center capitalize dark:bg-[#A966FF4D] dark:text-white
+                  className="reservoir-subtitle truncate bg-primary-100 p-3 text-center capitalize dark:bg-primary-900 dark:text-white
                   "
                   title={value}
                 >
