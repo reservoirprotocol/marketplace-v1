@@ -179,6 +179,14 @@ const TokensMain: FC<Props> = ({
   const hasTokenSetId = !!collection.data?.collection?.tokenSetId
 
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Price was greater than expected.',
+        title: 'Could not buy token',
+      })
+      return
+    }
     if (err?.message === 'Not enough ETH balance') {
       setToast({
         kind: 'error',
@@ -208,7 +216,11 @@ const TokensMain: FC<Props> = ({
   const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
     stats?.mutate()
 
-  const execute = async (token: string, taker: string) => {
+  const execute = async (
+    token: string,
+    taker: string,
+    expectedPrice: number
+  ) => {
     await checkWallet(signer, setToast, connect, connectData)
     if (isOwner) {
       setToast({
@@ -221,6 +233,7 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
     await buyToken({
+      expectedPrice,
       query: { token, taker },
       signer,
       apiBase: RESERVOIR_API_BASE,
@@ -315,6 +328,8 @@ const TokensMain: FC<Props> = ({
     discordUrl: collection.data?.collection?.metadata?.discordUrl,
   }
 
+  const expectedPrice = statsObj.floor
+
   return (
     <>
       <Head>
@@ -329,7 +344,12 @@ const TokensMain: FC<Props> = ({
               disabled={
                 floor?.price === null || waitingTx || isInTheWrongNetwork
               }
-              onClick={() => token && taker && execute(token, taker)}
+              onClick={() =>
+                token &&
+                taker &&
+                expectedPrice &&
+                execute(token, taker, expectedPrice)
+              }
               className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
             >
               {waitingTx ? (

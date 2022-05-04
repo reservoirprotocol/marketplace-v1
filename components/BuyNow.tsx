@@ -101,6 +101,15 @@ const BuyNow: FC<Props> = ({
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (
     err: any
   ) => {
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Price was greater than expected.',
+        title: 'Could not buy token',
+      })
+      return
+    }
+
     if (err?.message === 'Not enough ETH balance') {
       setToast({
         kind: 'error',
@@ -132,11 +141,16 @@ const BuyNow: FC<Props> = ({
     mutate && mutate()
   }
 
-  const execute = async (token: string, taker: string) => {
+  const execute = async (
+    token: string,
+    taker: string,
+    expectedPrice: number
+  ) => {
     await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
     await buyToken({
+      expectedPrice,
       query: {
         taker,
         token,
@@ -154,6 +168,8 @@ const BuyNow: FC<Props> = ({
 
   const taker = accountData?.address
 
+  const expectedPrice = token?.market?.floorAsk?.price
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
@@ -163,8 +179,13 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={() => taker && tokenString && execute(tokenString, taker)}
-          className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
+          onClick={() =>
+            taker &&
+            tokenString &&
+            expectedPrice &&
+            execute(tokenString, taker, expectedPrice)
+          }
+          className="btn-primary-fill w-full"
         >
           {waitingTx ? (
             <CgSpinner className="h-4 w-4 animate-spin" />

@@ -113,6 +113,14 @@ const AcceptOffer: FC<Props> = ({
   ) => {
     setOpen(false)
     setSteps(undefined)
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Offer was lower than expected.',
+        title: 'Could not accept offer',
+      })
+      return
+    }
     // Handle user rejection
     if (err?.code === 4001) {
       setToast({
@@ -145,11 +153,16 @@ const AcceptOffer: FC<Props> = ({
     tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
   }
 
-  const execute = async (token: string, taker: string) => {
+  const execute = async (
+    token: string,
+    taker: string,
+    expectedPrice: number
+  ) => {
     await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
     await acceptOffer({
+      expectedPrice,
       apiBase: RESERVOIR_API_BASE,
       query: {
         token,
@@ -165,13 +178,20 @@ const AcceptOffer: FC<Props> = ({
 
   const taker = accountData?.address
 
+  const expectedPrice = token?.market?.topBid?.value
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
-          onClick={() => taker && tokenString && execute(tokenString, taker)}
-          className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+          onClick={() =>
+            taker &&
+            tokenString &&
+            expectedPrice &&
+            execute(tokenString, taker, expectedPrice)
+          }
+          className="btn-primary-outline w-full dark:text-white"
         >
           {waitingTx ? (
             <CgSpinner className="h-4 w-4 animate-spin" />

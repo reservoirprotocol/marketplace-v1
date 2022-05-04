@@ -3,6 +3,7 @@ import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
 import SearchCollections from './SearchCollections'
 import HamburgerMenu from './HamburgerMenu'
+import ConnectWalletModal from './ConnectWalletModal'
 
 type Props = {
   communityId?: string
@@ -63,7 +64,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           )}
         </a>
       </Link>
-      <div className="flex flex-grow gap-4 md:w-auto">
+      <div className="w-full lg:w-auto lg:flex-none">
         {displaySearch && <div className="w-full">{search}</div>}
         {hasExternalLinks && (
           <div className="hidden items-center gap-6 md:flex">
@@ -84,6 +85,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
       <div className="ml-auto hidden md:block">
         <ConnectWallet />
       </div>
+      {/* <ConnectWalletModal /> */}
     </nav>
   )
 }

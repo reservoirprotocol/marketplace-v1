@@ -301,7 +301,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   waitingTx
                 }
                 onClick={execute}
-                className="btn-primary-fill w-full"
+                className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
                   <CgSpinner className="h-4 w-4 animate-spin" />
@@ -324,7 +324,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   step={0.01}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
-                  className="input-primary-outline w-[160px] dark:bg-neutral-900"
+                  className="input-primary-outline w-[160px] dark:border-neutral-600 dark:bg-neutral-900  dark:ring-primary-900 dark:focus:ring-4"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -361,6 +361,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 <div className="reservoir-h6 dark:text-white">Fees</div>
                 <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
+                  {FEE_BPS && (
+                    <div>
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
+                      %
+                    </div>
+                  )}
                   {postOnOpenSea && (
                     <div>
                       OpenSea 2.5%<sup>*</sup>
