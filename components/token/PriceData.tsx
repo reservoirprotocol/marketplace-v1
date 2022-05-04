@@ -32,7 +32,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
     if(token?.market?.floorAsk?.source?.name == "OpenSea"){
       return `https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`
     } else if(token?.market?.floorAsk?.source?.name == "ASK Marketplace"){
-       sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask.png`
+       sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask-round.png`
     }
     else {
       return `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
