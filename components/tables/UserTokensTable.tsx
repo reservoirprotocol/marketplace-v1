@@ -78,14 +78,14 @@ const UserTokensTable: FC<Props> = ({
                 <td className="reservoir-body whitespace-nowrap px-6 py-4">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
-                      <div className="relative h-10 w-10">
+                      <div className="relative h-100 w-100">
                         {image && (
                           <div className="aspect-w-1 aspect-h-1 relative">
                             <img
-                              src={optimizeImage(image, 35)}
-                              className="w-[35px] object-contain"
-                              width="35"
-                              height="35"
+                              src={optimizeImage(image, 135)}
+                              className="w-[135px] object-contain"
+                              width="135"
+                              height="135"
                             />
                           </div>
                         )}
