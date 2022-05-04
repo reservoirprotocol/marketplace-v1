@@ -101,7 +101,9 @@ const BuyNow: FC<Props> = ({
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (
     err: any
   ) => {
+    console.log(err?.code )
     if (err?.message === 'Not enough ETH balance' || err?.code === 422) {
+    
       setToast({
         kind: 'error',
         message: 'You have insufficient funds to buy this token.',
