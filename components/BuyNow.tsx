@@ -102,7 +102,7 @@ const BuyNow: FC<Props> = ({
     err: any
   ) => {
     console.log(err?.code )
-    if (err?.message === 'Not enough ETH balance' || err?.code === 422) {
+    if (err?.message === 'Not enough ETH balance' || err?.code === 422 || err?.message === 'Taker does not have sufficient balance') {
     
       setToast({
         kind: 'error',
