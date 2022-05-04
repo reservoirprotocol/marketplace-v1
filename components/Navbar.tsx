@@ -50,7 +50,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
           {NAVBAR_TITLE ? (
             <div className="hidden font-semibold md:block">{NAVBAR_TITLE}</div>
           ) : (
-            <div className="hidden font-['Obvia'] text-lg md:block">
+            <div className="hidden text-lg md:block">
               August Sander 10k Collection
             </div>
           )}
