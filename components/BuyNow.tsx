@@ -5,7 +5,7 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
@@ -31,7 +31,7 @@ type Props = {
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
-  signer: Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const BuyNow: FC<Props> = ({
@@ -43,8 +43,8 @@ const BuyNow: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData }] = useAccount()
+  const { connect, connectors } = useConnect()
+  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -146,7 +146,7 @@ const BuyNow: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
 
     setWaitingTx(true)
     await buyTokenBeta({

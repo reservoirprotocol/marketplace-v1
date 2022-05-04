@@ -1,10 +1,17 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { FiMenu } from 'react-icons/fi'
 import { HiOutlineLogout, HiX } from 'react-icons/hi'
-import { useAccount, useConnect } from 'wagmi'
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useEnsAvatar,
+  useEnsName,
+} from 'wagmi'
 import { Balance } from './ConnectWallet'
+import { Wallets } from './ConnectWalletModal'
 import EthAccount from './EthAccount'
 
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
@@ -20,12 +27,14 @@ type Props = {
 }
 
 const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData, loading }, disconnect] = useAccount({
-    fetchEns: true,
-  })
-  const wallet = connectData.connectors[0]
+  const { connectors } = useConnect()
+  const { data: accountData } = useAccount()
+  const { disconnect } = useDisconnect()
+  const { data: ensName } = useEnsName()
+  const { data: ensAvatar } = useEnsAvatar()
+  const wallet = connectors[0]
   const logo = NAVBAR_LOGO || '/reservoir.svg'
+  const [walletModal, setWalletModal] = useState(false)
 
   const hasExternalLinks = externalLinks.length > 0
   return (
@@ -34,7 +43,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
         <FiMenu className="h-6 w-6" />
       </Dialog.Trigger>
 
-      <Dialog.Content className="fixed inset-0 z-10 transform rounded-md bg-white shadow-md dark:bg-black">
+      <Dialog.Content className="fixed inset-0 z-10 transform bg-white shadow-md dark:bg-black">
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <div className="relative mr-4 inline-flex h-[42px] items-center  gap-1">
             <img src={logo} alt="" className="block w-8 flex-none" />
@@ -57,81 +66,76 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
-        {hasExternalLinks && (
-          <div className="grid">
-            {externalLinks.map(({ name, url }) => (
-              <a
-                key={url}
-                href={url}
-                rel="noopener noferrer"
-                className="reservoir-label-l border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
-              >
-                {name}
-              </a>
-            ))}
+
+        {walletModal ? (
+          <div className="px-6 py-4">
+            <Wallets />
           </div>
-        )}
-        {accountData ? (
-          <>
-            <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
-              <EthAccount
-                address={accountData.address}
-                ens={{
-                  avatar: accountData.ens?.avatar,
-                  name: accountData.ens?.name,
-                }}
-              />
-            </div>
-
-            <div className="reservoir-label-l flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white">
-              <span>Balance </span>
-              <span>
-                {accountData.address && (
-                  <Balance address={accountData.address} />
-                )}
-              </span>
-            </div>
-
-            <Link href={`/address/${accountData.address}`}>
-              <a className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600">
-                Portfolio
-              </a>
-            </Link>
-
-            <button
-              key={wallet.id}
-              onClick={() => disconnect()}
-              className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
-            >
-              <span>Disconnect</span>
-              <HiOutlineLogout className="h-6 w-7" />
-            </button>
-          </>
         ) : (
-          <div className="mt-12 px-4">
-            <button
-              key={wallet.id}
-              onClick={() => connect(wallet)}
-              className="btn-primary-fill col-span-2 col-start-3 w-full md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
-            >
-              Connect Wallet
-            </button>
-          </div>
-        )}
+          <>
+            {hasExternalLinks && (
+              <div className="grid">
+                {externalLinks.map(({ name, url }) => (
+                  <a
+                    key={url}
+                    href={url}
+                    rel="noopener noferrer"
+                    className="reservoir-label-l border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                  >
+                    {name}
+                  </a>
+                ))}
+              </div>
+            )}
+            {accountData ? (
+              <>
+                <div className="reservoir-label-l flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
+                  <EthAccount
+                    address={accountData.address}
+                    ens={{
+                      avatar: ensAvatar,
+                      name: ensName,
+                    }}
+                  />
+                </div>
 
-        {/* <a
-          className="reservoir-h6 flex items-center gap-2 p-4"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`https://metamask.io`}
-        >
-          <img
-            src="/icons/Twitter.svg"
-            alt="Twitter Icon"
-            className="h-6 w-6"
-          />
-          MetaMask
-        </a> */}
+                <div className="reservoir-label-l flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white">
+                  <span>Balance </span>
+                  <span>
+                    {accountData.address && (
+                      <Balance address={accountData.address} />
+                    )}
+                  </span>
+                </div>
+
+                <Link href={`/address/${accountData.address}`}>
+                  <a className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600">
+                    Portfolio
+                  </a>
+                </Link>
+
+                <button
+                  key={wallet.id}
+                  onClick={() => disconnect()}
+                  className="group reservoir-label-l flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                >
+                  <span>Disconnect</span>
+                  <HiOutlineLogout className="h-6 w-7" />
+                </button>
+              </>
+            ) : (
+              <div className="mt-12 px-4">
+                <button
+                  key={wallet.id}
+                  onClick={() => setWalletModal(true)}
+                  className="btn-primary-fill col-span-2 col-start-3 w-full md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
+                >
+                  Connect Wallet
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </Dialog.Content>
     </Dialog.Root>
   )

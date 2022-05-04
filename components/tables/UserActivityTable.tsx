@@ -18,7 +18,7 @@ const UserActivityTable: FC<Props> = ({
   chainId,
 }) => {
   const { data } = transfers
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
 
   const transfersFlat = data ? data.flatMap(({ transfers }) => transfers) : []
 

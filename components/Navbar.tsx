@@ -85,7 +85,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
       <div className="ml-auto hidden md:block">
         <ConnectWallet />
       </div>
-      {/* <ConnectWalletModal /> */}
+      <ConnectWalletModal />
     </nav>
   )
 }

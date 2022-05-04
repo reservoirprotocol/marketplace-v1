@@ -4,7 +4,7 @@ import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
@@ -30,7 +30,7 @@ type Props = {
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
-  signer: Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const AcceptOffer: FC<Props> = ({
@@ -42,8 +42,8 @@ const AcceptOffer: FC<Props> = ({
   setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData }] = useAccount()
+  const { connect, connectors } = useConnect()
+  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -158,7 +158,7 @@ const AcceptOffer: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
 
     setWaitingTx(true)
     await acceptOffer({

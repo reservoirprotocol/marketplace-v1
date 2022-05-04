@@ -11,7 +11,7 @@ const ddClientToken = process.env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN
  * @param data wagmi data object containing the user Ethereum address
  */
 export default function useDataDog(
-  data: ReturnType<typeof useAccount>['0']['data']
+  data: ReturnType<typeof useAccount>['data']
 ) {
   const [isDatadogRunning, setisDatadogRunning] = useState(false)
 
@@ -42,7 +42,7 @@ export default function useDataDog(
   useEffect(() => {
     if (data) {
       datadogRum.setUser({
-        id: data.address.toLowerCase(),
+        id: data?.address?.toLowerCase(),
       })
     }
   }, [data])

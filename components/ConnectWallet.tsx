@@ -1,5 +1,12 @@
 import { FC } from 'react'
-import { useAccount, useBalance, useConnect } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useConnect,
+  useDisconnect,
+  useEnsAvatar,
+  useEnsName,
+} from 'wagmi'
 import EthAccount from './EthAccount'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
@@ -7,24 +14,25 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import FormatEth from './FormatEth'
 
 const ConnectWallet: FC = () => {
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData, loading }, disconnect] = useAccount({
-    fetchEns: true,
-  })
-  const wallet = connectData.connectors[0]
+  const { connect, connectors } = useConnect()
+  const { data: accountData, isLoading, error } = useAccount()
+  const wallet = connectors[0]
+  const { data: ensName } = useEnsName()
+  const { data: ensAvatar } = useEnsAvatar()
+  const { disconnect } = useDisconnect()
 
   if (accountData) {
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger className="btn-primary-outline  ml-auto rounded-full border-transparent bg-gray-100 normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
-          {loading ? (
+          {isLoading ? (
             <div className="bg-primary-50 h-[32px] w-[115px] animate-pulse rounded"></div>
           ) : (
             <EthAccount
               address={accountData.address}
               ens={{
-                avatar: accountData.ens?.avatar,
-                name: accountData.ens?.name,
+                avatar: ensAvatar,
+                name: ensName,
               }}
             />
           )}
@@ -81,6 +89,6 @@ type Props = {
 }
 
 export const Balance: FC<Props> = ({ address }) => {
-  const [{ data: balance }] = useBalance({ addressOrName: address })
+  const { data: balance } = useBalance({ addressOrName: address })
   return <FormatEth amount={balance?.value} maximumFractionDigits={4} />
 }

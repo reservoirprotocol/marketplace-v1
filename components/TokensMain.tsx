@@ -55,10 +55,10 @@ const TokensMain: FC<Props> = ({
   openSeaApiKey,
   setToast,
 }) => {
-  const [{ data: accountData }] = useAccount()
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: signer }] = useSigner()
-  const [{ data: network }] = useNetwork()
+  const { data: accountData } = useAccount()
+  const { data: connectData, connect, connectors } = useConnect()
+  const { data: signer } = useSigner()
+  const { data: network } = useNetwork()
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -120,7 +120,7 @@ const TokensMain: FC<Props> = ({
 
   const isOwner =
     collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
-    accountData?.address.toLowerCase()
+    accountData?.address?.toLowerCase()
 
   const floor = stats?.data?.stats?.market?.floorAsk
 
@@ -150,7 +150,7 @@ const TokensMain: FC<Props> = ({
     openSeaApiKey,
   }
 
-  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
+  const isInTheWrongNetwork = Boolean(signer && network?.id !== env.chainId)
 
   const data: ModalProps['data'] = {
     collection: {
@@ -221,7 +221,7 @@ const TokensMain: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
     if (isOwner) {
       setToast({
         kind: 'error',

@@ -37,7 +37,7 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
   }
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   useDataDog(accountData)
 
   // Return error page if the API base url or the environment's

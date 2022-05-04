@@ -30,7 +30,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Home: NextPage<Props> = ({ mode, collectionId }) => {
   const router = useRouter()
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   useDataDog(accountData)
 
   if (!CHAIN_ID) {
