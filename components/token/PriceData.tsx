@@ -31,7 +31,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const sourceRedirect = (() => {
     if(token?.market?.floorAsk?.source?.name == "OpenSea"){
       return `https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`
-    } else if(token?.market?.floorAsk?.source?.name == "ASK Marketplace" || token?.market?.floorAsk?.source?.name == "undefined"){
+    } else if(token?.market?.floorAsk?.source?.name == "ASK Marketplace" || typeof token?.market?.floorAsk?.source?.name === 'undefined'){
        sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask-round.png`
        return ``
     }
