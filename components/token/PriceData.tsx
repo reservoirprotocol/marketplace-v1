@@ -26,7 +26,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const token = details.data?.tokens?.[0]
 
-  const sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.name}`
+  const sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask.png`
 
   const sourceRedirect = (() => {
     if(token?.market?.floorAsk?.source?.name == "OpenSea"){
