@@ -319,6 +319,7 @@ const TokensMain: FC<Props> = ({
       <Head>
         {title}
         {description}
+        {image}
       </Head>
       <Hero social={social} stats={statsObj} header={header}>
         <div className="grid w-full gap-4 md:flex">
