@@ -321,36 +321,6 @@ const TokensMain: FC<Props> = ({
         {description}
         {image}
       </Head>
-      <Hero social={social} stats={statsObj} header={header}>
-        <div className="grid w-full gap-4 md:flex">
-          <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger
-              disabled={
-                floor?.price === null || waitingTx || isInTheWrongNetwork
-              }
-              onClick={() => token && taker && execute(token, taker)}
-              className="btn-primary-fill w-full"
-            >
-              {waitingTx ? (
-                <CgSpinner className="h-4 w-4 animate-spin" />
-              ) : (
-                `Buy for ${formatBN(floor?.price, 4)} ETH`
-              )}
-            </Dialog.Trigger>
-            {steps && (
-              <Dialog.Portal>
-                <Dialog.Overlay>
-                  <ModalCard
-                    title="Buy token"
-                    loading={waitingTx}
-                    steps={steps}
-                  />
-                </Dialog.Overlay>
-              </Dialog.Portal>
-            )}
-          </Dialog.Root>
-        </div>
-      </Hero>
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
