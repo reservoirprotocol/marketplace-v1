@@ -349,28 +349,6 @@ const TokensMain: FC<Props> = ({
               </Dialog.Portal>
             )}
           </Dialog.Root>
-          {hasTokenSetId &&
-            (isAttributeModal ? (
-              <AttributeOfferModal
-                royalties={royalties}
-                signer={signer}
-                data={attributeData}
-                env={env}
-                stats={stats}
-                tokens={tokens}
-                setToast={setToast}
-              />
-            ) : (
-              <CollectionOfferModal
-                royalties={royalties}
-                signer={signer}
-                data={data}
-                env={env}
-                stats={stats}
-                tokens={tokens}
-                setToast={setToast}
-              />
-            ))}
         </div>
       </Hero>
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
