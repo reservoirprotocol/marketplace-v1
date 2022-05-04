@@ -64,7 +64,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 className="reservoir-body flex items-center gap-2 dark:text-white"
               >
                 on {token?.market?.floorAsk?.source?.name}
-                {<img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />}
+                {<img className="h-6 w-6 rounded-md" src={sourceLogo} alt="Source Logo" />}
               </a>
             }
             price={
