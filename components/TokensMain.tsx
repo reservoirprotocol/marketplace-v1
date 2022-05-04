@@ -4,7 +4,7 @@ import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import { Execute, paths } from '@reservoir0x/client-sdk/dist/types'
-import { buyToken } from '@reservoir0x/client-sdk/dist/actions'
+import { buyToken, buyTokenBeta } from '@reservoir0x/client-sdk/dist/actions'
 import { formatBN } from 'lib/numbers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -32,6 +32,7 @@ const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
@@ -232,15 +233,29 @@ const TokensMain: FC<Props> = ({
     }
 
     setWaitingTx(true)
-    await buyToken({
-      expectedPrice,
-      query: { token, taker },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+
+    if (CHAIN_ID === '4') {
+      await buyTokenBeta({
+        expectedPrice,
+        query: { token, taker },
+        signer,
+        apiBase: RESERVOIR_API_BASE,
+        setState: setSteps,
+        handleSuccess,
+        handleError,
+      })
+    } else {
+      await buyToken({
+        expectedPrice,
+        query: { token, taker },
+        signer,
+        apiBase: RESERVOIR_API_BASE,
+        setState: setSteps,
+        handleSuccess,
+        handleError,
+      })
+    }
+
     setWaitingTx(false)
   }
 

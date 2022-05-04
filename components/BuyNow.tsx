@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
+import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -12,6 +12,7 @@ import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -149,18 +150,33 @@ const BuyNow: FC<Props> = ({
     await checkWallet(signer, setToast, connect, connectData)
 
     setWaitingTx(true)
-    await buyToken({
-      expectedPrice,
-      query: {
-        taker,
-        token,
-      },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+    if (CHAIN_ID === '4') {
+      await buyTokenBeta({
+        expectedPrice,
+        query: {
+          taker,
+          token,
+        },
+        signer,
+        apiBase: RESERVOIR_API_BASE,
+        setState: setSteps,
+        handleSuccess,
+        handleError,
+      })
+    } else {
+      await buyToken({
+        query: {
+          taker,
+          token,
+        },
+        signer,
+        apiBase: RESERVOIR_API_BASE,
+        setState: setSteps,
+        handleSuccess,
+        handleError,
+      })
+    }
+
     setWaitingTx(false)
   }
 
