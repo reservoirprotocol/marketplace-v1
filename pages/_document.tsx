@@ -83,7 +83,7 @@ class MyDocument extends Document {
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="640" />
         <meta property="og:image:alt" content="August Sander 10k Collection banner" />
-        <body className="bg-white text-neutral-800 dark:bg-black dark:text-white">
+        <body className="bg-white text-neutral-600 dark:bg-black dark:text-white">
           <Main />
           <NextScript />
         </body>
