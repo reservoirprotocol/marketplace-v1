@@ -51,20 +51,6 @@ const TokenInfo: FC<Props> = ({ details }) => {
         return
       }
       
-      const pathLogs = `https://deep-index.moralis.io/api/v2/nft/${token?.token?.contract}/${token?.token?.tokenId}/transfers?chain=eth&format=decimal`
-      const resLogs = await fetch(pathLogs, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': 'Kzs6D7mGGxMKEDwxIzjgOTXj2uP3LKbhkLTdGm8crP1QbeTbp5zwSRlL7pWRCX48'
-        },
-        body: JSON.stringify(data),
-      })
-      if (!resLogs.ok) {
-        const jsonLogs = await resLogs.json()
-        handleError(jsonLogs?.message)
-        return
-      }
 
       setToast({
         kind: 'success',
