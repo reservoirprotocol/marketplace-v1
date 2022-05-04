@@ -26,12 +26,15 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const token = details.data?.tokens?.[0]
 
-  const sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask.png`
+  let sourceLogo = `https://api.reservoir.tools/redirect/logo/v1?source=${token?.market?.floorAsk?.source?.name}`
 
   const sourceRedirect = (() => {
     if(token?.market?.floorAsk?.source?.name == "OpenSea"){
       return `https://rarible.com/token/${token?.token?.contract}:${token?.token?.tokenId}`
-    } else {
+    } else if(token?.market?.floorAsk?.source?.name == "ASK Marketplace"){
+       sourceLogo = `https://afprojects.com/x-2016/nft-web-x/images/logo-ask.png`
+    }
+    else {
       return `https://api.reservoir.tools/redirect/token/v1?source=${token?.market?.floorAsk?.source?.name}&token=${token?.token?.contract}:${token?.token?.tokenId}`
     }
   })();
