@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Obvia';
-  src: url('/fonts/obvia/obvia_medium-webfont.woff2') format('woff2'),
-    url('/fonts/obvia/obvia_bold-webfont.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400 500 700;
+  font-family: 'Open Sans';
+  src: url('/fonts/open-sans/Light/OpenSans-Light.woff2?v=1.1.0')
+      format('woff2'),
+    url('/fonts/open-sans/Light/OpenSans-Light.woff?v=1.1.0') format('woff');
+  font-weight: 250;
+  font-style: normal;
 }
 
 model-viewer {
