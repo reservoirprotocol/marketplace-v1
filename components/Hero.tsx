@@ -51,7 +51,6 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
       )}
       <div className="col-span-full grid gap-5 px-4 py-6 md:place-items-center md:py-11 md:px-16 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
-          <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3  flex-grow ">
             <div className="grid items-center lg:flex lg:gap-4">
               <h1 className="reservoir-h6 dark:text-white">{header.name}</h1>
