@@ -32,7 +32,6 @@ const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
@@ -234,27 +233,15 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
 
-    if (CHAIN_ID === '4') {
-      await buyTokenBeta({
-        expectedPrice,
-        query: { token, taker },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    } else {
-      await buyToken({
-        expectedPrice,
-        query: { token, taker },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    }
+    await buyTokenBeta({
+      expectedPrice,
+      query: { token, taker },
+      signer,
+      apiBase: RESERVOIR_API_BASE,
+      setState: setSteps,
+      handleSuccess,
+      handleError,
+    })
 
     setWaitingTx(false)
   }
