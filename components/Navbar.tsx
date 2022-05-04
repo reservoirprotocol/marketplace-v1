@@ -3,6 +3,7 @@ import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
 import SearchCollections from './SearchCollections'
 import HamburgerMenu from './HamburgerMenu'
+import ConnectWalletModal from './ConnectWalletModal'
 
 type Props = {
   communityId?: string
@@ -84,6 +85,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
       <div className="ml-auto hidden md:block">
         <ConnectWallet />
       </div>
+      {/* <ConnectWalletModal /> */}
     </nav>
   )
 }
