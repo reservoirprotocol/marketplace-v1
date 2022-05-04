@@ -22,16 +22,15 @@ class MyDocument extends Document {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Reservoir" />
+        <meta name="description" content="August Sander - NFT Marketplace" />
         <meta name="keywords" content="nft, ethereum, protocol" />
         <link rel="shortcut icon" type="image/svg" href="/reservoir.svg" />
         <title>
-          August Sander 10k Collection | Open source NFT marketplace powered by Reservoir
-          Protocol
+          August Sander 10k Collection | Marketplace
         </title>
         <meta
           name="description"
-          content="August Sander 10k Collection is an open source NFT marketplace powered by Reservoir"
+          content="August Sander 10k Collection - Marketplace"
         />
         <meta name="keywords" content="NFT, API, Protocol" />
         {/* Twitter */}
@@ -49,12 +48,12 @@ class MyDocument extends Document {
         {/* should be between 30-60 characters, with a maximum of 70 */}
         <meta
           name="twitter:title"
-          content="August Sander 10k Collection | Open source NFT marketplace powered by Reservoir Protocol"
+          content="August Sander 10k Collection"
         />
         {/* should be between 55 and 200 characters long */}
         <meta
           name="twitter:description"
-          content="August Sander 10k Collection is an open source NFT marketplace powered by Reservoir"
+          content="August Sander 10k Collection is an open source NFT marketplace"
         />
         <meta name="twitter:site" content="@reservoir0x" />
 
@@ -63,7 +62,7 @@ class MyDocument extends Document {
         {/* should be between 30-60 characters, with a maximum of 90 */}
         <meta
           name="og:title"
-          content="August Sander 10k Collection | Open source NFT marketplace powered by Reservoir Protocol"
+          content="August Sander 10k Collection | Open source NFT marketplace"
         />
         <meta property="og:type" content="website" />
         <meta property="og:determiner" content="the" />
@@ -71,7 +70,7 @@ class MyDocument extends Document {
         {/* Make sure the important part of your description is within the first 110 characters, so it doesn't get cut off on mobile. */}
         <meta
           property="og:description"
-          content="August Sander 10k Collection is an open source NFT marketplace powered by Reservoir"
+          content="August Sander 10k Collection is an open source NFT marketplace"
         />
         <meta property="og:site_name" content="August Sander 10k Collection" />
         <meta property="og:url" content="https://www.August Sander 10k Collection/" />
