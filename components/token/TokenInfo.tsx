@@ -3,6 +3,19 @@ import useDetails from 'hooks/useDetails'
 import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { setToast } from './setToast'
+import { useMoralisWeb3Api } from "react-moralis";
+
+const Web3Api = useMoralisWeb3Api();
+
+const fetchWalletTokenIdTransfers = async () => {
+  const options = {
+    address:  process.env.NEXT_PUBLIC_COLLECTION,
+    token_id: "1",
+    chain: "eth",
+  };
+  const transfers = await Web3Api.token.getWalletTokenIdTransfers(options);
+  console.log(transfers);
+};
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
