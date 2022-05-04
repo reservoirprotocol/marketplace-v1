@@ -320,6 +320,11 @@ const TokensMain: FC<Props> = ({
         {title}
         {description}
       </Head>
+      <Hero social={social} stats={statsObj} header={header}>
+        <div className="grid w-full gap-4 md:flex">
+          
+        </div>
+      </Hero>
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
