@@ -71,7 +71,9 @@ export const Wallets: FC = () => {
           <a
             target="_blank"
             rel="noreferrer noopener"
-            className="reservoir-h6 flex items-center justify-between py-2 px-12 dark:text-white"
+            className={`reservoir-h6 flex items-center justify-between py-2 px-12 dark:text-white ${
+              connector?.id === 'injected' ? 'hidden md:flex' : ''
+            }`}
           >
             <div className="flex items-center gap-2">
               {Boolean(wallets[connector.id]?.icon) && (
