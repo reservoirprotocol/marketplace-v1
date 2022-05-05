@@ -10,7 +10,6 @@ import { ComponentProps } from 'react'
 import { Provider, chain, createClient, defaultChains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 // Select a custom ether.js interface for connecting to a network
@@ -34,14 +33,9 @@ const client = createClient({
       ? `${chain.rpcUrls.alchemy}/${alchemyId}`
       : chain.rpcUrls.default
     return [
-      new MetaMaskConnector({ chains }),
-      new CoinbaseWalletConnector({
+      new InjectedConnector({
         chains,
-        options: {
-          appName: 'wagmi',
-          chainId: chain.id,
-          jsonRpcUrl: rpcUrl,
-        },
+        options: { name: 'Injected' },
       }),
       new WalletConnectConnector({
         chains,
@@ -50,9 +44,13 @@ const client = createClient({
           rpc: { [chain.id]: rpcUrl },
         },
       }),
-      new InjectedConnector({
+      new CoinbaseWalletConnector({
         chains,
-        options: { name: 'Injected' },
+        options: {
+          appName: 'reservoir.market',
+          chainId: chain.id,
+          jsonRpcUrl: rpcUrl,
+        },
       }),
     ]
   },
