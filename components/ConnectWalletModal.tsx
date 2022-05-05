@@ -7,7 +7,7 @@ import { FiChevronRight } from 'react-icons/fi'
 const ConnectWalletModal: FC = () => {
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+      <Dialog.Trigger className="btn-primary-fill dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
         Connect Wallet
       </Dialog.Trigger>
       <Dialog.Portal>
