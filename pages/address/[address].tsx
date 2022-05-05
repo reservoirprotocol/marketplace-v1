@@ -39,7 +39,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const { data: accountData } = useAccount()
-  const { data: network } = useNetwork()
+  const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
   useDataDog(accountData)
@@ -58,7 +58,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
-  const isInTheWrongNetwork = network?.id !== +CHAIN_ID
+  const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
   let tabs = [

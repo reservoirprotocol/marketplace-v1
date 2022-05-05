@@ -56,9 +56,9 @@ const TokensMain: FC<Props> = ({
   setToast,
 }) => {
   const { data: accountData } = useAccount()
-  const { data: connectData, connect, connectors } = useConnect()
+  const { connect, connectors } = useConnect()
   const { data: signer } = useSigner()
-  const { data: network } = useNetwork()
+  const { activeChain } = useNetwork()
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -150,7 +150,7 @@ const TokensMain: FC<Props> = ({
     openSeaApiKey,
   }
 
-  const isInTheWrongNetwork = Boolean(signer && network?.id !== env.chainId)
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   const data: ModalProps['data'] = {
     collection: {

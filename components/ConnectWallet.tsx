@@ -12,30 +12,28 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
 import FormatEth from './FormatEth'
+import ConnectWalletModal from './ConnectWalletModal'
 
 const ConnectWallet: FC = () => {
-  const { connect, connectors } = useConnect()
-  const { data: accountData, isLoading, error } = useAccount()
-  const wallet = connectors[0]
-  const { data: ensName } = useEnsName()
-  const { data: ensAvatar } = useEnsAvatar()
+  const { data: account } = useAccount()
+  const { data: ensAvatar } = useEnsAvatar({ addressOrName: account?.address })
+  const { data: ensName } = useEnsName({ address: account?.address })
+  const { connect, connectors, error, isConnecting, pendingConnector } =
+    useConnect()
   const { disconnect } = useDisconnect()
+  const wallet = connectors[0]
 
-  if (accountData) {
+  if (account) {
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger className="btn-primary-outline  ml-auto rounded-full border-transparent bg-gray-100 normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
-          {isLoading ? (
-            <div className="bg-primary-50 h-[32px] w-[115px] animate-pulse rounded"></div>
-          ) : (
-            <EthAccount
-              address={accountData.address}
-              ens={{
-                avatar: ensAvatar,
-                name: ensName,
-              }}
-            />
-          )}
+          <EthAccount
+            address={account.address}
+            ens={{
+              avatar: ensAvatar,
+              name: ensName,
+            }}
+          />
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content
@@ -46,10 +44,10 @@ const ConnectWallet: FC = () => {
           <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
             <span>Balance </span>
             <span>
-              {accountData.address && <Balance address={accountData.address} />}
+              {account.address && <Balance address={account.address} />}
             </span>
           </div>
-          <Link href={`/address/${accountData.address}`}>
+          <Link href={`/address/${account.address}`}>
             <DropdownMenu.Item asChild>
               <a className="group flex w-full cursor-pointer items-center justify-between rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
                 Portfolio
@@ -71,15 +69,37 @@ const ConnectWallet: FC = () => {
     )
   }
 
-  return (
-    <button
-      key={wallet.id}
-      onClick={() => connect(wallet)}
-      className="btn-primary-fill col-span-2 col-start-3 ml-auto md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
-    >
-      Connect Wallet
-    </button>
-  )
+  return <ConnectWalletModal />
+
+  // return (
+  //   <div>
+  //     {connectors.map((connector) => (
+  //       <button
+  //         disabled={!connector.ready}
+  //         key={connector.id}
+  //         onClick={() => connect(connector)}
+  //       >
+  //         {connector.name}
+  //         {!connector.ready && ' (unsupported)'}
+  //         {isConnecting &&
+  //           connector.id === pendingConnector?.id &&
+  //           ' (connecting)'}
+  //       </button>
+  //     ))}
+
+  //     {error && <div>{error.message}</div>}
+  //   </div>
+  // )
+
+  // return (
+  //   <button
+  //     key={wallet.id}
+  //     onClick={() => connect(wallet)}
+  //     className="btn-primary-fill col-span-2 col-start-3 ml-auto md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-9"
+  //   >
+  //     Connect Wallet
+  //   </button>
+  // )
 }
 
 export default ConnectWallet

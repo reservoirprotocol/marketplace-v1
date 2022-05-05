@@ -62,7 +62,7 @@ const CollectionOfferModal: FC<Props> = ({
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const { data: connectData, connect, connectors } = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
-  const { data: network } = useNetwork()
+  const { activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
@@ -87,7 +87,7 @@ const CollectionOfferModal: FC<Props> = ({
   const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
-  const isInTheWrongNetwork = Boolean(signer && network?.id !== env.chainId)
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   useEffect(() => {
     async function loadWeth() {

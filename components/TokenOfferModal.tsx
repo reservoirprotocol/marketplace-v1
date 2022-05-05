@@ -65,7 +65,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const { connect, connectors } = useConnect()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
-  const { data: network } = useNetwork()
+  const { activeChain } = useNetwork()
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
   >({
@@ -91,7 +91,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const [open, setOpen] = useState(false)
-  const isInTheWrongNetwork = Boolean(signer && network?.id !== env.chainId)
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   useEffect(() => {
     async function loadWeth() {
