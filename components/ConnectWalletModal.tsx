@@ -84,7 +84,7 @@ export const Wallets: FC = () => {
                 {!connector.ready && ' (unsupported)'}
               </div>
             </div>
-            <FiChevronRight />
+            <FiChevronRight className="h-6 w-6" />
           </a>
         </button>
       ))}
