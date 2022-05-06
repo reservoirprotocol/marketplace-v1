@@ -1,5 +1,6 @@
 import 'styles/globals.css'
 import 'styles/inter.css'
+import 'styles/druk.css'
 import 'styles/montserrat.css'
 import 'styles/open-sans.css'
 import 'styles/playfair-display.css'
