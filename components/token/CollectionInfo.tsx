@@ -15,8 +15,7 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
   const token = details.data?.tokens?.[0]
 
   const tokenDescription =
-    token?.token?.description ||
-    collection.data?.collection?.metadata?.description
+    collection.data?.collection?.metadata?.description || token?.token?.description 
 
   return (
     <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
