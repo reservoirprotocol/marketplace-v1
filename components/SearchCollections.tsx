@@ -17,22 +17,22 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<
-    paths['/collections/v2']['get']['responses']['200']['schema']
+    paths['/search/collections/v1']['get']['responses']['200']['schema']
   >({})
   const [initialResults, setInitialResults] = useState<
-    paths['/collections/v2']['get']['responses']['200']['schema'] | undefined
+    | paths['/search/collections/v1']['get']['responses']['200']['schema']
+    | undefined
   >(undefined)
 
   function getHref(search?: string) {
-    const pathname = `${PROXY_API_BASE}/collections/v2`
+    const pathname = `${PROXY_API_BASE}/search/collections/v1`
 
-    const query: paths['/collections/v2']['get']['parameters']['query'] = {
-      sortBy: '7DayVolume',
-    }
+    const query: paths['/search/collections/v1']['get']['parameters']['query'] =
+      {}
 
-    if (communityId && communityId !== 'www' && communityId !== 'localhost') {
-      query.community = communityId
-    }
+    // if (communityId && communityId !== 'www' && communityId !== 'localhost') {
+    //   query.community = communityId
+    // }
 
     if (search) query.name = search
 
@@ -45,7 +45,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     const res = await fetch(href)
 
     const json =
-      (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
+      (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
 
     setResults(json)
     setInitialResults(json)
@@ -80,7 +80,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
         const res = await fetch(href)
 
         const data =
-          (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
+          (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
@@ -147,17 +147,11 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                 {...getMenuProps()}
               >
                 {initialResults?.collections
-                  ?.filter((collection) => {
-                    if (collection.tokenCount) {
-                      return +collection.tokenCount <= 30000
-                    }
-                    return false
-                  })
                   .slice(0, 6)
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
-                      href={`/collections/${collection?.id}`}
+                      href={`/collections/${collection?.contract}`}
                     >
                       <a
                         {...getItemProps({
@@ -205,49 +199,41 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
               className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
               {...getMenuProps()}
             >
-              {results?.collections
-                ?.filter((collection) => {
-                  if (collection.tokenCount) {
-                    return +collection.tokenCount <= 30000
-                  }
-                  return false
-                })
-                .slice(0, 6)
-                .map((collection, index) => (
-                  <Link
-                    key={collection?.name}
-                    href={`/collections/${collection?.id}`}
+              {results?.collections?.slice(0, 6).map((collection, index) => (
+                <Link
+                  key={collection?.name}
+                  href={`/collections/${collection?.contract}`}
+                >
+                  <a
+                    {...getItemProps({
+                      key: collection?.name,
+                      index,
+                      item: collection,
+                    })}
+                    onClick={() => {
+                      reset()
+                      setFocused(false)
+                    }}
+                    className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
+                      highlightedIndex === index
+                        ? 'bg-[#F3F4F6] dark:bg-neutral-600'
+                        : ''
+                    }`}
                   >
-                    <a
-                      {...getItemProps({
-                        key: collection?.name,
-                        index,
-                        item: collection,
-                      })}
-                      onClick={() => {
-                        reset()
-                        setFocused(false)
-                      }}
-                      className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
-                        highlightedIndex === index
-                          ? 'bg-[#F3F4F6] dark:bg-neutral-600'
-                          : ''
-                      }`}
-                    >
-                      <img
-                        src={
-                          // @ts-ignore
-                          collection?.image ?? 'https://via.placeholder.com/30'
-                        }
-                        alt={`${collection?.name}'s logo.`}
-                        className="h-9 w-9 overflow-hidden rounded-full"
-                      />
-                      <span className="reservoir-subtitle ml-2 dark:text-white">
-                        {collection?.name}
-                      </span>
-                    </a>
-                  </Link>
-                ))}
+                    <img
+                      src={
+                        // @ts-ignore
+                        collection?.image ?? 'https://via.placeholder.com/30'
+                      }
+                      alt={`${collection?.name}'s logo.`}
+                      className="h-9 w-9 overflow-hidden rounded-full"
+                    />
+                    <span className="reservoir-subtitle ml-2 dark:text-white">
+                      {collection?.name}
+                    </span>
+                  </a>
+                </Link>
+              ))}
             </div>
           )}
         </div>

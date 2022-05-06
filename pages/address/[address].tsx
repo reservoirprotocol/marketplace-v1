@@ -38,9 +38,9 @@ const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Address: NextPage<Props> = ({ mode, collectionId }) => {
-  const [{ data: accountData }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const [{ data: signer }] = useSigner()
+  const { data: accountData } = useAccount()
+  const { activeChain } = useNetwork()
+  const { data: signer } = useSigner()
   const router = useRouter()
   useDataDog(accountData)
   const address = router.query?.address?.toString()?.toLowerCase()
@@ -58,7 +58,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
-  const isInTheWrongNetwork = network.chain?.id !== +CHAIN_ID
+  const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
   let tabs = [

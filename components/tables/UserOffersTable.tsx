@@ -14,11 +14,11 @@ type Props = {
   maker: string
   mutate: () => any
   modal: {
-    accountData: ReturnType<typeof useAccount>[0]['data']
+    accountData: ReturnType<typeof useAccount>['data']
     collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
-    signer: ReturnType<typeof useSigner>[0]['data']
+    signer: ReturnType<typeof useSigner>['data']
   }
 }
 

@@ -32,7 +32,6 @@ const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
@@ -56,10 +55,10 @@ const TokensMain: FC<Props> = ({
   openSeaApiKey,
   setToast,
 }) => {
-  const [{ data: accountData }] = useAccount()
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: signer }] = useSigner()
-  const [{ data: network }] = useNetwork()
+  const { data: accountData } = useAccount()
+  const { connect, connectors } = useConnect()
+  const { data: signer } = useSigner()
+  const { activeChain } = useNetwork()
   const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -121,7 +120,7 @@ const TokensMain: FC<Props> = ({
 
   const isOwner =
     collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
-    accountData?.address.toLowerCase()
+    accountData?.address?.toLowerCase()
 
   const floor = stats?.data?.stats?.market?.floorAsk
 
@@ -151,7 +150,7 @@ const TokensMain: FC<Props> = ({
     openSeaApiKey,
   }
 
-  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   const data: ModalProps['data'] = {
     collection: {
@@ -222,7 +221,7 @@ const TokensMain: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
     if (isOwner) {
       setToast({
         kind: 'error',
@@ -234,27 +233,15 @@ const TokensMain: FC<Props> = ({
 
     setWaitingTx(true)
 
-    if (CHAIN_ID === '4') {
-      await buyTokenBeta({
-        expectedPrice,
-        query: { token, taker },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    } else {
-      await buyToken({
-        expectedPrice,
-        query: { token, taker },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    }
+    await buyTokenBeta({
+      expectedPrice,
+      query: { token, taker },
+      signer,
+      apiBase: RESERVOIR_API_BASE,
+      setState: setSteps,
+      handleSuccess,
+      handleError,
+    })
 
     setWaitingTx(false)
   }

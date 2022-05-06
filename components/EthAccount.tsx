@@ -31,7 +31,7 @@ function shrinkEns(ensName: string, shrinkInidicator?: string) {
 }
 
 type Props = {
-  address: string
+  address: string | undefined
   ens?: {
     avatar: string | null | undefined
     name: string | null | undefined
@@ -57,7 +57,7 @@ const EthAccount: FC<Props> = ({
         alt="ENS Avatar"
       />
     ) : (
-      <Jazzicon diameter={24} seed={jsNumberForAddress(address)} />
+      <Jazzicon diameter={24} seed={jsNumberForAddress(address || '')} />
     ))
 
   return (
@@ -77,7 +77,7 @@ const EthAccount: FC<Props> = ({
           className="reservoir-label-l block whitespace-nowrap font-mono dark:text-white"
           title={address}
         >
-          {shrinkAddress(address)}
+          {shrinkAddress(address || '')}
         </div>
       )}
       {side === 'right' && icon}

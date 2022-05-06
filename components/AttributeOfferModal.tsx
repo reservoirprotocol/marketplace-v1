@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import {
+  useAccount,
   useBalance,
   useConnect,
   useNetwork,
@@ -47,7 +48,7 @@ type Props = {
     bps: number | undefined
     recipient: string | undefined
   }
-  signer: ethers.Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
   stats: ReturnType<typeof useCollectionStats>
   tokens: ReturnType<typeof useTokens>['tokens']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -64,7 +65,7 @@ const AttributeOfferModal: FC<Props> = ({
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
-  const [{ data: network }] = useNetwork()
+  const { activeChain } = useNetwork()
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
   >({
@@ -80,19 +81,22 @@ const AttributeOfferModal: FC<Props> = ({
     weth: Common.Helpers.Weth
     balance: BigNumber
   } | null>(null)
-  const [{ data: signer }] = useSigner()
-  const [{ data: ethBalance }, getBalance] = useBalance()
-  const [{ data: connectData }, connect] = useConnect()
+  const { data: signer } = useSigner()
+  const { data: account } = useAccount()
+  const { data: ethBalance, refetch } = useBalance({
+    addressOrName: account?.address,
+  })
+  const { connect, connectors } = useConnect()
   const provider = useProvider()
   const bps = royalties?.bps ?? 0
   const royaltyPercentage = `${bps / 100}%`
   const [open, setOpen] = useState(false)
-  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   useEffect(() => {
     async function loadWeth() {
       if (signer) {
-        await getBalance({ addressOrName: await signer?.getAddress() })
+        await refetch()
         const weth = await getWeth(env.chainId as ChainId, provider, signer)
         if (weth) {
           setWeth(weth)
@@ -142,7 +146,7 @@ const AttributeOfferModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
 
     setWaitingTx(true)
 
@@ -179,7 +183,7 @@ const AttributeOfferModal: FC<Props> = ({
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
         onClick={async () =>
-          await checkWallet(signer, setToast, connect, connectData)
+          await checkWallet(signer, setToast, connect, connectors)
         }
         className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >

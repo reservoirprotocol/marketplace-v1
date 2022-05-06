@@ -5,14 +5,13 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { checkWallet } from 'lib/wallet'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -32,7 +31,7 @@ type Props = {
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
-  signer: Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const BuyNow: FC<Props> = ({
@@ -44,8 +43,8 @@ const BuyNow: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData }] = useAccount()
+  const { connect, connectors } = useConnect()
+  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
@@ -147,35 +146,21 @@ const BuyNow: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
 
     setWaitingTx(true)
-    if (CHAIN_ID === '4') {
-      await buyTokenBeta({
-        expectedPrice,
-        query: {
-          taker,
-          token,
-        },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    } else {
-      await buyToken({
-        query: {
-          taker,
-          token,
-        },
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    }
+    await buyTokenBeta({
+      expectedPrice,
+      query: {
+        taker,
+        token,
+      },
+      signer,
+      apiBase: RESERVOIR_API_BASE,
+      setState: setSteps,
+      handleSuccess,
+      handleError,
+    })
 
     setWaitingTx(false)
   }

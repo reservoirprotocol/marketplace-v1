@@ -38,7 +38,7 @@ const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   const router = useRouter()
 
   useDataDog(accountData)

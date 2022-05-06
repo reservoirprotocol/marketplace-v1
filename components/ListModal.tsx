@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
-import { useConnect } from 'wagmi'
+import { useConnect, useSigner } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
 import ModalCard from './modal/ModalCard'
@@ -39,7 +39,7 @@ type Props = {
   maker: string | undefined
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
-  signer: ethers.Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const ListModal: FC<Props> = ({
@@ -51,7 +51,7 @@ const ListModal: FC<Props> = ({
   setToast,
 }) => {
   // wagmi
-  const [{ data: connectData }, connect] = useConnect()
+  const { connect, connectors } = useConnect()
 
   // User input
   const [expiration, setExpiration] = useState('oneWeek')
@@ -169,7 +169,7 @@ const ListModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectData)
+    await checkWallet(signer, setToast, connect, connectors)
 
     setWaitingTx(true)
 
@@ -253,7 +253,7 @@ const ListModal: FC<Props> = ({
           onClick={async () => {
             setPostOnOpenSea(false)
             setOrderbook(['reservoir'])
-            await checkWallet(signer, setToast, connect, connectData)
+            await checkWallet(signer, setToast, connect, connectors)
           }}
           className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
         >

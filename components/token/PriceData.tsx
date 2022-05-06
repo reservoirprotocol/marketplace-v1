@@ -20,9 +20,9 @@ type Props = {
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
-  const [{ data: accountData }] = useAccount()
-  const [{ data: signer }] = useSigner()
-  const [{ data: network }] = useNetwork()
+  const { data: accountData } = useAccount()
+  const { data: signer } = useSigner()
+  const { activeChain } = useNetwork()
 
   const token = details.data?.tokens?.[0]
 
@@ -33,13 +33,13 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   if (!CHAIN_ID) return null
 
   const isOwner =
-    token?.token?.owner?.toLowerCase() === accountData?.address.toLowerCase()
+    token?.token?.owner?.toLowerCase() === accountData?.address?.toLowerCase()
   const isTopBidder =
     !!accountData &&
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
-  const isInTheWrongNetwork = signer && network.chain?.id !== +CHAIN_ID
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
@@ -139,7 +139,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               collection: collection.data,
               details,
             }}
-            maker={accountData?.address.toLowerCase()}
+            maker={accountData?.address?.toLowerCase()}
             signer={signer}
             show={isTopBidder}
             isInTheWrongNetwork={isInTheWrongNetwork}
@@ -150,7 +150,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               collection: collection.data,
               details,
             }}
-            maker={accountData?.address.toLowerCase()}
+            maker={accountData?.address?.toLowerCase()}
             signer={signer}
             show={isOwner && isListed}
             isInTheWrongNetwork={isInTheWrongNetwork}
