@@ -96,14 +96,17 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
               </div>
             </div>
-            <div className="flex w-min items-center justify-between gap-4">
+            <div className="flex w-min items-center justify-between gap-4 md:gap-6">
+              <Stat name="Items">{formatNumber(stats.count)}</Stat>
               <Stat name="Top Offer">
                 <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
               </Stat>
               <Stat name="Floor">
                 <FormatEth amount={stats.floor} maximumFractionDigits={4} />
               </Stat>
-              <Stat name="Items">{formatNumber(stats.count)}</Stat>
+              <Stat name="24h">
+                <FormatEth amount={stats.vol24} maximumFractionDigits={4} />
+              </Stat>
             </div>
           </div>
         </div>

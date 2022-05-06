@@ -32,27 +32,27 @@ const AttributesFlex = () => {
     )
   }, [router.query])
 
+  if (filters.length === 0) return null
+
   return (
-    <div className="flex flex-wrap gap-3">
-      {filters.map(({ key, value }) => {
-        return (
-          <div
-            key={key}
-            className="relative flex rounded-md border border-neutral-300 dark:border-neutral-600"
-          >
-            <div className="reservoir-label-l flex items-center justify-between gap-1.5 px-4 py-1 dark:text-white lg:py-2">
-              <p className="capitalize">{key}</p>
-              <p>{value}</p>
-            </div>
-            <button
-              className="absolute -top-2.5 -right-2.5 rounded-full bg-neutral-200 p-1 text-neutral-500 transition hover:bg-red-200 hover:text-neutral-900 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-red-700 dark:hover:text-neutral-100"
-              onClick={() => toggleOffAttribute(router, key)}
-            >
-              <HiX className="h-3.5 w-3.5" />
-            </button>
+    <div className="mb-10 flex flex-wrap gap-3">
+      {filters.map(({ key, value }) => (
+        <div
+          key={key}
+          className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-600"
+        >
+          <div className="reservoir-label-l flex items-center justify-between gap-1.5 dark:text-white ">
+            <p className="capitalize">{key}</p>
+            <p>{value}</p>
           </div>
-        )
-      })}
+          <button
+            className="ml-4"
+            onClick={() => toggleOffAttribute(router, key)}
+          >
+            <HiX className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ))}
     </div>
   )
 }
