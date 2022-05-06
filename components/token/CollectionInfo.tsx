@@ -44,7 +44,7 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
       {tokenDescription && (
         <div className="reservoir-body-2 mt-4 dark:text-white">
           {/* @ts-ignore */}
-          {tokenDescription}
+          {tokenDescription.replace(/\\r\\n/g, "<br />")}
         </div>
       )}
     </article>
