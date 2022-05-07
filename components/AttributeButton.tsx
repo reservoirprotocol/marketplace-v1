@@ -26,12 +26,14 @@ const AttributeButton: FC<Props> = ({
         // Update the URL queries
         if (!router.query[`attributes[${attribute}]`]) {
           toggleOnAttribute(router, attribute, value)
+          console.log("1")
         } else {
           if (router.query[`attributes[${attribute}]`] === value) {
             toggleOffAttribute(router, attribute)
+            console.log("2")
           } else {
-            toggleOnAttribute(router, attribute, value)  
             updateAttribute(router, attribute, value)
+            console.log("3")
           }
         }
 
