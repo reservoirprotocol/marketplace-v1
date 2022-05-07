@@ -22,7 +22,8 @@ const AttributeButton: FC<Props> = ({
   return (
     <button
       onClick={() => {
-        router.query?.attribute_key && toggleOffItem(router, 'attribute_key')
+        //router.query?.attribute_key && toggleOffItem(router, 'attribute_key')
+        router.query?.attribute_key 
         // Update the URL queries
         if (!router.query[`attributes[${attribute}]`]) {
           toggleOnAttribute(router, attribute, value)

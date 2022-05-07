@@ -20,7 +20,7 @@ function toggleOnAttribute(
 function toggleOffAttribute(router: NextRouter, attribute: string) {
   let query = router.query
 
-  //delete query[`attributes[${attribute}]`]
+  delete query[`attributes[${attribute}]`]
 
   router.push(
     {
