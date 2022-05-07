@@ -82,7 +82,7 @@ const getKey: (
   }
 
   if (router.query.attribute_key) {
-    query.attributeKey = router.query.attribute_key.toString()
+    query.attributeKey += router.query.attribute_key.toString()
   }
 
   const href = setParams(pathname, query)
