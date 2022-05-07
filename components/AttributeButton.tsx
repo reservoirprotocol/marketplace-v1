@@ -22,8 +22,7 @@ const AttributeButton: FC<Props> = ({
   return (
     <button
       onClick={() => {
-        //router.query?.attribute_key && toggleOffItem(router, 'attribute_key')
-        router.query?.attribute_key 
+        router.query?.attribute_key && toggleOffItem(router, 'attribute_key')
         // Update the URL queries
         if (!router.query[`attributes[${attribute}]`]) {
           toggleOnAttribute(router, attribute, value)
@@ -31,9 +30,11 @@ const AttributeButton: FC<Props> = ({
           if (router.query[`attributes[${attribute}]`] === value) {
             toggleOffAttribute(router, attribute)
           } else {
-            updateAttribute(router, attribute, value)
+            toggleOnAttribute(router, attribute, value)  
+            //updateAttribute(router, attribute, value)
           }
         }
+
         setTokensSize(0)
       }}
       className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
