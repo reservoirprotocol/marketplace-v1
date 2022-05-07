@@ -33,7 +33,6 @@ function toggleOffItem(router: NextRouter, item: string) {
 function toggleOnAttributeKey(router: NextRouter, item: string, value: string) {
   let query = router.query
   let tempkeys = ""
-  // Delete all attribute filters
   
   Object.keys(query).find((key) => {
     if (
@@ -45,7 +44,8 @@ function toggleOnAttributeKey(router: NextRouter, item: string, value: string) {
       tempkeys = key + ":" + query[key] + "&" + item + ":" + value
     }
   })
-
+console.log(tempkeys)
+console.log(query)
   router.push(
     {
       query: { ...router.query, tempkeys },
