@@ -12,7 +12,7 @@ import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import { paths } from '@reservoir0x/client-sdk'
 import setParams from 'lib/params'
 
 // Environment variables
@@ -25,7 +25,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COLLECTION = undefined//process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
@@ -37,7 +37,7 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
   }
-  const { data: accountData } = useAccount()
+  const [{ data: accountData }] = useAccount()
   useDataDog(accountData)
 
   // Return error page if the API base url or the environment's
