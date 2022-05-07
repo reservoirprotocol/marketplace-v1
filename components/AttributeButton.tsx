@@ -31,7 +31,7 @@ const AttributeButton: FC<Props> = ({
             toggleOffAttribute(router, attribute)
           } else {
             toggleOnAttribute(router, attribute, value)  
-            //updateAttribute(router, attribute, value)
+            updateAttribute(router, attribute, value)
           }
         }
 
