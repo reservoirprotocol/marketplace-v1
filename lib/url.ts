@@ -16,13 +16,13 @@ function toggleOnAttribute(
       query[key] !== '' && 
       key == attribute
     ) {
-      tempkeys = key + ":" + query[key] + "&" + attribute + ":" + value
+      tempkeys += key + ":" + query[key]
     }
   })
-
+  tempkeys += [`attributes[${attribute}]`] +":" + value
   router.push(
     {
-      query: { ...router.query, tempkeys},
+      query: { ...router.query, tempkeys },
     },
     undefined,
     {
