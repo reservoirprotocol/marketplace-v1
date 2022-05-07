@@ -12,7 +12,7 @@ import useDataDog from 'hooks/useAnalytics'
 import getMode from 'lib/getMode'
 import toast from 'react-hot-toast'
 import Toast from 'components/Toast'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
 
 // Environment variables
@@ -37,7 +37,7 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
     collection: { collection: undefined },
     tokens: { tokens: undefined },
   }
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   useDataDog(accountData)
 
   // Return error page if the API base url or the environment's
