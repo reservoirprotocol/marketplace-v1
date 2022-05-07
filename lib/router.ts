@@ -2,10 +2,24 @@ import { NextRouter } from 'next/router'
 
 function toggleOnItem(router: NextRouter, item: string, value: string) {
   let query = router.query
+  let tempkeys = ""
+  
+  Object.keys(query).find((key) => {
+    if (
+      key.startsWith('attributes[') &&
+      key.endsWith(']') &&
+      query[key] !== '' && 
+      key == item
+    ) {
+      tempkeys = key + ":" + query[key] + "&" + item + ":" + value
+    }
+  })
+console.log(tempkeys)
+console.log(query)
 
   router.push(
     {
-      query: { ...router.query, [`${item}`]: value },
+      query: { ...router.query,tempkeys },
     },
     undefined,
     {
@@ -32,23 +46,10 @@ function toggleOffItem(router: NextRouter, item: string) {
 
 function toggleOnAttributeKey(router: NextRouter, item: string, value: string) {
   let query = router.query
-  let tempkeys = ""
-  
-  Object.keys(query).find((key) => {
-    if (
-      key.startsWith('attributes[') &&
-      key.endsWith(']') &&
-      query[key] !== '' && 
-      key == item
-    ) {
-      tempkeys = key + ":" + query[key] + "&" + item + ":" + value
-    }
-  })
-console.log(tempkeys)
-console.log(query)
+
   router.push(
     {
-      query: { ...router.query, tempkeys },
+      query: { ...router.query, [`${item}`]: value },
     },
     undefined,
     {
