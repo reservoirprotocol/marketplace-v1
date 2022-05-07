@@ -6,23 +6,9 @@ function toggleOnAttribute(
   value: string
 ) {
 
-  let tempkeys = ""
-  // Delete all attribute filters
-  let query = router.query
-  Object.keys(query).find((key) => {
-    if (
-      key.startsWith('attributes[') &&
-      key.endsWith(']') &&
-      query[key] !== '' && 
-      key == attribute
-    ) {
-      tempkeys += key + ":" + query[key]
-    }
-  })
-  tempkeys += [`attributes[${attribute}]`] +":" + value
   router.push(
     {
-      query: { ...router.query, tempkeys },
+      query: { ...router.query, [`attributes[${attribute}]`]: value },
     },
     undefined,
     {
