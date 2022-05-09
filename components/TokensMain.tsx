@@ -404,21 +404,23 @@ const TokensMain: FC<Props> = ({
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
         <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
           <div className="mb-10 hidden items-center justify-between md:flex">
-            {!!stats?.data?.stats?.tokenCount &&
-              stats?.data?.stats?.tokenCount > 0 && (
-                <div className="flex items-center gap-6">
-                  <div>{stats?.data?.stats?.tokenCount} items</div>
+            <div className="flex items-center gap-6">
+              {!!stats?.data?.stats?.tokenCount &&
+                stats?.data?.stats?.tokenCount > 0 && (
+                  <>
+                    <div>{stats?.data?.stats?.tokenCount} items</div>
 
-                  <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                  <div>
-                    <FormatEth
-                      maximumFractionDigits={4}
-                      amount={stats?.data?.stats?.market?.floorAsk?.price}
-                    />{' '}
-                    floor price
-                  </div>
-                </div>
-              )}
+                    <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                    <div>
+                      <FormatEth
+                        maximumFractionDigits={4}
+                        amount={stats?.data?.stats?.market?.floorAsk?.price}
+                      />{' '}
+                      floor price
+                    </div>
+                  </>
+                )}
+            </div>
             <div className="flex gap-4">
               {router.query?.attribute_key ||
               router.query?.attribute_key === '' ? (

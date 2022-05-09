@@ -39,7 +39,7 @@ const AttributesFlex = () => {
       {filters.map(({ key, value }) => (
         <div
           key={key}
-          className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-600"
+          className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-600 dark:bg-primary-900 dark:text-white"
         >
           <div className="reservoir-label-l flex items-center justify-between gap-1.5 dark:text-white ">
             <p className="capitalize">{key}</p>
