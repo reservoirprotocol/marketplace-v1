@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, utils, Signer } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import {
   useAccount,
   useBalance,
@@ -88,7 +88,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   })
   const [continute, setContinute] = useState(false)
   const provider = useProvider()
-  const bps = royalties?.bps ?? 0
+  const bps = FEE_BPS && royalties?.bps ? royalties?.bps + +FEE_BPS : 0
   const royaltyPercentage = `${bps / 100}%`
   const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
@@ -367,8 +367,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
-                      %
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 100}%
                     </div>
                   )}
                   {postOnOpenSea && (

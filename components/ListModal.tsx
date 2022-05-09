@@ -110,6 +110,10 @@ const ListModal: FC<Props> = ({
     bps = collection?.collection?.royalties?.bps || 0
   }
 
+  if (FEE_BPS && typeof +FEE_BPS === 'number') {
+    bps = bps + +FEE_BPS
+  }
+
   const royaltyPercentage = `${bps / 100}%`
 
   // Set the token either from SWR or fetch
@@ -335,8 +339,7 @@ const ListModal: FC<Props> = ({
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
-                      %
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 100}%
                     </div>
                   )}
                   {postOnOpenSea && (
