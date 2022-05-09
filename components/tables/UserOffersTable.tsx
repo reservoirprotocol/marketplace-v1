@@ -114,7 +114,7 @@ const UserOffersTable: FC<Props> = ({
                             {key} {value}
                           </span>
                         </div>
-                        <div className="reservoir-h6 dark:text-white">
+                        <div className="reservoir-h6 font-headings dark:text-white">
                           {tokenName}
                         </div>
                       </span>

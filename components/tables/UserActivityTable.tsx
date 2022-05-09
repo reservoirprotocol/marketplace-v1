@@ -90,7 +90,9 @@ const UserActivityTable: FC<Props> = ({
                         </div>
                         <span className="whitespace-nowrap">
                           <div className="reservoir-body">{collectionName}</div>
-                          <div className="reservoir-h6">{name}</div>
+                          <div className="reservoir-h6 font-headings">
+                            {name}
+                          </div>
                         </span>
                       </a>
                     </Link>
