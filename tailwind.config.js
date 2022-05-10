@@ -65,7 +65,8 @@ module.exports = {
         '4xl': '2560px',
       },
       fontFamily: {
-        sans: [`"${FONT_FAMILY}"`, ...defaultTheme.fontFamily.sans],
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        headings: [`"${FONT_FAMILY}"`, ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         'slide-down': {
