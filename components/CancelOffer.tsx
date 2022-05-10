@@ -1,6 +1,12 @@
 import { Signer } from 'ethers'
 import { cancelOrder, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
@@ -9,7 +15,7 @@ import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
@@ -53,6 +59,7 @@ const CancelOffer: FC<Props> = ({
   // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const { dispatch } = useContext(GlobalContext)
 
   useEffect(() => {
     if (data && open) {
@@ -139,7 +146,7 @@ const CancelOffer: FC<Props> = ({
   }
 
   const execute = async (id: string, maker: string) => {
-    await checkWallet(signer, setToast, connect, connectors)
+    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
     setWaitingTx(true)
     await cancelOrder({
       query: { id, maker },

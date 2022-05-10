@@ -8,7 +8,13 @@ import { buyToken, buyTokenBeta } from '@reservoir0x/client-sdk/dist/actions'
 import { formatBN } from 'lib/numbers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import AttributesFlex from './AttributesFlex'
@@ -26,7 +32,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { FiRefreshCcw } from 'react-icons/fi'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -63,6 +69,7 @@ const TokensMain: FC<Props> = ({
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const { dispatch } = useContext(GlobalContext)
   const [refreshLoading, setRefreshLoading] = useState(false)
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
@@ -221,7 +228,7 @@ const TokensMain: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectors)
+    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
     if (isOwner) {
       setToast({
         kind: 'error',

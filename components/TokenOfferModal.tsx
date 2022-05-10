@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, utils, Signer } from 'ethers'
@@ -21,7 +21,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
@@ -66,6 +66,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const { activeChain } = useNetwork()
+  const { dispatch } = useContext(GlobalContext)
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
   >({
@@ -193,7 +194,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectors)
+    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
 
     setWaitingTx(true)
 
@@ -282,7 +283,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         onClick={async () => {
           setPostOnOpenSea(false)
           setOrderbook(['reservoir'])
-          await checkWallet(signer, setToast, connect, connectors)
+          if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
         }}
         className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >

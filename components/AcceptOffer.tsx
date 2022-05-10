@@ -1,6 +1,12 @@
 import { Signer } from 'ethers'
 import { acceptOffer, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
@@ -9,7 +15,7 @@ import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
@@ -46,6 +52,7 @@ const AcceptOffer: FC<Props> = ({
   const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const { dispatch } = useContext(GlobalContext)
 
   // Data from props
   const [collection, setCollection] = useState<Collection>()
@@ -158,7 +165,7 @@ const AcceptOffer: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectors)
+    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
 
     setWaitingTx(true)
     await acceptOffer({
