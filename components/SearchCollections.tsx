@@ -30,9 +30,9 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
       {}
 
-    // if (communityId && communityId !== 'www' && communityId !== 'localhost') {
-    query.community = communityId
-    // }
+    if (communityId && communityId !== 'www' && communityId !== 'localhost') {
+      query.community = communityId
+    }
 
     if (search) query.name = search
 
