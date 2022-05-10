@@ -12,6 +12,7 @@ type Props = {
     count: number | undefined
     topOffer: number | undefined
     floor: number | undefined
+    volumeChange: number | undefined
   }
   header: {
     banner: string | undefined
@@ -104,6 +105,10 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 <FormatEth amount={stats.floor} maximumFractionDigits={4} />
               </Stat>
               <Stat name="Items">{formatNumber(stats.count)}</Stat>
+              <Stat name="24hr">
+                <FormatEth amount={stats.vol24} maximumFractionDigits={4} />
+                <PercentageChange value={stats.volumeChange} />
+              </Stat>
             </div>
           </div>
         </div>
@@ -118,6 +123,22 @@ export default Hero
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div className="grid items-center sm:flex sm:gap-1">
     <div className="reservoir-h6 whitespace-nowrap text-gray-400">{name}</div>
-    <div className="reservoir-h6 dark:text-white">{children}</div>
+    <div className="reservoir-h6 flex gap-2 dark:text-white">{children}</div>
   </div>
 )
+
+const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
+  if (value === undefined) return null
+
+  const percentage = (value - 1) * 100
+
+  if (value < 0) {
+    return <div className="text-red-[#FF3B3B]">{percentage}%</div>
+  }
+
+  if (value > 0) {
+    return <div className="text-green-[#06C270]">{percentage}%</div>
+  }
+
+  return <div>0%</div>
+}
