@@ -28,8 +28,11 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
       >
         {collections?.map((collection) => {
           return (
-            <DropdownMenu.Item asChild key={collection.collectionId}>
-              <Link href={`/collections/${collection.collectionId}`}>
+            <Link
+              key={collection.collectionId}
+              href={`/collections/${collection.collectionId}`}
+            >
+              <DropdownMenu.Item asChild>
                 <a
                   className={`reservoir-gray-dropdown-item rounded-none border-b px-6 py-4 last:border-b-0 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
                 >
@@ -42,8 +45,8 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
                     {collection.name}
                   </p>
                 </a>
-              </Link>
-            </DropdownMenu.Item>
+              </DropdownMenu.Item>
+            </Link>
           )
         })}
       </DropdownMenu.Content>
