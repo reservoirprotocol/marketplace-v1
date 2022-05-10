@@ -33,10 +33,14 @@ function formatBN(
   if (typeof amount === 'number') {
     value = new Intl.NumberFormat('en-US', {
       maximumFractionDigits,
+      notation: 'compact',
+      compactDisplay: 'short',
     }).format(amount)
   } else {
     value = new Intl.NumberFormat('en-US', {
       maximumFractionDigits,
+      notation: 'compact',
+      compactDisplay: 'short',
     }).format(+utils.formatEther(amount))
   }
 
