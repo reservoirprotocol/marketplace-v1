@@ -34,6 +34,7 @@ const TokensGrid: FC<Props> = ({
 
   return (
     <Masonry
+      key="tokensGridMasonry"
       breakpointCols={{
         default: 6,
         1900: 5,
