@@ -109,8 +109,8 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
               </Stat>
               <Stat name="Items">{formatNumber(stats.count)}</Stat>
               <Stat name="24hr">
-                <FormatEth amount={stats.vol24} maximumFractionDigits={4} />
-                <PercentageChange value={0.335467865433} />
+                <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
+                <PercentageChange value={stats.volumeChange} />
               </Stat>
             </div>
           </div>
