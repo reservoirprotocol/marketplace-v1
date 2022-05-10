@@ -110,7 +110,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
               <Stat name="Items">{formatNumber(stats.count)}</Stat>
               <Stat name="24hr">
                 <FormatEth amount={stats.vol24} maximumFractionDigits={4} />
-                <PercentageChange value={stats.volumeChange} />
+                <PercentageChange value={0.335467865433} />
               </Stat>
             </div>
           </div>
@@ -128,7 +128,9 @@ const Stat: FC<{ name: string }> = ({ name, children }) => (
     <div className="reservoir-h6 whitespace-nowrap font-headings text-gray-400">
       {name}
     </div>
-    <div className="reservoir-h6 font-headings dark:text-white">{children}</div>
+    <div className="reservoir-h6 flex gap-2 font-headings dark:text-white">
+      {children}
+    </div>
   </div>
 )
 
@@ -137,12 +139,12 @@ const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
 
   const percentage = (value - 1) * 100
 
-  if (value < 0) {
-    return <div className="text-red-[#FF3B3B]">{percentage}%</div>
+  if (value < 1) {
+    return <div className="text-[#FF3B3B]">{formatNumber(percentage)}%</div>
   }
 
-  if (value > 0) {
-    return <div className="text-green-[#06C270]">{percentage}%</div>
+  if (value > 1) {
+    return <div className="text-[#06C270]">{formatNumber(percentage)}%</div>
   }
 
   return <div>0%</div>
