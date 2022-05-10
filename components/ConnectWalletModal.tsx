@@ -15,7 +15,7 @@ const ConnectWalletModal: FC = () => {
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
             <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white py-11 shadow-xl dark:bg-black">
               <div className="mx-12 mb-4 flex items-center justify-between">
-                <Dialog.Title className="reservoir-h4 dark:text-white">
+                <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
                   Connect Wallet
                 </Dialog.Title>
                 <Dialog.Close className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
@@ -71,7 +71,7 @@ export const Wallets: FC = () => {
           <a
             target="_blank"
             rel="noreferrer noopener"
-            className={`reservoir-h6 flex items-center justify-between py-2 px-12 dark:text-white ${
+            className={`reservoir-h6 flex items-center justify-between py-2 px-12 font-headings dark:text-white ${
               connector?.id === 'injected' ? 'hidden md:flex' : ''
             }`}
           >
