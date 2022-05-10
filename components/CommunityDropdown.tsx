@@ -13,26 +13,25 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
 
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
-      <DropdownMenu.Trigger className="text-md font-medium dark:text-white">
+      <DropdownMenu.Trigger className="text-md rounded font-medium outline-none dark:text-white dark:ring-primary-900 dark:focus:ring-4">
         Collection
         <FiChevronDown
-          className={`ml-3 inline text-[#9CA3AF] transition-transform ${
+          className={`ml-3 inline text-[#525252] transition-transform dark:text-[#D4D4D4] ${
             open ? 'rotate-180' : ''
           }`}
         />
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content
-        align="center"
-        sideOffset={53}
-        className="max-w-[422px] overflow-hidden rounded-2xl bg-white shadow-md radix-side-bottom:animate-slide-down dark:bg-neutral-900"
+        sideOffset={43}
+        className="max-w-[300px] overflow-hidden rounded-2xl bg-white shadow-md radix-side-bottom:animate-slide-down dark:bg-neutral-900 md:max-w-[422px]"
       >
         {collections?.map((collection) => {
           return (
             <DropdownMenu.Item asChild key={collection.collectionId}>
               <Link href={`/collections/${collection.collectionId}`}>
                 <a
-                  className={`reservoir-gray-dropdown-item rounded-none border-b px-6 py-4 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
+                  className={`reservoir-gray-dropdown-item rounded-none border-b px-6 py-4 last:border-b-0 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
                 >
                   <img
                     src={collection.image}
@@ -40,8 +39,7 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
                     className="h-9 w-9 shrink-0 overflow-hidden rounded-full"
                   />
                   <p className="truncate text-sm font-medium dark:text-white">
-                    {collection.name} testan testan
-                    testantestantestantestantestan testan testantestan
+                    {collection.name}
                   </p>
                 </a>
               </Link>
