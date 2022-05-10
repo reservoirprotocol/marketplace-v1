@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, utils, Signer } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import {
   useAccount,
   useBalance,
@@ -88,7 +88,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   })
   const [continute, setContinute] = useState(false)
   const provider = useProvider()
-  const bps = royalties?.bps ?? 0
+  const bps = FEE_BPS && royalties?.bps ? royalties?.bps + +FEE_BPS : 0
   const royaltyPercentage = `${bps / 100}%`
   const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
@@ -317,7 +317,10 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label htmlFor="price" className="reservoir-h6 dark:text-white">
+                <label
+                  htmlFor="price"
+                  className="reservoir-h6 font-headings dark:text-white"
+                >
                   Price (wETH)
                 </label>
                 <input
@@ -341,7 +344,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
               <div className="flex items-center gap-3">
                 <label
                   htmlFor="postOpenSea"
-                  className="reservoir-h6 dark:text-white"
+                  className="reservoir-h6 font-headings dark:text-white"
                 >
                   Post offer to OpenSea
                 </label>
@@ -362,13 +365,14 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 />
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6 dark:text-white">Fees</div>
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  Fees
+                </div>
                 <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
-                      %
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 100}%
                     </div>
                   )}
                   {postOnOpenSea && (
@@ -379,8 +383,10 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6 dark:text-white">Total Cost</div>
-                <div className="reservoir-h6 dark:text-white">
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  Total Cost
+                </div>
+                <div className="reservoir-h6 font-headings dark:text-white">
                   <FormatEth
                     amount={calculations.total}
                     maximumFractionDigits={4}
