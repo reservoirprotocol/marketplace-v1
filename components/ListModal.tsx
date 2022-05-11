@@ -103,16 +103,24 @@ const ListModal: FC<Props> = ({
     }
   }, [data, open])
 
-  let bps = 0
+  let apiBps = 0
 
   if ('details' in data) {
-    bps = data?.collection?.collection?.royalties?.bps || 0
+    apiBps = data?.collection?.collection?.royalties?.bps || 0
   }
   if ('tokenId' in data) {
-    bps = collection?.collection?.royalties?.bps || 0
+    apiBps = collection?.collection?.royalties?.bps || 0
   }
 
-  const royaltyPercentage = `${bps / 100}%`
+  const royaltyPercentage = `${(apiBps / 10000) * 100}%`
+
+  function getBps(royalties: number | undefined, envBps: string | undefined) {
+    let sum = 0
+    if (royalties) sum += royalties
+    if (envBps) sum += +envBps
+    return sum
+  }
+  const bps = getBps(apiBps, FEE_BPS)
 
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }
@@ -340,8 +348,8 @@ const ListModal: FC<Props> = ({
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 10000}
-                      %
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {(+FEE_BPS / 10000) * 100}%
                     </div>
                   )}
                   {postOnOpenSea && (
