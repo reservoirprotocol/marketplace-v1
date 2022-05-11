@@ -12,7 +12,7 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
   const [open, setOpen] = useState(false)
 
   return (
-    <DropdownMenu.Root onOpenChange={setOpen}>
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger className="reservoir-h6 rounded dark:text-white dark:outline-none dark:ring-primary-900 dark:focus:ring-4">
         Collection
         <FiChevronDown
@@ -28,13 +28,15 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
       >
         {collections?.map((collection) => {
           return (
-            <Link
+            <DropdownMenu.Item
               key={collection.collectionId}
-              href={`/collections/${collection.collectionId}`}
-              passHref={true}
+              className="first:rounded-t-2xl last:rounded-b-2xl"
             >
-              <DropdownMenu.Item asChild>
+              <Link href={`/collections/${collection.collectionId}`}>
                 <a
+                  onClick={() => {
+                    setOpen(false)
+                  }}
                   className={`reservoir-gray-dropdown-item rounded-none border-b px-6 py-4 last:border-b-0 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
                 >
                   <img
@@ -46,8 +48,8 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
                     {collection.name}
                   </p>
                 </a>
-              </DropdownMenu.Item>
-            </Link>
+              </Link>
+            </DropdownMenu.Item>
           )
         })}
       </DropdownMenu.Content>
