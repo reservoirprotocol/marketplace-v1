@@ -131,7 +131,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
         )}
       </div>
       <HamburgerMenu externalLinks={externalLinks} />
-      <div className="ml-auto hidden md:block">
+      <div className="ml-auto hidden shrink-0 md:block">
         <ConnectWallet />
       </div>
     </nav>
