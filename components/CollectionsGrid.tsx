@@ -26,6 +26,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
 
   return (
     <Masonry
+      key="collectionGridMasonry"
       breakpointCols={{
         default: 5,
         1536: 4,

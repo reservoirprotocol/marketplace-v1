@@ -30,7 +30,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               ? toggleOffItem(router, 'attribute_key')
               : toggleOnAttributeKey(router, 'attribute_key', '')
           }}
-          className={`reservoir-h6 w-full border-b-[1px] border-gray-300 px-6 py-5 text-left transition dark:border-neutral-600 dark:text-white ${
+          className={`reservoir-label-l w-full border-b-[1px] border-gray-300 px-6 py-5 text-left transition dark:border-neutral-600 dark:text-white ${
             router.query.attribute_key &&
             router.query.attribute_key.toString() === ''
               ? 'bg-primary-100 hover:bg-primary-300 dark:hover:bg-primary-900'
@@ -66,10 +66,10 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
                       )
                 }
               }}
-              className={`reservoir-h6 w-full py-5 px-6 text-left capitalize transition dark:text-white ${
+              className={`reservoir-label-l w-full py-5 px-6 text-left capitalize transition dark:text-white ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 bg-primary-900  hover:bg-primary-300 dark:hover:bg-primary-900'
+                  ? 'bg-primary-100 hover:bg-primary-300  dark:bg-primary-900 dark:hover:bg-primary-900'
                   : 'hover:bg-primary-100 dark:hover:bg-primary-900'
               }`}
             >
@@ -79,7 +79,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
               className={`flex items-center ${
                 router.query.attribute_key &&
                 router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 bg-primary-900 hover:bg-primary-300 dark:hover:bg-primary-900'
+                  ? 'bg-primary-100 hover:bg-primary-300 dark:bg-primary-900 dark:hover:bg-primary-900'
                   : 'hover:bg-primary-100 dark:hover:bg-primary-900'
               }`}
             >

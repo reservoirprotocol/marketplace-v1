@@ -15,7 +15,7 @@ const FormatEth: FC<Props> = ({ amount, maximumFractionDigits, logoWidth }) => {
 
   const icon = DARK_MODE ? '/eth-dark.svg' : '/eth.svg'
   return (
-    <div className="inline-flex items-center gap-1">
+    <div className="inline-flex flex-none items-center gap-1">
       {value !== '-' && (
         <img
           src={icon}
