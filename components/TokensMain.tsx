@@ -228,7 +228,6 @@ const TokensMain: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
     if (isOwner) {
       setToast({
         kind: 'error',
@@ -353,12 +352,14 @@ const TokensMain: FC<Props> = ({
               disabled={
                 floor?.price === null || waitingTx || isInTheWrongNetwork
               }
-              onClick={() =>
-                token &&
-                taker &&
-                expectedPrice &&
+              onClick={() => {
+                if (!token || !taker || !expectedPrice) {
+                  dispatch({ type: 'CONNECT_WALLET', payload: true })
+                  return
+                }
+
                 execute(token, taker, expectedPrice)
-              }
+              }}
               className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
             >
               {waitingTx ? (

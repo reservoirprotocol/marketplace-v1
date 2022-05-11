@@ -151,8 +151,6 @@ const BuyNow: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
-
     setWaitingTx(true)
     await buyTokenBeta({
       expectedPrice,
@@ -185,12 +183,14 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={() =>
-            taker &&
-            tokenString &&
-            expectedPrice &&
+          onClick={() => {
+            if (!taker || !tokenString || !expectedPrice) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+
             execute(tokenString, taker, expectedPrice)
-          }
+          }}
           className="btn-primary-fill w-full"
         >
           {waitingTx ? (

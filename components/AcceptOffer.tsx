@@ -165,8 +165,6 @@ const AcceptOffer: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
-
     setWaitingTx(true)
     await acceptOffer({
       expectedPrice,
@@ -192,12 +190,14 @@ const AcceptOffer: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
-          onClick={() =>
-            taker &&
-            tokenString &&
-            expectedPrice &&
+          onClick={() => {
+            if (!taker || !tokenString || !expectedPrice) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+
             execute(tokenString, taker, expectedPrice)
-          }
+          }}
           className="btn-primary-outline w-full dark:text-white"
         >
           {waitingTx ? (

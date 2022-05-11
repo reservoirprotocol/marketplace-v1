@@ -171,8 +171,6 @@ const ListModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
-
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
@@ -255,7 +253,6 @@ const ListModal: FC<Props> = ({
           onClick={async () => {
             setPostOnOpenSea(false)
             setOrderbook(['reservoir'])
-            if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
           }}
           className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
         >
@@ -274,7 +271,13 @@ const ListModal: FC<Props> = ({
             actionButton={
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
-                onClick={execute}
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
                 className="btn-primary-fill w-full dark:text-white  dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (

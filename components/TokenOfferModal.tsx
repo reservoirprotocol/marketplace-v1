@@ -194,8 +194,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const execute = async () => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
-
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
@@ -280,10 +278,9 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () => {
+        onClick={() => {
           setPostOnOpenSea(false)
           setOrderbook(['reservoir'])
-          if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
         }}
         className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
@@ -305,7 +302,13 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   !calculations.missingEth.isZero() ||
                   waitingTx
                 }
-                onClick={execute}
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
                 className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (

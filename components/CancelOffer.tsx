@@ -146,7 +146,6 @@ const CancelOffer: FC<Props> = ({
   }
 
   const execute = async (id: string, maker: string) => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
     setWaitingTx(true)
     await cancelOrder({
       query: { id, maker },
@@ -164,7 +163,13 @@ const CancelOffer: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
-          onClick={() => id && maker && execute(id, maker)}
+          onClick={() => {
+            if (!id || !maker) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+            execute(id, maker)
+          }}
           className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
         >
           {waitingTx ? (
