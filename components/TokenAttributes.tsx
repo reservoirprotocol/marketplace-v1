@@ -12,9 +12,7 @@ const TokenAttributes = ({ token }: Props) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
-        <p className="reservoir-h5 mb-4 font-headings dark:text-white">
-          Attributes
-        </p>
+        <p className="reservoir-h5 mb-4 dark:text-white">Attributes</p>
         <div className=" grid max-h-[440px] grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3">
           {token?.attributes?.map(({ key, value }) => (
             <Link

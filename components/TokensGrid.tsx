@@ -83,7 +83,7 @@ const TokensGrid: FC<Props> = ({
                               width="64"
                               height="64"
                             />
-                            <div className="reservoir-h6 font-headings text-white">
+                            <div className="reservoir-h6 text-white">
                               No Content Available
                             </div>
                           </div>
@@ -109,7 +109,7 @@ const TokensGrid: FC<Props> = ({
                         <div className="reservoir-subtitle text-gray-400">
                           Offer
                         </div>
-                        <div className="reservoir-h6 font-headings dark:text-white">
+                        <div className="reservoir-h6 dark:text-white">
                           <FormatEth
                             amount={token?.topBidValue}
                             maximumFractionDigits={4}
@@ -121,7 +121,7 @@ const TokensGrid: FC<Props> = ({
                         <div className="reservoir-subtitle text-gray-400">
                           Price
                         </div>
-                        <div className="reservoir-h6 font-headings dark:text-white">
+                        <div className="reservoir-h6 dark:text-white">
                           <FormatEth
                             amount={token?.floorAskPrice}
                             maximumFractionDigits={4}

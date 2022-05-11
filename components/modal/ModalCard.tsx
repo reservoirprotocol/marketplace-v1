@@ -71,7 +71,7 @@ const ModalCard: FC<Props> = ({
     <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
       <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white p-11 shadow-xl dark:bg-black ">
         <div className="mb-4 flex items-center justify-between">
-          <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
+          <Dialog.Title className="reservoir-h4 dark:text-white">
             {modalTitle}
           </Dialog.Title>
           <Dialog.Close
@@ -92,7 +92,7 @@ const ModalCard: FC<Props> = ({
             />
             <div className="overflow-auto">
               <div className="reservoir-body dark:text-white">{subTitle}</div>
-              <div className="reservoir-h4 my-1.5 font-headings dark:text-white">
+              <div className="reservoir-h4 my-1.5 dark:text-white">
                 {/* If this is an offer modal, change */}
                 {/* the header based on the type of offer */}
                 {data?.attribute ? (
