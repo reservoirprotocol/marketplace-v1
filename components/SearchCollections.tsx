@@ -7,22 +7,22 @@ import debounce from 'lodash.debounce'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 
+type SearchCollectionsAPISuccessResponse =
+  paths['/search/collections/v1']['get']['responses']['200']['schema']
+
 type Props = {
   communityId?: string
+  initialResults?: SearchCollectionsAPISuccessResponse
 }
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-const SearchCollections: FC<Props> = ({ communityId }) => {
+const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
-  const [results, setResults] = useState<
-    paths['/search/collections/v1']['get']['responses']['200']['schema']
-  >({})
-  const [initialResults, setInitialResults] = useState<
-    | paths['/search/collections/v1']['get']['responses']['200']['schema']
-    | undefined
-  >(undefined)
+  const [results, setResults] = useState<SearchCollectionsAPISuccessResponse>(
+    {}
+  )
 
   function getHref(search?: string) {
     const pathname = `${PROXY_API_BASE}/search/collections/v1`
@@ -30,34 +30,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
       {}
 
-    // if (communityId && communityId !== 'www' && communityId !== 'localhost') {
-    //   query.community = communityId
-    // }
+    if (communityId && communityId !== 'www' && communityId !== 'localhost') {
+      query.community = communityId
+    }
 
     if (search) query.name = search
 
-    const href = setParams(pathname, query)
-
-    return href
+    return setParams(pathname, query)
   }
-
-  async function loadInitialResults(href: string) {
-    const res = await fetch(href)
-
-    const json =
-      (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
-
-    setResults(json)
-    setInitialResults(json)
-  }
-
-  // LOAD INITIAL RESULTS
-  useEffect(() => {
-    if (focused && !initialResults) {
-      const href = getHref()
-      loadInitialResults(href)
-    }
-  }, [focused])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
@@ -79,8 +59,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       try {
         const res = await fetch(href)
 
-        const data =
-          (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
+        const data = (await res.json()) as SearchCollectionsAPISuccessResponse
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
@@ -171,7 +150,6 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                       >
                         <img
                           src={
-                            // @ts-ignore
                             collection?.image ??
                             'https://via.placeholder.com/30'
                           }
@@ -222,7 +200,6 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                   >
                     <img
                       src={
-                        // @ts-ignore
                         collection?.image ?? 'https://via.placeholder.com/30'
                       }
                       alt={`${collection?.name}'s logo.`}
