@@ -135,10 +135,11 @@ const TokensMain: FC<Props> = ({
   const volume = collection.data?.collection?.volume?.['1day']
 
   const statsObj = {
-    vol24: volume,
-    count: tokenCount ? +tokenCount : 0,
-    topOffer: collection.data?.collection?.topBid?.value,
+    count: stats?.data?.stats?.tokenCount ?? 0,
+    topOffer: stats?.data?.stats?.market?.topBid?.value,
     floor: floor?.price,
+    vol24: collection.data?.collection?.volume?.['1day'],
+    volumeChange: collection.data?.collection?.volumeChange?.['1day'],
   }
 
   const bannerImage =

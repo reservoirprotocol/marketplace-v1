@@ -27,6 +27,7 @@ const CommunityGrid: FC<Props> = ({ communities }) => {
   return (
     <>
       <Masonry
+        key="communityGridMasonry"
         breakpointCols={{
           default: 5,
           1536: 4,
