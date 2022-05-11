@@ -96,7 +96,9 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     return sum
   }
   const bps = getBps(royalties.bps, FEE_BPS)
-  const royaltyPercentage = `${(royalties.bps || 0 / 10000) * 100}%`
+  const royaltyPercentage = royalties?.bps
+    ? `${(royalties?.bps / 10000) * 100}%`
+    : '0%'
 
   const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)

@@ -94,7 +94,9 @@ const CollectionOfferModal: FC<Props> = ({
     return sum
   }
   const bps = getBps(royalties.bps, FEE_BPS)
-  const royaltyPercentage = `${(royalties?.bps || 0 / 10000) * 100}%`
+  const royaltyPercentage = royalties?.bps
+    ? `${(royalties?.bps / 10000) * 100}%`
+    : '0%'
 
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
