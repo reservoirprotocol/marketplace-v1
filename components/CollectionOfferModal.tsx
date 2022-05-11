@@ -177,9 +177,6 @@ const CollectionOfferModal: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () => {
-          if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
-        }}
         className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
         Make a Collection Offer
@@ -198,7 +195,13 @@ const CollectionOfferModal: FC<Props> = ({
                   !calculations.missingEth.isZero() ||
                   waitingTx
                 }
-                onClick={execute}
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
                 className="btn-primary-fill w-full  dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
