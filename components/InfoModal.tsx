@@ -18,9 +18,7 @@ const InfoModal: FC = () => {
               <div className="reservoir-body space-y-4">
                 <section>
                   <div className="mb-8 flex justify-between">
-                    <p className="reservoir-h4 font-headings">
-                      What is reservoir.market?
-                    </p>
+                    <p className="reservoir-h4 ">What is reservoir.market?</p>
                     <Dialog.Close className="btn-primary-outline p-1.5">
                       <HiX className="h-5 w-5" />
                     </Dialog.Close>
@@ -32,7 +30,7 @@ const InfoModal: FC = () => {
                   </p>
                 </section>
                 <section>
-                  <div className="reservoir-h6 mb-4 block font-headings">
+                  <div className="reservoir-h6 mb-4 block ">
                     It supports 3 modes:
                   </div>
                   <ul>

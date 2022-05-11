@@ -71,7 +71,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
         <div className="reservoir-h5 dark:text-white">Token Info</div>
         <div className="flex items-center gap-2">
           <a
-            className="reservoir-h6 font-headings"
+            className="reservoir-h6 "
             target="_blank"
             rel="noopener noreferrer"
             href={`https://looksrare.org/collections/${token?.token?.contract}/${token?.token?.tokenId}`}
@@ -83,7 +83,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
             />
           </a>
           <a
-            className="reservoir-h6 font-headings"
+            className="reservoir-h6 "
             target="_blank"
             rel="noopener noreferrer"
             href={`https://opensea.io/assets/${token?.token?.contract}/${token?.token?.tokenId}`}

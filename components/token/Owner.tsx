@@ -26,11 +26,11 @@ const Owner: FC<Props> = ({ details }) => {
           <div className="mb-4 flex justify-evenly">
             <div className="flex items-center gap-2">
               <FiUsers className="h-4 w-4" />
-              <span className="reservoir-h5 font-headings">Owners</span>
+              <span className="reservoir-h5 ">Owners</span>
             </div>
             <div className="flex items-center gap-2">
               <FiDatabase className="h-4 w-4" />
-              <span className="reservoir-h5 font-headings">Total</span>
+              <span className="reservoir-h5 ">Total</span>
             </div>
           </div>
         )} */}

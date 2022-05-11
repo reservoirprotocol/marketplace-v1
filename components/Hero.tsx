@@ -58,7 +58,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
               <div className="flex gap-4">
                 {typeof social.discordUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none font-headings"
+                    className="reservoir-h6 flex-none "
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.discordUrl}
@@ -72,7 +72,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.twitterUsername === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none font-headings"
+                    className="reservoir-h6 flex-none "
                     target="_blank"
                     rel="noopener noreferrer"
                     href={`https://twitter.com/${social.twitterUsername}`}
