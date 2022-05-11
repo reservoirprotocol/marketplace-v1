@@ -107,7 +107,6 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
               <Stat name="Floor">
                 <FormatEth amount={stats.floor} maximumFractionDigits={4} />
               </Stat>
-              <Stat name="Items">{formatNumber(stats.count)}</Stat>
               <Stat name="24hr">
                 <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
                 <PercentageChange value={stats.volumeChange} />
@@ -144,7 +143,7 @@ const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
   }
 
   if (value > 1) {
-    return <div className="text-[#06C270]">{formatNumber(percentage)}%</div>
+    return <div className="text-[#06C270]">+{formatNumber(percentage)}%</div>
   }
 
   return <div>0%</div>
