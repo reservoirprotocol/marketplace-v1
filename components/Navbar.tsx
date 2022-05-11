@@ -122,7 +122,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
                 key={url}
                 href={url}
                 rel="noopener noferrer"
-                className="text-dark font-headings reservoir-h6 hover:text-[#1F2937] dark:text-white"
+                className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
               >
                 {name}
               </a>
