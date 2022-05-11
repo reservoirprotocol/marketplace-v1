@@ -97,7 +97,7 @@ const AttributeOfferModal: FC<Props> = ({
     return sum
   }
   const bps = getBps(royalties.bps, FEE_BPS)
-  const royaltyPercentage = `${royalties?.bps || 0 / 100}%`
+  const royaltyPercentage = `${(royalties?.bps || 0 / 10000) * 100}%`
 
   const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
@@ -257,8 +257,8 @@ const AttributeOfferModal: FC<Props> = ({
                     <div>Royalty {royaltyPercentage}</div>
                     {FEE_BPS && (
                       <div>
-                        {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 100}
-                        %
+                        {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                        {(+FEE_BPS / 10000) * 100}%
                       </div>
                     )}
                   </div>

@@ -110,7 +110,7 @@ const ListModal: FC<Props> = ({
     apiBps = collection?.collection?.royalties?.bps || 0
   }
 
-  const royaltyPercentage = `${apiBps || 0 / 100}%`
+  const royaltyPercentage = `${(apiBps || 0 / 10000) * 100}%`
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
     let sum = 0
@@ -343,7 +343,8 @@ const ListModal: FC<Props> = ({
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'} {+FEE_BPS / 100}%
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {(+FEE_BPS / 10000) * 100}%
                     </div>
                   )}
                   {postOnOpenSea && (
