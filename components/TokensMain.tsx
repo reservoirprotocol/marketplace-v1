@@ -5,7 +5,7 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import { Execute, paths } from '@reservoir0x/client-sdk/dist/types'
 import { buyToken, buyTokenBeta } from '@reservoir0x/client-sdk/dist/actions'
-import { formatBN } from 'lib/numbers'
+import { formatBN, formatNumber } from 'lib/numbers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
@@ -27,6 +27,7 @@ import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { FiRefreshCcw } from 'react-icons/fi'
 import { checkWallet } from 'lib/wallet'
+import FormatEth from './FormatEth'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -122,12 +123,14 @@ const TokensMain: FC<Props> = ({
     collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
     accountData?.address?.toLowerCase()
 
-  const floor = stats?.data?.stats?.market?.floorAsk
+  const floor = collection.data?.collection?.floorAsk
+  const tokenCount = collection.data?.collection?.tokenCount
+  const volume = collection.data?.collection?.volume?.['1day']
 
   const statsObj = {
-    vol24: 10,
-    count: stats?.data?.stats?.tokenCount ?? 0,
-    topOffer: stats?.data?.stats?.market?.topBid?.value,
+    vol24: volume,
+    count: tokenCount ? +tokenCount : 0,
+    topOffer: collection.data?.collection?.topBid?.value,
     floor: floor?.price,
   }
 
@@ -401,9 +404,24 @@ const TokensMain: FC<Props> = ({
         <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
         <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
           <div className="mb-10 hidden items-center justify-between md:flex">
-            <div>
-              <AttributesFlex />
-              <ExploreFlex />
+            <div className="flex items-center gap-6">
+              {!!stats?.data?.stats?.tokenCount &&
+                stats?.data?.stats?.tokenCount > 0 && (
+                  <>
+                    <div>
+                      {formatNumber(stats?.data?.stats?.tokenCount)} items
+                    </div>
+
+                    <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                    <div>
+                      <FormatEth
+                        maximumFractionDigits={4}
+                        amount={stats?.data?.stats?.market?.floorAsk?.price}
+                      />{' '}
+                      floor price
+                    </div>
+                  </>
+                )}
             </div>
             <div className="flex gap-4">
               {router.query?.attribute_key ||
@@ -429,6 +447,8 @@ const TokensMain: FC<Props> = ({
               </button>
             </div>
           </div>
+          <AttributesFlex />
+          <ExploreFlex />
           {router.query?.attribute_key || router.query?.attribute_key === '' ? (
             <ExploreTokens
               attributes={collectionAttributes}
