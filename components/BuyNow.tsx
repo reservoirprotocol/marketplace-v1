@@ -1,6 +1,12 @@
 import { Signer } from 'ethers'
 import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
@@ -9,7 +15,7 @@ import { useAccount, useConnect, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
@@ -43,14 +49,13 @@ const BuyNow: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { connect, connectors } = useConnect()
   const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
-
   // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const { dispatch } = useContext(GlobalContext)
 
   useEffect(() => {
     if (data) {
@@ -146,8 +151,6 @@ const BuyNow: FC<Props> = ({
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectors)
-
     setWaitingTx(true)
     await buyTokenBeta({
       expectedPrice,
@@ -180,12 +183,14 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={() =>
-            taker &&
-            tokenString &&
-            expectedPrice &&
+          onClick={() => {
+            if (!taker || !tokenString || !expectedPrice) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+
             execute(tokenString, taker, expectedPrice)
-          }
+          }}
           className="btn-primary-fill w-full"
         >
           {waitingTx ? (

@@ -10,6 +10,7 @@ import { Provider, chain, createClient, defaultChains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { GlobalProvider } from 'context/GlobalState'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -57,9 +58,11 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider client={client}>
-      <Component {...pageProps} />
-    </Provider>
+    <GlobalProvider>
+      <Provider client={client}>
+        <Component {...pageProps} />
+      </Provider>
+    </GlobalProvider>
   )
 }
 

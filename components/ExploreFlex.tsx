@@ -9,7 +9,7 @@ const ExploreFlex = () => {
   if (router.query?.attribute_key || router.query?.attribute_key === '') {
     return (
       <div className="mb-10 flex flex-wrap gap-3">
-        <div className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-700">
+        <div className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-600 dark:bg-primary-900 dark:text-white">
           <div className="reservoir-label-l flex items-center justify-between gap-1.5 dark:text-white">
             <p className="capitalize">Explore</p>
             <p>{`${
