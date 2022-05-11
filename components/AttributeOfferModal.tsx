@@ -26,6 +26,7 @@ import { checkWallet } from 'lib/wallet'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
+const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 
 type Props = {
   env: {
@@ -88,8 +89,18 @@ const AttributeOfferModal: FC<Props> = ({
   })
   const { connect, connectors } = useConnect()
   const provider = useProvider()
-  const bps = royalties?.bps ?? 0
-  const royaltyPercentage = `${bps / 100}%`
+
+  function getBps(royalties: number | undefined, envBps: string | undefined) {
+    let sum = 0
+    if (royalties) sum += royalties
+    if (envBps) sum += +envBps
+    return sum
+  }
+  const bps = getBps(royalties.bps, FEE_BPS)
+  const royaltyPercentage = royalties?.bps
+    ? `${(royalties?.bps / 10000) * 100}%`
+    : '0%'
+
   const [open, setOpen] = useState(false)
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
@@ -246,6 +257,12 @@ const AttributeOfferModal: FC<Props> = ({
                   <div className="reservoir-h6 dark:text-white">Fees</div>
                   <div className="reservoir-body text-right dark:text-white">
                     <div>Royalty {royaltyPercentage}</div>
+                    {FEE_BPS && (
+                      <div>
+                        {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                        {(+FEE_BPS / 10000) * 100}%
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-between">
