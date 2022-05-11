@@ -37,7 +37,7 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
                   onClick={() => {
                     setOpen(false)
                   }}
-                  className={`flex items-center gap-2 rounded-none px-6 py-4 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
+                  className={`flex max-w-full items-center gap-2 rounded-none px-6 py-4 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800`}
                 >
                   <img
                     src={collection.image}
