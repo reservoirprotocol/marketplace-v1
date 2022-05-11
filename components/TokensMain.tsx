@@ -5,7 +5,7 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import { Execute, paths } from '@reservoir0x/client-sdk/dist/types'
 import { buyToken, buyTokenBeta } from '@reservoir0x/client-sdk/dist/actions'
-import { formatBN } from 'lib/numbers'
+import { formatBN, formatNumber } from 'lib/numbers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ComponentProps, FC, useEffect, useState } from 'react'
@@ -408,7 +408,9 @@ const TokensMain: FC<Props> = ({
               {!!stats?.data?.stats?.tokenCount &&
                 stats?.data?.stats?.tokenCount > 0 && (
                   <>
-                    <div>{stats?.data?.stats?.tokenCount} items</div>
+                    <div>
+                      {formatNumber(stats?.data?.stats?.tokenCount)} items
+                    </div>
 
                     <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
                     <div>
