@@ -53,7 +53,7 @@ const CommunityLanding: FC<Props> = ({ collectionId, mode }) => {
           className="mr-4 h-[50px] w-[50px] rounded-full"
           src={communities.communities.data?.[0].collections?.[0]?.image}
         />
-        <h1 className="reservoir-h1 ">
+        <h1 className="reservoir-h1">
           {communityIds[collectionId] || collectionId} Community
         </h1>
       </header>

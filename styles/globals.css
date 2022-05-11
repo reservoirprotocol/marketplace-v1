@@ -3,22 +3,7 @@
 @tailwind utilities;
 
 @layer components {
-  .reservoir-h1 {
-    @apply font-headings;
-  }
-  .reservoir-h2 {
-    @apply font-headings;
-  }
-  .reservoir-h3 {
-    @apply font-headings;
-  }
-  .reservoir-h4 {
-    @apply font-headings;
-  }
-  .reservoir-h5 {
-    @apply font-headings;
-  }
-  .reservoir-h6 {
+  .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
     @apply font-headings;
   }
 }

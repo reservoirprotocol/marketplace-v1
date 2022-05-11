@@ -14,11 +14,11 @@ const InfoModal: FC = () => {
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-            <div className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-8 shadow-md ">
+            <div className="fixed top-1/2 left-1/2 max-w-prose -translate-x-1/2 -translate-y-1/2 transform rounded-md bg-white p-8 shadow-md">
               <div className="reservoir-body space-y-4">
                 <section>
                   <div className="mb-8 flex justify-between">
-                    <p className="reservoir-h4 ">What is reservoir.market?</p>
+                    <p className="reservoir-h4">What is reservoir.market?</p>
                     <Dialog.Close className="btn-primary-outline p-1.5">
                       <HiX className="h-5 w-5" />
                     </Dialog.Close>
@@ -30,7 +30,7 @@ const InfoModal: FC = () => {
                   </p>
                 </section>
                 <section>
-                  <div className="reservoir-h6 mb-4 block ">
+                  <div className="reservoir-h6 mb-4 block">
                     It supports 3 modes:
                   </div>
                   <ul>
