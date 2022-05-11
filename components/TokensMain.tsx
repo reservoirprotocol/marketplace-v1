@@ -32,6 +32,7 @@ import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { FiRefreshCcw } from 'react-icons/fi'
+import FormatEth from './FormatEth'
 import { GlobalContext } from 'context/GlobalState'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
