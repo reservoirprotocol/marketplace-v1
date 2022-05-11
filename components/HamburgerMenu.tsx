@@ -14,7 +14,6 @@ import { Balance } from './ConnectWallet'
 import { Wallets } from './ConnectWalletModal'
 import EthAccount from './EthAccount'
 
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -47,15 +46,6 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <div className="relative mr-4 inline-flex h-[42px] items-center  gap-1">
             <img src={logo} alt="" className="block w-8 flex-none" />
-            {NAVBAR_TITLE ? (
-              <div className="font-semibold dark:text-white">
-                {NAVBAR_TITLE}
-              </div>
-            ) : (
-              <div className="font-['Obvia'] text-lg dark:text-white md:block">
-                reservoir.market
-              </div>
-            )}
             {CHAIN_ID === '4' && (
               <div className="reservoir-tiny rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
                 Testnet

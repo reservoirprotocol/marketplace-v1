@@ -26,7 +26,6 @@ import { checkWallet } from 'lib/wallet'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
@@ -214,7 +213,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
     if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
@@ -257,7 +256,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
     if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 

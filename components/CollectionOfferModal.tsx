@@ -25,7 +25,6 @@ import { checkWallet } from 'lib/wallet'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 
 type Props = {
   env: {
@@ -159,7 +158,7 @@ const CollectionOfferModal: FC<Props> = ({
       collection: data.collection.id,
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
 
     await placeBid({
       query,

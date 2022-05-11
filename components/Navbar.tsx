@@ -9,14 +9,14 @@ type Props = {
   mode: 'global' | 'community' | 'collection'
 }
 
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const EXTERNAL_LINKS = process.env.NEXT_PUBLIC_EXTERNAL_LINKS || null
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const Navbar: FC<Props> = ({ communityId, mode }) => {
   const logo = NAVBAR_LOGO || '/reservoir.svg'
-  const logoAlt = `${NAVBAR_TITLE} Logo` || 'Reservoir Logo'
+  const logoAlt = SOURCE_ID ? `${SOURCE_ID} Logo` : 'Reservoir Logo'
 
   const externalLinks: { name: string; url: string }[] = []
 
@@ -47,15 +47,6 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
       <Link href="/">
         <a className="relative inline-flex flex-none items-center gap-1">
           <img src={logo} alt={logoAlt} className="w-8" />
-          {NAVBAR_TITLE ? (
-            <div className="hidden font-semibold dark:text-white md:block">
-              {NAVBAR_TITLE}
-            </div>
-          ) : (
-            <div className="hidden font-['Obvia'] text-lg dark:text-white md:block">
-              reservoir.market
-            </div>
-          )}
           {CHAIN_ID === '4' && (
             <div className="reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
               Testnet
