@@ -1,12 +1,25 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import { useConnect } from 'wagmi'
 import { FiChevronRight } from 'react-icons/fi'
+import { GlobalContext } from 'context/GlobalState'
 
 const ConnectWalletModal: FC = () => {
+  const {
+    state: {
+      connectWallet: { open },
+    },
+    dispatch,
+  } = useContext(GlobalContext)
+
   return (
-    <Dialog.Root>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(state) =>
+        dispatch({ type: 'CONNECT_WALLET', payload: state })
+      }
+    >
       <Dialog.Trigger className="btn-primary-fill dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
         Connect Wallet
       </Dialog.Trigger>
