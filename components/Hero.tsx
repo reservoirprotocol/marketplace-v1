@@ -119,9 +119,11 @@ export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div className="grid items-center sm:flex sm:gap-1">
-    <div className="reservoir-h6 whitespace-nowrap font-headings text-gray-400">
+    <div className="reservoir-subtitle whitespace-nowrap font-headings text-gray-400">
       {name}
     </div>
-    <div className="reservoir-h6 font-headings dark:text-white">{children}</div>
+    <div className="reservoir-subtitle font-headings dark:text-white">
+      {children}
+    </div>
   </div>
 )
