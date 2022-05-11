@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
@@ -12,7 +12,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { Execute, listToken, paths } from '@reservoir0x/client-sdk'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
@@ -79,6 +79,8 @@ const ListModal: FC<Props> = ({
   // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+
+  const { dispatch } = useContext(GlobalContext)
 
   const [open, setOpen] = useState(false)
 
@@ -177,8 +179,6 @@ const ListModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectors)
-
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
@@ -261,7 +261,6 @@ const ListModal: FC<Props> = ({
           onClick={async () => {
             setPostOnOpenSea(false)
             setOrderbook(['reservoir'])
-            await checkWallet(signer, setToast, connect, connectors)
           }}
           className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
         >
@@ -280,7 +279,13 @@ const ListModal: FC<Props> = ({
             actionButton={
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
-                onClick={execute}
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
                 className="btn-primary-fill w-full dark:text-white  dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
