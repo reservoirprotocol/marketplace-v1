@@ -15,7 +15,7 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import AttributesFlex from './AttributesFlex'
 import CollectionOfferModal from './CollectionOfferModal'
@@ -63,7 +63,6 @@ const TokensMain: FC<Props> = ({
   setToast,
 }) => {
   const { data: accountData } = useAccount()
-  const { connect, connectors } = useConnect()
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
   const router = useRouter()
@@ -131,8 +130,6 @@ const TokensMain: FC<Props> = ({
     accountData?.address?.toLowerCase()
 
   const floor = collection.data?.collection?.floorAsk
-  const tokenCount = collection.data?.collection?.tokenCount
-  const volume = collection.data?.collection?.volume?.['1day']
 
   const statsObj = {
     count: stats?.data?.stats?.tokenCount ?? 0,
