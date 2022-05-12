@@ -40,7 +40,7 @@ const primaryColors = {
     900: '#1e3a8a',
   },
   purple: {
-    100: '#EBDFF',
+    100: '#EBDCFF',
     300: '#D9BCFF',
     500: '#B47AFF',
     700: '#8221FE',
