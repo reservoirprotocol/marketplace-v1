@@ -55,11 +55,13 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
           <div className="ml-3 flex-grow">
             <div className="grid items-center lg:flex lg:gap-4">
-              <h1 className="reservoir-h4 dark:text-white">{header.name}</h1>
+              <h1 className="reservoir-h4 font-headings dark:text-white">
+                {header.name}
+              </h1>
               <div className="flex gap-4">
                 {typeof social.discordUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none"
+                    className="reservoir-h6 flex-none font-headings"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.discordUrl}
@@ -73,7 +75,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.twitterUsername === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none"
+                    className="reservoir-h6 flex-none font-headings"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={`https://twitter.com/${social.twitterUsername}`}
@@ -87,7 +89,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.externalUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none dark:text-white"
+                    className="reservoir-h6 flex-none font-headings dark:text-white"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.externalUrl}
