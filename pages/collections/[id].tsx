@@ -62,6 +62,7 @@ const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -465,10 +466,54 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
 export default Home
 
-export const getStaticPaths: GetStaticPaths = () => {
-  if (COLLECTION) {
+export const getStaticPaths: GetStaticPaths = async () => {
+  if (COLLECTION && !COMMUNITY) {
     return {
       paths: [{ params: { id: COLLECTION } }],
+      fallback: false,
+    }
+  }
+
+  if (COLLECTION && COMMUNITY) {
+    const url = new URL(
+      `${PROXY_API_BASE}/search/collections/v1`,
+      RESERVOIR_API_BASE
+    )
+
+    const query: paths['/search/collections/v1']['get']['parameters']['query'] =
+      { community: COMMUNITY, limit: 20 }
+
+    setParams(url, query)
+
+    const res = await fetch(url.href)
+
+    const collections =
+      (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
+
+    if (!collections?.collections) {
+      return {
+        paths: [{ params: { id: COLLECTION } }],
+        fallback: false,
+      }
+    }
+
+    if (collections.collections?.length === 0) {
+      return {
+        paths: [{ params: { id: COLLECTION } }],
+        fallback: false,
+      }
+    }
+
+    const paths = collections?.collections?.map(({ contract }) => ({
+      params: {
+        id: contract,
+      },
+    }))
+
+    console.log(paths)
+
+    return {
+      paths,
       fallback: false,
     }
   }
