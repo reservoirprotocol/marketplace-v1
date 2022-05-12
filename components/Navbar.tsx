@@ -6,7 +6,6 @@ import HamburgerMenu from './HamburgerMenu'
 
 type Props = {
   communityId?: string
-  mode: 'global' | 'community' | 'collection'
 }
 
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
@@ -14,7 +13,7 @@ const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const EXTERNAL_LINKS = process.env.NEXT_PUBLIC_EXTERNAL_LINKS || null
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-const Navbar: FC<Props> = ({ communityId, mode }) => {
+const Navbar: FC<Props> = ({ communityId }) => {
   const logo = NAVBAR_LOGO || '/reservoir.svg'
   const logoAlt = `${NAVBAR_TITLE} Logo` || 'Reservoir Logo'
 
@@ -33,12 +32,6 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
   }
 
   const hasExternalLinks = externalLinks.length > 0
-
-  const rule1 = mode === 'global'
-
-  const rule2 = mode === 'community'
-
-  const displaySearch = rule1 || rule2
 
   const search = <SearchCollections communityId={communityId} />
 
@@ -64,7 +57,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
         </a>
       </Link>
       <div className="w-full lg:w-auto lg:flex-none">
-        {displaySearch && <div className="w-full">{search}</div>}
+        <div className="w-full">{search}</div>
         {hasExternalLinks && (
           <div className="hidden items-center gap-6 md:flex">
             {externalLinks.map(({ name, url }) => (

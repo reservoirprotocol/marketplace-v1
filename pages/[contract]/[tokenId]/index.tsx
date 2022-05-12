@@ -1,12 +1,16 @@
 import Layout from 'components/Layout'
 import setParams from 'lib/params'
-import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import TokenAttributes from 'components/TokenAttributes'
 import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
-import getMode from 'lib/getMode'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
@@ -35,9 +39,9 @@ const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
+const Index: NextPage<Props> = ({ collectionId, communityId }) => {
   const { data: accountData } = useAccount()
   const router = useRouter()
 
@@ -92,7 +96,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
   )
 
   return (
-    <Layout navbar={{ mode, communityId }}>
+    <Layout navbar={{}}>
       <Head>
         {title}
         {description}
@@ -103,11 +107,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
           <TokenMedia details={details} />
         </div>
         <div className="hidden space-y-4 md:block">
-          <CollectionInfo
-            collection={collection}
-            details={details}
-            mode={mode}
-          />
+          <CollectionInfo collection={collection} details={details} />
           <TokenInfo details={details} />
         </div>
       </div>
@@ -118,7 +118,7 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
         <TokenAttributes token={token?.token} />
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
-        <CollectionInfo collection={collection} details={details} mode={mode} />
+        <CollectionInfo collection={collection} details={details} />
         <TokenInfo details={details} />
       </div>
     </Layout>
@@ -127,11 +127,17 @@ const Index: NextPage<Props> = ({ collectionId, mode, communityId }) => {
 
 export default Index
 
-export const getServerSideProps: GetServerSideProps<{
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps: GetStaticProps<{
   collectionId: string
-  mode: ReturnType<typeof getMode>['mode']
   communityId?: string
-}> = async ({ req, params }) => {
+}> = async ({ params }) => {
   const options: RequestInit | undefined = {}
 
   if (RESERVOIR_API_KEY) {
@@ -139,13 +145,6 @@ export const getServerSideProps: GetServerSideProps<{
       'x-api-key': RESERVOIR_API_KEY,
     }
   }
-
-  const { mode, collectionId: communityId } = getMode(
-    req,
-    USE_WILDCARD,
-    COMMUNITY,
-    COLLECTION
-  )
 
   const url = new URL('/tokens/details/v4', RESERVOIR_API_BASE)
 
@@ -168,5 +167,5 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  return { props: { collectionId, mode, communityId } }
+  return { props: { collectionId } }
 }
