@@ -1,6 +1,12 @@
 import { Signer } from 'ethers'
 import { cancelOrder, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
@@ -9,7 +15,7 @@ import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
@@ -53,6 +59,7 @@ const CancelListing: FC<Props> = ({
   // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const { dispatch } = useContext(GlobalContext)
 
   useEffect(() => {
     if (data && open) {
@@ -139,7 +146,6 @@ const CancelListing: FC<Props> = ({
   }
 
   const execute = async (id: string, maker: string) => {
-    await checkWallet(signer, setToast, connect, connectors)
     setWaitingTx(true)
     await cancelOrder({
       query: { id, maker },
@@ -157,7 +163,13 @@ const CancelListing: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
-          onClick={() => id && maker && execute(id, maker)}
+          onClick={() => {
+            if (!id || !maker) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+            execute(id, maker)
+          }}
           className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
         >
           {waitingTx ? (

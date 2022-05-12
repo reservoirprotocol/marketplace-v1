@@ -20,9 +20,7 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
 
   return (
     <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
-      <div className="reservoir-h5 mb-4 font-headings dark:text-white">
-        Collection Info
-      </div>
+      <div className="reservoir-h5 mb-4 dark:text-white">Collection Info</div>
       <Link
         href={
           mode === 'collection'
@@ -39,7 +37,7 @@ const CollectionInfo: FC<Props> = ({ collection, mode, details }) => {
             alt="collection avatar"
             className="h-9 w-9 rounded-full"
           />
-          <span className="reservoir-h6 font-headings dark:text-white">
+          <span className="reservoir-h6 dark:text-white">
             {token?.token?.collection?.name}
           </span>
         </a>

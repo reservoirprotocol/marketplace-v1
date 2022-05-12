@@ -53,15 +53,13 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
       <div className="col-span-full grid gap-5 px-4 py-6 md:place-items-center md:py-11 md:px-16 lg:flex lg:items-center lg:justify-between">
         <div className="flex items-center">
           <img className="h-[70px] w-[70px] rounded-full" src={header.image} />
-          <div className="ml-3  flex-grow ">
+          <div className="ml-3 flex-grow">
             <div className="grid items-center lg:flex lg:gap-4">
-              <h1 className="reservoir-h4 font-headings dark:text-white">
-                {header.name}
-              </h1>
+              <h1 className="reservoir-h4 dark:text-white">{header.name}</h1>
               <div className="flex gap-4">
                 {typeof social.discordUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none font-headings"
+                    className="reservoir-h6 flex-none"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.discordUrl}
@@ -75,7 +73,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.twitterUsername === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none font-headings"
+                    className="reservoir-h6 flex-none"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={`https://twitter.com/${social.twitterUsername}`}
@@ -89,7 +87,7 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
                 )}
                 {typeof social.externalUrl === 'string' && (
                   <a
-                    className="reservoir-h6 flex-none font-headings dark:text-white"
+                    className="reservoir-h6 flex-none dark:text-white"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={social.externalUrl}
@@ -107,7 +105,6 @@ const Hero: FC<Props> = ({ stats, header, children, social }) => {
               <Stat name="Floor">
                 <FormatEth amount={stats.floor} maximumFractionDigits={4} />
               </Stat>
-              <Stat name="Items">{formatNumber(stats.count)}</Stat>
               <Stat name="24hr">
                 <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
                 <PercentageChange value={stats.volumeChange} />
@@ -125,12 +122,10 @@ export default Hero
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
   <div className="grid items-center sm:flex sm:gap-1">
-    <div className="reservoir-h6 whitespace-nowrap font-headings text-gray-400">
+    <div className="reservoir-subtitle whitespace-nowrap text-gray-400">
       {name}
     </div>
-    <div className="reservoir-h6 flex gap-2 font-headings dark:text-white">
-      {children}
-    </div>
+    <div className="reservoir-subtitle flex gap-2 dark:text-white">{children}</div>
   </div>
 )
 
@@ -144,7 +139,7 @@ const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
   }
 
   if (value > 1) {
-    return <div className="text-[#06C270]">{formatNumber(percentage)}%</div>
+    return <div className="text-[#06C270]">+{formatNumber(percentage)}%</div>
   }
 
   return <div>0%</div>

@@ -116,13 +116,13 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
       <div className="flex w-full justify-center">
         {filterComponent && filterComponent}
         {hasExternalLinks && (
-          <div className="ml-12 hidden items-center gap-6 lg:flex">
+          <div className="ml-12 hidden items-center gap-11 lg:flex">
             {externalLinks.map(({ name, url }) => (
               <a
                 key={url}
                 href={url}
                 rel="noopener noferrer"
-                className="text-dark reservoir-label-l hover:text-[#1F2937] dark:text-white"
+                className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
               >
                 {name}
               </a>
@@ -131,7 +131,7 @@ const Navbar: FC<Props> = ({ communityId, mode }) => {
         )}
       </div>
       <HamburgerMenu externalLinks={externalLinks} />
-      <div className="ml-auto hidden md:block">
+      <div className="ml-auto hidden shrink-0 md:block">
         <ConnectWallet />
       </div>
     </nav>

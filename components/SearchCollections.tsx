@@ -200,7 +200,6 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                   >
                     <img
                       src={
-                        // @ts-ignore
                         collection?.image ?? 'https://via.placeholder.com/30'
                       }
                       alt={`${collection?.name}'s logo.`}

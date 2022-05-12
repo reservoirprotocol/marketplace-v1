@@ -101,7 +101,7 @@ const UserListingsTable: FC<Props> = ({
                         <div className="reservoir-body dark:text-white ">
                           {collectionName}
                         </div>
-                        <div className="reservoir-h6 font-headings dark:text-white ">
+                        <div className="reservoir-h6 dark:text-white ">
                           {name}
                         </div>
                       </span>
