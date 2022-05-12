@@ -6,6 +6,8 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Tokens =
   paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
@@ -76,6 +78,9 @@ const getKey: InfiniteKeyLoader = (
     limit: 20,
     offset: index * 20,
   }
+
+  if (COMMUNITY) query.community = collectionId
+  if (COLLECTION) query.collection = collectionId
 
   const href = setParams(pathname, query)
 

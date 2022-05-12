@@ -61,6 +61,8 @@ const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
@@ -464,6 +466,13 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 export default Home
 
 export const getStaticPaths: GetStaticPaths = () => {
+  if (COLLECTION) {
+    return {
+      paths: [{ params: { id: COLLECTION } }],
+      fallback: false,
+    }
+  }
+
   return {
     paths: [],
     fallback: 'blocking',

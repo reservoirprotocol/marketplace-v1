@@ -31,17 +31,31 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 // OPTIONAL
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
-const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
-const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
+
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Index: NextPage<Props> = ({ collectionId, communityId }) => {
+const metadata = {
+  title: (title: string) => <title>{title}</title>,
+  description: (description: string) => (
+    <meta name="description" content={description} />
+  ),
+  image: (image: string) => (
+    <>
+      <meta name="twitter:image" content={image} />
+      <meta property="og:image" content={image} />
+    </>
+  ),
+  tagline: (tagline: string | undefined) => (
+    <>{tagline || 'Discover, buy and sell NFTs'}</>
+  ),
+}
+
+const Index: NextPage<Props> = ({ collectionId }) => {
   const { data: accountData } = useAccount()
   const router = useRouter()
 
@@ -67,33 +81,23 @@ const Index: NextPage<Props> = ({ collectionId, communityId }) => {
 
   const token = details.data?.tokens?.[0]
 
-  const title = META_TITLE ? (
-    <title>{META_TITLE}</title>
-  ) : (
-    <title>
-      {token?.token?.name || `#${token?.token?.tokenId}`} -{' '}
-      {collection.data?.collection?.name} | Reservoir Market
-    </title>
-  )
-  const description = META_DESCRIPTION ? (
-    <meta name="description" content={META_DESCRIPTION} />
-  ) : (
-    <meta
-      name="description"
-      content={collection.data?.collection?.metadata?.description as string}
-    />
-  )
-  const image = META_OG_IMAGE ? (
-    <>
-      <meta name="twitter:image" content={META_OG_IMAGE} />
-      <meta name="og:image" content={META_OG_IMAGE} />
-    </>
-  ) : (
-    <>
-      <meta name="twitter:image" content={token?.token?.image} />
-      <meta property="og:image" content={token?.token?.image} />
-    </>
-  )
+  // META
+  const title = META_TITLE
+    ? metadata.title(META_TITLE)
+    : metadata.title(`${token?.token?.name || `#${token?.token?.tokenId}`} - 
+    ${collection.data?.collection?.name} | Reservoir Market}`)
+
+  const description = META_DESCRIPTION
+    ? metadata.description(META_DESCRIPTION)
+    : metadata.description(
+        `${collection.data?.collection?.metadata?.description as string}`
+      )
+
+  const image = META_OG_IMAGE
+    ? metadata.image(META_OG_IMAGE)
+    : token?.token?.image
+    ? metadata.image(token?.token?.image)
+    : null
 
   return (
     <Layout navbar={{}}>
@@ -138,6 +142,14 @@ export const getStaticProps: GetStaticProps<{
   collectionId: string
   communityId?: string
 }> = async ({ params }) => {
+  const contract = params?.contract?.toString()
+
+  if (COLLECTION && COLLECTION.toLowerCase() !== contract?.toLowerCase()) {
+    return {
+      notFound: true,
+    }
+  }
+
   const options: RequestInit | undefined = {}
 
   if (RESERVOIR_API_KEY) {

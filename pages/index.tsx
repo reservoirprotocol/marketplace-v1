@@ -22,6 +22,7 @@ const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -82,6 +83,16 @@ export const getStaticProps: GetStaticProps<{
     collections: paths['/collections/v2']['get']['responses']['200']['schema']
   }
 }> = async () => {
+  if (COLLECTION) {
+    return {
+      redirect: {
+        destination: `/collections/${COLLECTION}`,
+        permanent: false,
+        // statusCode: 301
+      },
+    }
+  }
+
   const options: RequestInit | undefined = {}
 
   if (RESERVOIR_API_KEY) {

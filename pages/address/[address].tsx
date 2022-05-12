@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
+import { paths, setParams } from '@reservoir0x/client-sdk'
 
 // Environment variables
 // For more information about these variables
@@ -29,19 +30,26 @@ import useUserBids from 'hooks/useUserBids'
 // REQUIRED
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Address: NextPage<Props> = ({ address }) => {
+const metadata = {
+  title: (title: string) => <title>{title}</title>,
+}
+
+const Address: NextPage<Props> = ({ address, fallback }) => {
   const { data: accountData } = useAccount()
   const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
   useDataDog(accountData)
-  const userTokens = useUserTokens(undefined, [], address)
+  const userTokens = useUserTokens(COLLECTION, [fallback.tokens], address)
   // const userActivity = useUserActivity([], address)
   const sellPositions = useUserAsks([], address)
   const buyPositions = useUserBids([], address)
@@ -72,11 +80,9 @@ const Address: NextPage<Props> = ({ address }) => {
     ]
   }
 
-  const title = META_TITLE ? (
-    <title>{META_TITLE}</title>
-  ) : (
-    <title>{address} Profile | Reservoir Market</title>
-  )
+  const title = META_TITLE
+    ? metadata.title(META_TITLE)
+    : metadata.title(`${address} Profile | Reservoir Market`)
 
   return (
     <Layout navbar={{}}>
@@ -185,6 +191,9 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
+  fallback: {
+    tokens: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
+  }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
 
@@ -196,5 +205,27 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  return { props: { address } }
+  const url = new URL(`/users/${address}/tokens/v2}`, RESERVOIR_API_BASE)
+
+  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: 0,
+  }
+
+  if (COMMUNITY) query.community = COMMUNITY
+
+  setParams(url, query)
+
+  const res = await fetch(url.href, options)
+
+  const tokens = (await res.json()) as Props['fallback']['tokens']
+
+  return {
+    props: {
+      address,
+      fallback: {
+        tokens,
+      },
+    },
+  }
 }
