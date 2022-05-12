@@ -44,7 +44,7 @@ const primaryColors = {
     300: '#D9BCFF',
     500: '#B47AFF',
     700: '#8221FE',
-    900: '#48138',
+    900: '#48138F',
   },
   toxic: {
     100: '#f5f6db',
