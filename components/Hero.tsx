@@ -204,13 +204,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
               {header.description}
             </p>
           )}
-          <div className="grid w-full gap-4 md:flex">
-            <HeroBuyButton
-              collectionId={collectionId}
-              token={token}
-              attributeData={attributeData}
-              env={env}
-            />
+          <div className="flex w-full justify-center gap-4">
             {hasTokenSetId &&
               (isAttributeModal ? (
                 <AttributeOfferModal
@@ -233,6 +227,12 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ))}
+            <HeroBuyButton
+              collectionId={collectionId}
+              token={token}
+              attributeData={attributeData}
+              env={env}
+            />
           </div>
         </div>
       </HeroBackground>
@@ -436,7 +436,7 @@ const HeroBuyButton: FC<HeroBuyButtonProps> = ({
 
           execute(token.id, taker, expectedPrice)
         }}
-        className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
+        className="btn-primary-fill dark:ring-primary-900 dark:focus:ring-4"
       >
         {waitingTx ? (
           <CgSpinner className="h-4 w-4 animate-spin" />
