@@ -495,10 +495,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 
   if (COLLECTION && COMMUNITY) {
-    const url = new URL(
-      `${PROXY_API_BASE}/search/collections/v1`,
-      RESERVOIR_API_BASE
-    )
+    const url = new URL(`/search/collections/v1`, RESERVOIR_API_BASE)
 
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
       { community: COMMUNITY, limit: 20 }
@@ -529,8 +526,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         id: contract,
       },
     }))
-
-    console.log(paths)
 
     return {
       paths,
