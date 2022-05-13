@@ -7,6 +7,8 @@ import setParams from 'lib/params'
 import CollectionsGrid from 'components/CollectionsGrid'
 import Head from 'next/head'
 import useCollections from 'hooks/useCollections'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 // Environment variables
 // For more information about these variables
@@ -37,6 +39,7 @@ const metadata = {
 }
 
 const Home: NextPage<Props> = ({ fallback }) => {
+  const router = useRouter()
   const { data: accountData } = useAccount()
   const collections = useCollections(fallback.collections)
   useDataDog(accountData)
@@ -45,12 +48,23 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
   const tagline = metadata.tagline(TAGLINE)
 
+  useEffect(() => {
+    if (COLLECTION) {
+      router.push(`/collections/${COLLECTION}`)
+    }
+  }, [COLLECTION])
+
   // Return error page if the API base url or the environment's
   // chain ID are missing
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
     return <div>There was an error</div>
   }
+
+  if (COLLECTION)
+    return (
+      <div className="grid h-screen place-items-center">Redirecting...</div>
+    )
 
   return (
     <Layout navbar={{}}>
@@ -73,16 +87,6 @@ export const getStaticProps: GetStaticProps<{
     collections: paths['/collections/v2']['get']['responses']['200']['schema']
   }
 }> = async () => {
-  if (COLLECTION) {
-    return {
-      redirect: {
-        destination: `/collections/${COLLECTION}`,
-        permanent: false,
-        // statusCode: 301
-      },
-    }
-  }
-
   const options: RequestInit | undefined = {}
 
   if (RESERVOIR_API_KEY) {
