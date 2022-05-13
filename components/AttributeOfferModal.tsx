@@ -199,7 +199,7 @@ const AttributeOfferModal: FC<Props> = ({
         Make an Attribute Offer
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay>
+        <Dialog.Overlay className="PEDROTEST">
           <ModalCard
             loading={waitingTx}
             title="Make an Attribute Offer"
