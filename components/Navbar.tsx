@@ -6,10 +6,6 @@ import dynamic from 'next/dynamic'
 import { paths } from '@reservoir0x/client-sdk'
 import setParams from 'lib/params'
 
-type Props = {
-  communityId?: string
-}
-
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
@@ -19,20 +15,20 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
-function getInitialSearchHref(communityId?: string) {
+function getInitialSearchHref() {
   const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
   const pathname = `${PROXY_API_BASE}/search/collections/v1`
   const query: paths['/search/collections/v1']['get']['parameters']['query'] =
     {}
 
-  if (communityId && communityId !== 'www' && communityId !== 'localhost') {
-    query.community = communityId
-  }
+  // if (communityId) {
+  query.community = COMMUNITY
+  // }
 
   return setParams(pathname, query)
 }
 
-const Navbar: FC<Props> = ({ communityId }) => {
+const Navbar: FC = () => {
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
@@ -55,13 +51,12 @@ const Navbar: FC<Props> = ({ communityId }) => {
 
   const hasExternalLinks = externalLinks.length > 0
 
-  const search = <SearchCollections communityId={communityId} />
-
-  const filterableCollection = !!COMMUNITY
+  const isGlobal = !COMMUNITY && !COLLECTION
+  const filterableCollection = isGlobal || COMMUNITY
 
   useEffect(() => {
     if (filterableCollection) {
-      const href = getInitialSearchHref(communityId)
+      const href = getInitialSearchHref()
 
       fetch(href).then(async (res) => {
         let initialResults = undefined
@@ -76,14 +71,14 @@ const Navbar: FC<Props> = ({ communityId }) => {
           initialResults.collections.length >= 2 &&
           initialResults.collections.length <= 10
 
-        if (!!COMMUNITY && smallCommunity) {
+        if (COMMUNITY && smallCommunity) {
           setFilterComponent(
             <CommunityDropdown collections={initialResults?.collections} />
           )
         } else {
           setFilterComponent(
             <SearchCollections
-              communityId={communityId}
+              communityId={COMMUNITY}
               initialResults={initialResults}
             />
           )
