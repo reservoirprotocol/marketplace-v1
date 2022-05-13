@@ -7,8 +7,7 @@ import type {
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
 import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
-import useDataDog from 'hooks/useAnalytics'
-import { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useContext, useEffect, useState } from 'react'
 import useCollection from 'hooks/useCollection'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
@@ -28,7 +27,7 @@ import CollectionOfferModal from 'components/CollectionOfferModal'
 import Hero from 'components/Hero'
 import { CgSpinner } from 'react-icons/cg'
 import ModalCard from 'components/modal/ModalCard'
-import { formatBN } from 'lib/numbers'
+import { formatBN, formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
 import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
@@ -39,6 +38,8 @@ import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
+import { GlobalContext } from 'context/GlobalState'
+import FormatEth from 'components/FormatEth'
 
 // Environment variables
 // For more information about these variables
@@ -67,16 +68,15 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
   if (!CHAIN_ID) return null
-
-  const router = useRouter()
   const { data: accountData } = useAccount()
-  useDataDog(accountData)
   const { connect, connectors } = useConnect()
   const { data: signer } = useSigner()
   const { activeChain } = useNetwork()
+  const router = useRouter()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const { dispatch } = useContext(GlobalContext)
   const [refreshLoading, setRefreshLoading] = useState(false)
   const [attribute, setAttribute] = useState<
     AttibuteModalProps['data']['attribute']
@@ -85,7 +85,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     value: undefined,
   })
 
-  const collection = useCollection(fallback.collection)
+  const collection = useCollection(fallback.collection, id)
 
   const stats = useCollectionStats(router, id)
 
@@ -132,14 +132,16 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
     accountData?.address?.toLowerCase()
 
-  const floor = stats?.data?.stats?.market?.floorAsk
+  const floor = collection.data?.collection?.floorAsk
+  const tokenCount = collection.data?.collection?.tokenCount
+  const volume = collection.data?.collection?.volume?.['1day']
 
   const statsObj = {
-    vol24: 10,
     count: stats?.data?.stats?.tokenCount ?? 0,
     topOffer: stats?.data?.stats?.market?.topBid?.value,
     floor: floor?.price,
-    volumeChange: undefined,
+    vol24: collection.data?.collection?.volume?.['1day'],
+    volumeChange: collection.data?.collection?.volumeChange?.['1day'],
   }
 
   const bannerImage =
@@ -357,12 +359,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 disabled={
                   floor?.price === null || waitingTx || isInTheWrongNetwork
                 }
-                onClick={() =>
-                  token &&
-                  taker &&
-                  expectedPrice &&
+                onClick={() => {
+                  if (!token || !taker || !expectedPrice) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+
                   execute(token, taker, expectedPrice)
-                }
+                }}
                 className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
@@ -412,9 +416,24 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
           <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
             <div className="mb-10 hidden items-center justify-between md:flex">
-              <div>
-                <AttributesFlex />
-                <ExploreFlex />
+              <div className="flex items-center gap-6">
+                {!!stats?.data?.stats?.tokenCount &&
+                  stats?.data?.stats?.tokenCount > 0 && (
+                    <>
+                      <div>
+                        {formatNumber(stats?.data?.stats?.tokenCount)} items
+                      </div>
+
+                      <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                      <div>
+                        <FormatEth
+                          maximumFractionDigits={4}
+                          amount={stats?.data?.stats?.market?.floorAsk?.price}
+                        />{' '}
+                        floor price
+                      </div>
+                    </>
+                  )}
               </div>
               <div className="flex gap-4">
                 {router.query?.attribute_key ||
@@ -440,6 +459,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 </button>
               </div>
             </div>
+            <AttributesFlex />
+            <ExploreFlex />
             {router.query?.attribute_key ||
             router.query?.attribute_key === '' ? (
               <ExploreTokens
