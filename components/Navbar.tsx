@@ -21,9 +21,9 @@ function getInitialSearchHref() {
   const query: paths['/search/collections/v1']['get']['parameters']['query'] =
     {}
 
-  // if (communityId) {
-  query.community = COMMUNITY
-  // }
+  if (COMMUNITY) {
+    query.community = COMMUNITY
+  }
 
   return setParams(pathname, query)
 }
