@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import Link from 'next/link'
-import { FC, ReactNode, useState } from 'react'
+import { FC, useState } from 'react'
 import { FiMenu } from 'react-icons/fi'
 import { HiOutlineLogout, HiX } from 'react-icons/hi'
 import {
@@ -19,7 +19,6 @@ const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Props = {
-  search: ReactNode
   externalLinks: {
     name: string
     url: string

@@ -14,7 +14,6 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useAttributes from 'hooks/useAttributes'
-import { checkWallet } from 'lib/wallet'
 import { setToast } from 'components/token/setToast'
 import * as Dialog from '@radix-ui/react-dialog'
 import {
@@ -140,6 +139,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     count: stats?.data?.stats?.tokenCount ?? 0,
     topOffer: stats?.data?.stats?.market?.topBid?.value,
     floor: floor?.price,
+    volumeChange: undefined,
   }
 
   const bannerImage =
@@ -232,7 +232,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     taker: string,
     expectedPrice: number
   ) => {
-    await checkWallet(signer, setToast, connect, connectors)
     if (isOwner) {
       setToast({
         kind: 'error',

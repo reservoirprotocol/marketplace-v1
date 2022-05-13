@@ -1,19 +1,41 @@
-import { FC } from 'react'
+import { FC, ReactElement, useEffect, useState } from 'react'
 import ConnectWallet from './ConnectWallet'
 import Link from 'next/link'
-import SearchCollections from './SearchCollections'
 import HamburgerMenu from './HamburgerMenu'
+import dynamic from 'next/dynamic'
+import { paths } from '@reservoir0x/client-sdk'
+import setParams from 'lib/params'
 
 type Props = {
   communityId?: string
 }
 
+const SearchCollections = dynamic(() => import('./SearchCollections'))
+const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const EXTERNAL_LINKS = process.env.NEXT_PUBLIC_EXTERNAL_LINKS || null
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+
+function getInitialSearchHref(communityId?: string) {
+  const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+  const pathname = `${PROXY_API_BASE}/search/collections/v1`
+  const query: paths['/search/collections/v1']['get']['parameters']['query'] =
+    {}
+
+  if (communityId && communityId !== 'www' && communityId !== 'localhost') {
+    query.community = communityId
+  }
+
+  return setParams(pathname, query)
+}
 
 const Navbar: FC<Props> = ({ communityId }) => {
+  const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
+    null
+  )
   const logo = NAVBAR_LOGO || '/reservoir.svg'
   const logoAlt = `${NAVBAR_TITLE} Logo` || 'Reservoir Logo'
 
@@ -34,6 +56,41 @@ const Navbar: FC<Props> = ({ communityId }) => {
   const hasExternalLinks = externalLinks.length > 0
 
   const search = <SearchCollections communityId={communityId} />
+
+  const filterableCollection = !!COMMUNITY
+
+  useEffect(() => {
+    if (filterableCollection) {
+      const href = getInitialSearchHref(communityId)
+
+      fetch(href).then(async (res) => {
+        let initialResults = undefined
+
+        if (res.ok) {
+          initialResults =
+            (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
+        }
+
+        const smallCommunity =
+          initialResults?.collections &&
+          initialResults.collections.length >= 2 &&
+          initialResults.collections.length <= 10
+
+        if (!!COMMUNITY && smallCommunity) {
+          setFilterComponent(
+            <CommunityDropdown collections={initialResults?.collections} />
+          )
+        } else {
+          setFilterComponent(
+            <SearchCollections
+              communityId={communityId}
+              initialResults={initialResults}
+            />
+          )
+        }
+      })
+    }
+  }, [filterableCollection])
 
   return (
     <nav className="col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
@@ -56,16 +113,16 @@ const Navbar: FC<Props> = ({ communityId }) => {
           )}
         </a>
       </Link>
-      <div className="w-full lg:w-auto lg:flex-none">
-        <div className="w-full">{search}</div>
+      <div className="flex w-full justify-center">
+        {filterComponent && filterComponent}
         {hasExternalLinks && (
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="ml-12 hidden items-center gap-11 lg:flex">
             {externalLinks.map(({ name, url }) => (
               <a
                 key={url}
                 href={url}
                 rel="noopener noferrer"
-                className="reservoir-label-l text-[#4B5563] hover:text-[#1F2937] dark:text-neutral-300"
+                className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
               >
                 {name}
               </a>
@@ -73,8 +130,8 @@ const Navbar: FC<Props> = ({ communityId }) => {
           </div>
         )}
       </div>
-      <HamburgerMenu search={search} externalLinks={externalLinks} />
-      <div className="ml-auto hidden md:block">
+      <HamburgerMenu externalLinks={externalLinks} />
+      <div className="ml-auto hidden shrink-0 md:block">
         <ConnectWallet />
       </div>
     </nav>

@@ -8,7 +8,6 @@ import NetworkWarning from './NetworkWarning'
 const metaTitle = process.env.NEXT_PUBLIC_META_TITLE
 const metaDescription = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
-const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const FAVICON = process.env.NEXT_PUBLIC_FAVICON
 
 type Props = {

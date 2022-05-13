@@ -29,7 +29,7 @@ const CollectionInfo: FC<Props> = ({ collection, details }) => {
             alt="collection avatar"
             className="h-9 w-9 rounded-full"
           />
-          <span className="reservoir-h6 dark:text-white">
+          <span className="reservoir-h6 font-headings dark:text-white">
             {token?.token?.collection?.name}
           </span>
         </a>
