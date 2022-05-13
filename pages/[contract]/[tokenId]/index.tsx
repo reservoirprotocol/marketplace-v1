@@ -85,7 +85,7 @@ const Index: NextPage<Props> = ({ collectionId }) => {
   const title = META_TITLE
     ? metadata.title(META_TITLE)
     : metadata.title(`${token?.token?.name || `#${token?.token?.tokenId}`} - 
-    ${collection.data?.collection?.name} | Reservoir Market}`)
+    ${collection.data?.collection?.name}`)
 
   const description = META_DESCRIPTION
     ? metadata.description(META_DESCRIPTION)

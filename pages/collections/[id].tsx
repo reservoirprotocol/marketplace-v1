@@ -311,7 +311,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const title = metaTitle ? (
     <title>{metaTitle}</title>
   ) : (
-    <title>{collection.data?.collection?.name} | Reservoir Market</title>
+    <title>{collection.data?.collection?.name}</title>
   )
   const description = metaDescription ? (
     <meta name="description" content={metaDescription} />

@@ -80,13 +80,9 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     ]
   }
 
-  const title = META_TITLE
-    ? metadata.title(META_TITLE)
-    : metadata.title(`${address} Profile | Reservoir Market`)
-
   return (
     <Layout navbar={{}}>
-      <Head>{title}</Head>
+      <Head>{metadata.title(`${address} Profile`)}</Head>
       <div className="col-span-full mt-4 mb-10 justify-self-center">
         {address && <EthAccount address={address} />}
       </div>
