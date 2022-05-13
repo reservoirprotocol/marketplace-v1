@@ -9,7 +9,7 @@ type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 export default function useCollection(
   fallbackData: Collection | undefined,
-  collectionId: string | undefined
+  collectionId?: string | undefined
 ) {
   function getUrl() {
     if (!collectionId) return undefined
