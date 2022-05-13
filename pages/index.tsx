@@ -41,18 +41,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
   const collections = useCollections(fallback.collections)
   useDataDog(accountData)
 
-  const title = META_TITLE
-    ? metadata.title(META_TITLE)
-    : metadata.title(
-        'Reservoir Market | Open source NFT marketplace powered by Reservoir'
-      )
-
-  const description = META_DESCRIPTION
-    ? metadata.description(META_DESCRIPTION)
-    : metadata.description(
-        'Reservoir Market is an open source NFT marketplace powered by Reservoir'
-      )
-
+  const title = META_TITLE && metadata.title(META_TITLE)
+  const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
   const tagline = metadata.tagline(TAGLINE)
 
   // Return error page if the API base url or the environment's
