@@ -7,6 +7,13 @@ import Document, {
 } from 'next/document'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
+const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const OG_IMAGE = process.env.NEXT_PUBLIC_OG_IMAGE
+const META_URL = process.env.NEXT_PUBLIC_META_URL
+const FAVICON = process.env.NEXT_PUBLIC_FAVICON
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const META_TWITTER_USERNAME = process.env.NEXT_PUBLIC_META_TWITTER_USERNAME
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -22,68 +29,41 @@ class MyDocument extends Document {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Reservoir" />
+        <meta name="description" content={SOURCE_ID} />
         <meta name="keywords" content="nft, ethereum, protocol" />
-        <link rel="shortcut icon" type="image/svg" href="/reservoir.svg" />
-        <title>
-          Reservoir Market | Open source NFT marketplace powered by Reservoir
-          Protocol
-        </title>
-        <meta
-          name="description"
-          content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
-        />
+        <link rel="shortcut icon" type="image/svg" href={FAVICON} />
+        <title>{META_TITLE}</title>
+        <meta name="description" content={META_DESCRIPTION} />
         <meta name="keywords" content="NFT, API, Protocol" />
         {/* Twitter */}
         {/* The optimal size is 1200 x 630 (1.91:1 ratio). */}
-        <meta
-          name="twitter:image"
-          content="https://www.reservoir.market/og.png"
-        />
+        <meta name="twitter:image" content={OG_IMAGE} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:site:domain"
-          content="https://www.reservoir.market/"
-        />
-        <meta name="twitter:url" content="https://www.reservoir.market/" />
+        <meta name="twitter:site:domain" content={META_URL} />
+        <meta name="twitter:url" content={META_URL} />
         {/* should be between 30-60 characters, with a maximum of 70 */}
-        <meta
-          name="twitter:title"
-          content="Reservoir Market | Open source NFT marketplace powered by Reservoir Protocol"
-        />
+        <meta name="twitter:title" content={META_TITLE} />
         {/* should be between 55 and 200 characters long */}
-        <meta
-          name="twitter:description"
-          content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
-        />
-        <meta name="twitter:site" content="@reservoir0x" />
+        <meta name="twitter:description" content={META_DESCRIPTION} />
+        <meta name="twitter:site" content={META_TWITTER_USERNAME} />
 
         {/* OG - https://ogp.me/ */}
         {/* https://www.opengraph.xyz/ */}
         {/* should be between 30-60 characters, with a maximum of 90 */}
-        <meta
-          name="og:title"
-          content="Reservoir Market | Open source NFT marketplace powered by Reservoir Protocol"
-        />
+        <meta name="og:title" content={META_TITLE} />
         <meta property="og:type" content="website" />
         <meta property="og:determiner" content="the" />
         <meta property="og:locale" content="en" />
         {/* Make sure the important part of your description is within the first 110 characters, so it doesn't get cut off on mobile. */}
-        <meta
-          property="og:description"
-          content="Reservoir Market is an open source NFT marketplace powered by Reservoir"
-        />
-        <meta property="og:site_name" content="Reservoir Market" />
-        <meta property="og:url" content="https://www.reservoir.market/" />
+        <meta property="og:description" content={META_DESCRIPTION} />
+        <meta property="og:site_name" content={SOURCE_ID} />
+        <meta property="og:url" content={META_URL} />
         {/* The optimal size is 1200 x 630 (1.91:1 ratio). */}
-        <meta
-          property="og:image"
-          content="https://www.reservoir.market/og.png"
-        />
+        <meta property="og:image" content={OG_IMAGE} />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="640" />
-        <meta property="og:image:alt" content="Reservoir Market banner" />
+        <meta property="og:image:alt" content={`${SOURCE_ID} banner`} />
         <body className="bg-white text-neutral-800 dark:bg-black dark:text-white">
           <Main />
           <NextScript />
