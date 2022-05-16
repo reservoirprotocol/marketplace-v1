@@ -105,6 +105,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     floor: floor?.price,
     vol24: collection.data?.collection?.volume?.['1day'],
     volumeChange: collection.data?.collection?.volumeChange?.['1day'],
+    floorChange: collection.data?.collection?.floorSaleChange?.['1day'],
   }
 
   const bannerImage =
