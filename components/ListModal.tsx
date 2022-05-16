@@ -235,7 +235,6 @@ const ListModal: FC<Props> = ({
     }
 
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     if (postOnOpenSea) {
       await listToken({
