@@ -48,15 +48,23 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           <Price
             title="List Price"
             source={
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={sourceRedirect}
-                className="reservoir-body flex items-center gap-2 dark:text-white"
-              >
-                on {token?.market?.floorAsk?.source?.name}
-                {<img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />}
-              </a>
+              token?.market?.floorAsk?.source?.name ? (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={sourceRedirect}
+                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                >
+                  on {token?.market?.floorAsk?.source?.name}
+                  {
+                    <img
+                      className="h-6 w-6"
+                      src={sourceLogo}
+                      alt="Source Logo"
+                    />
+                  }
+                </a>
+              ) : null
             }
             price={
               <FormatEth
@@ -172,7 +180,7 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
       <div className="reservoir-h5 font-headings dark:text-white">{title}</div>
-      <div>{source}</div>
+      {source}
     </div>
     <div className="reservoir-h3 font-headings dark:text-white">{price}</div>
   </div>
