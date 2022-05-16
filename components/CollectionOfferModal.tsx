@@ -169,6 +169,7 @@ const CollectionOfferModal: FC<Props> = ({
       weiPrice: calculations.total.toString(),
       expirationTime: expirationValue,
       collection: data.collection.id,
+      orderKind: 'zeroex-v4',
     }
 
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
