@@ -1,19 +1,14 @@
 import Layout from 'components/Layout'
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from 'next'
-import Homepage from 'components/Homepage'
-import TokensMain from 'components/TokensMain'
-import { ComponentProps } from 'react'
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
 import { useAccount } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import getMode from 'lib/getMode'
-import toast from 'react-hot-toast'
-import Toast from 'components/Toast'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
+import CollectionsGrid from 'components/CollectionsGrid'
+import Head from 'next/head'
+import useCollections from 'hooks/useCollections'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 // Environment variables
 // For more information about these variables
@@ -25,20 +20,39 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
+const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
-const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
-  const fallback: ComponentProps<typeof TokensMain>['fallback'] = {
-    collection: { collection: undefined },
-    tokens: { tokens: undefined },
-  }
+const metadata = {
+  title: (title: string) => <title>{title}</title>,
+  description: (description: string) => (
+    <meta name="description" content={description} />
+  ),
+  tagline: (tagline: string | undefined) => (
+    <>{tagline || 'Discover, buy and sell NFTs'}</>
+  ),
+}
+
+const Home: NextPage<Props> = ({ fallback }) => {
+  const router = useRouter()
   const { data: accountData } = useAccount()
+  const collections = useCollections(fallback.collections)
   useDataDog(accountData)
+
+  const title = META_TITLE && metadata.title(META_TITLE)
+  const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
+  const tagline = metadata.tagline(TAGLINE)
+
+  useEffect(() => {
+    if (COLLECTION) {
+      router.push(`/collections/${COLLECTION}`)
+    }
+  }, [COLLECTION])
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
@@ -47,32 +61,29 @@ const Home: NextPage<Props> = ({ mode, contractAddress, collectionId }) => {
     return <div>There was an error</div>
   }
 
+  if (COLLECTION) return null
+
   return (
-    <Layout navbar={{ mode, communityId: collectionId }}>
-      {mode === 'global' ? (
-        <Homepage />
-      ) : (
-        <TokensMain
-          chainId={+CHAIN_ID as ChainId}
-          collectionId={contractAddress}
-          fallback={fallback}
-          openSeaApiKey={OPENSEA_API_KEY}
-          setToast={(data) =>
-            toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-          }
-        />
-      )}
+    <Layout navbar={{}}>
+      <Head>
+        {title}
+        {description}
+      </Head>
+      <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
+        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
+      </header>
+      <CollectionsGrid collections={collections} />
     </Layout>
   )
 }
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps<{
-  mode: ReturnType<typeof getMode>['mode']
-  contractAddress?: string
-  collectionId?: string
-}> = async ({ req }) => {
+export const getStaticProps: GetStaticProps<{
+  fallback: {
+    collections: paths['/collections/v2']['get']['responses']['200']['schema']
+  }
+}> = async () => {
   const options: RequestInit | undefined = {}
 
   if (RESERVOIR_API_KEY) {
@@ -81,71 +92,24 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const { mode, collectionId } = getMode(
-    req,
-    USE_WILDCARD,
-    COMMUNITY,
-    COLLECTION
-  )
+  const url = new URL('/collections/v2', RESERVOIR_API_BASE)
 
-  let contractAddress: string | undefined = undefined
-
-  if (mode === 'community') {
-    const url = new URL('/collections/v2', RESERVOIR_API_BASE)
-
-    let query: paths['/collections/v2']['get']['parameters']['query'] = {
-      limit: 20,
-      offset: 0,
-      community: collectionId,
-      sortBy: '7DayVolume',
-    }
-
-    const href = setParams(url, query)
-
-    const res = await fetch(href, options)
-
-    const json =
-      (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
-
-    contractAddress = json.collections?.[0]?.id
-
-    if (!contractAddress) {
-      return {
-        notFound: true,
-      }
-    }
-
-    return { props: { mode, collectionId, contractAddress } }
+  let query: paths['/collections/v2']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: 0,
+    sortBy: '7DayVolume',
   }
 
-  if (mode === 'collection') {
-    const url = new URL('/collection/v1', RESERVOIR_API_BASE)
+  const href = setParams(url, query)
+  const res = await fetch(href, options)
 
-    const query: paths['/collection/v1']['get']['parameters']['query'] = {}
+  const collections = (await res.json()) as Props['fallback']['collections']
 
-    if (COLLECTION) {
-      query.id = COLLECTION
-    } else {
-      query.slug = collectionId
-    }
-
-    const href = setParams(url, query)
-
-    const res = await fetch(href, options)
-
-    const json =
-      (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
-
-    contractAddress = json.collection?.id
-
-    if (!contractAddress) {
-      return {
-        notFound: true,
-      }
-    }
-
-    return { props: { mode, contractAddress } }
+  return {
+    props: {
+      fallback: {
+        collections,
+      },
+    },
   }
-
-  return { props: { mode } }
 }

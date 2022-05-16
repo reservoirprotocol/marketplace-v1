@@ -6,6 +6,8 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Tokens =
   paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
@@ -13,7 +15,6 @@ type Tokens =
 export default function useUserTokens(
   collectionId: string | undefined,
   fallbackData: Tokens[],
-  mode: string | undefined,
   user: string | undefined
 ) {
   const { ref, inView } = useInView()
@@ -23,7 +24,7 @@ export default function useUserTokens(
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
       getKey(
-        { pathname, mode, collectionId, proxyApi: PROXY_API_BASE },
+        { pathname, collectionId, proxyApi: PROXY_API_BASE },
         index,
         previousPageData
       ),
@@ -48,7 +49,6 @@ type InfiniteKeyLoader = (
   custom: {
     pathname: string
     collectionId: string | undefined
-    mode: string | undefined
     proxyApi: string | undefined
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
@@ -58,13 +58,12 @@ const getKey: InfiniteKeyLoader = (
   custom: {
     pathname: string
     collectionId: string | undefined
-    mode: string | undefined
     proxyApi: string | undefined
   },
   index: number,
   previousPageData: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 ) => {
-  const { pathname, collectionId, mode, proxyApi } = custom
+  const { pathname, collectionId, proxyApi } = custom
   if (!proxyApi) {
     console.debug(
       'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
@@ -80,13 +79,8 @@ const getKey: InfiniteKeyLoader = (
     offset: index * 20,
   }
 
-  if (mode === 'community') {
-    query.community = collectionId
-  }
-
-  if (mode === 'collection') {
-    query.collection = collectionId
-  }
+  if (COMMUNITY) query.community = collectionId
+  if (COLLECTION) query.collection = collectionId
 
   const href = setParams(pathname, query)
 
