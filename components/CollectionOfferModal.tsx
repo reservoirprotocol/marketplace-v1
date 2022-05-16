@@ -27,6 +27,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -173,6 +174,8 @@ const CollectionOfferModal: FC<Props> = ({
     }
 
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     await placeBid({
       query,
