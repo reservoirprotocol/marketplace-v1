@@ -6,6 +6,8 @@ import Steps from 'components/Steps'
 import { Execute } from '@reservoir0x/client-sdk/dist/types/index'
 import FormatEth from 'components/FormatEth'
 
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+
 type Props = {
   data?: {
     token?: {
@@ -38,7 +40,7 @@ type Props = {
 
 const orderbooks = {
   opensea: 'OpenSea',
-  reservoir: 'reservoir.market',
+  reservoir: SOURCE_ID,
 }
 
 const ModalCard: FC<Props> = ({
