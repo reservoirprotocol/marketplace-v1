@@ -70,7 +70,7 @@ const ModalCard: FC<Props> = ({
   const modalTitle = steps && orderbook ? orderbookTitle : title
 
   return (
-    <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
+    <Dialog.Content className="fixed inset-0 z-[1000] bg-[#000000b6]">
       <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white p-11 shadow-xl dark:bg-black ">
         <div className="mb-4 flex items-center justify-between">
           <Dialog.Title className="reservoir-h4 font-headings dark:text-white">

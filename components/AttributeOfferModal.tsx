@@ -5,7 +5,6 @@ import { BigNumber, constants, ethers } from 'ethers'
 import {
   useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -89,7 +88,6 @@ const AttributeOfferModal: FC<Props> = ({
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
-  const { connect, connectors } = useConnect()
   const provider = useProvider()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
