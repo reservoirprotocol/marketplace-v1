@@ -61,10 +61,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
     return <div>There was an error</div>
   }
 
-  if (COLLECTION)
-    return (
-      <div className="grid h-screen place-items-center">Redirecting...</div>
-    )
+  if (COLLECTION) return null
 
   return (
     <Layout navbar={{}}>
