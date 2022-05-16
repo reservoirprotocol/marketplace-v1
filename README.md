@@ -1,25 +1,80 @@
-# Reservoir Sample Marketplace
+<h3 align="center">Reservoir Market</h3>
 
-This repo is designed to help you quickly get started building on top of [Reservoir](https://reservoirprotocol.github.io/), a web3-native order book protocol.
+  <p align="center">
+An open source NFT marketplace built on Reservoir.    <br />
+    <a href="https://reservoirprotocol.github.io/docs/protocol/intro/"><strong>Explore the docs »</strong></a>
+    <br />
+ 
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
-## Modes
+
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+Reservoir Market is an open source marketplace that enables communities to easily launch their own NFT marketplace, accessing instant liquidity aggregated from other major marketplaces.
 
 The marketplace supports 3 different modes:
 
-- Single collection (e.g. [Crypto Coven](https://cryptocoven.reservoir.market))
-- Multi collection community (e.g. [BAYC](https://bayc.reservoir.market))
-- All collections ([example](https://www.reservoir.market))
+-   Single collection (e.g.  [Crypto Coven](https://cryptocoven.reservoir.market/))
+-   Multi collection community (e.g.  [BAYC](https://bayc.reservoir.market/))
+-   All collections ([example](https://www.reservoir.market/))
 
-A demo deployment allows you to test any collection, by changing the subdomain:
+With each deployment, communities are given full control over their marketplace from designing their look and feel to setting their own marketplace fees.
 
-- [{collection-slug}.reservoir.market](https://cryptocoven.reservoir.market) (if a collection is unsupported, ping us on Discord to get it added)
-- [{community-id}.reservoir.market](https://bayc.reservoir.market) (currently works with `bayc`,`loot`,`forgottenrunes`)
+We currently offer hosted and self hosted deployment options. For self hosted deployments you can simply fork this repository and follow the instructions below to configure and deploy your marketplace. For hosted deployments please submit your request and we will be in touch.
 
-## Get started
+Submit your request for a Hosted Deployment here.
 
-Fork this repository and follow these instructions:
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-### Install dependencies
+
+
+<!-- GETTING STARTED -->
+## Getting Started (Self-Hosted)
+
+### Prerequisites
+1. Install [Node.js and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+2. Install [Yarn](https://classic.yarnpkg.com/en/docs/install)
+3. Request free [Reservoir API key](https://api.reservoir.tools/#/0.%20Auth/postApikeys)
+
+### Built With
+
+This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+
+* [Next.js](https://nextjs.org/)
+* [React.js](https://reactjs.org/)
+* [Ethers.io](https://ethers.io/)
+* [WAGMI](https://wagmi.sh/)
+* [Tailwind CSS](https://tailwindcss.com/)
+
+### Installation
+
+Fork this repo and follow these instructions to install dependancies.
 
 With yarn:
 
@@ -33,7 +88,10 @@ With NPM:
 $ npm install
 ```
 
-### Add environment variables
+### Configuration
+Reservoir Market is built to be 100% configurable using environment variables. To preview your configuration locally you can copy the values you want to use from  `env.development`  or  `env.production`  into a new file called  `.env.local`
+
+Note: Environment variables can also be added during deployment via deployment platforms like [vercel](https://vercel.com/).
 
 | Environment Variable              | Required | Format                                                                            | Available values                                                                          | Example                                                 | Description                                                                                                                                                                                    |
 | --------------------------------- | -------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -61,9 +119,7 @@ $ npm install
 | NEXT_PUBLIC_TAGLINE               | `false`  | `String`                                                                          | `N/A`                                                                                     | This is our unique tagline!                             | A tagline to be displayed in the homepage. [Only avaiable if `NEXT_PUBLIC_COLLECTION` and `NEXT_PUBLIC_COMMUNITY` are unset]                                                                   |
 | NEXT_PUBLIC_DARK_MODE             | `false`  | `String`                                                                          | `N/A`                                                                                     | true                                                    | If set, the sample marketplace will use a dark mode                                                                                                                                            |
 | NEXT_PUBLIC_FEE_BPS               | `false`  | `String`                                                                          | `N/A`                                                                                     | 300                                                     | BPS is the percentage (in basis points - eg. 100 = 1%, 1000 = 10% and 10000 = 100%) of the price that will be charged as fee.                                                                  |
-| NEXT_PUBLIC_FEE_RECIPIENT         | `false`  | `String` (Ethereum contract address)                                              | `N/A`                                                                                     | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7              | The address that will receive BPS fee on each sale                                                                                                                                             |
-
-You can copy the values you want to use from `env.development` or `env.production` into a new file called `.env.local`
+| NEXT_PUBLIC_FEE_RECIPIENT         | `false`  | `String` (Ethereum contract address)                                              | `N/A`                                                                                     | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7              | The address that will receive BPS fee on each sale          
 
 ### Run the app
 
@@ -71,16 +127,24 @@ Once you have your setup ready, run:
 
 With yarn:
 
-```bash
-$ yarn dev
-```
+    $ yarn dev
 
 With npm:
 
-```bash
-$ npm run dev
-```
+    $ npm run dev
 
-### Deploy
+### Deploy with Vercel
 
-This is a Next.js app that can be easily deployed using [Vercel](https://vercel.com/)
+This is a Next.js app that can be easily deployed using  [Vercel](https://vercel.com/). For  more information on how to deploy your Github reposistory with Vercel visit their [docs](https://vercel.com/docs/concepts/projects/overview).
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+<!-- CONTACT -->
+## Contact
+
+Twitter: [@reservoir0x](https://twitter.com/reservoir0x)
+Discord: [Reservoir Protocol](https://discord.gg/j5K9fESNwh)
+Project Link: [Reservoir Protocol](https://reservoirprotocol.github.io/)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
