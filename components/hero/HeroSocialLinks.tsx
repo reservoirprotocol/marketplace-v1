@@ -22,7 +22,7 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
     return (
       <div className="absolute top-6 right-12">
         <DropdownMenu.Root>
-          <DropdownMenu.Trigger className="rounded-lg border p-2 dark:border-[#525252] dark:bg-black">
+          <DropdownMenu.Trigger className="rounded-lg border bg-white p-2 dark:border-[#525252] dark:bg-black">
             <FiMoreVertical className="h-6 w-6 dark:text-[#D4D4D4]" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content

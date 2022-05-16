@@ -2,13 +2,16 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { FC } from 'react'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
+const envBannerImageDisabled = process.env.NEXT_PUBLIC_DISABLE_COLLECTION_BG
 
 type Props = {
   banner: string | undefined
 }
 
 const HeroBackground: FC<Props> = ({ banner, children }) => {
-  const bannerImage = optimizeImage(envBannerImage || banner, 1500)
+  const bannerImage = envBannerImageDisabled
+    ? null
+    : optimizeImage(envBannerImage || banner, 1500)
   const baseClasses = `relative z-0 flex flex-col items-center col-span-full w-full py-14`
 
   return bannerImage ? (

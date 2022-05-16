@@ -61,6 +61,8 @@ $ npm install
 | NEXT_PUBLIC_FEE_BPS            | `false`  | `String`                                                                          | `N/A`                                                                                     | 300                                                     | BPS is the percentage (in basis points - eg. 100 = 1%, 1000 = 10% and 10000 = 100%) of the price that will be charged as fee.                                                                  |
 | NEXT_PUBLIC_FEE_RECIPIENT      | `false`  | `String` (Ethereum contract address)                                              | `N/A`                                                                                     | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7              | The address that will receive BPS fee on each sale                                                                                                                                             |
 
+| NEXT_PUBLIC_DISABLE_COLLECTION_BG | `false` | `String` | `N/A` | true | Disable background on collection page |
+
 You can copy the values you want to use from `env.development` or `env.production` into a new file called `.env.local`
 
 ### Run the app
