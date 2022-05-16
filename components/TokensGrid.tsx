@@ -61,11 +61,13 @@ const TokensGrid: FC<Props> = ({
                 href={`/${token?.contract}/${token?.tokenId}`}
               >
                 <a className="group relative mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
-                  <img
-                    className="absolute top-4 left-4 h-8 w-8"
-                    src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
-                    alt=""
-                  />
+                  {token?.source && (
+                    <img
+                      className="absolute top-4 left-4 h-8 w-8"
+                      src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
+                      alt=""
+                    />
+                  )}
                   {token?.image ? (
                     <img
                       src={optimizeImage(token?.image, 250)}
