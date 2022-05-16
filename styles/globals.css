@@ -33,3 +33,10 @@ model-viewer {
   padding-left: 30px; /* gutter size */
   background-clip: padding-box;
 }
+
+.clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
