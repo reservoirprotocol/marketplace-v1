@@ -3,30 +3,6 @@
 An open source NFT marketplace built on Reservoir.    <br />
     <a href="https://reservoirprotocol.github.io/docs/protocol/intro/"><strong>Explore the docs »</strong></a>
     <br />
- 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started (Self Hosted)</a>
-      <ul>
-	     <li><a href="#built-with">Built With</a></li>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-        <li><a href="#configuration">Configuration</a></li>
-        <li><a href="#run-the-app">Run the App</a></li>
-        <li><a href="#deploy-with-vercel">Deploy with Vercel</a></li>
-      </ul>
-    </li>
-
-  </ol>
-</details>
-
-
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
