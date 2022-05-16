@@ -19,6 +19,7 @@ import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
+import useSearchCommunity from 'hooks/useSearchCommunity'
 
 // Environment variables
 // For more information about these variables
@@ -46,8 +47,9 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
   const address = router.query?.address?.toString()?.toLowerCase()
   const userTokens = useUserTokens(collectionId, [], mode, address)
   // const userActivity = useUserActivity([], address)
-  const sellPositions = useUserAsks([], address)
-  const buyPositions = useUserBids([], address)
+  const collections = useSearchCommunity()
+  const sellPositions = useUserAsks([], address, collections)
+  const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
