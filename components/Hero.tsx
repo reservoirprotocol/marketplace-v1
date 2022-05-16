@@ -1,7 +1,14 @@
 import { formatNumber, formatBN } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
-import { FC, useEffect, useContext, useState, ComponentProps } from 'react'
-import { FiGlobe } from 'react-icons/fi'
+import {
+  FC,
+  useEffect,
+  useContext,
+  useState,
+  ComponentProps,
+  useRef,
+} from 'react'
+import { FiChevronDown, FiGlobe } from 'react-icons/fi'
 import FormatEth from './FormatEth'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
@@ -52,6 +59,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   })
   const { tokens } = useTokens(collectionId, [fallback.tokens], router)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
+  const descriptionRef = useRef<HTMLParagraphElement | null>(null)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -151,8 +159,15 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     attribute,
   }
 
-  const isLongDescription =
-    header.description && header.description.length > 150
+  let isLongDescription = false
+  let descriptionHeight = '60px'
+
+  if (descriptionRef.current) {
+    isLongDescription = descriptionRef.current.clientHeight > 60
+    descriptionHeight = descriptionExpanded
+      ? `${descriptionRef.current.clientHeight}px`
+      : '60px'
+  }
 
   return (
     <>
@@ -209,19 +224,33 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           <HeroStats stats={statsObj} />
           {header.description && (
             <>
-              <p className="relative max-h-[60px] w-[423px] overflow-hidden text-center text-sm text-[#262626] transition-[width] ease-in-out dark:text-white">
-                {descriptionExpanded
-                  ? header.description
-                  : header.shortDescription}
-              </p>
-              <a
-                onClick={(e) => {
-                  e.preventDefault()
-                  setDescriptionExpanded(!descriptionExpanded)
-                }}
+              <div
+                className="relative w-[423px] overflow-hidden transition-[max-height] ease-in-out"
+                style={{ maxHeight: descriptionHeight }}
               >
-                {descriptionExpanded ? 'See less' : 'See more'}
-              </a>
+                <p
+                  ref={descriptionRef}
+                  className="text-center text-sm text-[#262626] transition-[width] duration-300 ease-in-out dark:text-white"
+                >
+                  {header.description}
+                </p>
+              </div>
+              {isLongDescription && (
+                <a
+                  className="mt-[-18px]"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setDescriptionExpanded(!descriptionExpanded)
+                  }}
+                >
+                  <FiChevronDown
+                    className={`h-5 w-5 text-gray-300 transition-transform dark:text-gray-600 ${
+                      descriptionExpanded ? 'rotate-180' : ''
+                    }`}
+                    aria-hidden
+                  />
+                </a>
+              )}
             </>
           )}
           <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
