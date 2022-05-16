@@ -1,5 +1,4 @@
-import { formatNumber, formatBN } from 'lib/numbers'
-import { optimizeImage } from 'lib/optmizeImage'
+import { formatBN } from 'lib/numbers'
 import {
   FC,
   useEffect,
@@ -8,8 +7,7 @@ import {
   ComponentProps,
   useRef,
 } from 'react'
-import { FiChevronDown, FiGlobe } from 'react-icons/fi'
-import FormatEth from './FormatEth'
+import { FiChevronDown } from 'react-icons/fi'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import { CgSpinner } from 'react-icons/cg'
@@ -25,6 +23,9 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useCollection from 'hooks/useCollection'
 import { useRouter } from 'next/router'
 import useTokens from 'hooks/useTokens'
+import HeroSocialLinks from 'components/hero/HeroSocialLinks'
+import HeroBackground from 'components/hero/HeroBackground'
+import HeroStats from 'components/hero/HeroStats'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -106,12 +107,6 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     volumeChange: collection.data?.collection?.volumeChange?.['1day'],
   }
 
-  const social = {
-    twitterUsername: collection.data?.collection?.metadata?.twitterUsername,
-    externalUrl: collection.data?.collection?.metadata?.externalUrl,
-    discordUrl: collection.data?.collection?.metadata?.discordUrl,
-  }
-
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
 
@@ -173,46 +168,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     <>
       <HeroBackground banner={header.banner}>
         <div className="z-10 flex flex-col items-center gap-6">
-          <div className="absolute top-6 right-12 flex gap-4">
-            {typeof social.discordUrl === 'string' && (
-              <a
-                className="reservoir-h6 flex-none"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={social.discordUrl}
-              >
-                <img
-                  src="/icons/Discord.svg"
-                  alt="Discord Icon"
-                  className="h-6 w-6"
-                />
-              </a>
-            )}
-            {typeof social.twitterUsername === 'string' && (
-              <a
-                className="reservoir-h6 flex-none"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://twitter.com/${social.twitterUsername}`}
-              >
-                <img
-                  src="/icons/Twitter.svg"
-                  alt="Twitter Icon"
-                  className="h-6 w-6"
-                />
-              </a>
-            )}
-            {typeof social.externalUrl === 'string' && (
-              <a
-                className="reservoir-h6 flex-none text-black dark:text-white"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={social.externalUrl}
-              >
-                <FiGlobe className="h-6 w-6" />
-              </a>
-            )}
-          </div>
+          <HeroSocialLinks collection={collection?.data?.collection} />
           <img
             className="h-20 w-20 rounded-full"
             alt={`${header.name} Logo`}
@@ -290,88 +246,6 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 }
 
 export default Hero
-
-const HeroBackground: FC<{ banner: string | undefined }> = ({
-  banner,
-  children,
-}) => {
-  const bannerImage = optimizeImage(envBannerImage || banner, 1500)
-  const baseClasses = `relative z-0 flex flex-col items-center col-span-full w-full py-14`
-
-  return bannerImage ? (
-    <div
-      className={`${baseClasses} bg-cover bg-center`}
-      style={{ backgroundImage: `url(${bannerImage})` }}
-    >
-      {children}
-      <div className="absolute inset-0 z-0 bg-backdrop backdrop-blur-[30px] dark:bg-dark-backdrop"></div>
-    </div>
-  ) : (
-    <div className={`${baseClasses} bg-white dark:bg-black`}>{children}</div>
-  )
-}
-
-type HeroStatsProps = {
-  count: number
-  topOffer: number | undefined
-  floor: number | undefined
-  vol24: number | undefined
-  volumeChange: number | undefined
-}
-
-const HeroStats: FC<{ stats: HeroStatsProps }> = ({ stats }) => {
-  return (
-    <div className="mx-[25px] grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
-      <Stat name="items">
-        <h3 className="reservoir-h6 dark:text-white">{stats.count}</h3>
-      </Stat>
-      <Stat name="top offer">
-        <h3 className="reservoir-h6 dark:text-white">
-          <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
-        </h3>
-      </Stat>
-      <Stat name="floor">
-        <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
-          <FormatEth amount={stats.floor} maximumFractionDigits={2} />
-          <PercentageChange value={stats.volumeChange} />
-        </h3>
-      </Stat>
-      <Stat name="24h">
-        <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
-          <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
-          <PercentageChange value={stats.volumeChange} />
-        </h3>
-      </Stat>
-    </div>
-  )
-}
-
-const Stat: FC<{ name: string }> = ({ name, children }) => (
-  <div className="flex h-20 flex-col items-center justify-center bg-white dark:bg-black md:h-auto">
-    {children}
-    <p className="mt-1 text-[#A3A3A3]">{name}</p>
-  </div>
-)
-
-const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
-  if (value === undefined) return null
-
-  const percentage = (value - 1) * 100
-
-  if (value < 1) {
-    return (
-      <div className="text-sm text-[#FF3B3B]">{formatNumber(percentage)}%</div>
-    )
-  }
-
-  if (value > 1) {
-    return (
-      <div className="text-sm text-[#06C270]">+{formatNumber(percentage)}%</div>
-    )
-  }
-
-  return <div>0%</div>
-}
 
 type HeroBuyButtonProps = {
   collectionId: string | undefined
