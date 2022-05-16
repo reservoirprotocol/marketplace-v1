@@ -122,7 +122,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 }}
                 env={{
                   chainId: +CHAIN_ID as ChainId,
-                  openSeaApiKey: OPENSEA_API_KEY,
                 }}
                 setToast={setToast}
               />
