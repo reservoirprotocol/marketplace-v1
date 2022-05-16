@@ -51,6 +51,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     value: undefined,
   })
   const { tokens } = useTokens(collectionId, [fallback.tokens], router)
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -106,13 +107,15 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
 
+  const description = collection?.data?.collection?.metadata?.description as
+    | string
+    | undefined
   const header = {
     banner: bannerImage as string,
     image: collection?.data?.collection?.metadata?.imageUrl as string,
     name: collection?.data?.collection?.name,
-    description: collection?.data?.collection?.metadata?.description as
-      | string
-      | undefined,
+    description: description,
+    shortDescription: description ? description.slice(0, 150) : description,
   }
 
   const token = {
@@ -147,6 +150,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     },
     attribute,
   }
+
+  const isLongDescription =
+    header.description && header.description.length > 150
 
   return (
     <>
@@ -183,7 +189,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             )}
             {typeof social.externalUrl === 'string' && (
               <a
-                className="reservoir-h6 flex-none text-white"
+                className="reservoir-h6 flex-none text-black dark:text-white"
                 target="_blank"
                 rel="noopener noreferrer"
                 href={social.externalUrl}
@@ -197,14 +203,28 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             alt={`${header.name} Logo`}
             src={header.image}
           />
-          <h1 className="reservoir-h4 text-white">{header.name}</h1>
+          <h1 className="reservoir-h4 text-black dark:text-white">
+            {header.name}
+          </h1>
           <HeroStats stats={statsObj} />
           {header.description && (
-            <p className="w-[423px] text-center text-sm text-white">
-              {header.description}
-            </p>
+            <>
+              <p className="relative max-h-[60px] w-[423px] overflow-hidden text-center text-sm text-[#262626] transition-[width] ease-in-out dark:text-white">
+                {descriptionExpanded
+                  ? header.description
+                  : header.shortDescription}
+              </p>
+              <a
+                onClick={(e) => {
+                  e.preventDefault()
+                  setDescriptionExpanded(!descriptionExpanded)
+                }}
+              >
+                {descriptionExpanded ? 'See less' : 'See more'}
+              </a>
+            </>
           )}
-          <div className="flex w-full justify-center gap-4">
+          <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
             {hasTokenSetId &&
               (isAttributeModal ? (
                 <AttributeOfferModal
@@ -247,7 +267,7 @@ const HeroBackground: FC<{ banner: string | undefined }> = ({
   children,
 }) => {
   const bannerImage = optimizeImage(envBannerImage || banner, 1500)
-  const baseClasses = `relative flex flex-col items-center col-span-full w-full py-14`
+  const baseClasses = `relative z-0 flex flex-col items-center col-span-full w-full py-14`
 
   return bannerImage ? (
     <div
@@ -255,14 +275,10 @@ const HeroBackground: FC<{ banner: string | undefined }> = ({
       style={{ backgroundImage: `url(${bannerImage})` }}
     >
       {children}
-      <div className="absolute inset-0 z-0 backdrop-blur"></div>
+      <div className="absolute inset-0 z-0 bg-backdrop backdrop-blur-[30px] dark:bg-dark-backdrop"></div>
     </div>
   ) : (
-    <div
-      className={`${baseClasses} bg-gradient-to-r from-violet-500 to-fuchsia-500`}
-    >
-      {children}
-    </div>
+    <div className={`${baseClasses} bg-white dark:bg-black`}>{children}</div>
   )
 }
 
@@ -276,7 +292,7 @@ type HeroStatsProps = {
 
 const HeroStats: FC<{ stats: HeroStatsProps }> = ({ stats }) => {
   return (
-    <div className="grid h-[82px] min-w-[647px] grid-cols-4 items-center gap-2 rounded-lg border-[1px] border-gray-300 bg-white dark:bg-black">
+    <div className="mx-[25px] grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
       <Stat name="items">
         <h3 className="reservoir-h6 dark:text-white">{stats.count}</h3>
       </Stat>
@@ -286,13 +302,13 @@ const HeroStats: FC<{ stats: HeroStatsProps }> = ({ stats }) => {
         </h3>
       </Stat>
       <Stat name="floor">
-        <h3 className="reservoir-h6 flex justify-center gap-1 dark:text-white">
+        <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
           <FormatEth amount={stats.floor} maximumFractionDigits={2} />
           <PercentageChange value={stats.volumeChange} />
         </h3>
       </Stat>
       <Stat name="24h">
-        <h3 className="reservoir-h6 flex justify-center gap-1 dark:text-white">
+        <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
           <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
           <PercentageChange value={stats.volumeChange} />
         </h3>
@@ -302,7 +318,7 @@ const HeroStats: FC<{ stats: HeroStatsProps }> = ({ stats }) => {
 }
 
 const Stat: FC<{ name: string }> = ({ name, children }) => (
-  <div className="text-center">
+  <div className="flex h-20 flex-col items-center justify-center bg-white dark:bg-black md:h-auto">
     {children}
     <p className="mt-1 text-[#A3A3A3]">{name}</p>
   </div>
@@ -314,11 +330,15 @@ const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
   const percentage = (value - 1) * 100
 
   if (value < 1) {
-    return <div className="text-[#FF3B3B]">{formatNumber(percentage)}%</div>
+    return (
+      <div className="text-sm text-[#FF3B3B]">{formatNumber(percentage)}%</div>
+    )
   }
 
   if (value > 1) {
-    return <div className="text-[#06C270]">+{formatNumber(percentage)}%</div>
+    return (
+      <div className="text-sm text-[#06C270]">+{formatNumber(percentage)}%</div>
+    )
   }
 
   return <div>0%</div>
@@ -436,7 +456,7 @@ const HeroBuyButton: FC<HeroBuyButtonProps> = ({
 
           execute(token.id, taker, expectedPrice)
         }}
-        className="btn-primary-fill dark:ring-primary-900 dark:focus:ring-4"
+        className="btn-primary-fill min-w-[222px] dark:ring-primary-900 dark:focus:ring-4"
       >
         {waitingTx ? (
           <CgSpinner className="h-4 w-4 animate-spin" />

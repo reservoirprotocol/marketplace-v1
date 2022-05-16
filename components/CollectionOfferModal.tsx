@@ -188,7 +188,7 @@ const CollectionOfferModal: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+        className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
       >
         Make a Collection Offer
       </Dialog.Trigger>
