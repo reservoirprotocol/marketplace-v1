@@ -1,5 +1,4 @@
 <h3 align="center">Reservoir Market</h3>
-
   <p align="center">
 An open source NFT marketplace built on Reservoir.    <br />
     <a href="https://reservoirprotocol.github.io/docs/protocol/intro/"><strong>Explore the docs »</strong></a>
@@ -11,23 +10,19 @@ An open source NFT marketplace built on Reservoir.    <br />
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
     </li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#getting-started">Getting Started (Self Hosted)</a>
       <ul>
+	     <li><a href="#built-with">Built With</a></li>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+        <li><a href="#run-the-app">Run the App</a></li>
+        <li><a href="#deploy-with-vercel">Deploy with Vercel</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+
   </ol>
 </details>
 
@@ -35,6 +30,7 @@ An open source NFT marketplace built on Reservoir.    <br />
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
 
 Reservoir Market is an open source marketplace that enables communities to easily launch their own NFT marketplace, accessing instant liquidity aggregated from other major marketplaces.
 
@@ -48,7 +44,7 @@ With each deployment, communities are given full control over their marketplace 
 
 We currently offer hosted and self hosted deployment options. For self hosted deployments you can simply fork this repository and follow the instructions below to configure and deploy your marketplace. For hosted deployments please submit your request and we will be in touch.
 
-Submit your request for a Hosted Deployment here.
+[Submit your request for a Hosted Deployment here.](https://forms.gle/o6mbPJb7bwaG22pm6)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -89,7 +85,7 @@ $ npm install
 ```
 
 ### Configuration
-Reservoir Market is built to be 100% configurable using environment variables. To preview your configuration locally you can copy the values you want to use from  `env.development`  or  `env.production`  into a new file called  `.env.local`
+Reservoir Market is built to be fully configurable using environment variables. To preview your configuration locally you can copy the values you want to use from  `env.development`  or  `env.production`  into a new file called  `.env.local`
 
 Note: Environment variables can also be added during deployment via deployment platforms like [vercel](https://vercel.com/).
 
@@ -121,7 +117,7 @@ Note: Environment variables can also be added during deployment via deployment p
 | NEXT_PUBLIC_FEE_BPS               | `false`  | `String`                                                                          | `N/A`                                                                                     | 300                                                     | BPS is the percentage (in basis points - eg. 100 = 1%, 1000 = 10% and 10000 = 100%) of the price that will be charged as fee.                                                                  |
 | NEXT_PUBLIC_FEE_RECIPIENT         | `false`  | `String` (Ethereum contract address)                                              | `N/A`                                                                                     | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7              | The address that will receive BPS fee on each sale          
 
-### Run the app
+### Run the App
 
 Once you have your setup ready, run:
 
