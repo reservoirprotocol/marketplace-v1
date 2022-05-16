@@ -236,7 +236,6 @@ const ListModal: FC<Props> = ({
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     if (postOnOpenSea) {
