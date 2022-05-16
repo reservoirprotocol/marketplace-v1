@@ -23,7 +23,7 @@ const FormatEth: FC<Props> = ({ amount, maximumFractionDigits, logoWidth }) => {
           style={{ width: `${logoWidth ?? 8}px` }}
         />
       )}
-      <span className="flex-grow">{value}</span>
+      <span className="flex-grow font-semibold">{value}</span>
     </div>
   )
 }

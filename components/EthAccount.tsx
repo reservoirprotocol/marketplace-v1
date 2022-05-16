@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
+import Avatar from './Avatar'
 
 /**
  * Ensure that an Ethereum address does not overflow
@@ -48,17 +49,7 @@ const EthAccount: FC<Props> = ({
   side = 'right',
   hideIcon,
 }) => {
-  const icon =
-    !hideIcon &&
-    (ens?.avatar ? (
-      <img
-        className="block h-6 w-6 rounded-full"
-        src={ens.avatar}
-        alt="ENS Avatar"
-      />
-    ) : (
-      <Jazzicon diameter={24} seed={jsNumberForAddress(address || '')} />
-    ))
+  const icon = !hideIcon && <Avatar address={address} avatar={ens?.avatar} />
 
   return (
     <div className="flex items-center gap-2">

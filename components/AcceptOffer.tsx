@@ -43,6 +43,7 @@ const AcceptOffer: FC<Props> = ({
   isInTheWrongNetwork,
   mutate,
   data,
+  children,
   signer,
   show,
   setToast,
@@ -198,12 +199,18 @@ const AcceptOffer: FC<Props> = ({
 
             execute(tokenString, taker, expectedPrice)
           }}
-          className="btn-primary-outline w-full dark:text-white"
+          //className="btn-primary-outline w-full dark:text-white"
         >
-          {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
+          {children ? (
+            children
           ) : (
-            'Accept Offer'
+            <button className="btn-primary-outline w-full dark:text-white">
+              {waitingTx ? (
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                'Accept Offer'
+              )}
+            </button>
           )}
         </Dialog.Trigger>
       )}
