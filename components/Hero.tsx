@@ -168,7 +168,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   return (
     <>
       <HeroBackground banner={header.banner}>
-        <div className="z-10 flex flex-col items-center gap-6">
+        <div className="z-10 flex w-full flex-col items-center gap-6">
           <HeroSocialLinks collection={collection?.data?.collection} />
           <img
             className="h-20 w-20 rounded-full"
