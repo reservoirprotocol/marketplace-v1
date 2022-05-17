@@ -83,27 +83,29 @@ const Navbar: FC = () => {
   }, [filterableCollection])
 
   return (
-    <nav className="col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
-      <NavbarLogo />
-      <div className="flex w-full justify-center">
-        {filterComponent && filterComponent}
-        {hasExternalLinks && (
-          <div className="ml-12 hidden items-center gap-11 lg:flex">
-            {externalLinks.map(({ name, url }) => (
-              <a
-                key={url}
-                href={url}
-                rel="noopener noferrer"
-                className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
-              >
-                {name}
-              </a>
-            ))}
-          </div>
-        )}
+    <nav className="relative col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
+      <NavbarLogo className="z-10" />
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="absolute left-0 z-0 flex w-full justify-center">
+          {filterComponent && filterComponent}
+          {hasExternalLinks && (
+            <div className="ml-12 hidden items-center gap-11 lg:flex">
+              {externalLinks.map(({ name, url }) => (
+                <a
+                  key={url}
+                  href={url}
+                  rel="noopener noferrer"
+                  className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
+                >
+                  {name}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <HamburgerMenu externalLinks={externalLinks} />
-      <div className="ml-auto hidden shrink-0 md:block">
+      <div className="z-10 ml-auto hidden shrink-0 md:block">
         <ConnectWallet />
       </div>
     </nav>
