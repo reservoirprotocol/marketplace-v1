@@ -12,7 +12,7 @@ const HeroBackground: FC<Props> = ({ banner, children }) => {
   const bannerImage = envBannerImageDisabled
     ? null
     : optimizeImage(envBannerImage || banner, 1500)
-  const baseClasses = `relative z-0 flex flex-col items-center col-span-full w-full py-14`
+  const baseClasses = `relative z-0 px-[25px] flex flex-col items-center col-span-full w-full py-14`
 
   return bannerImage ? (
     <div
@@ -20,7 +20,7 @@ const HeroBackground: FC<Props> = ({ banner, children }) => {
       style={{ backgroundImage: `url(${bannerImage})` }}
     >
       {children}
-      <div className="absolute inset-0 z-0 bg-backdrop backdrop-blur-[30px] dark:bg-dark-backdrop"></div>
+      <div className="absolute inset-0 z-0 bg-backdrop backdrop-blur-[5px] dark:bg-dark-backdrop"></div>
     </div>
   ) : (
     <div className={`${baseClasses} bg-white dark:bg-black`}>{children}</div>
