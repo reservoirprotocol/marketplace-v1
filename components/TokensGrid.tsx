@@ -8,6 +8,9 @@ import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
+
 type Props = {
   tokens: SWRInfiniteResponse<
     paths['/tokens/v4']['get']['responses']['200']['schema'],
@@ -64,7 +67,13 @@ const TokensGrid: FC<Props> = ({
                   {token?.source && (
                     <img
                       className="absolute top-4 left-4 h-8 w-8"
-                      src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
+                      src={
+                        SOURCE_ID &&
+                        token?.source &&
+                        SOURCE_ID === token?.source
+                          ? NAVBAR_LOGO
+                          : `https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`
+                      }
                       alt=""
                     />
                   )}
