@@ -17,6 +17,7 @@ const NavbarLogo: FC<Props> = ({ variant }) => {
 
   const mobileVariant = variant == 'mobile'
   const desktopVariant = variant == 'desktop'
+  const isTestNet = CHAIN_ID === '4'
 
   return (
     <Link href="/">
@@ -35,12 +36,14 @@ const NavbarLogo: FC<Props> = ({ variant }) => {
             !variant ? 'hidden md:block' : ''
           } ${mobileVariant ? 'hidden' : ''} ${desktopVariant ? 'block' : ''}`}
         />
-        {CHAIN_ID === '4' && (
+        {isTestNet && (
           <div
             className={`reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px]
-          ${!variant ? 'md:absolute md:right-0 md:top-7' : ''} ${
-              desktopVariant ? 'absolute right-0 top-7' : ''
-            }
+          ${
+            !variant || desktopVariant
+              ? 'md:absolute md:left-[-50px] md:bottom-[8px]'
+              : ''
+          }
           `}
           >
             Testnet
