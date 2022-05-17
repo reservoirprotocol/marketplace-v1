@@ -14,7 +14,6 @@ import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useAttributes from 'hooks/useAttributes'
 import { setToast } from 'components/token/setToast'
-import * as Dialog from '@radix-ui/react-dialog'
 import {
   buyToken,
   buyTokenBeta,
@@ -25,9 +24,7 @@ import {
 import AttributeOfferModal from 'components/AttributeOfferModal'
 import CollectionOfferModal from 'components/CollectionOfferModal'
 import Hero from 'components/Hero'
-import { CgSpinner } from 'react-icons/cg'
-import ModalCard from 'components/modal/ModalCard'
-import { formatBN, formatNumber } from 'lib/numbers'
+import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
 import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
@@ -40,6 +37,7 @@ import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
 import { GlobalContext } from 'context/GlobalState'
 import FormatEth from 'components/FormatEth'
+import Sweep from 'components/Sweep'
 
 // Environment variables
 // For more information about these variables
@@ -354,39 +352,12 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         </Head>
         <Hero social={social} stats={statsObj} header={header}>
           <div className="grid w-full gap-4 md:flex">
-            <Dialog.Root open={open} onOpenChange={setOpen}>
-              <Dialog.Trigger
-                disabled={
-                  floor?.price === null || waitingTx || isInTheWrongNetwork
-                }
-                onClick={() => {
-                  if (!token || !taker || !expectedPrice) {
-                    dispatch({ type: 'CONNECT_WALLET', payload: true })
-                    return
-                  }
-
-                  execute(token, taker, expectedPrice)
-                }}
-                className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
-              >
-                {waitingTx ? (
-                  <CgSpinner className="h-4 w-4 animate-spin" />
-                ) : (
-                  `Buy for ${formatBN(floor?.price, 4)} ETH`
-                )}
-              </Dialog.Trigger>
-              {steps && (
-                <Dialog.Portal>
-                  <Dialog.Overlay>
-                    <ModalCard
-                      title="Buy token"
-                      loading={waitingTx}
-                      steps={steps}
-                    />
-                  </Dialog.Overlay>
-                </Dialog.Portal>
-              )}
-            </Dialog.Root>
+            <Sweep
+              collection={collection}
+              tokens={tokens}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+              setToast={setToast}
+            />
             {hasTokenSetId &&
               (isAttributeModal ? (
                 <AttributeOfferModal
