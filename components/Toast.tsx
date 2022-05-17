@@ -21,7 +21,7 @@ type Props = {
 
 const Toast: FC<Props> = ({ t, toast, data: { kind, message, title } }) => {
   return (
-    <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
+    <div className="flex w-full max-w-sm flex-col items-center space-y-4 sm:items-end">
       <Transition
         show={t.visible}
         as={Fragment}
