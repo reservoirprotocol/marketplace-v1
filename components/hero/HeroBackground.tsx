@@ -12,7 +12,7 @@ const HeroBackground: FC<Props> = ({ banner, children }) => {
   const bannerImage = envBannerImageDisabled
     ? null
     : optimizeImage(envBannerImage || banner, 1500)
-  const baseClasses = `relative z-0 flex flex-col items-center col-span-full w-full py-14`
+  const baseClasses = `relative z-0 px-[25px] flex flex-col items-center col-span-full w-full py-14`
 
   return bannerImage ? (
     <div

@@ -13,7 +13,7 @@ type Props = {
 
 const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
   return (
-    <div className="mx-[25px] grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
+    <div className="grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
       <Stat name="items">
         <h3 className="reservoir-h6 dark:text-white">
           {formatNumber(stats.count)}

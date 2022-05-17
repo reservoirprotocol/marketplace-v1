@@ -182,7 +182,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           {header.description && (
             <>
               <div
-                className="relative w-[423px] overflow-hidden transition-[max-height] ease-in-out"
+                className="relative overflow-hidden transition-[max-height] ease-in-out md:w-[423px]"
                 style={{ maxHeight: descriptionHeight }}
               >
                 <p
