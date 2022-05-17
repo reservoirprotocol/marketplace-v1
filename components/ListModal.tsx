@@ -233,12 +233,7 @@ const ListModal: FC<Props> = ({
       orderKind: 'wyvern-v2.3',
     }
 
-    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
-
-    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (SOURCE_ID) query.source = SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     if (postOnOpenSea) {
       await listToken({
