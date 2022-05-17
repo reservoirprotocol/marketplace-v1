@@ -66,16 +66,24 @@ Reservoir Market is built to be fully configurable using environment variables. 
 Note: Environment variables can also be added during deployment via deployment platforms like [vercel](https://vercel.com/).
 
 **Admin Configuration**
-| Environment Variable           | Required | Description                                                                         | Example                                                           |
-|--------------------------------|----------|-------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| NEXT_PUBLIC_CHAIN_ID           | 'true'   | The Reservoir API base URL. Available on Mainnet and Rinkeby.                       | https://api-rinkeby.reservoir.tools/ https://api.reservoir.tools/ |
-| NEXT_PUBLIC_RESERVOIR_API_BASE | 'true'   | The Ethereum network to be used. 1 for Etherem Mainnet and 4 for Rinkeby Testnet.   | 1 4                                                               |
-| NEXT_PUBLIC_PROXY_API_BASE     | 'true'   | The proxy API used to pass the Reservoir API key without exposing it to the client. | /api/reservoir                                                    |
-| RESERVOIR_API_KEY              | 'true'   | Reservoir API key provided by the Reservoir Protocol. Get your own API key.         | 123e4567-e89b-12d3-a456-426614174000                              |
-| NEXT_PUBLIC_OPENSEA_API_KEY    | 'false'  | OpenSea API key used to cross post orders to OpenSea.                               | 1a6c419a275c34de9d83df3dbe7ab890                                  |      
+| Environment Variable           | Required | Description                                                                         | Example              |
+|--------------------------------|----------|-------------------------------------------------------------------------------------|---------------------|
+| NEXT_PUBLIC_CHAIN_ID           | `true`   | The Reservoir API base URL. Available on Mainnet and Rinkeby.                       | https://api-rinkeby.reservoir.tools/ https://api.reservoir.tools/ |
+| NEXT_PUBLIC_RESERVOIR_API_BASE | `true`   | The Ethereum network to be used. 1 for Etherem Mainnet and 4 for Rinkeby Testnet.   | 1 4                                                               |
+| NEXT_PUBLIC_PROXY_API_BASE     | `true`   | The proxy API used to pass the Reservoir API key without exposing it to the client. | /api/reservoir                                                    |
+| RESERVOIR_API_KEY              | `true`   | Reservoir API key provided by the Reservoir Protocol. Get your own API key.         | 123e4567-e89b-12d3-a456-426614174000                              |
+| NEXT_PUBLIC_OPENSEA_API_KEY    | `false`  | OpenSea API key used to cross post orders to OpenSea.                               | 1a6c419a275c34de9d83df3dbe7ab890                                  |      
 
 **Marketplace Configuration**
-
+| Environment Variable       | Required | Description                                                                                                                                                          | Example                                       |
+|----------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| NEXT_PUBLIC_SOURCE_ID      | `true`   | The source ID used to attribute listings and offers from your marketplace.                                                                                           | Reservoir Market                              |
+| NEXT_PUBLIC_ORDER_KIND     | `false`  | The default order kind to the be used when listing or making offers on your marketplace.                                                                             | zeroex-v4 wyvern-v2.3                         |
+| NEXT_PUBLIC_FEE_BPS        | `false`  | The marketplace fee that will be earned from native listings and offers on your marketplace. Configured as basis points - eg. 100 = 1%, 1000 = 10% and 10000 = 100%. | 100                                           |
+| NEXT_PUBLIC_FEE_RECIPIENT  |    | The address that will receive marketplace fee.                                                                                                                       | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7    |
+| NEXT_PUBLIC_COLLECTION     | `false`  | Use this to configure a single collection marketplace or set the default collection for your community marketplace.                                                  | 0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7    |
+| NEXT_PUBLIC_COMMUNITY      | `false`  | Use this to configure a community marketplace. Note: NEXT_PUBLIC_COLLECTION must also be set when creating community marketplaces.                                   | bayc forgottenrunes artblocks azuki           |
+| NEXT_PUBLIC_EXTERNAL_LINKS | `false`  | External links to be displayed in the top navigation bard.                                                                                                           | Blog::https://blog.com,Docs::https://docs.com |
 
 **Design Configuration**
 
