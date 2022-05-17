@@ -149,6 +149,7 @@ const Media: FC<{
         height="533"
         width="533"
         src={animation_url}
+        sandbox="allow-scripts"
       ></iframe>
     )
   }
