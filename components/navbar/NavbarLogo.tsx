@@ -8,9 +8,10 @@ const DESKTOP_NAVBAR_LOGO = process.env.NEXT_PUBLIC_DESKTOP_NAVBAR_LOGO
 
 type Props = {
   variant?: 'desktop' | 'mobile' | undefined
+  className?: string
 }
 
-const NavbarLogo: FC<Props> = ({ variant }) => {
+const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const logo = NAVBAR_LOGO || '/reservoir.svg'
   const desktopLogo = DESKTOP_NAVBAR_LOGO || '/reservoir-desktop.svg'
   const logoAlt = SOURCE_ID ? `${SOURCE_ID} Logo` : 'Reservoir Logo'
@@ -21,7 +22,9 @@ const NavbarLogo: FC<Props> = ({ variant }) => {
 
   return (
     <Link href="/">
-      <a className="relative inline-flex flex-none items-center gap-1">
+      <a
+        className={`relative inline-flex flex-none items-center gap-1 ${className}`}
+      >
         <img
           src={logo}
           alt={logoAlt}
