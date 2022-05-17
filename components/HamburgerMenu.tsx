@@ -1,4 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import NavbarLogo from 'components/navbar/NavbarLogo'
 import Link from 'next/link'
 import { FC, useState } from 'react'
 import { FiMenu } from 'react-icons/fi'
@@ -14,9 +15,6 @@ import { Balance } from './ConnectWallet'
 import { Wallets } from './ConnectWalletModal'
 import EthAccount from './EthAccount'
 
-const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-
 type Props = {
   externalLinks: {
     name: string
@@ -31,7 +29,6 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
   const { data: ensName } = useEnsName()
   const { data: ensAvatar } = useEnsAvatar()
   const wallet = connectors[0]
-  const logo = NAVBAR_LOGO || '/reservoir.svg'
   const [walletModal, setWalletModal] = useState(false)
 
   const hasExternalLinks = externalLinks.length > 0
@@ -43,14 +40,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
 
       <Dialog.Content className="fixed inset-0 z-10 transform bg-white shadow-md dark:bg-black">
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
-          <div className="relative mr-4 inline-flex h-[42px] items-center  gap-1">
-            <img src={logo} alt="" className="block w-8 flex-none" />
-            {CHAIN_ID === '4' && (
-              <div className="reservoir-tiny rounded-[4px] bg-[#EFC45C] p-1 py-[2px] md:absolute md:left-[133px] md:top-7">
-                Testnet
-              </div>
-            )}
-          </div>
+          <NavbarLogo variant="desktop" />
           <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
