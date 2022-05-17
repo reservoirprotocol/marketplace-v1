@@ -34,8 +34,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const sourceLogo =
     typeof SOURCE_ID === 'string' &&
     typeof sourceName === 'string' &&
-    // @ts-ignore
-    SOURCE_ID.toLowerCase() === sourceName?.toLoweCase()
+    SOURCE_ID === sourceName
       ? NAVBAR_LOGO
       : `https://api.reservoir.tools/redirect/logo/v1?source=${sourceName}`
 
