@@ -32,8 +32,8 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const sourceName = token?.market?.floorAsk?.source?.name
 
   const sourceLogo =
-    SOURCE_ID &&
-    sourceName &&
+    typeof SOURCE_ID === 'string' &&
+    typeof sourceName === 'string' &&
     // @ts-ignore
     SOURCE_ID.toLowerCase() === sourceName?.toLoweCase()
       ? NAVBAR_LOGO
