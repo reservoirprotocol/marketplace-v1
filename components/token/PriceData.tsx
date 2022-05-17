@@ -31,12 +31,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const sourceName = token?.market?.floorAsk?.source?.name
 
-  const sourceLogo =
-    typeof SOURCE_ID === 'string' &&
-    typeof sourceName === 'string' &&
-    SOURCE_ID === sourceName
-      ? NAVBAR_LOGO
-      : `https://api.reservoir.tools/redirect/logo/v1?source=${sourceName}`
+  const isLocalListed = SOURCE_ID && sourceName && SOURCE_ID === sourceName
+
+  const sourceLogo = isLocalListed
+    ? NAVBAR_LOGO
+    : `https://api.reservoir.tools/redirect/logo/v1?source=${sourceName}`
 
   const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${sourceName}&token=${token?.token?.contract}:${token?.token?.tokenId}`
 
@@ -58,15 +57,34 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           <Price
             title="List Price"
             source={
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={sourceRedirect}
-                className="reservoir-body flex items-center gap-2 dark:text-white"
-              >
-                on {sourceName}
-                {<img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />}
-              </a>
+              isLocalListed ? (
+                <div className="reservoir-body flex items-center gap-2 dark:text-white">
+                  on {sourceName}
+                  {
+                    <img
+                      className="h-6 w-6"
+                      src={sourceLogo}
+                      alt="Source Logo"
+                    />
+                  }
+                </div>
+              ) : (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={sourceRedirect}
+                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                >
+                  on {sourceName}
+                  {
+                    <img
+                      className="h-6 w-6"
+                      src={sourceLogo}
+                      alt="Source Logo"
+                    />
+                  }
+                </a>
+              )
             }
             price={
               <FormatEth
