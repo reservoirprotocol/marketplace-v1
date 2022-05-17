@@ -175,7 +175,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             alt={`${header.name} Logo`}
             src={header.image}
           />
-          <h1 className="reservoir-h4 text-black dark:text-white">
+          <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
           </h1>
           <HeroStats stats={statsObj} />
