@@ -5,7 +5,7 @@ import useSWR from 'swr'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-type Asks = paths['/orders/asks/v1']['get']['responses']['200']['schema']
+type Asks = paths['/orders/asks/v2']['get']['responses']['200']['schema']
 
 export default function useAsks(
   fallbackData: Asks | undefined,
@@ -17,9 +17,9 @@ export default function useAsks(
 
     if (tokenKind !== 'erc1155') return undefined
 
-    const pathname = `${PROXY_API_BASE}/orders/asks/v1`
+    const pathname = `${PROXY_API_BASE}/orders/asks/v2`
 
-    let query: paths['/orders/asks/v1']['get']['parameters']['query'] = {
+    let query: paths['/orders/asks/v2']['get']['parameters']['query'] = {
       token,
       sortBy: 'price',
     }

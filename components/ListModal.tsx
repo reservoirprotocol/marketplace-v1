@@ -20,6 +20,7 @@ const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
+const OPENSEA_CROSS_POST = process.env.NEXT_PUBLIC_OPENSEA_CROSS_POST
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
@@ -230,14 +231,10 @@ const ListModal: FC<Props> = ({
       weiPrice: ethers.utils.parseEther(listingPrice).toString(),
       token: `${token_?.contract}:${token_?.tokenId}`,
       expirationTime: expirationValue,
+      orderKind: 'wyvern-v2.3',
     }
 
-    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
-
-    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     if (postOnOpenSea) {
       await listToken({
@@ -322,29 +319,31 @@ const ListModal: FC<Props> = ({
                   expiration={expiration}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label
-                  htmlFor="postOpenSea"
-                  className="reservoir-h6 font-headings dark:text-white"
-                >
-                  Post listing to OpenSea
-                </label>
-                <input
-                  type="checkbox"
-                  name="postOpenSea"
-                  id="postOpenSea"
-                  className="scale-125 transform"
-                  checked={postOnOpenSea}
-                  onChange={(e) => {
-                    setPostOnOpenSea(e.target.checked)
-                    if (e.target.checked) {
-                      setOrderbook(['reservoir', 'opensea'])
-                    } else {
-                      setOrderbook(['reservoir'])
-                    }
-                  }}
-                />
-              </div>
+              {!!OPENSEA_CROSS_POST && (
+                <div className="flex items-center gap-3">
+                  <label
+                    htmlFor="postOpenSea"
+                    className="reservoir-h6 font-headings dark:text-white"
+                  >
+                    Post listing to OpenSea
+                  </label>
+                  <input
+                    type="checkbox"
+                    name="postOpenSea"
+                    id="postOpenSea"
+                    className="scale-125 transform"
+                    checked={postOnOpenSea}
+                    onChange={(e) => {
+                      setPostOnOpenSea(e.target.checked)
+                      if (e.target.checked) {
+                        setOrderbook(['reservoir', 'opensea'])
+                      } else {
+                        setOrderbook(['reservoir'])
+                      }
+                    }}
+                  />
+                </div>
+              )}
               <div className="flex justify-between">
                 <div className="reservoir-h6 font-headings dark:text-white">
                   Fees

@@ -22,6 +22,7 @@ import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
 import { paths, setParams } from '@reservoir0x/client-sdk'
+import useSearchCommunity from 'hooks/useSearchCommunity'
 
 // Environment variables
 // For more information about these variables
@@ -51,8 +52,9 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   useDataDog(accountData)
   const userTokens = useUserTokens(COLLECTION, [fallback.tokens], address)
   // const userActivity = useUserActivity([], address)
-  const sellPositions = useUserAsks([], address)
-  const buyPositions = useUserBids([], address)
+  const collections = useSearchCommunity()
+  const sellPositions = useUserAsks([], address, collections)
+  const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
