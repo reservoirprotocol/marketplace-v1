@@ -35,7 +35,7 @@ const CollectionInfo: FC<Props> = ({ collection, details }) => {
         </a>
       </Link>
       {tokenDescription && (
-        <div className="reservoir-body-2 mt-4 dark:text-white">
+        <div className="reservoir-body-2 mt-4 break-words dark:text-white">
           {/* @ts-ignore */}
           {tokenDescription}
         </div>
