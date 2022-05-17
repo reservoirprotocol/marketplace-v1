@@ -86,7 +86,7 @@ const Navbar: FC = () => {
     <nav className="relative col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
       <NavbarLogo className="z-10" />
       <div className="flex h-full w-full items-center justify-center">
-        <div className="absolute left-0 z-0 flex w-full justify-center">
+        <div className="absolute left-0 z-[1] flex w-full justify-center">
           {filterComponent && filterComponent}
           {hasExternalLinks && (
             <div className="ml-12 hidden items-center gap-11 lg:flex">
