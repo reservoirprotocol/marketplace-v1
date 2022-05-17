@@ -201,7 +201,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   }}
                 >
                   <FiChevronDown
-                    className={`h-5 w-5 text-gray-300 transition-transform dark:text-gray-600 ${
+                    className={`h-5 w-5 text-black transition-transform dark:text-white ${
                       descriptionExpanded ? 'rotate-180' : ''
                     }`}
                     aria-hidden
