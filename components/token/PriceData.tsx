@@ -199,7 +199,7 @@ const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
       <div className="reservoir-h5 font-headings dark:text-white">{title}</div>
-      <div>{source}</div>
+      {source}
     </div>
     <div className="reservoir-h3 font-headings dark:text-white">{price}</div>
   </div>
