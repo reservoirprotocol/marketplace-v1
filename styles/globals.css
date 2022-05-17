@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
+    @apply font-headings;
+  }
+}
+
 @font-face {
   font-family: 'Obvia';
   src: url('/fonts/obvia/obvia_medium-webfont.woff2') format('woff2'),

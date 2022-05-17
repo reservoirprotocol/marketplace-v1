@@ -1212,10 +1212,10 @@
   resolved "https://registry.npmjs.org/@ramosdiego/ui/-/ui-0.0.10.tgz"
   integrity sha512-V4o+owVvgeVfKvj5oUobm1GyJO2VPKKtIwmGS/WlwPLXGvV470g6D8xUG8AHN6bM9EhALWUl8/QEiDMXwco0wQ==
 
-"@reservoir0x/client-sdk@^0.0.22":
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/client-sdk/-/client-sdk-0.0.22.tgz#c60c3326f966363fbf9a493c9dfad3b455c93dea"
-  integrity sha512-VVXfwzRjixqbGtlxMR/XBnPQ0zT34fX9Z/Sf6BLnsUfk1E/6g8kYeC90z9nvGk4ZF1CKDibvwLr0jZ6llA+Pwg==
+"@reservoir0x/client-sdk@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/client-sdk/-/client-sdk-0.0.23.tgz#69e0135f362e3183726fe5946ae4e8e8b730fc46"
+  integrity sha512-AggoSBk0GwGm9L/fY1m92UY1YRTDWrvTA9fO+WgorONy3jpVvpA/HrmJezeLPQvmGcj/HMY5a+5QAUjKCx3CxA==
   dependencies:
     ethers "^5.6.1"
 

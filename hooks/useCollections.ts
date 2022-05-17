@@ -7,18 +7,19 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
+type Collections = paths['/collections/v3']['get']['responses']['200']['schema']
 
-export default function useCollections() {
+export default function useCollections(fallback?: Collections) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/collections/v2`
+  const pathname = `${PROXY_API_BASE}/collections/v3`
 
   const collections = useSWRInfinite<Collections>(
     (index, previousPageData) => getKey(pathname, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
+      fallback,
     }
   )
 
@@ -38,13 +39,13 @@ const getKey: (
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   pathname: string,
   index: number,
-  previousPageData: paths['/collections/v2']['get']['responses']['200']['schema']
+  previousPageData: paths['/collections/v3']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
 
-  let query: paths['/collections/v2']['get']['parameters']['query'] = {
+  let query: paths['/collections/v3']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
     sortBy: '7DayVolume',
