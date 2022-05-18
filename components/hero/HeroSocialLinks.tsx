@@ -18,6 +18,10 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
     discordUrl: collection?.metadata?.discordUrl,
   }
 
+  if (!social.twitterUsername && !social.externalUrl && !social.discordUrl) {
+    return null
+  }
+
   if (isSmallDevice) {
     return (
       <div className="absolute top-6 right-12">
@@ -82,7 +86,7 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
     )
   } else {
     return (
-      <div className="absolute top-6 right-12 flex gap-4">
+      <div className="flex gap-4">
         {typeof social.discordUrl === 'string' && (
           <a
             className="flex-none"
