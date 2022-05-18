@@ -9,7 +9,7 @@ import React, {
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import Toast from './Toast'
-import { useAccount, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { GlobalContext } from 'context/GlobalState'
 import useTokens from 'hooks/useTokens'
@@ -20,29 +20,23 @@ import FormatEth from './FormatEth'
 import AttributesFlex from './AttributesFlex'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
 type Tokens = ReturnType<typeof useTokens>['tokens']
 
 type Props = {
   tokens: Tokens
   collection: ReturnType<typeof useCollection>
-  isInTheWrongNetwork: boolean | undefined
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
-const Sweep: FC<Props> = ({
-  tokens,
-  collection,
-  isInTheWrongNetwork,
-  mutate,
-  setToast,
-}) => {
+const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const { data: accountData } = useAccount()
+  const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [sweepAmount, setSweepAmount] = useState<number>(1)
@@ -54,6 +48,10 @@ const Sweep: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
+
+  const isInTheWrongNetwork = Boolean(
+    signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
+  )
 
   const { data } = tokens
 
