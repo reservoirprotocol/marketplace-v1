@@ -36,8 +36,7 @@ We currently offer hosted and self hosted deployment options. For self hosted de
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
+* [Reservoir Protocol and API](https://reservoirprotocol.github.io/)
 * [Next.js](https://nextjs.org/)
 * [React.js](https://reactjs.org/)
 * [Ethers.io](https://ethers.io/)
@@ -100,7 +99,11 @@ Note: Environment variables can also be added during deployment via deployment p
 | NEXT_PUBLIC_TAGLINE               | `false`  | A tagline to be displayed in the homepage. Only available if NEXT_PUBLIC_COLLECTION and NEXT_PUBLIC_COMMUNITY are unset. | Buy, sell and collect NFTs!                                                          |
 
 **SEO Configuration**
-
+| Environment Variable         | Required | Description                                                                                             | Example                                                                  |
+|------------------------------|----------|---------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| NEXT_PUBLIC_META_TITLE       | `false`  | The text used in the <title> tag.                                                                       | Reservoir Market \| Open Source NFT Marketplace                          |
+| NEXT_PUBLIC_META_DESCRIPTION | `false`  | The text used in the meta description <meta name="description" content={NEXT_PUBLIC_META_DESCRIPTION}/> | Reservoir Market is an open source NFT marketplace built with Reservoir. |
+| NEXT_PUBLIC_META_OG_IMAGE    | `false`  | The image used in the meta og images <meta name="twitter:image" content={NEXT_PUBLIC_META_OG_IMAGE}/>   | https://www.reservoir.market/og.png                                      |
 
 
 ### Run the App
