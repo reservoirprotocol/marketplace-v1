@@ -9,6 +9,7 @@ import AcceptOffer from 'components/AcceptOffer'
 
 import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
+import FormatWEth from 'components/FormatWeth'
 
 type Props = {
   data: ReturnType<typeof useUserTokens>
@@ -93,7 +94,6 @@ const Token = ({ token, modal, mutate }: any) => {
               <div className="text-md reservoir-h6 dark:text-white">
                 <FormatEth
                   amount={token?.ownership?.floorAskPrice}
-                  maximumFractionDigits={4}
                   logoWidth={7}
                 />
               </div>
@@ -105,9 +105,8 @@ const Token = ({ token, modal, mutate }: any) => {
                 Top Offer
               </div>
               <div className="text-md reservoir-h6 dark:text-white">
-                <FormatEth
+                <FormatWEth
                   amount={token?.token?.topBid?.value}
-                  maximumFractionDigits={4}
                   logoWidth={7}
                 />
               </div>
@@ -123,7 +122,6 @@ const Token = ({ token, modal, mutate }: any) => {
               <div className="reservoir-h6 dark:text-white">
                 <FormatEth
                   amount={token?.token?.collection?.floorAskPrice || 0}
-                  maximumFractionDigits={4}
                   logoWidth={7}
                 />
               </div>

@@ -7,6 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import FormatWEth from 'components/FormatWeth'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
@@ -125,7 +126,6 @@ const TokensGrid: FC<Props> = ({
                       <div className="reservoir-h6 dark:text-white">
                         <FormatEth
                           amount={token?.floorAskPrice}
-                          maximumFractionDigits={4}
                           logoWidth={7}
                         />
                       </div>
@@ -135,11 +135,7 @@ const TokensGrid: FC<Props> = ({
                         Offer
                       </div>
                       <div className="reservoir-h6 dark:text-white">
-                        <FormatEth
-                          amount={token?.topBidValue}
-                          maximumFractionDigits={4}
-                          logoWidth={7}
-                        />
+                        <FormatWEth amount={token?.topBidValue} logoWidth={7} />
                       </div>
                     </div>
                   </div>

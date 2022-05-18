@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import FormatEth from '../FormatEth'
 import { formatNumber } from 'lib/numbers'
+import FormatWEth from 'components/FormatWeth'
 
 type Props = {
   count: number
@@ -21,7 +22,7 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
       </Stat>
       <Stat name="top offer">
         <h3 className="reservoir-h6 dark:text-white">
-          <FormatEth amount={stats.topOffer} maximumFractionDigits={4} />
+          <FormatWEth amount={stats.topOffer} />
         </h3>
       </Stat>
       <Stat name="floor">

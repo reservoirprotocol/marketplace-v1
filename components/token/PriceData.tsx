@@ -3,6 +3,7 @@ import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import FormatEth from 'components/FormatEth'
+import FormatWEth from 'components/FormatWeth'
 import ListModal from 'components/ListModal'
 import TokenOfferModal from 'components/TokenOfferModal'
 import useCollection from 'hooks/useCollection'
@@ -89,7 +90,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             price={
               <FormatEth
                 amount={token?.market?.floorAsk?.price}
-                maximumFractionDigits={4}
                 logoWidth={16}
               />
             }
@@ -97,9 +97,8 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           <Price
             title="Top Offer"
             price={
-              <FormatEth
+              <FormatWEth
                 amount={token?.market?.topBid?.value}
-                maximumFractionDigits={4}
                 logoWidth={16}
               />
             }

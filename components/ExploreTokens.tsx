@@ -92,7 +92,6 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                         <span className="reservoir-h6 font-headings dark:text-white">
                           <FormatEth
                             amount={attribute?.topBid?.value}
-                            maximumFractionDigits={4}
                             logoWidth={7}
                           />
                         </span>
@@ -104,7 +103,6 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                         <span className="reservoir-h6 font-headings dark:text-white">
                           <FormatEth
                             amount={attribute?.floorAskPrices?.[0]}
-                            maximumFractionDigits={4}
                             logoWidth={5}
                           />
                         </span>

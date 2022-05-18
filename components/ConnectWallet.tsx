@@ -84,5 +84,5 @@ type Props = {
 
 export const Balance: FC<Props> = ({ address }) => {
   const { data: balance } = useBalance({ addressOrName: address })
-  return <FormatEth amount={balance?.value} maximumFractionDigits={4} />
+  return <FormatEth amount={balance?.value} />
 }
