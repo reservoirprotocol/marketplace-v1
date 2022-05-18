@@ -5,7 +5,6 @@ import { BigNumber, constants, ethers } from 'ethers'
 import {
   useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -25,8 +24,8 @@ import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -88,7 +87,6 @@ const AttributeOfferModal: FC<Props> = ({
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
-  const { connect, connectors } = useConnect()
   const provider = useProvider()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
@@ -175,9 +173,12 @@ const AttributeOfferModal: FC<Props> = ({
       attributeKey: data.attribute.key,
       attributeValue: data.attribute.value,
       collection: data.collection.id,
+      orderKind: 'zeroex-v4',
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     await placeBid({
       query,

@@ -5,7 +5,6 @@ import { BigNumber, constants, utils } from 'ethers'
 import {
   useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -26,7 +25,6 @@ import { GlobalContext } from 'context/GlobalState'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
@@ -36,7 +34,6 @@ type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 type Props = {
   env: {
     chainId: ChainId
-    openSeaApiKey: string | undefined
   }
   data:
     | {
@@ -58,11 +55,6 @@ type Props = {
 
 const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
-  const [orderbook, setOrderbook] = useState<('opensea' | 'reservoir')[]>([
-    'reservoir',
-  ])
-  const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
-  const { connect, connectors } = useConnect()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const { activeChain } = useNetwork()
@@ -87,7 +79,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
-  const [continute, setContinute] = useState(false)
   const provider = useProvider()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
@@ -223,7 +214,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
     if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
@@ -239,59 +230,10 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     setWaitingTx(false)
   }
 
-  const onContinue = async () => {
-    setWaitingTx(true)
-
-    // setOrderbook((orderbook) => {
-    //   orderbook.shift()
-    //   return orderbook
-    // })
-
-    setOrderbook(['opensea'])
-
-    const expirationValue = expirationPresets
-      .find(({ preset }) => preset === expiration)
-      ?.value()
-
-    if (!signer) throw 'signer is undefined'
-
-    const query: Parameters<typeof placeBid>['0']['query'] = {
-      maker: await signer.getAddress(),
-      weiPrice: calculations.total.toString(),
-      orderbook: 'opensea',
-      expirationTime: expirationValue,
-      token: `${token.token?.contract}:${token.token?.tokenId}`,
-    }
-
-    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
-
-    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
-
-    if (postOnOpenSea) {
-      await placeBid({
-        query,
-        signer,
-        apiBase: RESERVOIR_API_BASE,
-        setState: setSteps,
-        handleSuccess,
-        handleError,
-      })
-    }
-
-    setWaitingTx(false)
-  }
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={() => {
-          setPostOnOpenSea(false)
-          setOrderbook(['reservoir'])
-        }}
         className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
         Make Offer
@@ -302,9 +244,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
             loading={waitingTx}
             title="Make a Token Offer"
             steps={steps}
-            orderbook={orderbook}
             onCloseCallback={() => setSteps(undefined)}
-            onContinue={onContinue}
             actionButton={
               <button
                 disabled={
@@ -355,29 +295,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   expiration={expiration}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label
-                  htmlFor="postOpenSea"
-                  className="reservoir-h6 font-headings dark:text-white"
-                >
-                  Post offer to OpenSea
-                </label>
-                <input
-                  type="checkbox"
-                  name="postOpenSea"
-                  id="postOpenSea"
-                  className="scale-125 transform "
-                  checked={postOnOpenSea}
-                  onChange={(e) => {
-                    setPostOnOpenSea(e.target.checked)
-                    if (e.target.checked) {
-                      setOrderbook(['reservoir', 'opensea'])
-                    } else {
-                      setOrderbook(['reservoir'])
-                    }
-                  }}
-                />
-              </div>
               <div className="flex justify-between">
                 <div className="reservoir-h6 font-headings dark:text-white">
                   Fees
@@ -388,11 +305,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                     <div>
                       {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
                       {(+FEE_BPS / 10000) * 100}%
-                    </div>
-                  )}
-                  {postOnOpenSea && (
-                    <div>
-                      OpenSea 2.5%<sup>*</sup>
                     </div>
                   )}
                 </div>
@@ -409,12 +321,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   />
                 </div>
               </div>
-              {postOnOpenSea && (
-                <div className="reservoir-small dark:text-white">
-                  <sup>*</sup>OpenSea fee is taken out of the above amount if
-                  item is sold on OpenSea.
-                </div>
-              )}
               {calculations.error && (
                 <div className="rounded-md bg-red-100 px-2 py-1 text-red-900">
                   {calculations.error}

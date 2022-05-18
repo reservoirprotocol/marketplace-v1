@@ -36,6 +36,7 @@ const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -144,7 +145,11 @@ export const getStaticProps: GetStaticProps<{
 }> = async ({ params }) => {
   const contract = params?.contract?.toString()
 
-  if (COLLECTION && COLLECTION.toLowerCase() !== contract?.toLowerCase()) {
+  if (
+    COLLECTION &&
+    !COMMUNITY &&
+    COLLECTION.toLowerCase() !== contract?.toLowerCase()
+  ) {
     return {
       notFound: true,
     }

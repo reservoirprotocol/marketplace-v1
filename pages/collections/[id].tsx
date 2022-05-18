@@ -6,23 +6,13 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
-import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
-import { ComponentProps, useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import useCollection from 'hooks/useCollection'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
-import useAttributes from 'hooks/useAttributes'
 import { setToast } from 'components/token/setToast'
-import {
-  buyToken,
-  buyTokenBeta,
-  Execute,
-  paths,
-  setParams,
-} from '@reservoir0x/client-sdk'
-import AttributeOfferModal from 'components/AttributeOfferModal'
-import CollectionOfferModal from 'components/CollectionOfferModal'
+import { paths, setParams } from '@reservoir0x/client-sdk'
 import Hero from 'components/Hero'
 import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
@@ -35,9 +25,8 @@ import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
-import { GlobalContext } from 'context/GlobalState'
 import FormatEth from 'components/FormatEth'
-import Sweep from 'components/Sweep'
+import useAttributes from 'hooks/useAttributes'
 
 // Environment variables
 // For more information about these variables
@@ -48,7 +37,6 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -65,23 +53,8 @@ const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
-  if (!CHAIN_ID) return null
-  const { data: accountData } = useAccount()
-  const { connect, connectors } = useConnect()
-  const { data: signer } = useSigner()
-  const { activeChain } = useNetwork()
   const router = useRouter()
-  const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [steps, setSteps] = useState<Execute['steps']>()
-  const [open, setOpen] = useState(false)
-  const { dispatch } = useContext(GlobalContext)
   const [refreshLoading, setRefreshLoading] = useState(false)
-  const [attribute, setAttribute] = useState<
-    AttibuteModalProps['data']['attribute']
-  >({
-    key: undefined,
-    value: undefined,
-  })
 
   const collection = useCollection(fallback.collection, id)
 
@@ -94,167 +67,13 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
   const attributes = useAttributes(id)
 
-  useEffect(() => {
-    const keys = Object.keys(router.query)
-    const attributesSelected = keys.filter(
-      (key) =>
-        key.startsWith('attributes[') &&
-        key.endsWith(']') &&
-        router.query[key] !== ''
-    )
-
-    // Only enable the attribute modal if one attribute is selected
-    if (attributesSelected.length !== 1) {
-      setAttribute({
-        // Extract the key from the query key: attributes[{key}]
-        key: undefined,
-        value: undefined,
-      })
-      return
-    }
-
-    setAttribute({
-      // Extract the key from the query key: attributes[{key}]
-      key: attributesSelected[0].slice(11, -1),
-      value: router.query[attributesSelected[0]]?.toString(),
-    })
-  }, [router.query])
+  if (!CHAIN_ID) return null
 
   if (tokens.error) {
     return <div>There was an error</div>
   }
 
-  type ModalProps = ComponentProps<typeof CollectionOfferModal>
-
-  const isOwner =
-    collection.data?.collection?.floorAsk?.maker?.toLowerCase() ===
-    accountData?.address?.toLowerCase()
-
-  const floor = collection.data?.collection?.floorAsk
-  const tokenCount = collection.data?.collection?.tokenCount
-  const volume = collection.data?.collection?.volume?.['1day']
-
-  const statsObj = {
-    count: stats?.data?.stats?.tokenCount ?? 0,
-    topOffer: stats?.data?.stats?.market?.topBid?.value,
-    floor: floor?.price,
-    vol24: collection.data?.collection?.volume?.['1day'],
-    volumeChange: collection.data?.collection?.volumeChange?.['1day'],
-  }
-
-  const bannerImage =
-    envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
-
-  const header = {
-    banner: bannerImage as string,
-    image: collection?.data?.collection?.metadata?.imageUrl as string,
-    name: collection?.data?.collection?.name,
-  }
-
-  const royalties: ModalProps['royalties'] = {
-    bps: collection.data?.collection?.royalties?.bps,
-    recipient: collection.data?.collection?.royalties?.recipient,
-  }
-
-  const env: ModalProps['env'] = {
-    chainId: +CHAIN_ID as ChainId,
-    openSeaApiKey: OPENSEA_API_KEY,
-  }
-
-  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
-
-  const data: ModalProps['data'] = {
-    collection: {
-      id: collection?.data?.collection?.id,
-      // image: collection?.data?.collection?.collection?.image,
-      image: '',
-      name: collection?.data?.collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
-  }
-
-  type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
-
-  const attributeData: AttibuteModalProps['data'] = {
-    collection: {
-      id: collection.data?.collection?.id,
-      image: collection?.data?.collection?.metadata?.imageUrl as string,
-      name: collection?.data?.collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
-    attribute,
-  }
-
-  const isAttributeModal = !!attribute.key && !!attribute.value
-
-  const hasTokenSetId = !!collection.data?.collection?.tokenSetId
-
-  const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
-    if (err?.type === 'price mismatch') {
-      setToast({
-        kind: 'error',
-        message: 'Price was greater than expected.',
-        title: 'Could not buy token',
-      })
-      return
-    }
-    if (err?.message === 'Not enough ETH balance') {
-      setToast({
-        kind: 'error',
-        message: 'You have insufficient funds to buy this token.',
-        title: 'Not enough ETH balance',
-      })
-      return
-    }
-    // Handle user rejection
-    if (err?.code === 4001) {
-      setOpen(false)
-      setSteps(undefined)
-      setToast({
-        kind: 'error',
-        message: 'You have canceled the transaction.',
-        title: 'User canceled transaction',
-      })
-      return
-    }
-    setToast({
-      kind: 'error',
-      message: 'The transaction was not completed.',
-      title: 'Could not buy token',
-    })
-  }
-
-  const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
-    stats?.mutate()
-
-  const execute = async (
-    token: string,
-    taker: string,
-    expectedPrice: number
-  ) => {
-    if (isOwner) {
-      setToast({
-        kind: 'error',
-        message: 'You already own this token.',
-        title: 'Failed to buy token',
-      })
-      return
-    }
-
-    setWaitingTx(true)
-
-    await buyTokenBeta({
-      expectedPrice,
-      query: { token, taker },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
-
-    setWaitingTx(false)
-  }
+  const tokenCount = stats?.data?.stats?.tokenCount ?? 0
 
   async function refreshCollection(collectionId: string | undefined) {
     function handleError(message?: string) {
@@ -319,6 +138,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
       content={collection.data?.collection?.metadata?.description as string}
     />
   )
+
+  const bannerImage = (envBannerImage ||
+    collection?.data?.collection?.metadata?.bannerImageUrl) as string
+
   const image = metaImage ? (
     <>
       <meta name="twitter:image" content={metaImage} />
@@ -326,21 +149,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     </>
   ) : (
     <>
-      <meta name="twitter:image" content={header.banner} />
-      <meta property="og:image" content={header.banner} />
+      <meta name="twitter:image" content={bannerImage} />
+      <meta property="og:image" content={bannerImage} />
     </>
   )
-
-  const token = `${floor?.token?.contract}:${floor?.token?.tokenId}`
-  const taker = accountData?.address
-
-  const social = {
-    twitterUsername: collection.data?.collection?.metadata?.twitterUsername,
-    externalUrl: collection.data?.collection?.metadata?.externalUrl,
-    discordUrl: collection.data?.collection?.metadata?.discordUrl,
-  }
-
-  const expectedPrice = statsObj.floor
 
   return (
     <Layout navbar={{}}>
@@ -350,38 +162,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           {description}
           {image}
         </Head>
-        <Hero social={social} stats={statsObj} header={header}>
-          <div className="grid w-full gap-4 md:flex">
-            <Sweep
-              collection={collection}
-              tokens={tokens}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={setToast}
-            />
-            {hasTokenSetId &&
-              (isAttributeModal ? (
-                <AttributeOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={attributeData}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
-                />
-              ) : (
-                <CollectionOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={data}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
-                />
-              ))}
-          </div>
-        </Hero>
+        <Hero collectionId={id} fallback={fallback} />
         <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
           <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
           <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
@@ -440,7 +221,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               />
             ) : (
               <TokensGrid
-                tokenCount={statsObj.count}
+                tokenCount={tokenCount}
                 tokens={tokens}
                 viewRef={refTokens}
                 collectionImage={

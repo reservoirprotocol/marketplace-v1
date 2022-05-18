@@ -4,23 +4,25 @@ import setParams from 'lib/params'
 import { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
+import useSearchCommunity from './useSearchCommunity'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-type Orders = paths['/orders/bids/v1']['get']['responses']['200']['schema']
+type Orders = paths['/orders/bids/v2']['get']['responses']['200']['schema']
 
 export default function useUserBids(
   fallbackData: Orders[],
-  user: string | undefined
+  user: string | undefined,
+  collections: ReturnType<typeof useSearchCommunity>
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/orders/bids/v1`
+  const pathname = `${PROXY_API_BASE}/orders/bids/v2`
 
   const orders = useSWRInfinite<Orders>(
     (index, previousPageData) =>
       getKey(
-        { pathname, proxyApi: PROXY_API_BASE, user },
+        { pathname, proxyApi: PROXY_API_BASE, user, collections },
         index,
         previousPageData
       ),
@@ -46,6 +48,7 @@ type InfiniteKeyLoader = (
     pathname: string
     proxyApi: string | undefined
     user: string | undefined
+    collections: ReturnType<typeof useSearchCommunity>
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader>
@@ -55,11 +58,17 @@ const getKey: InfiniteKeyLoader = (
     pathname: string
     proxyApi: string | undefined
     user: string | undefined
+    collections: ReturnType<typeof useSearchCommunity>
   },
   index: number,
   previousPageData: Orders
 ) => {
-  const { pathname, proxyApi, user } = custom
+  const { pathname, proxyApi, user, collections } = custom
+
+  const contracts = collections?.data?.collections
+    ?.map(({ contract }) => contract)
+    .filter((contract) => !!contract)
+
   if (!proxyApi) {
     console.debug(
       'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
@@ -72,11 +81,16 @@ const getKey: InfiniteKeyLoader = (
 
   if (index !== 0 && previousPageData?.continuation === null) return null
 
-  let query: paths['/orders/bids/v1']['get']['parameters']['query'] = {
+  let query: paths['/orders/bids/v2']['get']['parameters']['query'] = {
     status: 'active',
     maker: user,
     limit: 20,
   }
+
+  contracts?.forEach(
+    // @ts-ignore
+    (contract, index) => (query[`contracts[${index}]`] = contract)
+  )
 
   if (index !== 0) query.continuation = previousPageData.continuation
 
