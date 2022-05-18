@@ -176,7 +176,7 @@ const Sweep: FC<Props> = ({
           waitingTx ||
           isInTheWrongNetwork
         }
-        className="btn-primary-fill w-full"
+        className="btn-primary-fill w-full md:w-[222px]"
       >
         Sweep
       </Dialog.Trigger>
