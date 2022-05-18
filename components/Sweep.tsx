@@ -229,7 +229,7 @@ const Sweep: FC<Props> = ({
                   className="input-primary-outline w-full px-2 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900  dark:focus:ring-4 md:w-20"
                 />
               </div>
-              <div className="mb-8 grid h-[200px] grid-cols-5 gap-2 overflow-y-auto pr-2 md:grid-cols-7">
+              <div className="mb-8 grid h-[200px] grid-cols-5 justify-center gap-2 overflow-y-auto pr-2 md:grid-cols-7">
                 {sweepTokens?.map((token) => (
                   <div className="relative" key={token.tokenId}>
                     <img
@@ -240,7 +240,7 @@ const Sweep: FC<Props> = ({
                     <img
                       src={optimizeImage(token?.image, 72)}
                       alt=""
-                      className="mb-2 h-[72px] w-[72px] rounded-lg"
+                      className="mb-2 h-[72px] w-full rounded-lg object-contain"
                     />
                     <div className="reservoir-subtitle text-center dark:text-white">
                       <FormatEth
