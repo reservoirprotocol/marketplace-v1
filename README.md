@@ -86,7 +86,18 @@ Note: Environment variables can also be added during deployment via deployment p
 | NEXT_PUBLIC_EXTERNAL_LINKS | `false`  | External links to be displayed in the top navigation bard.                                                                                                           | Blog::https://blog.com,Docs::https://docs.com |
 
 **Design Configuration**
-
+| Environment Variable              | Required | Description                                                                                                              | Example                                                                              |
+|-----------------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| NEXT_PUBLIC_NAVBAR_TITLE          | `false`  | The title of your marketplace.                                                                                           | Reservoir Market                                                                     |
+| NEXT_PUBLIC_NAVBAR_LOGO           | `false`  | The logo of your marketplace that appears on mobile                                                                      | https://www.reservoir.market/reservoir.svg                                           |
+| NEXT_PUBLIC_DESKTOP_NAVBAR_LOGO   | `false`  | The logo of your marketplace that appears on desktop                                                                     | https://www.reservoir.market/reservoir-desktop.svg                                   |
+| NEXT_PUBLIC_FAVICON               | `false`  | The favicon for your marketplace                                                                                         | https://www.reservoir.market/reservoir.svg                                           |
+| NEXT_PUBLIC_DARK_MODE             | `false`  | Use this to enable dark mode theme.                                                                                      | True                                                                                 |
+| NEXT_PUBLIC_PRIMARY_COLOR         | `false`  | Use this to select your primary color.                                                                                   | default red orange lime green blue                                                   |
+| NEXT_PUBLIC_FONT_FAMILY           | `false`  | Primary sans font used in your marketplace.                                                                              | Inter Montserrat Open Sans Playfair Display Roboto Druk Text Wide Web Medium Regular |
+| NEXT_PUBLIC_BANNER_IMAGE          | `false`  | The background banner image used on collection pages. If not set this will use the default collection banner.            | /banner.png                                                                          |
+| NEXT_PUBLIC_DISABLE_COLLECTION_BG | `false`  | Use this to hide the background banners on collection pages.                                                             | true                                                                                 |
+| NEXT_PUBLIC_TAGLINE               | `false`  | A tagline to be displayed in the homepage. Only available if NEXT_PUBLIC_COLLECTION and NEXT_PUBLIC_COMMUNITY are unset. | Buy, sell and collect NFTs!                                                          |
 
 **SEO Configuration**
 
