@@ -1,5 +1,11 @@
 import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useContext, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import Toast from './Toast'
@@ -10,14 +16,18 @@ import useTokens from 'hooks/useTokens'
 import { HiX } from 'react-icons/hi'
 import useCollection from 'hooks/useCollection'
 import { optimizeImage } from 'lib/optmizeImage'
+import FormatEth from './FormatEth'
+import AttributesFlex from './AttributesFlex'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
 
+type Tokens = ReturnType<typeof useTokens>['tokens']
+
 type Props = {
-  tokens: ReturnType<typeof useTokens>['tokens']
+  tokens: Tokens
   collection: ReturnType<typeof useCollection>
   isInTheWrongNetwork: boolean | undefined
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
@@ -35,9 +45,44 @@ const Sweep: FC<Props> = ({
   const { data: accountData } = useAccount()
   const { data: signer } = useSigner()
   const [steps, setSteps] = useState<Execute['steps']>()
+  const [sweepAmount, setSweepAmount] = useState<number>(1)
+  const [maxInput, setMaxInput] = useState<number>(0)
+  const [sweepTokens, setSweepTokens] = useState<
+    NonNullable<Tokens['data']>[0]['tokens']
+  >([])
+  const [sweepTotal, setSweepTotal] = useState<number>(0)
   const [open, setOpen] = useState(false)
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
+
+  const { data } = tokens
+
+  // Reference: https://swr.vercel.app/examples/infinite-loading
+  const mappedTokens = data
+    ? data
+        .flatMap(({ tokens }) => tokens)
+        .filter((token) => token?.floorAskPrice)
+    : []
+
+  useEffect(() => {
+    const sweepTokens = mappedTokens
+      .filter((value) => value !== undefined)
+      .slice(0, sweepAmount)
+    // @ts-ignore
+    setSweepTokens(sweepTokens)
+
+    let total = 0
+
+    sweepTokens.forEach((token) => {
+      if (token?.floorAskPrice) {
+        total += token?.floorAskPrice
+      }
+    })
+
+    setSweepTotal(total)
+  }, [sweepAmount, data])
+
+  useEffect(() => setMaxInput(mappedTokens.length), [mappedTokens])
 
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }
@@ -123,13 +168,6 @@ const Sweep: FC<Props> = ({
 
   const expectedPrice = token?.market?.floorAsk?.price
 
-  const { data, error } = tokens
-
-  // Reference: https://swr.vercel.app/examples/infinite-loading
-  const mappedTokens = data ? data.flatMap(({ tokens }) => tokens) : []
-  const isLoadingInitialData = !data && !error
-  const isEmpty = mappedTokens.length === 0
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -165,39 +203,78 @@ const Sweep: FC<Props> = ({
                       alt=""
                       className="block h-12 w-12 rounded-full"
                     />
-                    <div>{collection?.data?.collection?.name}</div>
+                    <div className="reservoir-h5 dark:text-white">
+                      {collection?.data?.collection?.name}
+                    </div>
                   </div>
                 </Dialog.Title>
                 <Dialog.Close className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
                   <HiX className="h-5 w-5" />
                 </Dialog.Close>
               </div>
+              <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
               <div className="mb-4 flex items-center gap-4">
                 <input
+                  value={sweepAmount}
                   type="range"
                   name="amount"
                   id="amount"
                   min={1}
-                  max={20}
+                  max={maxInput}
                   step={1}
+                  onChange={(e) => setSweepAmount(+e.target.value)}
                   className="w-full flex-grow"
                 />
                 <input
+                  value={sweepAmount}
+                  min={1}
+                  max={maxInput}
+                  step={1}
+                  onChange={(e) => setSweepAmount(+e.target.value)}
                   type="number"
                   name="amount"
                   id="amount"
                   className="input-primary-outline w-20 px-2 dark:bg-neutral-900"
                 />
               </div>
-              <div className="grid grid-cols-7 gap-4">
-                {mappedTokens?.map((token) => (
-                  <img
-                    src={optimizeImage(token?.image, 72)}
-                    alt=""
-                    className="h-[72px] w-[72px]"
-                  />
+              <div className="mb-8 grid h-[200px] grid-cols-7 gap-2 overflow-y-auto pr-2">
+                {sweepTokens?.map((token) => (
+                  <div className="relative" key={token.tokenId}>
+                    <img
+                      className="absolute top-1 right-1 h-4 w-4"
+                      src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
+                      alt=""
+                    />
+                    <img
+                      src={optimizeImage(token?.image, 72)}
+                      alt=""
+                      className="mb-2 h-[72px] w-[72px] rounded-lg"
+                    />
+                    <div className="reservoir-subtitle text-center dark:text-white">
+                      <FormatEth
+                        amount={token?.floorAskPrice}
+                        maximumFractionDigits={4}
+                        logoWidth={7}
+                      />
+                    </div>
+                  </div>
                 ))}
               </div>
+              <div className="mb-4 flex justify-between">
+                <div className="reservoir-h6 text-center dark:text-white">
+                  Total Price
+                </div>
+                <div className="reservoir-h5 text-center dark:text-white">
+                  <FormatEth
+                    amount={sweepTotal}
+                    maximumFractionDigits={4}
+                    logoWidth={7}
+                  />
+                </div>
+              </div>
+              <button className="btn-primary-fill mx-auto w-[248px]">
+                Sweep
+              </button>
             </div>
           </Dialog.Content>
         </Dialog.Overlay>
