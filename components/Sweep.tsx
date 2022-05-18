@@ -140,18 +140,21 @@ const Sweep: FC<Props> = ({
     mutate && mutate()
   }
 
-  const execute = async (
-    token: string,
-    taker: string,
-    expectedPrice: number
-  ) => {
+  const execute = async (taker: string) => {
     setWaitingTx(true)
+
+    const query: Parameters<typeof buyTokenBeta>['0']['query'] = {
+      taker,
+    }
+
+    sweepTokens?.forEach(
+      (token, index) =>
+        // @ts-ignore
+        (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
+    )
+
     await buyTokenBeta({
-      expectedPrice,
-      query: {
-        taker,
-        token,
-      },
+      query,
       signer,
       apiBase: RESERVOIR_API_BASE,
       setState: setSteps,
@@ -162,11 +165,7 @@ const Sweep: FC<Props> = ({
     setWaitingTx(false)
   }
 
-  const tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
-
   const taker = accountData?.address
-
-  const expectedPrice = token?.market?.floorAsk?.price
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -176,14 +175,6 @@ const Sweep: FC<Props> = ({
           waitingTx ||
           isInTheWrongNetwork
         }
-        onClick={() => {
-          if (!taker || !tokenString || !expectedPrice) {
-            dispatch({ type: 'CONNECT_WALLET', payload: true })
-            return
-          }
-
-          execute(tokenString, taker, expectedPrice)
-        }}
         className="btn-primary-fill w-full"
       >
         Sweep
@@ -272,8 +263,23 @@ const Sweep: FC<Props> = ({
                   />
                 </div>
               </div>
-              <button className="btn-primary-fill mx-auto w-[248px]">
-                Sweep
+              <button
+                disabled={
+                  token?.market?.floorAsk?.price === null ||
+                  waitingTx ||
+                  isInTheWrongNetwork
+                }
+                onClick={async () => {
+                  if (!taker) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+
+                  await execute(taker)
+                }}
+                className="btn-primary-fill mx-auto w-[248px]"
+              >
+                Buy Now
               </button>
             </div>
           </Dialog.Content>
