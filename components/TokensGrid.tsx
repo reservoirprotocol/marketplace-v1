@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
-import FormatWEth from 'components/FormatWeth'
+import FormatWEth from 'components/FormatWEth'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO

@@ -9,7 +9,7 @@ import AcceptOffer from 'components/AcceptOffer'
 
 import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
-import FormatWEth from 'components/FormatWeth'
+import FormatWEth from 'components/FormatWEth'
 
 type Props = {
   data: ReturnType<typeof useUserTokens>
