@@ -66,6 +66,9 @@ $ npm install
 
 | NEXT_PUBLIC_DISABLE_COLLECTION_BG | `false` | `String` | `N/A` | true | Disable background on collection page |
 
+| NEXT_PUBLIC_COLLECTION_DESCRIPTIONS | `false` | `COLLECTION_ID::DESCRIPTION,...` | `N/A` | `0xb74bf94049d2c01f8805b8b15db0909168cabf46::test description,0xc751c84678d8e229e361f9b04c080256516f4a0a::another description` | Customize descriptions on a per collection basis |
+|
+
 You can copy the values you want to use from `env.development` or `env.production` into a new file called `.env.local`
 
 ### Run the app
