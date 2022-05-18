@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import FormatEth from '../FormatEth'
+import FormatEth from 'components/FormatEth'
 import { formatNumber } from 'lib/numbers'
-import FormatWEth from 'components/FormatWeth'
+import FormatWEth from 'components/FormatWEth'
 
 type Props = {
   count: number
