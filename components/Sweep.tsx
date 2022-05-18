@@ -183,7 +183,7 @@ const Sweep: FC<Props> = ({
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="fixed inset-0 bg-[#000000b6]">
-            <div className="fixed top-1/2 left-1/2 w-[639px] -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white p-11 shadow-xl dark:bg-black ">
+            <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white p-11 shadow-xl dark:bg-black md:w-[639px] ">
               <div className="mb-4 flex items-center justify-between">
                 <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
                   <div className="flex items-center gap-4">
@@ -215,7 +215,7 @@ const Sweep: FC<Props> = ({
                   max={maxInput}
                   step={1}
                   onChange={(e) => setSweepAmount(+e.target.value)}
-                  className="w-full flex-grow"
+                  className="hidden w-full flex-grow md:block"
                 />
                 <input
                   value={sweepAmount}
@@ -226,10 +226,10 @@ const Sweep: FC<Props> = ({
                   type="number"
                   name="amount"
                   id="amount"
-                  className="input-primary-outline w-20 px-2 dark:bg-neutral-900"
+                  className="input-primary-outline w-full px-2 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900  dark:focus:ring-4 md:w-20"
                 />
               </div>
-              <div className="mb-8 grid h-[200px] grid-cols-7 gap-2 overflow-y-auto pr-2">
+              <div className="mb-8 grid h-[200px] grid-cols-5 gap-2 overflow-y-auto pr-2 md:grid-cols-7">
                 {sweepTokens?.map((token) => (
                   <div className="relative" key={token.tokenId}>
                     <img
@@ -278,7 +278,7 @@ const Sweep: FC<Props> = ({
 
                   await execute(taker)
                 }}
-                className="btn-primary-fill mx-auto w-[248px]"
+                className="btn-primary-fill w-full md:mx-auto md:w-[248px]"
               >
                 Buy Now
               </button>
