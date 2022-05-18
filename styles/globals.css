@@ -8,14 +8,6 @@
   }
 }
 
-@font-face {
-  font-family: 'Obvia';
-  src: url('/fonts/obvia/obvia_medium-webfont.woff2') format('woff2'),
-    url('/fonts/obvia/obvia_bold-webfont.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400 500 700;
-}
-
 model-viewer {
   width: 100%;
   min-height: 500px;
@@ -32,4 +24,11 @@ model-viewer {
 .masonry-grid_column {
   padding-left: 30px; /* gutter size */
   background-clip: padding-box;
+}
+
+.clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }

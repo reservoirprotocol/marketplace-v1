@@ -5,7 +5,6 @@ import { BigNumber, constants, ethers } from 'ethers'
 import {
   useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -25,8 +24,8 @@ import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -88,7 +87,6 @@ const AttributeOfferModal: FC<Props> = ({
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
-  const { connect, connectors } = useConnect()
   const provider = useProvider()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
@@ -175,9 +173,12 @@ const AttributeOfferModal: FC<Props> = ({
       attributeKey: data.attribute.key,
       attributeValue: data.attribute.value,
       collection: data.collection.id,
+      orderKind: 'zeroex-v4',
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
+    if (SOURCE_ID) query.source = SOURCE_ID
 
     await placeBid({
       query,
@@ -234,7 +235,7 @@ const AttributeOfferModal: FC<Props> = ({
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="price"
-                    className="reservoir-h6 dark:text-white"
+                    className="reservoir-h6 font-headings dark:text-white"
                   >
                     Price (wETH)
                   </label>
@@ -258,7 +259,9 @@ const AttributeOfferModal: FC<Props> = ({
                   />
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6 dark:text-white">Fees</div>
+                  <div className="reservoir-h6 font-headings dark:text-white">
+                    Fees
+                  </div>
                   <div className="reservoir-body text-right dark:text-white">
                     <div>Royalty {royaltyPercentage}</div>
                     {FEE_BPS && (
@@ -270,8 +273,10 @@ const AttributeOfferModal: FC<Props> = ({
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6 dark:text-white">Total Cost</div>
-                  <div className="reservoir-h6 font-bold dark:text-white">
+                  <div className="reservoir-h6 font-headings dark:text-white">
+                    Total Cost
+                  </div>
+                  <div className="reservoir-h6 font-headings font-bold dark:text-white">
                     <FormatEth
                       amount={calculations.total}
                       maximumFractionDigits={4}

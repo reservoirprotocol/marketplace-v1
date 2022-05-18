@@ -30,7 +30,7 @@ const CommunityDropdown: FC<Props> = ({ collections }) => {
           return (
             <DropdownMenu.Item
               key={collection.collectionId}
-              className="reservoir-gray-dropdown-item overflow-hidden rounded-none border-b p-0 outline-none first:rounded-t-2xl last:rounded-b-2xl last:border-b-0 dark:border-[#525252] dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              className="reservoir-gray-dropdown-item overflow-hidden rounded-none border-b p-0 outline-none first:rounded-t-2xl last:rounded-b-2xl last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             >
               <Link href={`/collections/${collection.collectionId}`}>
                 <a

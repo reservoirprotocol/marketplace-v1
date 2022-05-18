@@ -1,10 +1,14 @@
 import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
-import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next'
 import { useRouter } from 'next/router'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import useDataDog from 'hooks/useAnalytics'
-import getMode from 'lib/getMode'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import useUserTokens from 'hooks/useUserTokens'
@@ -15,10 +19,10 @@ import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
-import setParams from 'lib/params'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
+import { paths, setParams } from '@reservoir0x/client-sdk'
+import useSearchCommunity from 'hooks/useSearchCommunity'
 
 // Environment variables
 // For more information about these variables
@@ -26,28 +30,31 @@ import useUserBids from 'hooks/useUserBids'
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
-const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Address: NextPage<Props> = ({ mode, collectionId }) => {
+const metadata = {
+  title: (title: string) => <title>{title}</title>,
+}
+
+const Address: NextPage<Props> = ({ address, fallback }) => {
   const { data: accountData } = useAccount()
   const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
   useDataDog(accountData)
-  const address = router.query?.address?.toString()?.toLowerCase()
-  const userTokens = useUserTokens(collectionId, [], mode, address)
+  const userTokens = useUserTokens(COLLECTION, [fallback.tokens], address)
   // const userActivity = useUserActivity([], address)
-  const sellPositions = useUserAsks([], address)
-  const buyPositions = useUserBids([], address)
+  const collections = useSearchCommunity()
+  const sellPositions = useUserAsks([], address, collections)
+  const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
@@ -75,15 +82,9 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
     ]
   }
 
-  const title = META_TITLE ? (
-    <title>{META_TITLE}</title>
-  ) : (
-    <title>{address} Profile | Reservoir Market</title>
-  )
-
   return (
-    <Layout navbar={{ mode, communityId: collectionId }}>
-      <Head>{title}</Head>
+    <Layout navbar={{}}>
+      <Head>{metadata.title(`${address} Profile`)}</Head>
       <div className="col-span-full mt-4 mb-10 justify-self-center">
         {address && <EthAccount address={address} />}
       </div>
@@ -119,7 +120,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
             modal={{
               accountData,
               isInTheWrongNetwork,
-              collectionId,
+              collectionId: undefined,
               setToast,
               signer,
             }}
@@ -146,7 +147,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 modal={{
                   accountData,
                   isInTheWrongNetwork,
-                  collectionId,
+                  collectionId: undefined,
                   setToast,
                   signer,
                 }}
@@ -164,7 +165,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
                 modal={{
                   accountData,
                   isInTheWrongNetwork,
-                  collectionId,
+                  collectionId: undefined,
                   setToast,
                   signer,
                 }}
@@ -179,11 +180,22 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
 
 export default Address
 
-export const getServerSideProps: GetServerSideProps<{
-  mode: ReturnType<typeof getMode>['mode']
-  collectionId: string
-}> = async ({ req }) => {
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps: GetStaticProps<{
+  address: string | undefined
+  fallback: {
+    tokens: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
+  }
+}> = async ({ params }) => {
   const options: RequestInit | undefined = {}
+
+  const address = params?.address?.toString()
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
@@ -191,30 +203,27 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  let { collectionId, mode } = getMode(req, USE_WILDCARD, COMMUNITY, COLLECTION)
+  const url = new URL(`/users/${address}/tokens/v2}`, RESERVOIR_API_BASE)
 
-  if (mode === 'collection') {
-    const url = new URL('/collection/v1', RESERVOIR_API_BASE)
-
-    const query: paths['/collection/v1']['get']['parameters']['query'] = {
-      id: collectionId,
-    }
-
-    const href = setParams(url, query)
-
-    const res = await fetch(href, options)
-
-    const json =
-      (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
-
-    if (!json.collection?.id) {
-      return {
-        notFound: true,
-      }
-    }
-
-    collectionId = json.collection?.id
+  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: 0,
   }
 
-  return { props: { collectionId, mode } }
+  if (COMMUNITY) query.community = COMMUNITY
+
+  setParams(url, query)
+
+  const res = await fetch(url.href, options)
+
+  const tokens = (await res.json()) as Props['fallback']['tokens']
+
+  return {
+    props: {
+      address,
+      fallback: {
+        tokens,
+      },
+    },
+  }
 }

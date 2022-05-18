@@ -25,8 +25,8 @@ import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -169,9 +169,12 @@ const CollectionOfferModal: FC<Props> = ({
       weiPrice: calculations.total.toString(),
       expirationTime: expirationValue,
       collection: data.collection.id,
+      orderKind: 'zeroex-v4',
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
+    if (SOURCE_ID) query.source = SOURCE_ID
 
     await placeBid({
       query,
@@ -188,7 +191,7 @@ const CollectionOfferModal: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+        className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
       >
         Make a Collection Offer
       </Dialog.Trigger>
@@ -225,7 +228,10 @@ const CollectionOfferModal: FC<Props> = ({
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label htmlFor="price" className="reservoir-h6 dark:text-white">
+                <label
+                  htmlFor="price"
+                  className="reservoir-h6 font-headings dark:text-white"
+                >
                   Price (wETH)
                 </label>
                 <input
@@ -247,7 +253,9 @@ const CollectionOfferModal: FC<Props> = ({
                 />
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6 dark:text-white">Fees</div>
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  Fees
+                </div>
                 <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
@@ -259,8 +267,10 @@ const CollectionOfferModal: FC<Props> = ({
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6 dark:text-white">Total Cost</div>
-                <div className="reservoir-h6 dark:text-white">
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  Total Cost
+                </div>
+                <div className="reservoir-h6 font-headings dark:text-white">
                   <FormatEth
                     amount={calculations.total}
                     maximumFractionDigits={4}

@@ -39,6 +39,20 @@ const primaryColors = {
     700: '#1d4ed8',
     900: '#1e3a8a',
   },
+  purple: {
+    100: '#EBDCFF',
+    300: '#D9BCFF',
+    500: '#B47AFF',
+    700: '#8221FE',
+    900: '#48138F',
+  },
+  toxic: {
+    100: '#f5f6db',
+    300: '#ecedbd',
+    500: '#d9dc82',
+    700: '#C0C53F',
+    900: '#adb139',
+  },
   default: {
     100: '#F1E5FF',
     300: '#E2CCFF',
@@ -81,6 +95,8 @@ module.exports = {
       },
       colors: {
         primary: primaryColors[PRIMARY_COLOR],
+        'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
+        backdrop: 'rgba(255, 255, 255, 0.8)',
       },
     },
   },
