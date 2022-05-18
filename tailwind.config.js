@@ -95,6 +95,8 @@ module.exports = {
       },
       colors: {
         primary: primaryColors[PRIMARY_COLOR],
+        'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
+        backdrop: 'rgba(255, 255, 255, 0.8)',
       },
     },
   },
