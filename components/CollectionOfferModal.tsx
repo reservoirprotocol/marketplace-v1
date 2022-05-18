@@ -172,9 +172,9 @@ const CollectionOfferModal: FC<Props> = ({
       orderKind: 'zeroex-v4',
     }
 
+    if (SOURCE_ID) query.source = SOURCE_ID
     if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
-    if (SOURCE_ID) query.source = SOURCE_ID
 
     await placeBid({
       query,
