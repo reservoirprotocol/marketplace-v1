@@ -154,6 +154,7 @@ const Sweep: FC<Props> = ({
     )
 
     await buyTokenBeta({
+      expectedPrice: sweepTotal,
       query,
       signer,
       apiBase: RESERVOIR_API_BASE,
