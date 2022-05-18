@@ -49,6 +49,7 @@ const ListModal: FC<Props> = ({
   signer,
   mutate,
   setToast,
+  children,
 }) => {
   // wagmi
   const { connect, connectors } = useConnect()
@@ -252,16 +253,24 @@ const ListModal: FC<Props> = ({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button
-          disabled={isInTheWrongNetwork}
-          onClick={async () => {
-            setPostOnOpenSea(false)
-            setOrderbook(['reservoir'])
-          }}
-          className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
-        >
-          {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
-        </button>
+        {children ? (
+          children
+        ) : (
+          <button
+            disabled={isInTheWrongNetwork}
+            onClick={async (e) => {
+              setPostOnOpenSea(false)
+              setOrderbook(['reservoir'])
+            }}
+            className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
+          >
+            {children
+              ? children
+              : token?.market?.floorAsk?.price
+              ? 'Edit Listing'
+              : 'List for Sale'}
+          </button>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>

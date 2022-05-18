@@ -93,6 +93,7 @@ module.exports = {
 
         'spin-reverse': 'spin 1s reverse linear infinite',
       },
+
       colors: {
         primary: primaryColors[PRIMARY_COLOR],
         'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
