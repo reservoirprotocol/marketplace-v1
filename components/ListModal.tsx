@@ -17,7 +17,6 @@ import { GlobalContext } from 'context/GlobalState'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const OPENSEA_CROSS_POST = process.env.NEXT_PUBLIC_OPENSEA_CROSS_POST
@@ -50,6 +49,7 @@ const ListModal: FC<Props> = ({
   signer,
   mutate,
   setToast,
+  children,
 }) => {
   // wagmi
   const { connect, connectors } = useConnect()
@@ -199,7 +199,7 @@ const ListModal: FC<Props> = ({
     if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
     if (FEE_BPS) query.fee = FEE_BPS
     if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
@@ -234,7 +234,7 @@ const ListModal: FC<Props> = ({
       orderKind: 'wyvern-v2.3',
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
 
     if (postOnOpenSea) {
       await listToken({
@@ -253,16 +253,24 @@ const ListModal: FC<Props> = ({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button
-          disabled={isInTheWrongNetwork}
-          onClick={async () => {
-            setPostOnOpenSea(false)
-            setOrderbook(['reservoir'])
-          }}
-          className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
-        >
-          {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
-        </button>
+        {children ? (
+          children
+        ) : (
+          <button
+            disabled={isInTheWrongNetwork}
+            onClick={async (e) => {
+              setPostOnOpenSea(false)
+              setOrderbook(['reservoir'])
+            }}
+            className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
+          >
+            {children
+              ? children
+              : token?.market?.floorAsk?.price
+              ? 'Edit Listing'
+              : 'List for Sale'}
+          </button>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
