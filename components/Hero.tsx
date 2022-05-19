@@ -112,9 +112,10 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
-
+  
+  //Split on commas outside of backticks (`)
   let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
-    ? ENV_COLLECTION_DESCRIPTIONS.split(',')
+    ? ENV_COLLECTION_DESCRIPTIONS.split(/,(?=(?:[^\`]*\`[^\`]*\`)*[^\`]*$)/)
     : null
   let envDescription = null
 
@@ -122,7 +123,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     envDescriptions.find((description) => {
       const descriptionPieces = description.split('::')
       if (descriptionPieces[0] == collectionId) {
-        envDescription = descriptionPieces[1]
+        envDescription = descriptionPieces[1].replace(/`/g, '')
       }
     })
   }
