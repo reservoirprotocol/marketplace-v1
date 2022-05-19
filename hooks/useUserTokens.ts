@@ -14,8 +14,8 @@ type Tokens =
 
 export default function useUserTokens(
   user: string | undefined,
-  collectionId: string | undefined,
-  fallbackData: Tokens[]
+  collectionId?: string | undefined,
+  fallbackData?: Tokens[]
 ) {
   const { ref, inView } = useInView()
 
