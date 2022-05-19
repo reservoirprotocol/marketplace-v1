@@ -58,7 +58,7 @@ const primaryColors = {
     300: '#FFD0EB',
     500: '#FDA2D5',
     700: '#FC96D0',
-    900: '#48138f',
+    900: '#975B7D',
   },
   babyblue: {
     100: '#F8FEFF',
