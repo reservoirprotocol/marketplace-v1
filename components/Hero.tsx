@@ -32,6 +32,8 @@ const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const ENV_COLLECTION_DESCRIPTIONS =
+  process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
 const setToast = (data: ComponentProps<typeof Toast>['data']) => {
   toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
@@ -111,10 +113,25 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
+  
+  //Split on commas outside of backticks (`)
+  let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
+    ? ENV_COLLECTION_DESCRIPTIONS.split(/,(?=(?:[^\`]*\`[^\`]*\`)*[^\`]*$)/)
+    : null
+  let envDescription = null
 
-  const description = collection?.data?.collection?.metadata?.description as
-    | string
-    | undefined
+  if (envDescriptions && envDescriptions.length > 0) {
+    envDescriptions.find((description) => {
+      const descriptionPieces = description.split('::')
+      if (descriptionPieces[0] == collectionId) {
+        envDescription = descriptionPieces[1].replace(/`/g, '')
+      }
+    })
+  }
+
+  const description =
+    envDescription ||
+    (collection?.data?.collection?.metadata?.description as string | undefined)
   const header = {
     banner: bannerImage as string,
     image: collection?.data?.collection?.metadata?.imageUrl as string,
