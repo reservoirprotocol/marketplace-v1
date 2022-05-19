@@ -233,7 +233,7 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`/users/${address}/tokens/v2}`, RESERVOIR_API_BASE)
+  const url = new URL(`/users/${address}/tokens/v2`, RESERVOIR_API_BASE)
 
   let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,

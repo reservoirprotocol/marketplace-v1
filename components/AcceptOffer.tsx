@@ -161,11 +161,9 @@ const AcceptOffer: FC<Props> = ({
     tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
   }
 
-  const execute = async (
-    token: string,
-    taker: string,
-    expectedPrice: number
-  ) => {
+  const expectedPrice = token?.market?.topBid?.value
+
+  const execute = async (token: string, taker: string) => {
     setWaitingTx(true)
     await acceptOffer({
       expectedPrice,
@@ -184,20 +182,18 @@ const AcceptOffer: FC<Props> = ({
 
   const taker = accountData?.address
 
-  const expectedPrice = token?.market?.topBid?.value
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
           onClick={() => {
-            if (!taker || !tokenString || !expectedPrice) {
+            if (!taker || !tokenString) {
               dispatch({ type: 'CONNECT_WALLET', payload: true })
               return
             }
 
-            execute(tokenString, taker, expectedPrice)
+            execute(tokenString, taker)
           }}
           //className="btn-primary-outline w-full dark:text-white"
         >
