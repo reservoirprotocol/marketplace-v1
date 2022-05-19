@@ -13,9 +13,9 @@ type Tokens =
   paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 
 export default function useUserTokens(
-  collectionId: string | undefined,
-  fallbackData: Tokens[],
-  user: string | undefined
+  user: string | undefined,
+  collectionId?: string | undefined,
+  fallbackData?: Tokens[]
 ) {
   const { ref, inView } = useInView()
 
@@ -79,8 +79,8 @@ const getKey: InfiniteKeyLoader = (
     offset: index * 20,
   }
 
-  if (COMMUNITY) query.community = collectionId
   if (COLLECTION) query.collection = collectionId
+  if (COMMUNITY) query.community = COMMUNITY
 
   const href = setParams(pathname, query)
 

@@ -271,11 +271,7 @@ const CollectionOfferModal: FC<Props> = ({
                   Total Cost
                 </div>
                 <div className="reservoir-h6 font-headings dark:text-white">
-                  <FormatEth
-                    amount={calculations.total}
-                    maximumFractionDigits={4}
-                    logoWidth={10}
-                  />
+                  <FormatEth amount={calculations.total} logoWidth={10} />
                 </div>
               </div>
               {calculations.error && (

@@ -49,7 +49,7 @@ const Listings: FC<Props> = ({ asks }) => {
                   >
                     {/* UNIT PRICE */}
                     <td className="reservoir-h6 whitespace-nowrap px-6 py-4 font-headings dark:text-white">
-                      <FormatEth amount={unitPrice} maximumFractionDigits={4} />
+                      <FormatEth amount={unitPrice} />
                     </td>
 
                     {/* TIME */}

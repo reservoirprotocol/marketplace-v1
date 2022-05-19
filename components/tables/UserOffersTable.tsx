@@ -124,7 +124,7 @@ const UserOffersTable: FC<Props> = ({
 
                 {/* OFFER */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} maximumFractionDigits={4} />
+                  <FormatEth amount={price} />
                 </td>
 
                 {/* EXPIRATION */}

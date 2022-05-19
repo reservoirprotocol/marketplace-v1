@@ -166,7 +166,6 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
                     <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
                     <div>
                       <FormatEth
-                        maximumFractionDigits={4}
                         amount={stats?.data?.stats?.market?.floorAsk?.price}
                       />{' '}
                       floor price
@@ -198,7 +197,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
               </button>
             </div>
           </div>
-          <AttributesFlex />
+          <AttributesFlex className="mb-10 flex flex-wrap gap-3" />
           <ExploreFlex />
           {router.query?.attribute_key || router.query?.attribute_key === '' ? (
             <ExploreTokens

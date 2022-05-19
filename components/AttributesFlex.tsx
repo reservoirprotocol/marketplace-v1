@@ -1,6 +1,6 @@
 import { toggleOffAttribute } from 'lib/url'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { FC } from 'react'
 import { HiX } from 'react-icons/hi'
 
 type Attribute = {
@@ -8,7 +8,11 @@ type Attribute = {
   value: string
 }[]
 
-const AttributesFlex = () => {
+type Props = {
+  className: string
+}
+
+const AttributesFlex: FC<Props> = ({ className }) => {
   const router = useRouter()
 
   const [filters, setFilters] = React.useState<Attribute>([])
@@ -35,7 +39,7 @@ const AttributesFlex = () => {
   if (filters.length === 0) return null
 
   return (
-    <div className="mb-10 flex flex-wrap gap-3">
+    <div className={className}>
       {filters.map(({ key, value }) => (
         <div
           key={key}

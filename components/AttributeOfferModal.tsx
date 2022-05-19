@@ -279,7 +279,6 @@ const AttributeOfferModal: FC<Props> = ({
                   <div className="reservoir-h6 font-headings font-bold dark:text-white">
                     <FormatEth
                       amount={calculations.total}
-                      maximumFractionDigits={4}
                       logoWidth={10}
                     />
                   </div>

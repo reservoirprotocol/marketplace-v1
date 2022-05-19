@@ -57,14 +57,14 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const { data: accountData } = useAccount()
 
   const { data: ensAvatar } = useEnsAvatar({
-    addressOrName: accountData?.address,
+    addressOrName: address,
   })
-  const { data: ensName } = useEnsName({ address: accountData?.address })
+  const { data: ensName } = useEnsName({ address })
   const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
   useDataDog(accountData)
-  const userTokens = useUserTokens(COLLECTION, [fallback.tokens], address)
+  const userTokens = useUserTokens(address)
   // const userActivity = useUserActivity([], address)
   const collections = useSearchCommunity()
   const sellPositions = useUserAsks([], address, collections)
@@ -233,7 +233,7 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`/users/${address}/tokens/v2}`, RESERVOIR_API_BASE)
+  const url = new URL(`/users/${address}/tokens/v2`, RESERVOIR_API_BASE)
 
   let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
     limit: 20,

@@ -8,6 +8,16 @@
   }
 }
 
+input[type=range] {
+  -webkit-appearance: none;
+  @apply bg-primary-700 rounded-full h-3;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+   -webkit-appearance: none;
+  @apply bg-black w-6 h-6 rounded-full dark:bg-white ring ring-white dark:ring-black;
+}
+
 model-viewer {
   width: 100%;
   min-height: 500px;
