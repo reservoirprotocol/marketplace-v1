@@ -30,7 +30,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
 
   return (
     <Link href={`/${token?.token?.contract}/${token?.token?.tokenId}`}>
-      <a className="group overflow-hidden rounded-md border bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-[rgba(255,255,255,0.1)]  dark:bg-[#040404]">
+      <a className="group overflow-hidden rounded-[16px] border bg-white shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-[rgba(255,255,255,0.1)]  dark:bg-[#040404]">
         {token?.token?.image && !isBroken ? (
           <img
             onError={() => setIsBroken(true)}
