@@ -1,8 +1,6 @@
 <h3 align="center">Reservoir Market</h3>
   <p align="center">
-An open source NFT marketplace built on Reservoir.    <br />
-    <a href="https://reservoirprotocol.github.io/docs/protocol/intro/"><strong>Explore the docs »</strong></a>
-    <br />
+An open source NFT marketplace built on Reservoir.
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
