@@ -106,7 +106,7 @@ const UserTokensTable: FC<Props> = ({
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <div className="min-w-[160px]">
                     <span className={`${isOwner ? 'group-hover:hidden' : ''}`}>
-                      <FormatEth amount={listPrice} maximumFractionDigits={4} />
+                      <FormatEth amount={listPrice} />
                     </span>
                     {isOwner && (
                       <div className="hidden group-hover:inline-block">
@@ -135,7 +135,6 @@ const UserTokensTable: FC<Props> = ({
                         <span className="group-hover:hidden">
                           <FormatEth
                             amount={topOffer}
-                            maximumFractionDigits={4}
                           />
                         </span>
                         <div className="hidden group-hover:inline-block">
@@ -153,7 +152,7 @@ const UserTokensTable: FC<Props> = ({
                         </div>
                       </div>
                     ) : (
-                      <FormatEth amount={topOffer} maximumFractionDigits={4} />
+                      <FormatEth amount={topOffer} />
                     )
                   ) : (
                     '-'
@@ -162,7 +161,7 @@ const UserTokensTable: FC<Props> = ({
 
                 {/* FLOOR */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={listPrice} maximumFractionDigits={4} />
+                  <FormatEth amount={listPrice} />
                 </td>
               </tr>
             )

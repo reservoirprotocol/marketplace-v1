@@ -164,7 +164,6 @@ export const ListPrice = ({
         <div>
           <FormatEth
             amount={floorSellValue}
-            maximumFractionDigits={4}
             logoWidth={7}
           />
         </div>
@@ -187,7 +186,6 @@ export const TopOffer = ({
         <div>
           <FormatEth
             amount={topBuyValue}
-            maximumFractionDigits={4}
             logoWidth={7}
           />
         </div>

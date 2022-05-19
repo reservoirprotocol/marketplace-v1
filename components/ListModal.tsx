@@ -378,7 +378,6 @@ const ListModal: FC<Props> = ({
                 <div className="reservoir-h6 font-headings dark:text-white">
                   <FormatEth
                     amount={youGet}
-                    maximumFractionDigits={4}
                     logoWidth={10}
                   />
                 </div>
