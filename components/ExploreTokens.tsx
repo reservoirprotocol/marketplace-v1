@@ -67,7 +67,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                 >
                   <a
                     ref={idx === arr.length - 1 ? viewRef : null}
-                    className="flex flex-col rounded-[16px] border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
+                    className="flex transform-gpu flex-col rounded-[16px] border border-[#D4D4D4] bg-white p-3 transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
                   >
                     <div className="flex-grow"></div>
                     <ExploreImagesGrid

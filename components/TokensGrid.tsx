@@ -64,7 +64,7 @@ const TokensGrid: FC<Props> = ({
                 key={`${token?.collection?.name}${idx}`}
                 href={`/${token?.contract}/${token?.tokenId}`}
               >
-                <a className="group relative mb-6 grid self-start overflow-hidden rounded-[16px] bg-white shadow-md transition hover:shadow-lg dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
+                <a className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#D4D4D4] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
                   {token?.source && (
                     <img
                       className="absolute top-4 left-4 h-8 w-8"
