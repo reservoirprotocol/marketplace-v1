@@ -37,6 +37,50 @@ type Props = {
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 
+const StyledSlider = styled(SliderPrimitive.Root, {
+  position: 'relative',
+  alignItems: 'center',
+  userSelect: 'none',
+  touchAction: 'none',
+
+  '&[data-orientation="horizontal"]': {
+    height: 20,
+  },
+
+  '&[data-orientation="vertical"]': {
+    flexDirection: 'column',
+    width: 20,
+    height: 100,
+  },
+})
+
+const StyledTrack = styled(SliderPrimitive.Track, {
+  position: 'relative',
+  flexGrow: 1,
+  borderRadius: '9999px',
+
+  '&[data-orientation="horizontal"]': { height: 6 },
+  '&[data-orientation="vertical"]': { width: 6 },
+})
+
+const StyledRange = styled(SliderPrimitive.Range, {
+  position: 'absolute',
+  borderRadius: '9999px',
+  height: '100%',
+})
+
+const StyledThumb = styled(SliderPrimitive.Thumb, {
+  all: 'unset',
+  display: 'block',
+  width: 20,
+  height: 20,
+  backgroundColor: 'white',
+  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  borderRadius: 10,
+  '&:hover': { backgroundColor: violet.violet3 },
+  '&:focus': { boxShadow: `0 0 0 5px ${blackA.blackA8}` },
+})
+
 const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const { data: accountData } = useAccount()
@@ -69,6 +113,10 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   useEffect(() => {
     const sweepTokens = mappedTokens
       .filter((value) => value !== undefined)
+      .filter(
+        (token) =>
+          token?.owner?.toLowerCase() !== accountData?.address?.toLowerCase()
+      )
       .slice(0, sweepAmount)
     // @ts-ignore
     setSweepTokens(sweepTokens)
@@ -170,54 +218,6 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
 
   const taker = accountData?.address
 
-  const StyledSlider = styled(SliderPrimitive.Root, {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    userSelect: 'none',
-    touchAction: 'none',
-    width: 200,
-
-    '&[data-orientation="horizontal"]': {
-      height: 20,
-    },
-
-    '&[data-orientation="vertical"]': {
-      flexDirection: 'column',
-      width: 20,
-      height: 100,
-    },
-  })
-
-  const StyledTrack = styled(SliderPrimitive.Track, {
-    backgroundColor: blackA.blackA10,
-    position: 'relative',
-    flexGrow: 1,
-    borderRadius: '9999px',
-
-    '&[data-orientation="horizontal"]': { height: 3 },
-    '&[data-orientation="vertical"]': { width: 3 },
-  })
-
-  const StyledRange = styled(SliderPrimitive.Range, {
-    position: 'absolute',
-    backgroundColor: 'white',
-    borderRadius: '9999px',
-    height: '100%',
-  })
-
-  const StyledThumb = styled(SliderPrimitive.Thumb, {
-    all: 'unset',
-    display: 'block',
-    width: 20,
-    height: 20,
-    backgroundColor: 'white',
-    boxShadow: `0 2px 10px ${blackA.blackA7}`,
-    borderRadius: 10,
-    '&:hover': { backgroundColor: violet.violet3 },
-    '&:focus': { boxShadow: `0 0 0 5px ${blackA.blackA8}` },
-  })
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -226,6 +226,15 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           waitingTx ||
           isInTheWrongNetwork
         }
+        onClick={() => {
+          if (sweepTokens?.length === 0) {
+            setToast({
+              kind: 'error',
+              message: 'There are no tokens available for purchase.',
+              title: 'Unable to sweep',
+            })
+          }
+        }}
         className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:w-[222px]"
       >
         Sweep
@@ -260,20 +269,22 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                 </div>
                 <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
                 <div className="mb-4 flex items-center gap-4">
-                  <form>
-                    <StyledSlider
-                      defaultValue={[50]}
-                      value={[sweepAmount]}
-                      max={100}
-                      step={1}
-                      onValueChange={(value) => setSweepAmount(value[0])}
-                    >
-                      <StyledTrack>
-                        <StyledRange />
-                      </StyledTrack>
-                      <StyledThumb />
-                    </StyledSlider>
-                  </form>
+                  <StyledSlider
+                    defaultValue={[50]}
+                    value={[sweepAmount]}
+                    step={1}
+                    onValueChange={(value) => setSweepAmount(value[0])}
+                    name="amount"
+                    id="amount"
+                    min={1}
+                    max={maxInput}
+                    className="hidden w-full flex-grow md:flex"
+                  >
+                    <StyledTrack className="bg-neutral-200 dark:bg-neutral-700">
+                      <StyledRange className="bg-primary-700" />
+                    </StyledTrack>
+                    <StyledThumb />
+                  </StyledSlider>
                   <input
                     value={sweepAmount}
                     min={1}
@@ -325,7 +336,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                   disabled={
                     token?.market?.floorAsk?.price === null ||
                     waitingTx ||
-                    isInTheWrongNetwork
+                    isInTheWrongNetwork ||
+                    sweepTokens?.length === 0
                   }
                   onClick={async () => {
                     if (!taker) {
