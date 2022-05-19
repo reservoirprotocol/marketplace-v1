@@ -19,6 +19,9 @@ import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from './FormatEth'
 import AttributesFlex from './AttributesFlex'
 import ModalCard from './modal/ModalCard'
+import { styled } from '@stitches/react'
+import { violet, blackA } from '@radix-ui/colors'
+import * as SliderPrimitive from '@radix-ui/react-slider'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -167,6 +170,54 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
 
   const taker = accountData?.address
 
+  const StyledSlider = styled(SliderPrimitive.Root, {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    userSelect: 'none',
+    touchAction: 'none',
+    width: 200,
+
+    '&[data-orientation="horizontal"]': {
+      height: 20,
+    },
+
+    '&[data-orientation="vertical"]': {
+      flexDirection: 'column',
+      width: 20,
+      height: 100,
+    },
+  })
+
+  const StyledTrack = styled(SliderPrimitive.Track, {
+    backgroundColor: blackA.blackA10,
+    position: 'relative',
+    flexGrow: 1,
+    borderRadius: '9999px',
+
+    '&[data-orientation="horizontal"]': { height: 3 },
+    '&[data-orientation="vertical"]': { width: 3 },
+  })
+
+  const StyledRange = styled(SliderPrimitive.Range, {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: '9999px',
+    height: '100%',
+  })
+
+  const StyledThumb = styled(SliderPrimitive.Thumb, {
+    all: 'unset',
+    display: 'block',
+    width: 20,
+    height: 20,
+    backgroundColor: 'white',
+    boxShadow: `0 2px 10px ${blackA.blackA7}`,
+    borderRadius: 10,
+    '&:hover': { backgroundColor: violet.violet3 },
+    '&:focus': { boxShadow: `0 0 0 5px ${blackA.blackA8}` },
+  })
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
@@ -209,17 +260,20 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                 </div>
                 <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
                 <div className="mb-4 flex items-center gap-4">
-                  <input
-                    value={sweepAmount}
-                    type="range"
-                    name="amount"
-                    id="amount"
-                    min={1}
-                    max={maxInput}
-                    step={1}
-                    onChange={(e) => setSweepAmount(+e.target.value)}
-                    className="hidden w-full flex-grow md:block"
-                  />
+                  <form>
+                    <StyledSlider
+                      defaultValue={[50]}
+                      value={[sweepAmount]}
+                      max={100}
+                      step={1}
+                      onValueChange={(value) => setSweepAmount(value[0])}
+                    >
+                      <StyledTrack>
+                        <StyledRange />
+                      </StyledTrack>
+                      <StyledThumb />
+                    </StyledSlider>
+                  </form>
                   <input
                     value={sweepAmount}
                     min={1}
