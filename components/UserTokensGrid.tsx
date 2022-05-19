@@ -24,7 +24,7 @@ type Props = {
   }
 }
 
-const Token = ({ token, modal, mutate }: any) => {
+const Token = ({ token, modal, mutate, isOwner }: any) => {
   const [isBroken, setIsBroken] = useState(false)
   console.log(token)
 
@@ -131,44 +131,46 @@ const Token = ({ token, modal, mutate }: any) => {
           )}
         </div>
 
-        <div
-          onClick={(e) => e.preventDefault()}
-          className="flex items-center bg-[rgba(0,0,0,0.02)]  p-4  py-2 dark:bg-[rgba(255,255,255,0.05)]"
-        >
-          <ListModal
-            signer={modal.signer}
-            isInTheWrongNetwork={modal.isInTheWrongNetwork}
-            maker={modal.accountData?.address}
-            data={{
-              collectionId: token?.token?.collection.id,
-              contract: token?.token?.contract,
-              tokenId: token?.token?.tokenId,
-            }}
-            mutate={mutate}
-            setToast={modal.setToast}
+        {isOwner && (
+          <div
+            onClick={(e) => e.preventDefault()}
+            className="flex items-center bg-[rgba(0,0,0,0.02)]  p-4  py-2 dark:bg-[rgba(255,255,255,0.05)]"
           >
-            <p className="hover:color-primary mr-6 text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-              List
-            </p>
-          </ListModal>
-          {token?.token?.topBid?.value && (
-            <AcceptOffer
+            <ListModal
+              signer={modal.signer}
+              isInTheWrongNetwork={modal.isInTheWrongNetwork}
+              maker={modal.accountData?.address}
               data={{
+                collectionId: token?.token?.collection.id,
                 contract: token?.token?.contract,
                 tokenId: token?.token?.tokenId,
               }}
-              show={true}
-              signer={modal.signer}
-              isInTheWrongNetwork={modal.isInTheWrongNetwork}
-              setToast={modal.setToast}
               mutate={mutate}
+              setToast={modal.setToast}
             >
-              <p className="hover:color-primary text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                Accept Offer
+              <p className="hover:color-primary mr-6 text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
+                List
               </p>
-            </AcceptOffer>
-          )}
-        </div>
+            </ListModal>
+            {token?.token?.topBid?.value && (
+              <AcceptOffer
+                data={{
+                  contract: token?.token?.contract,
+                  tokenId: token?.token?.tokenId,
+                }}
+                show={true}
+                signer={modal.signer}
+                isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                setToast={modal.setToast}
+                mutate={mutate}
+              >
+                <p className="hover:color-primary text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
+                  Accept Offer
+                </p>
+              </AcceptOffer>
+            )}
+          </div>
+        )}
       </a>
     </Link>
   )
@@ -178,6 +180,7 @@ const UserTokensGrid: FC<Props> = ({
   data: { tokens, ref },
   modal,
   mutate,
+  isOwner,
 }) => {
   const { data, isValidating, size } = tokens
   const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
@@ -197,7 +200,13 @@ const UserTokensGrid: FC<Props> = ({
             <LoadingCard key={`loading-card-${index}`} />
           ))
         : mappedTokens?.map((token, idx) => (
-            <Token token={token} key={idx} modal={modal} mutate={mutate} />
+            <Token
+              token={token}
+              key={idx}
+              modal={modal}
+              mutate={mutate}
+              isOwner={isOwner}
+            />
           ))}
       {!didReactEnd &&
         Array(20)
