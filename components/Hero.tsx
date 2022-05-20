@@ -26,11 +26,14 @@ import useTokens from 'hooks/useTokens'
 import HeroSocialLinks from 'components/hero/HeroSocialLinks'
 import HeroBackground from 'components/hero/HeroBackground'
 import HeroStats from 'components/hero/HeroStats'
+import Sweep from './Sweep'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const ENV_COLLECTION_DESCRIPTIONS =
+  process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
 const setToast = (data: ComponentProps<typeof Toast>['data']) => {
   toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
@@ -110,10 +113,25 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
+  
+  //Split on commas outside of backticks (`)
+  let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
+    ? ENV_COLLECTION_DESCRIPTIONS.split(/,(?=(?:[^\`]*\`[^\`]*\`)*[^\`]*$)/)
+    : null
+  let envDescription = null
 
-  const description = collection?.data?.collection?.metadata?.description as
-    | string
-    | undefined
+  if (envDescriptions && envDescriptions.length > 0) {
+    envDescriptions.find((description) => {
+      const descriptionPieces = description.split('::')
+      if (descriptionPieces[0] == collectionId) {
+        envDescription = descriptionPieces[1].replace(/`/g, '')
+      }
+    })
+  }
+
+  const description =
+    envDescription ||
+    (collection?.data?.collection?.metadata?.description as string | undefined)
   const header = {
     banner: bannerImage as string,
     image: collection?.data?.collection?.metadata?.imageUrl as string,
@@ -233,11 +251,10 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ))}
-            <HeroBuyButton
-              collectionId={collectionId}
-              token={token}
-              attributeData={attributeData}
-              env={env}
+            <Sweep
+              collection={collection}
+              tokens={tokens}
+              setToast={setToast}
             />
           </div>
         </div>
@@ -247,134 +264,3 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 }
 
 export default Hero
-
-type HeroBuyButtonProps = {
-  collectionId: string | undefined
-  attributeData: AttibuteModalProps['data']
-  token: {
-    id: string
-    asker: string | undefined
-    price: number | undefined
-  }
-  env: CollectionModalProps['env']
-}
-
-const HeroBuyButton: FC<HeroBuyButtonProps> = ({
-  collectionId,
-  token,
-  env,
-}) => {
-  const { data: accountData } = useAccount()
-  const { activeChain } = useNetwork()
-  const { data: signer } = useSigner()
-  const { dispatch } = useContext(GlobalContext)
-  const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [steps, setSteps] = useState<Execute['steps']>()
-  const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const stats = useCollectionStats(router, collectionId)
-
-  const taker = accountData?.address
-  const expectedPrice = token.price
-
-  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
-  const isOwner =
-    token?.asker?.toLowerCase() === accountData?.address?.toLowerCase()
-
-  const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () =>
-    stats?.mutate()
-
-  const handleError: Parameters<typeof buyToken>[0]['handleError'] = (err) => {
-    if (err?.type === 'price mismatch') {
-      setToast({
-        kind: 'error',
-        message: 'Price was greater than expected.',
-        title: 'Could not buy token',
-      })
-      return
-    }
-    if (err?.message === 'Not enough ETH balance') {
-      setToast({
-        kind: 'error',
-        message: 'You have insufficient funds to buy this token.',
-        title: 'Not enough ETH balance',
-      })
-      return
-    }
-    // Handle user rejection
-    if (err?.code === 4001) {
-      setOpen(false)
-      setSteps(undefined)
-      setToast({
-        kind: 'error',
-        message: 'You have canceled the transaction.',
-        title: 'User canceled transaction',
-      })
-      return
-    }
-    setToast({
-      kind: 'error',
-      message: 'The transaction was not completed.',
-      title: 'Could not buy token',
-    })
-  }
-
-  const execute = async (
-    token: string,
-    taker: string,
-    expectedPrice: number
-  ) => {
-    if (isOwner) {
-      setToast({
-        kind: 'error',
-        message: 'You already own this token.',
-        title: 'Failed to buy token',
-      })
-      return
-    }
-
-    setWaitingTx(true)
-
-    await buyTokenBeta({
-      expectedPrice,
-      query: { token, taker },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
-
-    setWaitingTx(false)
-  }
-
-  return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger
-        disabled={token.price === null || waitingTx || isInTheWrongNetwork}
-        onClick={() => {
-          if (!token.id || !taker || !expectedPrice) {
-            dispatch({ type: 'CONNECT_WALLET', payload: true })
-            return
-          }
-
-          execute(token.id, taker, expectedPrice)
-        }}
-        className="btn-primary-fill min-w-[222px] dark:ring-primary-900 dark:focus:ring-4"
-      >
-        {waitingTx ? (
-          <CgSpinner className="h-4 w-4 animate-spin" />
-        ) : (
-          `Buy for ${formatBN(token.price, 4)} ETH`
-        )}
-      </Dialog.Trigger>
-      {steps && (
-        <Dialog.Portal>
-          <Dialog.Overlay>
-            <ModalCard title="Buy token" loading={waitingTx} steps={steps} />
-          </Dialog.Overlay>
-        </Dialog.Portal>
-      )}
-    </Dialog.Root>
-  )
-}

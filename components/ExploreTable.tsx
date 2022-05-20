@@ -64,14 +64,12 @@ const ExploreTable = ({
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.floorAskPrices?.[0]}
-                maximumFractionDigits={4}
                 logoWidth={7}
               />
             </td>
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.topBid?.value}
-                maximumFractionDigits={4}
                 logoWidth={7}
               />
             </td>
