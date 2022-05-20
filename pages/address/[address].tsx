@@ -14,7 +14,6 @@ import {
   useEnsName,
   useEnsAvatar,
 } from 'wagmi'
-import useDataDog from 'hooks/useAnalytics'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import useUserTokens from 'hooks/useUserTokens'
@@ -63,7 +62,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const { activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
-  useDataDog(accountData)
   const userTokens = useUserTokens(address)
   // const userActivity = useUserActivity([], address)
   const collections = useSearchCommunity()

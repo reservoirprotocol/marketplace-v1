@@ -1,7 +1,5 @@
 import Layout from 'components/Layout'
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
-import { useAccount } from 'wagmi'
-import useDataDog from 'hooks/useAnalytics'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
 import CollectionsGrid from 'components/CollectionsGrid'
@@ -40,9 +38,7 @@ const metadata = {
 
 const Home: NextPage<Props> = ({ fallback }) => {
   const router = useRouter()
-  const { data: accountData } = useAccount()
   const collections = useCollections(fallback.collections)
-  useDataDog(accountData)
 
   const title = META_TITLE && metadata.title(META_TITLE)
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
