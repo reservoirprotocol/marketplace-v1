@@ -49,6 +49,7 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -221,21 +222,23 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 <AttributesFlex className="flex flex-wrap gap-3" />
                 <ExploreFlex />
               </div>
-              <div className="flex items-center gap-4">
-                <input
-                  type="checkbox"
-                  name="localListings"
-                  id="localListings"
-                  className="scale-125 transform"
-                  onChange={(e) => setLocalListings(e.target.checked)}
-                />
-                <label
-                  htmlFor="localListings"
-                  className="reservoir-body dark:text-white"
-                >
-                  Show Only Local Listings
-                </label>
-              </div>
+              {SOURCE_ID && (
+                <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    name="localListings"
+                    id="localListings"
+                    className="scale-125 transform"
+                    onChange={(e) => setLocalListings(e.target.checked)}
+                  />
+                  <label
+                    htmlFor="localListings"
+                    className="reservoir-body dark:text-white"
+                  >
+                    Show Only Local Listings
+                  </label>
+                </div>
+              )}
             </div>
             {router.query?.attribute_key ||
             router.query?.attribute_key === '' ? (

@@ -74,7 +74,7 @@ const getKey: (
   }
 
   if (index !== 0) query.continuation = previousPageData.continuation
-  if (source) query.source = SOURCE_ID || 'Reservoir Market'
+  if (source) query.source = SOURCE_ID
 
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {
