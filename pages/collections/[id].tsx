@@ -54,13 +54,19 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
+  const [localListings, setLocalListings] = useState(false)
   const [refreshLoading, setRefreshLoading] = useState(false)
 
   const collection = useCollection(fallback.collection, id)
 
   const stats = useCollectionStats(router, id)
 
-  const { tokens, ref: refTokens } = useTokens(id, [fallback.tokens], router)
+  const { tokens, ref: refTokens } = useTokens(
+    id,
+    [fallback.tokens],
+    router,
+    localListings
+  )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
@@ -167,7 +173,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
           <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
           <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
-            <div className="mb-10 hidden items-center justify-between md:flex">
+            <div className="mb-4 hidden items-center justify-between md:flex">
               <div className="flex items-center gap-6">
                 {!!stats?.data?.stats?.tokenCount &&
                   stats?.data?.stats?.tokenCount > 0 && (
@@ -210,8 +216,27 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 </button>
               </div>
             </div>
-            <AttributesFlex className="mb-10 flex flex-wrap gap-3" />
-            <ExploreFlex />
+            <div className="mb-10 flex items-center justify-between">
+              <div>
+                <AttributesFlex className="flex flex-wrap gap-3" />
+                <ExploreFlex />
+              </div>
+              <div className="flex items-center gap-4">
+                <input
+                  type="checkbox"
+                  name="localListings"
+                  id="localListings"
+                  className="scale-125 transform"
+                  onChange={(e) => setLocalListings(e.target.checked)}
+                />
+                <label
+                  htmlFor="localListings"
+                  className="reservoir-body dark:text-white"
+                >
+                  Show Only Local Listings
+                </label>
+              </div>
+            </div>
             {router.query?.attribute_key ||
             router.query?.attribute_key === '' ? (
               <ExploreTokens
