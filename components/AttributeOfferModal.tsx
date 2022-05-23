@@ -277,10 +277,7 @@ const AttributeOfferModal: FC<Props> = ({
                     Total Cost
                   </div>
                   <div className="reservoir-h6 font-headings font-bold dark:text-white">
-                    <FormatEth
-                      amount={calculations.total}
-                      logoWidth={10}
-                    />
+                    <FormatEth amount={calculations.total} logoWidth={10} />
                   </div>
                 </div>
                 {calculations.error && (

@@ -138,17 +138,6 @@ const ListModal: FC<Props> = ({
 
   const { market, token: token_ } = token
 
-  const tokenData: ComponentProps<typeof ModalCard>['data'] = {
-    token: {
-      contract: token_?.contract,
-      floorSellValue: market?.floorAsk?.price,
-      id: token_?.tokenId,
-      image: token_?.image,
-      name: token_?.name,
-      topBuyValue: market?.topBid?.value,
-    },
-  }
-
   const handleError: Parameters<typeof listToken>[0]['handleError'] = (
     err: any
   ) => {
@@ -376,10 +365,7 @@ const ListModal: FC<Props> = ({
                   You get
                 </div>
                 <div className="reservoir-h6 font-headings dark:text-white">
-                  <FormatEth
-                    amount={youGet}
-                    logoWidth={10}
-                  />
+                  <FormatEth amount={youGet} logoWidth={10} />
                 </div>
               </div>
               {postOnOpenSea && (
