@@ -18,6 +18,7 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { GlobalProvider } from 'context/GlobalState'
+import AnalyticsProvider from 'components/AnalyticsProvider'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -67,7 +68,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <GlobalProvider>
       <Provider client={client}>
-        <Component {...pageProps} />
+        <AnalyticsProvider>
+          <Component {...pageProps} />
+        </AnalyticsProvider>
       </Provider>
     </GlobalProvider>
   )

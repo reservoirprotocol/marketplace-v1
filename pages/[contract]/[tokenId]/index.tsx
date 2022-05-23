@@ -7,9 +7,7 @@ import {
   NextPage,
 } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
 import TokenAttributes from 'components/TokenAttributes'
-import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
@@ -57,10 +55,7 @@ const metadata = {
 }
 
 const Index: NextPage<Props> = ({ collectionId }) => {
-  const { data: accountData } = useAccount()
   const router = useRouter()
-
-  useDataDog(accountData)
 
   const collection = useCollection(undefined, collectionId)
 

@@ -70,6 +70,8 @@ Note: Environment variables can also be added during deployment via deployment p
 | NEXT_PUBLIC_PROXY_API_BASE     | `true`   | The proxy API used to pass the Reservoir API key without exposing it to the client. | /api/reservoir                                                    |
 | RESERVOIR_API_KEY              | `true`   | Reservoir API key provided by the Reservoir Protocol. Get your own API key.         | 123e4567-e89b-12d3-a456-426614174000                              |
 | NEXT_PUBLIC_OPENSEA_API_KEY    | `false`  | OpenSea API key used to cross post orders to OpenSea.                               | 1a6c419a275c34de9d83df3dbe7ab890                                  |      
+| NEXT_PUBLIC_DATADOG_CLIENT_TOKEN    | `false`  | Datadog client token for configuring analytics                               | pub4bec8e12715ec3458fe1acced2bidb361                                  |      
+| NEXT_PUBLIC_DATADOG_APPLICATION_ID    | `false`  | Datadog application id for configuring analytics                               | 1dabcdadaad-3577-125a-b412-815faf31sfsd190                                  |      
 
 **Marketplace Configuration**
 | Environment Variable                | Required | Description                                                                                                                                                          | Example                                       |                                                                                                                                |                                                  |
