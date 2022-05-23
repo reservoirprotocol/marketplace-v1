@@ -293,7 +293,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
-    collection: paths['/collection/v1']['get']['responses']['200']['schema']
+    collection: paths['/collection/v2']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
   }
   id: string | undefined
@@ -309,9 +309,9 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-  const collectionUrl = new URL('/collection/v1', RESERVOIR_API_BASE)
+  const collectionUrl = new URL('/collection/v2', RESERVOIR_API_BASE)
 
-  let collectionQuery: paths['/collection/v1']['get']['parameters']['query'] = {
+  let collectionQuery: paths['/collection/v2']['get']['parameters']['query'] = {
     id,
   }
 

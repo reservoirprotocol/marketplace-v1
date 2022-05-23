@@ -29,9 +29,9 @@ export async function getCollection(
   collectionId: string | undefined,
   setCollection: Dispatch<any>
 ) {
-  const pathname = `${PROXY_API_BASE}/collection/v1`
+  const pathname = `${PROXY_API_BASE}/collection/v2`
 
-  let query: paths['/collection/v1']['get']['parameters']['query'] = {
+  let query: paths['/collection/v2']['get']['parameters']['query'] = {
     id: collectionId,
   }
 
@@ -40,7 +40,7 @@ export async function getCollection(
   const res = await fetch(href)
 
   const json =
-    (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
+    (await res.json()) as paths['/collection/v2']['get']['responses']['200']['schema']
 
   setCollection(json)
 }
