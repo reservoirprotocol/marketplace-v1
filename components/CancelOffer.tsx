@@ -93,20 +93,6 @@ const CancelOffer: FC<Props> = ({
     token = details.data?.tokens?.[0]
   }
 
-  const modalData: ComponentProps<typeof ModalCard>['data'] = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
-  }
-
   const handleError: Parameters<typeof cancelOrder>[0]['handleError'] = (
     err: any
   ) => {
