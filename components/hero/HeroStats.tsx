@@ -55,6 +55,10 @@ const PercentageChange: FC<{ value: number | undefined | null }> = ({
 
   const percentage = (value - 1) * 100
 
+  if (percentage > 100 || value === 0) {
+    return null
+  }
+
   if (value < 1) {
     return (
       <div className="text-sm text-[#FF3B3B]">{formatNumber(percentage)}%</div>
@@ -67,7 +71,7 @@ const PercentageChange: FC<{ value: number | undefined | null }> = ({
     )
   }
 
-  return <div>0%</div>
+  return null
 }
 
 export default HeroStats
