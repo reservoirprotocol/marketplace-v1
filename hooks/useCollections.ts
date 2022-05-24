@@ -19,7 +19,11 @@ export default function useCollections(fallback?: Collections) {
     fetcher,
     {
       revalidateFirstPage: false,
-      fallback,
+      fallbackData: [
+        {
+          collections: fallback?.collections,
+        },
+      ],
     }
   )
 

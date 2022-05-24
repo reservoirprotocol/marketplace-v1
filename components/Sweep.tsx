@@ -224,17 +224,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         disabled={
           token?.market?.floorAsk?.price === null ||
           waitingTx ||
-          isInTheWrongNetwork
+          isInTheWrongNetwork ||
+          sweepTokens?.length === 0
         }
-        onClick={() => {
-          if (sweepTokens?.length === 0) {
-            setToast({
-              kind: 'error',
-              message: 'There are no tokens available for purchase.',
-              title: 'Unable to sweep',
-            })
-          }
-        }}
         className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:w-[222px]"
       >
         Sweep

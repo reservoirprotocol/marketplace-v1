@@ -1,24 +1,11 @@
-import { formatBN } from 'lib/numbers'
-import {
-  FC,
-  useEffect,
-  useContext,
-  useState,
-  ComponentProps,
-  useRef,
-} from 'react'
+import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
-import * as Dialog from '@radix-ui/react-dialog'
-import ModalCard from './modal/ModalCard'
-import { CgSpinner } from 'react-icons/cg'
-import { Execute, paths } from '@reservoir0x/client-sdk/dist/types'
-import { GlobalContext } from 'context/GlobalState'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
+import { paths } from '@reservoir0x/client-sdk/dist/types'
+import { useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import CollectionOfferModal from 'components/CollectionOfferModal'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
-import { buyTokenBeta, buyToken } from '@reservoir0x/client-sdk/dist/actions'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useCollection from 'hooks/useCollection'
 import { useRouter } from 'next/router'
@@ -31,7 +18,6 @@ import Sweep from './Sweep'
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ENV_COLLECTION_DESCRIPTIONS =
   process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
@@ -43,7 +29,7 @@ type Props = {
   collectionId: string | undefined
   fallback: {
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
-    collection: paths['/collection/v1']['get']['responses']['200']['schema']
+    collection: paths['/collection/v2']['get']['responses']['200']['schema']
   }
 }
 
@@ -113,7 +99,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const bannerImage =
     envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
-  
+
   //Split on commas outside of backticks (`)
   let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
     ? ENV_COLLECTION_DESCRIPTIONS.split(/,(?=(?:[^\`]*\`[^\`]*\`)*[^\`]*$)/)
@@ -146,7 +132,10 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     asker: floor?.maker,
   }
 
-  const hasTokenSetId = !!collection.data?.collection?.tokenSetId
+  const isSupported =
+    !!collection.data?.collection?.tokenSetId &&
+    !!collection.data?.collection?.collectionBidSupported
+
   const isAttributeModal = !!attribute.key && !!attribute.value
 
   const royalties: CollectionModalProps['royalties'] = {
@@ -229,7 +218,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             </>
           )}
           <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
-            {hasTokenSetId &&
+            {isSupported &&
               (isAttributeModal ? (
                 <AttributeOfferModal
                   royalties={royalties}
