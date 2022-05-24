@@ -7,9 +7,7 @@ import {
   NextPage,
 } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
 import TokenAttributes from 'components/TokenAttributes'
-import useDataDog from 'hooks/useAnalytics'
 import Head from 'next/head'
 import useDetails from 'hooks/useDetails'
 import useCollection from 'hooks/useCollection'
@@ -57,10 +55,7 @@ const metadata = {
 }
 
 const Index: NextPage<Props> = ({ collectionId }) => {
-  const { data: accountData } = useAccount()
   const router = useRouter()
-
-  useDataDog(accountData)
 
   const collection = useCollection(undefined, collectionId)
 
@@ -119,8 +114,8 @@ const Index: NextPage<Props> = ({ collectionId }) => {
       <div className="col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-4 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
         <Owner details={details} />
         <PriceData details={details} collection={collection} />
-        <Listings asks={asks} />
         <TokenAttributes token={token?.token} />
+        <Listings asks={asks} />
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         <CollectionInfo collection={collection} details={details} />
