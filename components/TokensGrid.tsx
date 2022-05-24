@@ -29,8 +29,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const isLoadingInitialData = !data && !error
   const didReachEnd =
     data &&
-    (data[data.length - 1].tokens?.length === 0 ||
-      data[data.length - 1].continuation === null)
+    (data[data.length - 1]?.tokens?.length === 0 ||
+      data[data.length - 1]?.continuation === null)
 
   return (
     <Masonry

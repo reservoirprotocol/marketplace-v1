@@ -22,7 +22,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
         // @ts-ignore
         .filter((collection) => !collection?.sampleImages?.includes(null))
     : []
-  const didReachEnd = data && data[data.length - 1].collections?.length === 0
+  const didReachEnd = data && data[data.length - 1]?.collections?.length === 0
 
   return (
     <Masonry
