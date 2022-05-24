@@ -26,6 +26,7 @@ function getInitialSearchHref() {
 }
 
 const Navbar: FC = () => {
+  const [showLinks, setShowLinks] = useState(true)
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
@@ -44,10 +45,12 @@ const Navbar: FC = () => {
     })
   }
 
-  const hasExternalLinks = externalLinks.length > 0
-
   const isGlobal = !COMMUNITY && !COLLECTION
   const filterableCollection = isGlobal || COMMUNITY
+
+  useEffect(() => {
+    setShowLinks(externalLinks.length > 0)
+  }, [])
 
   useEffect(() => {
     if (filterableCollection) {
@@ -71,6 +74,7 @@ const Navbar: FC = () => {
             <CommunityDropdown collections={initialResults?.collections} />
           )
         } else {
+          setShowLinks(false)
           setFilterComponent(
             <SearchCollections
               communityId={COMMUNITY}
@@ -84,24 +88,25 @@ const Navbar: FC = () => {
 
   return (
     <nav className="relative col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
-      <NavbarLogo className="z-10" />
+      <NavbarLogo className="z-10 max-w-[300px]" />
+      {showLinks && (
+        <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
+          {externalLinks.map(({ name, url }) => (
+            <a
+              key={url}
+              href={url}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
+            >
+              {name}
+            </a>
+          ))}
+        </div>
+      )}
       <div className="flex h-full w-full items-center justify-center">
         <div className="absolute left-0 z-[1] flex w-full justify-center">
           {filterComponent && filterComponent}
-          {hasExternalLinks && (
-            <div className="ml-12 hidden items-center gap-11 lg:flex">
-              {externalLinks.map(({ name, url }) => (
-                <a
-                  key={url}
-                  href={url}
-                  rel="noopener noferrer"
-                  className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
-                >
-                  {name}
-                </a>
-              ))}
-            </div>
-          )}
         </div>
       </div>
       <HamburgerMenu externalLinks={externalLinks} />
