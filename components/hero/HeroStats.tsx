@@ -48,10 +48,16 @@ const Stat: FC<{ name: string }> = ({ name, children }) => (
   </div>
 )
 
-const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
-  if (value === undefined) return null
+const PercentageChange: FC<{ value: number | undefined | null }> = ({
+  value,
+}) => {
+  if (value === undefined || value === null) return null
 
   const percentage = (value - 1) * 100
+
+  if (percentage > 100 || value === 0) {
+    return null
+  }
 
   if (value < 1) {
     return (
@@ -65,7 +71,7 @@ const PercentageChange: FC<{ value: number | undefined }> = ({ value }) => {
     )
   }
 
-  return <div>0%</div>
+  return null
 }
 
 export default HeroStats

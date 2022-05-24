@@ -6,7 +6,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
 type Props = {
   collection:
-    | paths['/collection/v1']['get']['responses']['200']['schema']['collection']
+    | paths['/collection/v2']['get']['responses']['200']['schema']['collection']
     | undefined
 }
 

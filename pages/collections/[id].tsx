@@ -52,18 +52,25 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
+  const [localListings, setLocalListings] = useState(false)
   const [refreshLoading, setRefreshLoading] = useState(false)
 
   const collection = useCollection(fallback.collection, id)
 
   const stats = useCollectionStats(router, id)
 
-  const { tokens, ref: refTokens } = useTokens(id, [fallback.tokens], router)
+  const { tokens, ref: refTokens } = useTokens(
+    id,
+    [fallback.tokens],
+    router,
+    localListings
+  )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
@@ -194,7 +201,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
             <>
               <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
-                <div className="mb-10 hidden items-center justify-between md:flex">
+                <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
                     {!!stats?.data?.stats?.tokenCount &&
                       stats?.data?.stats?.tokenCount > 0 && (
@@ -241,8 +248,29 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     </button>
                   </div>
                 </div>
-                <AttributesFlex className="mb-10 flex flex-wrap gap-3" />
-                <ExploreFlex />
+                <div className="mb-10 flex items-center justify-between">
+                  <div>
+                    <AttributesFlex className="flex flex-wrap gap-3" />
+                    <ExploreFlex />
+                  </div>
+                  {SOURCE_ID && (
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        name="localListings"
+                        id="localListings"
+                        className="scale-125 transform"
+                        onChange={(e) => setLocalListings(e.target.checked)}
+                      />
+                      <label
+                        htmlFor="localListings"
+                        className="reservoir-body dark:text-white"
+                      >
+                        Show Only Local Listings
+                      </label>
+                    </div>
+                  )}
+                </div>
                 {router.query?.attribute_key ||
                 router.query?.attribute_key === '' ? (
                   <ExploreTokens
@@ -251,7 +279,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   />
                 ) : (
                   <TokensGrid
-                    tokenCount={tokenCount}
                     tokens={tokens}
                     viewRef={refTokens}
                     collectionImage={
@@ -329,7 +356,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
-    collection: paths['/collection/v1']['get']['responses']['200']['schema']
+    collection: paths['/collection/v2']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
   }
   id: string | undefined
@@ -345,9 +372,9 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-  const collectionUrl = new URL('/collection/v1', RESERVOIR_API_BASE)
+  const collectionUrl = new URL('/collection/v2', RESERVOIR_API_BASE)
 
-  let collectionQuery: paths['/collection/v1']['get']['parameters']['query'] = {
+  let collectionQuery: paths['/collection/v2']['get']['parameters']['query'] = {
     id,
   }
 

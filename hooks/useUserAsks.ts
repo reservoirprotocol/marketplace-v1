@@ -92,7 +92,9 @@ const getKey: InfiniteKeyLoader = (
     (contract, index) => (query[`contracts[${index}]`] = contract)
   )
 
-  if (index !== 0) query.continuation = previousPageData.continuation
+  if (index !== 0 && previousPageData.continuation !== null) {
+    query.continuation = previousPageData.continuation
+  }
 
   const href = setParams(pathname, query)
 
