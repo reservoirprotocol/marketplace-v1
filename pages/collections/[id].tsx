@@ -29,6 +29,7 @@ import FormatEth from 'components/FormatEth'
 import useAttributes from 'hooks/useAttributes'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
+import CollectionActivityTable from 'components/tables/CollectionActivityTable'
 
 // Environment variables
 // For more information about these variables
@@ -260,6 +261,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 )}
               </div>
             </>
+          </Tabs.Content>
+          <Tabs.Content value="activity" asChild>
+            <CollectionActivityTable />
           </Tabs.Content>
         </Tabs.Root>
       </>
