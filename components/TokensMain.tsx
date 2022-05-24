@@ -206,7 +206,6 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
             />
           ) : (
             <TokensGrid
-              tokenCount={tokenCount}
               tokens={tokens}
               viewRef={refTokens}
               collectionImage={

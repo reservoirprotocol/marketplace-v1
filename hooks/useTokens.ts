@@ -73,7 +73,10 @@ const getKey: (
     collection: collectionId,
   }
 
-  if (index !== 0) query.continuation = previousPageData.continuation
+  if (index !== 0 && previousPageData.continuation !== null) {
+    query.continuation = previousPageData.continuation
+  }
+
   if (source) query.source = SOURCE_ID
 
   // Convert the client sort query into the API sort query

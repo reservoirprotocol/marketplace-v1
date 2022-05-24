@@ -248,7 +248,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               />
             ) : (
               <TokensGrid
-                tokenCount={tokenCount}
                 tokens={tokens}
                 viewRef={refTokens}
                 collectionImage={

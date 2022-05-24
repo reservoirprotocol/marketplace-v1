@@ -19,22 +19,18 @@ type Props = {
   >
   collectionImage: string | undefined
   viewRef: ReturnType<typeof useInView>['ref']
-  tokenCount: number
 }
 
-const TokensGrid: FC<Props> = ({
-  tokens,
-  viewRef,
-  tokenCount,
-  collectionImage,
-}) => {
+const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const { data, error } = tokens
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedTokens = data ? data.flatMap(({ tokens }) => tokens) : []
   const isLoadingInitialData = !data && !error
-  const isEmpty = mappedTokens.length === 0
-  const didReactEnd = isEmpty || (data && mappedTokens.length < tokenCount)
+  const didReachEnd =
+    data &&
+    (data[data.length - 1].tokens?.length === 0 ||
+      data[data.length - 1].continuation === null)
 
   return (
     <Masonry
@@ -143,7 +139,7 @@ const TokensGrid: FC<Props> = ({
               </Link>
             )
           })}
-      {didReactEnd &&
+      {!didReachEnd &&
         Array(10)
           .fill(null)
           .map((_, index) => {
