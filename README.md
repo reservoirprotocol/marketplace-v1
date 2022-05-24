@@ -17,7 +17,7 @@ The marketplace supports 3 different modes:
 ![bayc-screen](https://user-images.githubusercontent.com/96800113/170141023-3ec88b7d-bbab-43b8-a0e4-8792c5235057.png)
 
 -   All collections ([example](https://www.reservoir.market/))
-![general-screen](https://user-images.githubusercontent.com/96800113/170141089-2d036e57-5298-40e3-902d-b3bbe0725f72.png)
+![general-screen](https://user-images.githubusercontent.com/96800113/170141225-422ec020-86ba-41b0-ba12-085e9617eaf8.png)
 
   
 With each deployment, communities are given full control over their marketplace from designing their look and feel to setting their own marketplace fees.
