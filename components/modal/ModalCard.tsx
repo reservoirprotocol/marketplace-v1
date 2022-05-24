@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
-import { optimizeImage } from 'lib/optmizeImage'
 import Steps from 'components/Steps'
 import { Execute } from '@reservoir0x/client-sdk/dist/types/index'
 import FormatEth from 'components/FormatEth'
@@ -9,26 +8,6 @@ import FormatEth from 'components/FormatEth'
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 
 type Props = {
-  data?: {
-    token?: {
-      image?: string | undefined
-      name?: string | undefined
-      id?: string | undefined
-      contract?: string | undefined
-      topBuyValue?: number | undefined
-      floorSellValue?: number | undefined
-    }
-    collection?: {
-      id?: string | undefined
-      image?: string | undefined
-      name?: string | undefined
-      tokenCount?: number
-    }
-    attribute?: {
-      key?: string | undefined
-      value?: string | undefined
-    }
-  }
   loading: boolean
   onCloseCallback?: () => any
   orderbook?: ('opensea' | 'reservoir')[]
@@ -40,13 +19,12 @@ type Props = {
 
 const orderbooks = {
   opensea: 'OpenSea',
-  reservoir: SOURCE_ID,
+  reservoir: SOURCE_ID || 'Reservoir',
 }
 
 const ModalCard: FC<Props> = ({
   actionButton,
   children,
-  data,
   loading,
   orderbook,
   onCloseCallback,
@@ -54,13 +32,6 @@ const ModalCard: FC<Props> = ({
   steps,
   title,
 }) => {
-  // SUBTITLE
-  // Attribute Offer -> Loot (for Adventurers)
-  // Collection Offer -> Collection
-  // Token Offer -> Loot (for Adventurers)
-  const subTitle =
-    data?.attribute || data?.token ? data?.collection?.name : 'Collection'
-
   // If all executed succesfully, then success is true
   const success =
     !loading && steps && !steps.find(({ status }) => status === 'incomplete')
@@ -82,43 +53,6 @@ const ModalCard: FC<Props> = ({
           >
             <HiX className="h-5 w-5" />
           </Dialog.Close>
-        </div>
-        {data && (
-          <div className="mb-5 flex items-center gap-4">
-            <img
-              src={optimizeImage(
-                data?.collection?.image || data?.token?.image,
-                50
-              )}
-              className="w-[50px]"
-            />
-            <div className="overflow-auto">
-              <div className="reservoir-body dark:text-white">{subTitle}</div>
-              <div className="reservoir-h4 my-1.5 font-headings dark:text-white">
-                {/* If this is an offer modal, change */}
-                {/* the header based on the type of offer */}
-                {data?.attribute ? (
-                  <>
-                    <span>{data?.attribute?.key}: </span>
-                    <span>{data?.attribute?.value}</span>
-                  </>
-                ) : data?.token ? (
-                  data?.token?.name
-                ) : (
-                  data?.collection?.name
-                )}
-              </div>
-              {data?.collection?.tokenCount && (
-                <div className="reservoir-body mb-1.5 dark:text-white">
-                  {`${data?.collection?.tokenCount} Eligible Tokens`}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        <div className="reservoir-body mb-5 flex flex-wrap items-stretch gap-1.5 dark:text-white">
-          <TopOffer topBuyValue={data?.token?.topBuyValue} />
-          <ListPrice floorSellValue={data?.token?.floorSellValue} />
         </div>
         {steps ? <Steps steps={steps} /> : children}
         {success ? (
@@ -162,10 +96,7 @@ export const ListPrice = ({
       <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5 text-[#111827]">
         <span className="whitespace-nowrap">List Price</span>
         <div>
-          <FormatEth
-            amount={floorSellValue}
-            logoWidth={7}
-          />
+          <FormatEth amount={floorSellValue} logoWidth={7} />
         </div>
       </div>
     )
@@ -184,10 +115,7 @@ export const TopOffer = ({
       <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5">
         <span className="whitespace-nowrap">Current Top Offer</span>
         <div>
-          <FormatEth
-            amount={topBuyValue}
-            logoWidth={7}
-          />
+          <FormatEth amount={topBuyValue} logoWidth={7} />
         </div>
       </div>
     )

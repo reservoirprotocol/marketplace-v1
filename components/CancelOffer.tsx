@@ -20,7 +20,7 @@ import { GlobalContext } from 'context/GlobalState'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
 
 type Props = {
   data:
@@ -91,20 +91,6 @@ const CancelOffer: FC<Props> = ({
   // From SWR
   if (details && 'data' in details && details?.data?.tokens?.[0]) {
     token = details.data?.tokens?.[0]
-  }
-
-  const modalData: ComponentProps<typeof ModalCard>['data'] = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
   }
 
   const handleError: Parameters<typeof cancelOrder>[0]['handleError'] = (

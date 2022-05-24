@@ -14,7 +14,6 @@ type Tokens =
 
 export default function useUserTokens(
   user: string | undefined,
-  collectionId?: string | undefined,
   fallbackData?: Tokens[]
 ) {
   const { ref, inView } = useInView()
@@ -23,11 +22,7 @@ export default function useUserTokens(
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey(
-        { pathname, collectionId, proxyApi: PROXY_API_BASE },
-        index,
-        previousPageData
-      ),
+      getKey({ pathname, proxyApi: PROXY_API_BASE }, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -48,7 +43,6 @@ export default function useUserTokens(
 type InfiniteKeyLoader = (
   custom: {
     pathname: string
-    collectionId: string | undefined
     proxyApi: string | undefined
   },
   ...base: Parameters<SWRInfiniteKeyLoader>
@@ -57,13 +51,12 @@ type InfiniteKeyLoader = (
 const getKey: InfiniteKeyLoader = (
   custom: {
     pathname: string
-    collectionId: string | undefined
     proxyApi: string | undefined
   },
   index: number,
   previousPageData: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
 ) => {
-  const { pathname, collectionId, proxyApi } = custom
+  const { pathname, proxyApi } = custom
   if (!proxyApi) {
     console.debug(
       'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
@@ -79,8 +72,8 @@ const getKey: InfiniteKeyLoader = (
     offset: index * 20,
   }
 
-  if (COLLECTION) query.collection = collectionId
   if (COMMUNITY) query.community = COMMUNITY
+  if (COLLECTION && !COMMUNITY) query.collection = COLLECTION
 
   const href = setParams(pathname, query)
 
