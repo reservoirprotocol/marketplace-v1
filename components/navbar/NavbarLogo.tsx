@@ -5,6 +5,7 @@ const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const DESKTOP_NAVBAR_LOGO = process.env.NEXT_PUBLIC_DESKTOP_NAVBAR_LOGO
+const NAVBAR_LOGO_LINK = process.env.NEXT_PUBLIC_NAVBAR_LOGO_LINK
 
 type Props = {
   variant?: 'desktop' | 'mobile' | undefined
@@ -20,7 +21,7 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const isTestNet = CHAIN_ID === '4'
 
   return (
-    <Link href="/">
+    <Link href={NAVBAR_LOGO_LINK || '/'}>
       <a
         className={`relative inline-flex flex-none items-center gap-1 ${className}`}
       >
