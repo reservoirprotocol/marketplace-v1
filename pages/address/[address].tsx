@@ -19,7 +19,6 @@ import { toggleOnItem } from 'lib/router'
 import useUserTokens from 'hooks/useUserTokens'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
-import UserTokensTable from 'components/tables/UserTokensTable'
 import UserTokensGrid from 'components/UserTokensGrid'
 import { shrinkAddress } from 'components/EthAccount'
 import Avatar from 'components/Avatar'
@@ -42,8 +41,6 @@ const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
-const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
