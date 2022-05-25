@@ -25,7 +25,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
           <div>{token?.token?.name || `#${token?.token?.tokenId}`}</div>
           {bannedOnOpenSea && (
             <Tooltip.Provider>
-              <Tooltip.Root>
+              <Tooltip.Root delayDuration={0}>
                 <Tooltip.Trigger>
                   <FiAlertCircle className="h-6 w-6 text-[#FF3B3B]" />
                 </Tooltip.Trigger>
