@@ -19,6 +19,7 @@ import CollectionInfo from 'components/token/CollectionInfo'
 import Owner from 'components/token/Owner'
 import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
+import { useEffect, useState } from 'react'
 
 // Environment variables
 // For more information about these variables
@@ -35,6 +36,7 @@ const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -55,6 +57,11 @@ const metadata = {
 }
 
 const Index: NextPage<Props> = ({ collectionId }) => {
+  const [tokenOpenSea, setTokenOpenSea] = useState<any>({
+    animation_url: null,
+    extension: null,
+  })
+  const [bannedOnOpenSea, setBannedOnOpenSea] = useState(false)
   const router = useRouter()
 
   const collection = useCollection(undefined, collectionId)
@@ -70,6 +77,56 @@ const Index: NextPage<Props> = ({ collectionId }) => {
     details.data?.tokens?.[0]?.token?.kind,
     `${details.data?.tokens?.[0]?.token?.contract}:${details.data?.tokens?.[0]?.token?.tokenId}`
   )
+
+  const contract = router.query?.contract?.toString()
+  const tokenId = router.query?.tokenId?.toString()
+
+  const openSeaBaseUrl =
+    CHAIN_ID === '4'
+      ? 'https://testnets-api.opensea.io/'
+      : 'https://api.opensea.io/'
+
+  const urlOpenSea = new URL(
+    `/api/v1/asset/${contract}/${tokenId}`,
+    openSeaBaseUrl
+  )
+
+  useEffect(() => {
+    async function getOpenSeaData(url: URL) {
+      let result: any = { animation_url: null, extension: null }
+      try {
+        const res = await fetch(url.href)
+        const json = await res.json()
+
+        setBannedOnOpenSea(!json?.supports_wyvern)
+
+        const animation_url = json?.animation_url
+        // Get the last section of the URL
+        // lastPartOfUrl = '874f68834bdf5f05982d01067776acc2.wav' when input is
+        // 'https://storage.opensea.io/files/874f68834bdf5f05982d01067776acc2.wav'
+        const lastPartOfUrl = animation_url?.split('/')?.pop()
+        // Extract the file extension from `lastPartOfUrl`, example: 'wav'
+        let extension = null
+        if (lastPartOfUrl) {
+          const ext = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
+          // This makes a strong assumption and it's not reliable
+          if (ext?.length && ext.length > 10) {
+            extension = 'other'
+          } else {
+            extension = ext
+          }
+        }
+
+        result = { animation_url, extension }
+      } catch (err) {
+        console.error(err)
+      }
+
+      setTokenOpenSea(result)
+    }
+
+    getOpenSeaData(urlOpenSea)
+  }, [])
 
   if (details.error) {
     return <div>There was an error</div>
@@ -104,7 +161,7 @@ const Index: NextPage<Props> = ({ collectionId }) => {
       </Head>
       <div className="col-span-full content-start space-y-4 px-2 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
         <div className="mb-4">
-          <TokenMedia details={details} />
+          <TokenMedia details={details} tokenOpenSea={tokenOpenSea} />
         </div>
         <div className="hidden space-y-4 md:block">
           <CollectionInfo collection={collection} details={details} />
@@ -112,7 +169,7 @@ const Index: NextPage<Props> = ({ collectionId }) => {
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-4 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
-        <Owner details={details} />
+        <Owner details={details} bannedOnOpenSea={bannedOnOpenSea} />
         <PriceData details={details} collection={collection} />
         <TokenAttributes token={token?.token} />
         <Listings asks={asks} />

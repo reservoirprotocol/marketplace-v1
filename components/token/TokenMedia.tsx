@@ -1,64 +1,18 @@
 import useDetails from 'hooks/useDetails'
 import { optimizeImage } from 'lib/optmizeImage'
-import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 
 type Props = {
   details: ReturnType<typeof useDetails>
+  tokenOpenSea: {
+    animation_url: string | null
+    extension: string | null
+  }
 }
 
-const TokenMedia: FC<Props> = ({ details }) => {
-  const router = useRouter()
-  const [tokenOpenSea, setTokenOpenSea] = useState<any>({
-    animation_url: null,
-    extension: null,
-  })
-
+const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
   const token = details.data?.tokens?.[0]
-
-  const contract = router.query?.contract?.toString()
-  const tokenId = router.query?.tokenId?.toString()
-
-  const urlOpenSea = new URL(
-    `/api/v1/asset/${contract}/${tokenId}`,
-    'https://api.opensea.io/'
-  )
-
-  useEffect(() => {
-    async function getOpenSeaData(url: URL) {
-      let result: any = { animation_url: null, extension: null }
-      try {
-        const res = await fetch(url.href)
-        const json = await res.json()
-
-        const animation_url = json?.animation_url
-        // Get the last section of the URL
-        // lastPartOfUrl = '874f68834bdf5f05982d01067776acc2.wav' when input is
-        // 'https://storage.opensea.io/files/874f68834bdf5f05982d01067776acc2.wav'
-        const lastPartOfUrl = animation_url?.split('/')?.pop()
-        // Extract the file extension from `lastPartOfUrl`, example: 'wav'
-        let extension = null
-        if (lastPartOfUrl) {
-          const ext = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
-          // This makes a strong assumption and it's not reliable
-          if (ext?.length && ext.length > 10) {
-            extension = 'other'
-          } else {
-            extension = ext
-          }
-        }
-
-        result = { animation_url, extension }
-      } catch (err) {
-        console.error(err)
-      }
-
-      setTokenOpenSea(result)
-    }
-
-    getOpenSeaData(urlOpenSea)
-  }, [])
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
