@@ -237,112 +237,116 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           {steps ? (
             <ModalCard title="Buy Now" loading={waitingTx} steps={steps} />
           ) : (
-            <Dialog.Content className="fixed inset-0 z-10 bg-[#000000b6]">
-              <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform rounded-2xl border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[639px]">
-                <div className="mb-4 flex items-center justify-between">
-                  <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={
-                          collection?.data?.collection?.metadata
-                            ?.imageUrl as string
-                        }
-                        alt=""
-                        className="block h-12 w-12 rounded-full"
-                      />
-                      <div className="reservoir-h5 dark:text-white">
-                        {collection?.data?.collection?.name}
-                      </div>
+            <Dialog.Content className="fixed inset-0 z-10 bg-[#000000b6] px-8">
+              <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
+                <div className="px-5">
+                  <div className="mx-auto rounded-2xl border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[639px]">
+                    <div className="mb-4 flex items-center justify-between">
+                      <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={
+                              collection?.data?.collection?.metadata
+                                ?.imageUrl as string
+                            }
+                            alt=""
+                            className="block h-12 w-12 rounded-full"
+                          />
+                          <div className="reservoir-h5 dark:text-white">
+                            {collection?.data?.collection?.name}
+                          </div>
+                        </div>
+                      </Dialog.Title>
+                      <Dialog.Close className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                        <HiX className="h-5 w-5" />
+                      </Dialog.Close>
                     </div>
-                  </Dialog.Title>
-                  <Dialog.Close className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                    <HiX className="h-5 w-5" />
-                  </Dialog.Close>
-                </div>
-                <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
-                <div className="mb-4 flex items-center gap-4">
-                  <StyledSlider
-                    defaultValue={[50]}
-                    value={[sweepAmount]}
-                    step={1}
-                    onValueChange={(value) => setSweepAmount(value[0])}
-                    name="amount"
-                    id="amount"
-                    min={1}
-                    max={maxInput}
-                    className="hidden w-full flex-grow md:flex"
-                  >
-                    <StyledTrack className="bg-neutral-200 dark:bg-neutral-700">
-                      <StyledRange className="bg-primary-700" />
-                    </StyledTrack>
-                    <StyledThumb />
-                  </StyledSlider>
-                  <input
-                    value={sweepAmount}
-                    min={1}
-                    max={maxInput}
-                    step={1}
-                    onChange={(e) => setSweepAmount(+e.target.value)}
-                    type="number"
-                    name="amount"
-                    id="amount"
-                    className="input-primary-outline w-full px-2 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900  dark:focus:ring-4 md:w-20"
-                  />
-                </div>
-                <div className="mb-8 grid h-[215px] grid-cols-5 justify-center gap-2 overflow-y-auto pr-2 md:grid-cols-7">
-                  {sweepTokens?.map((token) => (
-                    <div className="relative" key={token.tokenId}>
-                      <img
-                        className="absolute top-1 right-1 h-4 w-4"
-                        src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
-                        alt=""
+                    <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
+                    <div className="mb-4 flex items-center gap-4">
+                      <StyledSlider
+                        defaultValue={[50]}
+                        value={[sweepAmount]}
+                        step={1}
+                        onValueChange={(value) => setSweepAmount(value[0])}
+                        name="amount"
+                        id="amount"
+                        min={1}
+                        max={maxInput}
+                        className="hidden w-full flex-grow md:flex"
+                      >
+                        <StyledTrack className="bg-neutral-200 dark:bg-neutral-700">
+                          <StyledRange className="bg-primary-700" />
+                        </StyledTrack>
+                        <StyledThumb />
+                      </StyledSlider>
+                      <input
+                        value={sweepAmount}
+                        min={1}
+                        max={maxInput}
+                        step={1}
+                        onChange={(e) => setSweepAmount(+e.target.value)}
+                        type="number"
+                        name="amount"
+                        id="amount"
+                        className="input-primary-outline w-full px-2 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900  dark:focus:ring-4 md:w-20"
                       />
-                      <img
-                        src={optimizeImage(token?.image, 72)}
-                        alt=""
-                        className="mb-2 h-[72px] w-full rounded-lg object-contain"
-                      />
-                      <div className="reservoir-subtitle text-center dark:text-white">
+                    </div>
+                    <div className="mb-8 grid h-[215px] grid-cols-5 justify-center gap-2 overflow-y-auto pr-2 md:grid-cols-7">
+                      {sweepTokens?.map((token) => (
+                        <div className="relative" key={token.tokenId}>
+                          <img
+                            className="absolute top-1 right-1 h-4 w-4"
+                            src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
+                            alt=""
+                          />
+                          <img
+                            src={optimizeImage(token?.image, 72)}
+                            alt=""
+                            className="mb-2 h-[72px] w-full rounded-lg object-contain"
+                          />
+                          <div className="reservoir-subtitle text-center dark:text-white">
+                            <FormatEth
+                              amount={token?.floorAskPrice}
+                              maximumFractionDigits={4}
+                              logoWidth={7}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mb-4 flex justify-between">
+                      <div className="reservoir-h6 text-center dark:text-white">
+                        Total Price
+                      </div>
+                      <div className="reservoir-h5 text-center dark:text-white">
                         <FormatEth
-                          amount={token?.floorAskPrice}
+                          amount={sweepTotal}
                           maximumFractionDigits={4}
                           logoWidth={7}
                         />
                       </div>
                     </div>
-                  ))}
-                </div>
-                <div className="mb-4 flex justify-between">
-                  <div className="reservoir-h6 text-center dark:text-white">
-                    Total Price
-                  </div>
-                  <div className="reservoir-h5 text-center dark:text-white">
-                    <FormatEth
-                      amount={sweepTotal}
-                      maximumFractionDigits={4}
-                      logoWidth={7}
-                    />
-                  </div>
-                </div>
-                <button
-                  disabled={
-                    token?.market?.floorAsk?.price === null ||
-                    waitingTx ||
-                    isInTheWrongNetwork ||
-                    sweepTokens?.length === 0
-                  }
-                  onClick={async () => {
-                    if (!taker) {
-                      dispatch({ type: 'CONNECT_WALLET', payload: true })
-                      return
-                    }
+                    <button
+                      disabled={
+                        token?.market?.floorAsk?.price === null ||
+                        waitingTx ||
+                        isInTheWrongNetwork ||
+                        sweepTokens?.length === 0
+                      }
+                      onClick={async () => {
+                        if (!taker) {
+                          dispatch({ type: 'CONNECT_WALLET', payload: true })
+                          return
+                        }
 
-                    await execute(taker)
-                  }}
-                  className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:mx-auto md:w-[248px]"
-                >
-                  Buy Now
-                </button>
+                        await execute(taker)
+                      }}
+                      className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:mx-auto md:w-[248px]"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
               </div>
             </Dialog.Content>
           )}
