@@ -42,43 +42,50 @@ const ModalCard: FC<Props> = ({
 
   return (
     <Dialog.Content className="fixed inset-0 z-[1000] bg-[#000000b6]">
-      <div className="fixed top-1/2 left-1/2 w-[460px] -translate-x-1/2 -translate-y-1/2 transform rounded-2xl bg-white p-11 shadow-xl dark:bg-black ">
-        <div className="mb-4 flex items-center justify-between">
-          <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
-            {modalTitle}
-          </Dialog.Title>
-          <Dialog.Close
-            onClick={onCloseCallback}
-            className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-          >
-            <HiX className="h-5 w-5" />
-          </Dialog.Close>
-        </div>
-        {steps ? <Steps steps={steps} /> : children}
-        {success ? (
-          orderbook && orderbook?.length > 1 ? (
-            <button onClick={onContinue} className="btn-primary-fill w-full">
-              Continue
-            </button>
-          ) : (
-            <Dialog.Close
-              onClick={onCloseCallback}
-              className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-            >
-              Success, Close this menu
-            </Dialog.Close>
-          )
-        ) : (
-          <div className="flex gap-4">
-            <Dialog.Close
-              onClick={onCloseCallback}
-              className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-            >
-              Cancel
-            </Dialog.Close>
-            {actionButton}
+      <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
+        <div className="px-5">
+          <div className="mx-auto rounded-2xl border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[510px]">
+            <div className="mb-4 flex items-center justify-between">
+              <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
+                {modalTitle}
+              </Dialog.Title>
+              <Dialog.Close
+                onClick={onCloseCallback}
+                className="btn-primary-outline p-1.5 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+              >
+                <HiX className="h-5 w-5" />
+              </Dialog.Close>
+            </div>
+            {steps ? <Steps steps={steps} /> : children}
+            {success ? (
+              orderbook && orderbook?.length > 1 ? (
+                <button
+                  onClick={onContinue}
+                  className="btn-primary-fill w-full"
+                >
+                  Continue
+                </button>
+              ) : (
+                <Dialog.Close
+                  onClick={onCloseCallback}
+                  className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                >
+                  Success, Close this menu
+                </Dialog.Close>
+              )
+            ) : (
+              <div className="flex gap-4">
+                <Dialog.Close
+                  onClick={onCloseCallback}
+                  className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                >
+                  Cancel
+                </Dialog.Close>
+                {actionButton}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </Dialog.Content>
   )
