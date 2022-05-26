@@ -27,6 +27,9 @@ import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
 import FormatEth from 'components/FormatEth'
 import useAttributes from 'hooks/useAttributes'
+import * as Tabs from '@radix-ui/react-tabs'
+import { toggleOnItem } from 'lib/router'
+import CollectionActivityTable from 'components/tables/CollectionActivityTable'
 
 // Environment variables
 // For more information about these variables
@@ -161,6 +164,11 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     </>
   )
 
+  const tabs = [
+    { name: 'Items', id: 'items' },
+    { name: 'Activity', id: 'activity' },
+  ]
+
   return (
     <Layout navbar={{}}>
       <>
@@ -170,93 +178,119 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           {image}
         </Head>
         <Hero collectionId={id} fallback={fallback} />
-        <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
-          <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
-          <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
-          <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
-            <div className="mb-4 hidden items-center justify-between md:flex">
-              <div className="flex items-center gap-6">
-                {!!stats?.data?.stats?.tokenCount &&
-                  stats?.data?.stats?.tokenCount > 0 && (
-                    <>
-                      <div>
-                        {formatNumber(stats?.data?.stats?.tokenCount)} items
-                      </div>
+        <Tabs.Root
+          value={router.query?.tab?.toString() || 'items'}
+          className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21"
+        >
+          <Tabs.List className="col-span-full flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
+            {tabs.map(({ name, id }) => (
+              <Tabs.Trigger
+                key={id}
+                id={id}
+                value={id}
+                className={
+                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center text-[#525252] hover:text-black focus:z-10 radix-state-active:border-black radix-state-active:text-black dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
+                }
+                onClick={() => toggleOnItem(router, 'tab', id)}
+              >
+                <span>{name}</span>
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+          <Tabs.Content value="items" asChild>
+            <>
+              <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+              <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
+                <div className="mb-4 hidden items-center justify-between md:flex">
+                  <div className="flex items-center gap-6">
+                    {tokenCount > 0 && (
+                      <>
+                        <div>{formatNumber(tokenCount)} items</div>
 
-                      <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                      <div>
-                        <FormatEth
-                          amount={stats?.data?.stats?.market?.floorAsk?.price}
-                        />{' '}
-                        floor price
-                      </div>
-                    </>
+                        <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                        <div>
+                          <FormatEth
+                            amount={stats?.data?.stats?.market?.floorAsk?.price}
+                          />{' '}
+                          floor price
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex gap-4">
+                    {router.query?.attribute_key ||
+                    router.query?.attribute_key === '' ? (
+                      <>
+                        <SortMenuExplore
+                          setSize={collectionAttributes.setSize}
+                        />
+                        <ViewMenu />
+                      </>
+                    ) : (
+                      <SortMenu setSize={tokens.setSize} />
+                    )}
+                    <button
+                      className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                      title="Refresh collection"
+                      disabled={refreshLoading}
+                      onClick={() => refreshCollection(id)}
+                    >
+                      <FiRefreshCcw
+                        className={`h-5 w-5 ${
+                          refreshLoading ? 'animate-spin-reverse' : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+                <div className="mb-10 flex items-center justify-between">
+                  <div>
+                    <AttributesFlex className="flex flex-wrap gap-3" />
+                    <ExploreFlex />
+                  </div>
+                  {SOURCE_ID && (
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="checkbox"
+                        name="localListings"
+                        id="localListings"
+                        className="scale-125 transform"
+                        onChange={(e) => setLocalListings(e.target.checked)}
+                      />
+                      <label
+                        htmlFor="localListings"
+                        className="reservoir-body dark:text-white"
+                      >
+                        Show Only Local Listings
+                      </label>
+                    </div>
                   )}
-              </div>
-              <div className="flex gap-4">
+                </div>
                 {router.query?.attribute_key ||
                 router.query?.attribute_key === '' ? (
-                  <>
-                    <SortMenuExplore setSize={collectionAttributes.setSize} />
-                    <ViewMenu />
-                  </>
+                  <ExploreTokens
+                    attributes={collectionAttributes}
+                    viewRef={refCollectionAttributes}
+                  />
                 ) : (
-                  <SortMenu setSize={tokens.setSize} />
+                  <TokensGrid
+                    tokens={tokens}
+                    viewRef={refTokens}
+                    collectionImage={
+                      collection.data?.collection?.metadata?.imageUrl as string
+                    }
+                  />
                 )}
-                <button
-                  className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                  title="Refresh collection"
-                  disabled={refreshLoading}
-                  onClick={() => refreshCollection(id)}
-                >
-                  <FiRefreshCcw
-                    className={`h-5 w-5 ${
-                      refreshLoading ? 'animate-spin-reverse' : ''
-                    }`}
-                  />
-                </button>
               </div>
-            </div>
-            <div className="mb-10 flex items-center justify-between">
-              <div>
-                <AttributesFlex className="flex flex-wrap gap-3" />
-                <ExploreFlex />
-              </div>
-              {SOURCE_ID && (
-                <div className="flex items-center gap-4">
-                  <input
-                    type="checkbox"
-                    name="localListings"
-                    id="localListings"
-                    className="scale-125 transform"
-                    onChange={(e) => setLocalListings(e.target.checked)}
-                  />
-                  <label
-                    htmlFor="localListings"
-                    className="reservoir-body dark:text-white"
-                  >
-                    Show Only Local Listings
-                  </label>
-                </div>
-              )}
-            </div>
-            {router.query?.attribute_key ||
-            router.query?.attribute_key === '' ? (
-              <ExploreTokens
-                attributes={collectionAttributes}
-                viewRef={refCollectionAttributes}
-              />
-            ) : (
-              <TokensGrid
-                tokens={tokens}
-                viewRef={refTokens}
-                collectionImage={
-                  collection.data?.collection?.metadata?.imageUrl as string
-                }
-              />
-            )}
-          </div>
-        </div>
+            </>
+          </Tabs.Content>
+          <Tabs.Content
+            value="activity"
+            className="col-span-full mx-[25px] grid lg:col-start-2 lg:col-end-[-2]"
+          >
+            <CollectionActivityTable collection={collection.data?.collection} />
+          </Tabs.Content>
+        </Tabs.Root>
       </>
     </Layout>
   )

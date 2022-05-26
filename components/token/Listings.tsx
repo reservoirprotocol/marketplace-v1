@@ -1,8 +1,8 @@
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import { setParams } from '@reservoir0x/client-sdk/dist/utils/params'
-import { shrinkAddress } from 'components/EthAccount'
 import FormatEth from 'components/FormatEth'
 import useAsks from 'hooks/useAsks'
+import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { FC } from 'react'
@@ -73,7 +73,7 @@ const Listings: FC<Props> = ({ asks }) => {
                           </a>
                           <Link href={from.href}>
                             <a className="reservoir-subtitle text-primary-700 dark:text-primary-100">
-                              {shrinkAddress(from.address)}
+                              {truncateAddress(from.address)}
                             </a>
                           </Link>
                         </div>

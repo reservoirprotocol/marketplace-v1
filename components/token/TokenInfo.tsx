@@ -1,5 +1,5 @@
-import { shrinkAddress } from 'components/EthAccount'
 import useDetails from 'hooks/useDetails'
+import { truncateAddress } from 'lib/truncateText'
 import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { setToast } from './setToast'
@@ -110,7 +110,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
               rel="noopener noreferrer"
               href={`https://etherscan.io/address/${token?.token?.contract}`}
             >
-              {shrinkAddress(token?.token?.contract)}
+              {truncateAddress(token?.token?.contract)}
               <FiExternalLink className="h-4 w-4" />
             </a>
           </div>
@@ -118,7 +118,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
       )}
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token ID</div>
-        <div className="reservoir-h6 font-headings dark:text-white">
+        <div className="reservoir-h6 max-w-[80px] truncate font-headings dark:text-white">
           {token?.token?.tokenId}
         </div>
       </div>

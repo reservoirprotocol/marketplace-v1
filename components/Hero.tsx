@@ -126,12 +126,6 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     shortDescription: description ? description.slice(0, 150) : description,
   }
 
-  const token = {
-    id: `${floor?.token?.contract}:${floor?.token?.tokenId}`,
-    price: floor?.price,
-    asker: floor?.maker,
-  }
-
   const isSupported =
     !!collection.data?.collection?.tokenSetId &&
     !!collection.data?.collection?.collectionBidSupported
