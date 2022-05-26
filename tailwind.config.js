@@ -131,8 +131,8 @@ module.exports = {
         },
       },
       animation: {
+        'spin-loading': 'spin 1s cubic-bezier(0.76, 0.35, 0.2, 0.7) infinite',
         'slide-down': 'slide-down 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-
         'spin-reverse': 'spin 1s reverse linear infinite',
       },
 
