@@ -1,7 +1,7 @@
 import FormatEth from 'components/FormatEth'
 import useSales from 'hooks/useSales'
 import { optimizeImage } from 'lib/optmizeImage'
-import { truncateAddress, truncateFromMiddle } from 'lib/truncateText'
+import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
@@ -23,8 +23,8 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
   useEffect(() => {
-    if (sales.data && sales.size > 1) {
-      sales.setSize(0)
+    if (sales.data) {
+      sales.setSize(1)
       sales.mutate()
     }
   }, [])
