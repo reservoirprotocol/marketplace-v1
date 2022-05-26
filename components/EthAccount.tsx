@@ -1,35 +1,6 @@
+import { truncateAddress, truncateEns } from 'lib/truncateText'
 import { FC } from 'react'
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import Avatar from './Avatar'
-
-/**
- * Ensure that an Ethereum address does not overflow
- * by removing the middle characters
- * @param address An Ethereum address
- * @param shrinkInidicator Visual indicator to show address is only
- * partially displayed
- * @returns A shrinked version of the Ethereum address
- * with the middle characters removed.
- */
-export function shrinkAddress(address: string, shrinkInidicator?: string) {
-  return address.slice(0, 4) + (shrinkInidicator || '…') + address.slice(-4)
-}
-
-/**
- * Ensure the ENS names do not overflow by removing the
- * middle characters
- * @param ensName An ENS name
- * @param shrinkInidicator Visual indicator to show address is only
- * partially displayed
- * @returns A shrinked version of the ENS name if and
- * and only if the ENS name is longer than 24 characters
- * such that the displayed string does not overflow
- */
-function shrinkEns(ensName: string, shrinkInidicator?: string) {
-  if (ensName.length < 24) return ensName
-
-  return ensName.slice(0, 20) + (shrinkInidicator || '…') + ensName.slice(-3)
-}
 
 type Props = {
   address: string | undefined
@@ -61,14 +32,14 @@ const EthAccount: FC<Props> = ({
       {side === 'left' && icon}
       {ens?.name ? (
         <div title={address} className="dark:text-white">
-          {shrinkEns(ens.name)}
+          {truncateEns(ens.name)}
         </div>
       ) : (
         <div
           className="reservoir-label-l block whitespace-nowrap font-mono dark:text-white"
           title={address}
         >
-          {shrinkAddress(address || '')}
+          {truncateAddress(address || '')}
         </div>
       )}
       {side === 'right' && icon}

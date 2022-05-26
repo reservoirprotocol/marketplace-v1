@@ -20,7 +20,6 @@ import useUserTokens from 'hooks/useUserTokens'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
-import { shrinkAddress } from 'components/EthAccount'
 import Avatar from 'components/Avatar'
 import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
@@ -30,6 +29,7 @@ import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
 import { paths, setParams } from '@reservoir0x/client-sdk'
 import useSearchCommunity from 'hooks/useSearchCommunity'
+import { truncateAddress } from 'lib/truncateText'
 
 // Environment variables
 // For more information about these variables
@@ -102,11 +102,11 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             )}
             <div className="ml-4">
               <p className="reservoir-h6 text-xl font-semibold dark:text-white">
-                {ensName || shrinkAddress(address as string)}
+                {ensName || truncateAddress(address as string)}
               </p>
 
               <p className="reservoir-label text-md font-semibold opacity-60">
-                {shrinkAddress(address as string)}
+                {truncateAddress(address as string)}
               </p>
             </div>
           </div>

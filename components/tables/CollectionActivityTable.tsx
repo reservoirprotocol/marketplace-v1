@@ -1,7 +1,7 @@
 import FormatEth from 'components/FormatEth'
 import useSales from 'hooks/useSales'
 import { optimizeImage } from 'lib/optmizeImage'
-import { truncateFromMiddle } from 'lib/truncateText'
+import { truncateAddress, truncateFromMiddle } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
@@ -24,7 +24,8 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
 
   useEffect(() => {
     if (sales.data && sales.size > 1) {
-      sales.setSize(1)
+      sales.setSize(0)
+      sales.mutate()
     }
   }, [])
 
@@ -111,8 +112,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const [timeAgo, setTimeAgo] = useState(sale.timestamp || '')
 
   useEffect(() => {
-    setToShortAddress(truncateFromMiddle(sale?.from || '', 13))
-    setFromShortAddress(truncateFromMiddle(sale?.to || '', 13))
+    setToShortAddress(truncateAddress(sale?.to || ''))
+    setFromShortAddress(truncateAddress(sale?.from || ''))
     setTimeAgo(
       sale?.timestamp
         ? DateTime.fromSeconds(sale.timestamp).toRelative() || ''
