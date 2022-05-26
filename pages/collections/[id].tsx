@@ -203,24 +203,19 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
-                    {!!stats?.data?.stats?.tokenCount &&
-                      stats?.data?.stats?.tokenCount > 0 && (
-                        <>
-                          <div>
-                            {formatNumber(stats?.data?.stats?.tokenCount)} items
-                          </div>
+                    {tokenCount > 0 && (
+                      <>
+                        <div>{formatNumber(tokenCount)} items</div>
 
-                          <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                          <div>
-                            <FormatEth
-                              amount={
-                                stats?.data?.stats?.market?.floorAsk?.price
-                              }
-                            />{' '}
-                            floor price
-                          </div>
-                        </>
-                      )}
+                        <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                        <div>
+                          <FormatEth
+                            amount={stats?.data?.stats?.market?.floorAsk?.price}
+                          />{' '}
+                          floor price
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className="flex gap-4">
                     {router.query?.attribute_key ||
@@ -289,8 +284,11 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               </div>
             </>
           </Tabs.Content>
-          <Tabs.Content value="activity" asChild>
-            <CollectionActivityTable />
+          <Tabs.Content
+            value="activity"
+            className="col-span-full mx-[25px] grid lg:col-start-2 lg:col-end-[-2]"
+          >
+            <CollectionActivityTable collection={collection.data?.collection} />
           </Tabs.Content>
         </Tabs.Root>
       </>
