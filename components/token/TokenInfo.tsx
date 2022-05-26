@@ -118,7 +118,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
       )}
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token ID</div>
-        <div className="reservoir-h6 font-headings dark:text-white">
+        <div className="reservoir-h6 max-w-[80px] truncate font-headings dark:text-white">
           {token?.token?.tokenId}
         </div>
       </div>
