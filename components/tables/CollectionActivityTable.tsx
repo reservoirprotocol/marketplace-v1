@@ -19,20 +19,12 @@ type Props = {
 const CollectionActivityTable: FC<Props> = ({ collection }) => {
   const headings = ['Event', 'Item', 'Price', 'From', 'To', 'Time']
   const { sales, ref: swrInfiniteRef } = useSales(collection?.id)
-  const [nowTimestamp, setNowTimestamp] = useState(0)
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
   const { data: salesData } = sales
   const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
   const noSales = flatSalesData.length == 0
   const collectionImage = collection?.metadata?.imageUrl as string
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNowTimestamp(Date.now())
-    }, 60000)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <table>
@@ -42,7 +34,7 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
             {headings.map((name, i) => (
               <th
                 key={i}
-                className="reservoir-subtitle pt-8 pb-7 font-medium text-neutral-600"
+                className="reservoir-subtitle pt-8 pb-7 font-medium text-neutral-600 dark:text-neutral-300"
               >
                 {name}
               </th>
@@ -62,7 +54,6 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
               key={sale?.id}
               sale={sale}
               collectionImage={collectionImage}
-              nowTimestamp={nowTimestamp}
             />
           )
         })}
@@ -91,13 +82,11 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
 type CollectionActivityTableRowProps = {
   sale: TokenSale
   collectionImage?: string
-  nowTimestamp: number
 }
 
 const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   sale,
   collectionImage,
-  nowTimestamp,
 }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
   const [toShortAddress, setToShortAddress] = useState(sale.to || '')
@@ -110,15 +99,12 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   useEffect(() => {
     setToShortAddress(truncateFromMiddle(sale?.from || '', 13))
     setFromShortAddress(truncateFromMiddle(sale?.to || '', 13))
-  }, [sale])
-
-  useEffect(() => {
     setTimeAgo(
       sale?.timestamp
         ? DateTime.fromSeconds(sale.timestamp).toRelative() || ''
         : ''
     )
-  }, [sale, nowTimestamp])
+  }, [sale])
 
   useEffect(() => {
     if (sale?.token?.image) {
@@ -151,7 +137,10 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   if (isMobile) {
     return (
-      <tr key={sale.id} className="h-24 border-b border-gray-300">
+      <tr
+        key={sale.id}
+        className="h-24 border-b border-gray-300 dark:border-[#525252]"
+      >
         <td className="flex flex-col gap-2">
           <div className="mt-6">
             <img
@@ -159,7 +148,9 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               src={saleSourceImgSrc}
               alt={`${sale.orderSource} Source`}
             />
-            <span className="text-sm text-neutral-600">{saleDescription}</span>
+            <span className="text-sm text-neutral-600 dark:text-neutral-300">
+              {saleDescription}
+            </span>
           </div>
           <Link
             href={`/${sale.token?.contract}/${sale.token?.tokenId}`}
@@ -174,21 +165,31 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 width={48}
                 height={48}
               />
-              <span className="reservoir-h6 ml-2 truncate">
+              <span className="reservoir-h6 ml-2 truncate dark:text-white">
                 {sale.token?.name}
               </span>
             </a>
           </Link>
           <div>
-            <span className="mr-1 font-light text-neutral-600">From</span>
+            <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
+              From
+            </span>
             <Link href={`/address/${sale.from}`}>
-              <a className="font-light text-primary-700">{fromShortAddress}</a>
+              <a className="font-light text-primary-700 dark:text-primary-300">
+                {fromShortAddress}
+              </a>
             </Link>
-            <span className="mx-1 font-light text-neutral-600">to</span>
+            <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
+              to
+            </span>
             <Link href={`/address/${sale.to}`}>
-              <a className="font-light text-primary-700">{toShortAddress}</a>
+              <a className="font-light text-primary-700 dark:text-primary-300">
+                {toShortAddress}
+              </a>
             </Link>
-            <div className="mb-4 font-light text-neutral-600">{timeAgo}</div>
+            <div className="mb-4 font-light text-neutral-600 dark:text-neutral-300">
+              {timeAgo}
+            </div>
           </div>
         </td>
         <td>
@@ -199,7 +200,10 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   }
 
   return (
-    <tr key={sale.id} className="h-24 border-b border-gray-300">
+    <tr
+      key={sale.id}
+      className="h-24 border-b border-gray-300 dark:border-[#525252]"
+    >
       <td>
         <div className="mr-2.5 flex items-center">
           <img
@@ -207,7 +211,9 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             src={saleSourceImgSrc}
             alt={`${sale.orderSource} Source`}
           />
-          <span className="text-sm text-neutral-600">{saleDescription}</span>
+          <span className="text-sm text-neutral-600 dark:text-neutral-300">
+            {saleDescription}
+          </span>
         </div>
       </td>
       <td>
@@ -221,7 +227,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               width={48}
               height={48}
             />
-            <span className="reservoir-h6 ml-2 truncate">
+            <span className="reservoir-h6 ml-2 truncate dark:text-white">
               {sale.token?.name}
             </span>
           </a>
@@ -232,17 +238,19 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       </td>
       <td>
         <Link href={`/address/${sale.from}`}>
-          <a className="mr-2.5 font-light text-primary-700">
+          <a className="mr-2.5 font-light text-primary-700 dark:text-primary-300">
             {fromShortAddress}
           </a>
         </Link>
       </td>
       <td>
         <Link href={`/address/${sale.to}`}>
-          <a className="mr-2.5 font-light text-primary-700">{toShortAddress}</a>
+          <a className="mr-2.5 font-light text-primary-700 dark:text-primary-300">
+            {toShortAddress}
+          </a>
         </Link>
       </td>
-      <td className="w-[1%] whitespace-nowrap font-light text-neutral-600">
+      <td className="w-[1%] whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
         {timeAgo}
       </td>
     </tr>
