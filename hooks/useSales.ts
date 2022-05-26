@@ -20,7 +20,11 @@ const getKey: (
   index: number,
   previousPageData?: SalesData
 ) => {
-  if (previousPageData && previousPageData?.sales?.length === 0) return null
+  if (
+    previousPageData &&
+    (previousPageData.sales?.length === 0 || !previousPageData.continuation)
+  )
+    return null
 
   if (!PROXY_API_BASE) {
     console.debug(
