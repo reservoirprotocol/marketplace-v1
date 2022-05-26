@@ -64,7 +64,11 @@ const getKey: (
   previousPageData: paths['/tokens/v4']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
-  if (previousPageData && previousPageData?.tokens?.length === 0) return null
+  if (
+    previousPageData &&
+    (previousPageData.tokens?.length === 0 || !previousPageData.continuation)
+  )
+    return null
 
   if (!pathname) return null
 
