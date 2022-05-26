@@ -7,6 +7,7 @@ import {
   TokenDetails,
   TokenDetailsAttribute,
 } from 'types/reservoir'
+import { FixedNumber } from 'ethers'
 
 type Props = {
   token?: TokenDetails
@@ -14,6 +15,8 @@ type Props = {
 }
 
 const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
+  const collectionTotalTokens = FixedNumber.from(collection?.tokenCount || 1)
+
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
@@ -26,7 +29,7 @@ const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
                 key={attribute.key}
                 attribute={attribute}
                 collectionId={token?.collection?.id}
-                collectionTokenCount={collection?.tokenCount}
+                collectionTokenCount={collectionTotalTokens}
               />
             ))}
         </div>
@@ -38,7 +41,7 @@ const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
 type TokenAttributeProps = {
   attribute: TokenDetailsAttribute
   collectionId?: string
-  collectionTokenCount?: string
+  collectionTokenCount: FixedNumber
 }
 
 const TokenAttribute: FC<TokenAttributeProps> = ({
@@ -46,11 +49,10 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
   collectionId,
   collectionTokenCount,
 }) => {
-  const totalTokenCount = collectionTokenCount ? +collectionTokenCount : 0
-  const attributeRarity = (
-    ((attribute?.tokenCount || 0) / totalTokenCount) *
-    100
-  ).toFixed()
+  const attributeRarity = FixedNumber.from(attribute?.tokenCount)
+    .divUnsafe(collectionTokenCount)
+    .mulUnsafe(FixedNumber.from(100))
+    .toString()
 
   return (
     <Link
