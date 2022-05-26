@@ -22,6 +22,12 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
   const { sales, ref: swrInfiniteRef } = useSales(collection?.id)
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
+  useEffect(() => {
+    if (sales.data && sales.size > 1) {
+      sales.setSize(1)
+    }
+  }, [])
+
   const { data: salesData } = sales
   const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
   const noSales = !sales.isValidating && flatSalesData.length == 0
@@ -46,14 +52,14 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
         )}
 
         <tbody>
-          {flatSalesData.map((sale) => {
+          {flatSalesData.map((sale, i) => {
             if (!sale) {
               return null
             }
 
             return (
               <CollectionActivityTableRow
-                key={sale?.id}
+                key={`${sale?.id}-${i}`}
                 sale={sale}
                 collectionImage={collectionImage}
               />
