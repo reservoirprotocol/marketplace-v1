@@ -8,6 +8,7 @@ import { FC, useEffect, useState } from 'react'
 import { Collection, TokenSale } from 'types/reservoir'
 import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
+import LoadingIcon from 'components/LoadingIcon'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
@@ -23,59 +24,66 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
 
   const { data: salesData } = sales
   const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
-  const noSales = flatSalesData.length == 0
+  const noSales = !sales.isValidating && flatSalesData.length == 0
   const collectionImage = collection?.metadata?.imageUrl as string
 
   return (
-    <table>
-      {!isMobile && !noSales && (
-        <thead>
-          <tr className="text-left">
-            {headings.map((name, i) => (
-              <th
-                key={i}
-                className="reservoir-subtitle pt-8 pb-7 font-medium text-neutral-600 dark:text-neutral-300"
-              >
-                {name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-      )}
-
-      <tbody>
-        {flatSalesData.map((sale) => {
-          if (!sale) {
-            return null
-          }
-
-          return (
-            <CollectionActivityTableRow
-              key={sale?.id}
-              sale={sale}
-              collectionImage={collectionImage}
-            />
-          )
-        })}
-        {noSales && (
-          <div className="mt-20 mb-20 flex w-full flex-col justify-center">
-            <img
-              src="/magnifying-glass.svg"
-              className="h-[59px]"
-              alt="Magnifying Glass"
-            />
-            <div className="reservoir-h6 mt-4 mb-2 text-center dark:text-white">
-              No activity yet
-            </div>
-            <div className="text-center text-xs font-light dark:text-white">
-              There hasn&apos;t been any activity for this <br /> collection
-              yet.
-            </div>
-          </div>
+    <>
+      <table>
+        {!isMobile && !noSales && (
+          <thead>
+            <tr className="text-left">
+              {headings.map((name, i) => (
+                <th
+                  key={i}
+                  className="reservoir-subtitle pt-8 pb-7 font-medium text-neutral-600 dark:text-neutral-300"
+                >
+                  {name}
+                </th>
+              ))}
+            </tr>
+          </thead>
         )}
-        <tr ref={swrInfiniteRef}></tr>
-      </tbody>
-    </table>
+
+        <tbody>
+          {flatSalesData.map((sale) => {
+            if (!sale) {
+              return null
+            }
+
+            return (
+              <CollectionActivityTableRow
+                key={sale?.id}
+                sale={sale}
+                collectionImage={collectionImage}
+              />
+            )
+          })}
+          {noSales && (
+            <div className="mt-20 mb-20 flex w-full flex-col justify-center">
+              <img
+                src="/magnifying-glass.svg"
+                className="h-[59px]"
+                alt="Magnifying Glass"
+              />
+              <div className="reservoir-h6 mt-4 mb-2 text-center dark:text-white">
+                No activity yet
+              </div>
+              <div className="text-center text-xs font-light dark:text-white">
+                There hasn&apos;t been any activity for this <br /> collection
+                yet.
+              </div>
+            </div>
+          )}
+          <tr ref={swrInfiniteRef}></tr>
+        </tbody>
+      </table>
+      {sales.isValidating && (
+        <div className="my-20 flex justify-center">
+          <LoadingIcon />
+        </div>
+      )}
+    </>
   )
 }
 
@@ -238,7 +246,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       </td>
       <td>
         <Link href={`/address/${sale.from}`}>
-          <a className="mr-2.5 font-light text-primary-700 dark:text-primary-300">
+          <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
             {fromShortAddress}
           </a>
         </Link>
