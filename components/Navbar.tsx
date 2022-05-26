@@ -71,7 +71,10 @@ const Navbar: FC = () => {
 
         if (COMMUNITY && smallCommunity) {
           setFilterComponent(
-            <CommunityDropdown collections={initialResults?.collections} />
+            <CommunityDropdown
+              collections={initialResults?.collections}
+              defaultCollectionId={COLLECTION}
+            />
           )
         } else {
           setShowLinks(false)

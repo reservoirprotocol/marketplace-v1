@@ -11,9 +11,15 @@ Reservoir Market is an open source marketplace that enables communities to easil
 The marketplace supports 3 different modes:
 
 -   Single collection (e.g.  [Crypto Coven](https://cryptocoven.reservoir.market/))
--   Multi collection community (e.g.  [BAYC](https://bayc.reservoir.market/))
--   All collections ([example](https://www.reservoir.market/))
+![crytocoven-screen](https://user-images.githubusercontent.com/96800113/170140995-6bf22f44-0887-4f50-93d8-cda0dc51bf7d.png)
 
+-   Multi collection community (e.g.  [BAYC](https://bayc.reservoir.market/))
+![bayc-screen](https://user-images.githubusercontent.com/96800113/170141023-3ec88b7d-bbab-43b8-a0e4-8792c5235057.png)
+
+-   All collections ([example](https://www.reservoir.market/))
+![general-screen](https://user-images.githubusercontent.com/96800113/170141225-422ec020-86ba-41b0-ba12-085e9617eaf8.png)
+
+  
 With each deployment, communities are given full control over their marketplace from designing their look and feel to setting their own marketplace fees.
 
 We currently offer hosted and self hosted deployment options. For self hosted deployments you can simply fork this repository and follow the instructions below to configure and deploy your marketplace. For hosted deployments please submit your request and we will be in touch.
@@ -74,8 +80,8 @@ Note: Environment variables can also be added during deployment via deployment p
 | NEXT_PUBLIC_DATADOG_APPLICATION_ID    | `false`  | Datadog application id for configuring analytics                               | 1dabcdadaad-3577-125a-b412-815faf31sfsd190                                  |      
 
 **Marketplace Configuration**
-| Environment Variable                | Required | Description                                                                                                                                                          | Example                                                                                      |
-|-------------------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| Environment Variable                | Required | Description                                                                     | Example             |
+|-------------------------------------|----------|---------------------------------------------------------------------------------|---------------------|
 | NEXT_PUBLIC_SOURCE_ID               | `true`   | The source ID used to attribute listings and offers from your marketplace.                                                                                           | Reservoir Market                              |                                                                                                                                |                                                  |
 | NEXT_PUBLIC_ORDER_KIND              | `false`  | The default order kind to the be used when listing or making offers on your marketplace.                                                                             | zeroex-v4 wyvern-v2.3                         |                                                                                                                                |                                                  |
 | NEXT_PUBLIC_FEE_BPS                 | `false`  | The marketplace fee that will be earned from native listings and offers on your marketplace. Configured as basis points - eg. 100 = 1%, 1000 = 10% and 10000 = 100%. | 100                                           |                                                                                                                                |                                                  |
