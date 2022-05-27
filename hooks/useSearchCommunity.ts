@@ -9,9 +9,10 @@ const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 export default function useSearchCommunity() {
   const pathname = `${PROXY_API_BASE}/search/collections/v1`
 
-  const query: paths['/search/collections/v1']['get']['parameters']['query'] = {
-    community: COMMUNITY,
-  }
+  const query: paths['/search/collections/v1']['get']['parameters']['query'] =
+    {}
+
+  if (COMMUNITY) query.community = COMMUNITY
 
   const href = setParams(pathname, query)
 
