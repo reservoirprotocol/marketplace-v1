@@ -370,8 +370,7 @@ const ListModal: FC<Props> = ({
               </div>
               {postOnOpenSea && (
                 <div className="reservoir-small dark:text-white">
-                  <sup>*</sup>OpenSea fee is taken out of the above amount if
-                  item is sold on OpenSea.
+                  <sup>*</sup>Only one marketplace fee will be applied to this listing at time of sale. Note: Fees may vary based on where the item is sold.
                 </div>
               )}
             </div>
