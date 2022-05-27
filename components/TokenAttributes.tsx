@@ -7,7 +7,7 @@ import {
   TokenDetails,
   TokenDetailsAttribute,
 } from 'types/reservoir'
-import { FixedNumber } from 'ethers'
+import { formatNumber } from 'lib/numbers'
 
 type Props = {
   token?: TokenDetails
@@ -15,8 +15,6 @@ type Props = {
 }
 
 const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
-  const collectionTotalTokens = FixedNumber.from(collection?.tokenCount || 1)
-
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
@@ -29,7 +27,7 @@ const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
                 key={attribute.key}
                 attribute={attribute}
                 collectionId={token?.collection?.id}
-                collectionTokenCount={collectionTotalTokens}
+                collectionTokenCount={collection?.tokenCount}
               />
             ))}
         </div>
@@ -41,7 +39,7 @@ const TokenAttributes: FC<Props> = ({ token, collection }: Props) => {
 type TokenAttributeProps = {
   attribute: TokenDetailsAttribute
   collectionId?: string
-  collectionTokenCount: FixedNumber
+  collectionTokenCount?: string
 }
 
 const TokenAttribute: FC<TokenAttributeProps> = ({
@@ -49,10 +47,12 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
   collectionId,
   collectionTokenCount,
 }) => {
-  const attributeRarity = FixedNumber.from(attribute?.tokenCount)
-    .divUnsafe(collectionTokenCount)
-    .mulUnsafe(FixedNumber.from(100))
-    .toString()
+  const attributeTokenCount = attribute?.tokenCount || 0
+  const totalTokens = collectionTokenCount ? +collectionTokenCount : 0
+  const attributeRarity = formatNumber(
+    (attributeTokenCount / totalTokens) * 100,
+    1
+  )
 
   return (
     <Link
@@ -78,7 +78,7 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
         </div>
         <div className="flex justify-between gap-1 text-xs dark:text-neutral-300">
           <span>
-            {attribute.tokenCount} ({attributeRarity}%) have this
+            {formatNumber(attribute.tokenCount)} ({attributeRarity}%) have this
           </span>
           <span>floor price</span>
         </div>
