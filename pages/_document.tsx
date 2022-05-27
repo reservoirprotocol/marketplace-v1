@@ -9,7 +9,7 @@ import Document, {
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
-const OG_IMAGE = process.env.NEXT_PUBLIC_OG_IMAGE
+const OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const META_URL = process.env.NEXT_PUBLIC_META_URL
 const FAVICON = process.env.NEXT_PUBLIC_FAVICON
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
