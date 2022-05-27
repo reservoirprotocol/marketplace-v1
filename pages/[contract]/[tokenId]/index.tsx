@@ -171,7 +171,10 @@ const Index: NextPage<Props> = ({ collectionId }) => {
       <div className="col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-4 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
         <Owner details={details} bannedOnOpenSea={bannedOnOpenSea} />
         <PriceData details={details} collection={collection} />
-        <TokenAttributes token={token?.token} />
+        <TokenAttributes
+          token={token?.token}
+          collection={collection.data?.collection}
+        />
         <Listings asks={asks} />
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
