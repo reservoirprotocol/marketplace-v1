@@ -21,6 +21,7 @@ const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
+const META_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
@@ -34,6 +35,17 @@ const metadata = {
   tagline: (tagline: string | undefined) => (
     <>{tagline || 'Discover, buy and sell NFTs'}</>
   ),
+  image: (image?: string) => {
+    if (image) {
+      return (
+        <>
+          <meta name="twitter:image" content={image} />
+          <meta name="og:image" content={image} />
+        </>
+      )
+    }
+    return null
+  },
 }
 
 const Home: NextPage<Props> = ({ fallback }) => {
@@ -42,6 +54,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 
   const title = META_TITLE && metadata.title(META_TITLE)
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
+  const image = metadata.image(META_IMAGE)
   const tagline = metadata.tagline(TAGLINE)
 
   useEffect(() => {
@@ -64,6 +77,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
       <Head>
         {title}
         {description}
+        {image}
       </Head>
       <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
         <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
