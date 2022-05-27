@@ -50,9 +50,6 @@ const ListModal: FC<Props> = ({
   mutate,
   setToast,
 }) => {
-  // wagmi
-  const { connect, connectors } = useConnect()
-
   // User input
   const [expiration, setExpiration] = useState('oneWeek')
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
@@ -85,7 +82,7 @@ const ListModal: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (data && open) {
+    if (data) {
       // Load data if missing
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
@@ -101,7 +98,7 @@ const ListModal: FC<Props> = ({
         setCollection(collection)
       }
     }
-  }, [data, open])
+  }, [data])
 
   let apiBps = 0
 

@@ -129,7 +129,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
           )}
         </div>
 
-        {isOwner && (
+        {isOwner && !token?.token?.topBid?.value && (
           <div
             onClick={(e) => e.preventDefault()}
             className="flex items-center bg-[rgba(0,0,0,0.02)]  p-4  py-2 dark:bg-[rgba(255,255,255,0.05)]"
