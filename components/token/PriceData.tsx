@@ -30,9 +30,12 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const token = details.data?.tokens?.[0]
 
-  const sourceName = token?.market?.floorAsk?.source?.name
+  const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
 
-  const isLocalListed = SOURCE_ID && sourceName && SOURCE_ID === sourceName
+  const isLocalListed =
+    typeof SOURCE_ID === 'string' &&
+    typeof sourceName === 'string' &&
+    SOURCE_ID === sourceName
 
   const sourceLogo = isLocalListed
     ? NAVBAR_LOGO
@@ -58,18 +61,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           <Price
             title="List Price"
             source={
-              isLocalListed ? (
-                <div className="reservoir-body flex items-center gap-2 dark:text-white">
-                  on {sourceName}
-                  {
-                    <img
-                      className="h-6 w-6"
-                      src={sourceLogo}
-                      alt="Source Logo"
-                    />
-                  }
-                </div>
-              ) : (
+              sourceName && (
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -77,13 +69,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   className="reservoir-body flex items-center gap-2 dark:text-white"
                 >
                   on {sourceName}
-                  {
-                    <img
-                      className="h-6 w-6"
-                      src={sourceLogo}
-                      alt="Source Logo"
-                    />
-                  }
+                  <img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />
                 </a>
               )
             }
