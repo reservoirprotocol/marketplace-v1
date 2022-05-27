@@ -6,9 +6,12 @@ const { format: formatDollar } = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 
-function formatNumber(amount: number | null | undefined) {
+function formatNumber(
+  amount: number | null | undefined,
+  maximumFractionDigits: number = 2
+) {
   const { format } = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 2,
+    maximumFractionDigits: maximumFractionDigits,
   })
   if (!amount) {
     return '-'
