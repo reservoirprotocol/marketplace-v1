@@ -7,6 +7,7 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import useSearchCommunity from './useSearchCommunity'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 
 type Orders = paths['/orders/asks/v2']['get']['responses']['200']['schema']
 
@@ -65,10 +66,6 @@ const getKey: InfiniteKeyLoader = (
 ) => {
   const { pathname, proxyApi, user, collections } = custom
 
-  const contracts = collections?.data?.collections
-    ?.map(({ contract }) => contract)
-    .filter((contract) => !!contract)
-
   if (!proxyApi) {
     console.debug(
       'Environment variable NEXT_PUBLIC_PROXY_API_BASE is undefined.'
@@ -77,9 +74,7 @@ const getKey: InfiniteKeyLoader = (
   }
 
   // Reached the end
-  if (previousPageData && previousPageData?.orders?.length === 0) return null
-
-  if (index !== 0 && previousPageData?.continuation === null) return null
+  if (previousPageData && !previousPageData?.continuation) return null
 
   let query: paths['/orders/asks/v2']['get']['parameters']['query'] = {
     status: 'active',
@@ -87,14 +82,15 @@ const getKey: InfiniteKeyLoader = (
     limit: 20,
   }
 
-  contracts?.forEach(
-    // @ts-ignore
-    (contract, index) => (query[`contracts[${index}]`] = contract)
-  )
-
-  if (index !== 0 && previousPageData.continuation !== null) {
-    query.continuation = previousPageData.continuation
+  if (COMMUNITY) {
+    collections?.data?.collections
+      ?.map(({ contract }) => contract)
+      .filter((contract) => !!contract)
+      // @ts-ignore
+      .forEach((contract, index) => (query[`contracts[${index}]`] = contract))
   }
+
+  if (previousPageData) query.continuation = previousPageData.continuation
 
   const href = setParams(pathname, query)
 
