@@ -2,6 +2,7 @@ import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -194,8 +195,8 @@ const ExploreImagesGrid = ({
       <div className="flex gap-2">
         {sample_images.length > 1 ? (
           // SMALLER IMAGE, HAS SIDE IMAGES
-          <img
-            alt={`${value}`}
+          <Image
+            loader={({ src }) => src}
             src={optimizeImage(
               sample_images[0],
               window?.innerWidth < 639
@@ -210,14 +211,15 @@ const ExploreImagesGrid = ({
                 ? 196
                 : 170
             )}
+            alt={`${value}`}
             className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
-            width="250"
-            height="250"
+            width={250}
+            height={250}
+            objectFit="cover"
           />
         ) : (
-          // BIG IMAGE, NO SIDE IMAGES
-          <img
-            alt={`${value}`}
+          <Image
+            loader={({ src }) => src}
             src={optimizeImage(
               sample_images[0],
               window?.innerWidth < 639
@@ -232,16 +234,19 @@ const ExploreImagesGrid = ({
                 ? 261
                 : 226
             )}
+            alt={`${value}`}
             className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
-            width="300"
-            height="300"
+            width={300}
+            height={300}
+            objectFit="cover"
           />
         )}
         {sample_images.length > 1 && (
           <div className="w-[25%] space-y-2">
             {sample_images.slice(1).map((image) => (
-              <img
+              <Image
                 key={image}
+                loader={({ src }) => src}
                 src={optimizeImage(
                   image,
                   window?.innerWidth < 639
@@ -257,9 +262,10 @@ const ExploreImagesGrid = ({
                     : 66
                 )}
                 alt={`${value}`}
-                width="70"
-                height="70"
                 className="w-full"
+                width={70}
+                height={70}
+                objectFit="cover"
               />
             ))}
           </div>

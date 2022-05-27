@@ -142,11 +142,11 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   switch (sale?.orderSide) {
     case 'ask': {
-      saleDescription = 'Listing Sale'
+      saleDescription = 'Sale'
       break
     }
     case 'bid': {
-      saleDescription = 'Offer Sale'
+      saleDescription = 'Offer Accepted'
     }
   }
 
