@@ -7,12 +7,12 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-type Collections = paths['/collections/v2']['get']['responses']['200']['schema']
+type Collections = paths['/collections/v4']['get']['responses']['200']['schema']
 
 export default function useCommunity(collectionId: string) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/collections/v2`
+  const pathname = `${PROXY_API_BASE}/collections/v4`
 
   const communities = useSWRInfinite<Collections>(
     (index, previousPageData) =>
@@ -47,9 +47,8 @@ const getKey: (
   if (previousPageData && previousPageData?.collections?.length === 0)
     return null
 
-  let query: paths['/collections/v2']['get']['parameters']['query'] = {
+  let query: paths['/collections/v4']['get']['parameters']['query'] = {
     limit: 20,
-    offset: index * 20,
     community: collectionId,
     sortBy: '7DayVolume',
   }
