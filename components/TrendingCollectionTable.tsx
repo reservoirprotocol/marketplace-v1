@@ -7,6 +7,7 @@ import { paths } from '@reservoir0x/client-sdk'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
+import { useMediaQuery } from '@react-hookz/web'
 
 type Props = {
   fallback: {
@@ -17,6 +18,7 @@ type Props = {
 type Volumes = '1DayVolume' | '7DayVolume' | '30DayVolume'
 
 const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
   const { collections, ref } = useCollections(router, fallback.collections)
 
@@ -29,12 +31,16 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
     ? data.flatMap(({ collections }) => collections)
     : []
 
+  const columns = isSmallDevice
+    ? ['Collection', 'Floor Price']
+    : ['Collection', 'Volume', 'Floor Price', 'Supply']
+
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
-        <thead className="bg-gray-50 dark:bg-neutral-900">
+    <div className="mb-11 overflow-x-auto">
+      <table className="min-w-full table-auto">
+        <thead>
           <tr>
-            {['Collection', 'Volume', 'Floor Price', 'Supply'].map((item) => (
+            {columns.map((item) => (
               <th
                 key={item}
                 scope="col"
@@ -66,7 +72,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[88px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
+                className="group h-[88px] border-b border-neutral-300 dark:border-neutral-600 dark:text-white"
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
@@ -76,10 +82,14 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
                       <img
-                        src={optimizeImage(image, 35)}
+                        src={optimizeImage(image, 140)}
                         className="h-[56px] w-[56px] rounded-full object-contain"
                       />
-                      <div className="reservoir-h6 whitespace-nowrap dark:text-white ">
+                      <div
+                        className={`reservoir-h6 overflow-hidden truncate whitespace-nowrap dark:text-white ${
+                          isSmallDevice ? 'max-w-[140px]' : ''
+                        }`}
+                      >
                         {name}
                       </div>
                     </a>
@@ -87,26 +97,28 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 </td>
 
                 {/* VOLUME */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth
-                    amount={
-                      sort === '7DayVolume'
-                        ? days7
-                        : sort === '30DayVolume'
-                        ? days30
-                        : days1
-                    }
-                  />
-                  <PercentageChange
-                    value={
-                      sort === '7DayVolume'
-                        ? days7Change
-                        : sort === '30DayVolume'
-                        ? days30Change
-                        : days1Change
-                    }
-                  />
-                </td>
+                {!isSmallDevice && (
+                  <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                    <FormatEth
+                      amount={
+                        sort === '7DayVolume'
+                          ? days7
+                          : sort === '30DayVolume'
+                          ? days30
+                          : days1
+                      }
+                    />
+                    <PercentageChange
+                      value={
+                        sort === '7DayVolume'
+                          ? days7Change
+                          : sort === '30DayVolume'
+                          ? days30Change
+                          : days1Change
+                      }
+                    />
+                  </td>
+                )}
 
                 {/* FLOOR PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
@@ -123,9 +135,11 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 </td>
 
                 {/* SUPPLY */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  {supply ? formatNumber(+supply) : '-'}
-                </td>
+                {!isSmallDevice && (
+                  <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                    {supply ? formatNumber(+supply) : '-'}
+                  </td>
+                )}
               </tr>
             )
           })}

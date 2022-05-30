@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import TrendingCollectionTable from 'components/TrendingCollectionTable'
 import SortTrendingCollections from 'components/SortTrendingCollections'
+import { useMediaQuery } from '@react-hookz/web'
 
 // Environment variables
 // For more information about these variables
@@ -37,6 +38,7 @@ const metadata = {
 }
 
 const Home: NextPage<Props> = ({ fallback }) => {
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
 
   const title = META_TITLE && metadata.title(META_TITLE)
@@ -72,7 +74,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
           <div className="reservoir-h4 dark:text-white">
             Trending Collections
           </div>
-          <SortTrendingCollections />
+          {!isSmallDevice && <SortTrendingCollections />}
         </div>
         <TrendingCollectionTable fallback={fallback} />
       </div>
