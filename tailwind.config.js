@@ -171,7 +171,7 @@ module.exports = {
         'cpg-backdrop': 'rgba(251, 248, 235, 0.8)',
         'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
         backdrop: 'rgba(255, 255, 255, 0.8)',
-      },
+      }, 
     },
   },
   plugins: [
