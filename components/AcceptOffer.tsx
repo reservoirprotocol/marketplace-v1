@@ -55,7 +55,6 @@ const AcceptOffer: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const { dispatch } = useContext(GlobalContext)
 
-  // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
