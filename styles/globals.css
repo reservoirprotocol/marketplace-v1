@@ -6,12 +6,13 @@
   .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
     @apply font-headings;
   }
+  
+  input[type=range] {
+    -webkit-appearance: none;
+    @apply bg-primary-700 rounded-full h-3;
+  }
 }
 
-input[type=range] {
-  -webkit-appearance: none;
-  @apply bg-primary-700 rounded-full h-3;
-}
 
 input[type="range"]::-webkit-slider-thumb {
    -webkit-appearance: none;
