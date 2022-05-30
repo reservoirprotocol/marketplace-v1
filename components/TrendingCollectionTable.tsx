@@ -6,43 +6,27 @@ import useCollections from 'hooks/useCollections'
 import { paths } from '@reservoir0x/client-sdk'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
+import { PercentageChange } from './hero/HeroStats'
 
 type Props = {
   fallback: {
-    collections: paths['/collections/v2']['get']['responses']['200']['schema']
+    collections: paths['/collections/v4']['get']['responses']['200']['schema']
   }
 }
 
-type Volumes = 'hr24' | 'days7' | 'days30'
+type Volumes = '1DayVolume' | '7DayVolume' | '30DayVolume'
 
 const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
-  const { query } = useRouter()
-  const { collections, ref } = useCollections(fallback.collections)
+  const router = useRouter()
+  const { collections, ref } = useCollections(router, fallback.collections)
 
   const { data } = collections
 
-  const sort = query['sort']?.toString()
+  const sort = router?.query['sort']?.toString()
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedCollections = data
-    ? data
-        .flatMap(({ collections }) => collections)
-        .sort((a, b) => {
-          if (sort === 'days7' && a?.volume?.['7day'] && b?.volume?.['7day']) {
-            return a.volume?.['7day'] - b.volume?.['7day']
-          }
-          if (
-            sort === 'days30' &&
-            a?.volume?.['30day'] &&
-            b?.volume?.['30day']
-          ) {
-            return a.volume?.['30day'] - b.volume?.['30day']
-          }
-          if (a?.volume?.['1day'] && b?.volume?.['1day']) {
-            return a.volume?.['1day'] - b.volume?.['1day']
-          }
-          return -1
-        })
+    ? data.flatMap(({ collections }) => collections)
     : []
 
   return (
@@ -54,7 +38,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
+                className="reservoir-subtitle px-6 py-3 text-left dark:text-white"
               >
                 {item}
               </th>
@@ -68,41 +52,36 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               tokenHref,
               image,
               name,
-              hr24,
+              days1,
               days30,
               days7,
+              days1Change,
+              days7Change,
+              days30Change,
               floorPrice,
               supply,
             } = processCollection(collection)
-
-            const volume = {
-              hr24,
-              days7,
-              days30,
-            }
 
             return (
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
+                className="group h-[88px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
-                  <div>{index + 1}</div>
+                  <div className="reservoir-h6 mr-6 dark:text-white">
+                    {index + 1}
+                  </div>
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
-                      {image && (
-                        <img
-                          src={optimizeImage(image, 35)}
-                          className="rounded-full object-contain"
-                        />
-                      )}
-                      <span className="whitespace-nowrap">
-                        <div className="reservoir-h6 dark:text-white ">
-                          {name}
-                        </div>
-                      </span>
+                      <img
+                        src={optimizeImage(image, 35)}
+                        className="h-[56px] w-[56px] rounded-full object-contain"
+                      />
+                      <div className="reservoir-h6 whitespace-nowrap dark:text-white ">
+                        {name}
+                      </div>
                     </a>
                   </Link>
                 </td>
@@ -111,9 +90,20 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth
                     amount={
-                      (sort === ('hr24' || 'days7' || 'days30') &&
-                        volume[sort]) ||
-                      hr24
+                      sort === '7DayVolume'
+                        ? days7
+                        : sort === '30DayVolume'
+                        ? days30
+                        : days1
+                    }
+                  />
+                  <PercentageChange
+                    value={
+                      sort === '7DayVolume'
+                        ? days7Change
+                        : sort === '30DayVolume'
+                        ? days30Change
+                        : days1Change
                     }
                   />
                 </td>
@@ -121,6 +111,15 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 {/* FLOOR PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <FormatEth amount={floorPrice} />
+                  <PercentageChange
+                    value={
+                      sort === '7DayVolume'
+                        ? getFloorDelta(floorPrice, days7Change)
+                        : sort === '30DayVolume'
+                        ? getFloorDelta(floorPrice, days30Change)
+                        : getFloorDelta(floorPrice, days1Change)
+                    }
+                  />
                 </td>
 
                 {/* SUPPLY */}
@@ -138,6 +137,15 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
 export default TrendingCollectionTable
 
+function getFloorDelta(
+  currentFloor: number | undefined,
+  previousFloor: number | undefined
+) {
+  if (!currentFloor || !previousFloor) return 0
+
+  return (currentFloor - previousFloor) / previousFloor
+}
+
 function processCollection(
   collection:
     | NonNullable<
@@ -149,9 +157,15 @@ function processCollection(
     contract: collection?.primaryContract,
     image: collection?.image,
     name: collection?.name,
-    hr24: collection?.['1dayVolume'],
-    days30: collection?.['30dayVolume'],
-    days7: collection?.['7dayVolume'],
+    days1: collection?.volume?.['1day'],
+    days7: collection?.volume?.['7day'],
+    days30: collection?.volume?.['30day'],
+    days1Change: collection?.volumeChange?.['1day'],
+    days7Change: collection?.volumeChange?.['7day'],
+    days30Change: collection?.volumeChange?.['30day'],
+    floor1Days: collection?.floorSale?.['1day'],
+    floor7Days: collection?.floorSale?.['7day'],
+    floor30Days: collection?.floorSale?.['30day'],
     floorPrice: collection?.floorAskPrice,
     supply: collection?.tokenCount,
   }

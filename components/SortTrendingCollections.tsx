@@ -9,16 +9,16 @@ import useCollections from 'hooks/useCollections'
 type Options = 'Last 24 Hours' | 'Last 7 Days' | 'Last 30 Days'
 
 const options: { [x: string]: Options } = {
-  hr24: 'Last 24 Hours',
-  days7: 'Last 7 Days',
-  days30: 'Last 30 Days',
+  '1DayVolume': 'Last 24 Hours',
+  '7DayVolume': 'Last 7 Days',
+  '30DayVolume': 'Last 30 Days',
 }
 
 const SortTrendingCollections: FC = () => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [sortSelection, setSortSelection] = useState<Options>('Last 24 Hours')
-  const { collections } = useCollections()
+  const { collections } = useCollections(router)
 
   useEffect(() => {
     const sort = router?.query['sort']?.toString()
