@@ -47,6 +47,7 @@ const ListModal: FC<Props> = ({
   maker,
   isInTheWrongNetwork,
   signer,
+  children,
   mutate,
   setToast,
 }) => {
@@ -243,9 +244,14 @@ const ListModal: FC<Props> = ({
           setPostOnOpenSea(false)
           setOrderbook(['reservoir'])
         }}
-        className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
       >
-        {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
+        {children ? (
+          children
+        ) : (
+          <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+            {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
+          </div>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
