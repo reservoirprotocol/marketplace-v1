@@ -1,20 +1,26 @@
 import { Signer } from 'ethers'
 import { acceptOffer, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
 
 type Props = {
   data:
@@ -30,22 +36,24 @@ type Props = {
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
-  signer: Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const AcceptOffer: FC<Props> = ({
   isInTheWrongNetwork,
   mutate,
   data,
+  children,
   signer,
   show,
   setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData }] = useAccount()
+  const { connect, connectors } = useConnect()
+  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const { dispatch } = useContext(GlobalContext)
 
   // Data from props
   const [collection, setCollection] = useState<Collection>()
@@ -113,6 +121,14 @@ const AcceptOffer: FC<Props> = ({
   ) => {
     setOpen(false)
     setSteps(undefined)
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Offer was lower than expected.',
+        title: 'Could not accept offer',
+      })
+      return
+    }
     // Handle user rejection
     if (err?.code === 4001) {
       setToast({
@@ -145,11 +161,12 @@ const AcceptOffer: FC<Props> = ({
     tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
   }
 
-  const execute = async (token: string, taker: string) => {
-    await checkWallet(signer, setToast, connect, connectData)
+  const expectedPrice = token?.market?.topBid?.value
 
+  const execute = async (token: string, taker: string) => {
     setWaitingTx(true)
     await acceptOffer({
+      expectedPrice,
       apiBase: RESERVOIR_API_BASE,
       query: {
         token,
@@ -170,13 +187,26 @@ const AcceptOffer: FC<Props> = ({
       {show && (
         <Dialog.Trigger
           disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
-          onClick={() => taker && tokenString && execute(tokenString, taker)}
-          className="btn-primary-outline w-full"
+          onClick={() => {
+            if (!taker || !tokenString) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+
+            execute(tokenString, taker)
+          }}
+          //className="btn-primary-outline w-full dark:text-white"
         >
-          {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
+          {children ? (
+            children
           ) : (
-            'Accept Offer'
+            <button className="btn-primary-outline w-full dark:text-white">
+              {waitingTx ? (
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                'Accept Offer'
+              )}
+            </button>
           )}
         </Dialog.Trigger>
       )}

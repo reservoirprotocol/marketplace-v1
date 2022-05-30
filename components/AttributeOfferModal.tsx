@@ -1,10 +1,10 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { BigNumber, constants, ethers } from 'ethers'
 import {
+  useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -20,11 +20,12 @@ import { Execute, placeBid } from '@reservoir0x/client-sdk'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
+const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -47,7 +48,7 @@ type Props = {
     bps: number | undefined
     recipient: string | undefined
   }
-  signer: ethers.Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
   stats: ReturnType<typeof useCollectionStats>
   tokens: ReturnType<typeof useTokens>['tokens']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -64,7 +65,8 @@ const AttributeOfferModal: FC<Props> = ({
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
-  const [{ data: network }] = useNetwork()
+  const { activeChain } = useNetwork()
+  const { dispatch } = useContext(GlobalContext)
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
   >({
@@ -80,19 +82,31 @@ const AttributeOfferModal: FC<Props> = ({
     weth: Common.Helpers.Weth
     balance: BigNumber
   } | null>(null)
-  const [{ data: signer }] = useSigner()
-  const [{ data: ethBalance }, getBalance] = useBalance()
-  const [{ data: connectData }, connect] = useConnect()
+  const { data: signer } = useSigner()
+  const { data: account } = useAccount()
+  const { data: ethBalance, refetch } = useBalance({
+    addressOrName: account?.address,
+  })
   const provider = useProvider()
-  const bps = royalties?.bps ?? 0
-  const royaltyPercentage = `${bps / 100}%`
+
+  function getBps(royalties: number | undefined, envBps: string | undefined) {
+    let sum = 0
+    if (royalties) sum += royalties
+    if (envBps) sum += +envBps
+    return sum
+  }
+  const bps = getBps(royalties.bps, FEE_BPS)
+  const royaltyPercentage = royalties?.bps
+    ? `${(royalties?.bps / 10000) * 100}%`
+    : '0%'
+
   const [open, setOpen] = useState(false)
-  const isInTheWrongNetwork = signer && network.chain?.id !== env.chainId
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   useEffect(() => {
     async function loadWeth() {
       if (signer) {
-        await getBalance({ addressOrName: await signer?.getAddress() })
+        await refetch()
         const weth = await getWeth(env.chainId as ChainId, provider, signer)
         if (weth) {
           setWeth(weth)
@@ -142,7 +156,7 @@ const AttributeOfferModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectData)
+    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
 
     setWaitingTx(true)
 
@@ -159,9 +173,12 @@ const AttributeOfferModal: FC<Props> = ({
       attributeKey: data.attribute.key,
       attributeValue: data.attribute.value,
       collection: data.collection.id,
+      orderKind: 'zeroex-v4',
     }
 
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     await placeBid({
       query,
@@ -178,18 +195,15 @@ const AttributeOfferModal: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         disabled={isInTheWrongNetwork}
-        onClick={async () =>
-          await checkWallet(signer, setToast, connect, connectData)
-        }
-        className="btn-primary-outline"
+        className="btn-primary-outline whitespace-nowrap dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       >
-        Maker an Attribute Offer
+        Make an Attribute Offer
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
           <ModalCard
             loading={waitingTx}
-            title="Maker an Attribute Offer"
+            title="Make an Attribute Offer"
             onCloseCallback={() => setSteps(undefined)}
             steps={steps}
             actionButton={
@@ -199,8 +213,14 @@ const AttributeOfferModal: FC<Props> = ({
                   !calculations.missingEth.isZero() ||
                   waitingTx
                 }
-                onClick={execute}
-                className="btn-primary-fill w-full"
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
+                className="btn-primary-fill w-full dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
                   <CgSpinner className="h-4 w-4 animate-spin" />
@@ -213,7 +233,10 @@ const AttributeOfferModal: FC<Props> = ({
             <>
               <div className="mb-8 space-y-5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="price" className="reservoir-h6">
+                  <label
+                    htmlFor="price"
+                    className="reservoir-h6 font-headings dark:text-white"
+                  >
                     Price (wETH)
                   </label>
                   <input
@@ -224,7 +247,7 @@ const AttributeOfferModal: FC<Props> = ({
                     step={0.01}
                     value={offerPrice}
                     onChange={(e) => setOfferPrice(e.target.value)}
-                    className="input-primary-outline w-[160px]"
+                    className="input-primary-outline w-[160px] dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4"
                   />
                 </div>
 
@@ -236,19 +259,25 @@ const AttributeOfferModal: FC<Props> = ({
                   />
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6">Fees</div>
-                  <div className="reservoir-body text-right">
+                  <div className="reservoir-h6 font-headings dark:text-white">
+                    Fees
+                  </div>
+                  <div className="reservoir-body text-right dark:text-white">
                     <div>Royalty {royaltyPercentage}</div>
+                    {FEE_BPS && (
+                      <div>
+                        {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                        {(+FEE_BPS / 10000) * 100}%
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <div className="reservoir-h6">Total Cost</div>
-                  <div className="reservoir-h6 font-bold">
-                    <FormatEth
-                      amount={calculations.total}
-                      maximumFractionDigits={4}
-                      logoWidth={10}
-                    />
+                  <div className="reservoir-h6 font-headings dark:text-white">
+                    Total Cost
+                  </div>
+                  <div className="reservoir-h6 font-headings font-bold dark:text-white">
+                    <FormatEth amount={calculations.total} logoWidth={10} />
                   </div>
                 </div>
                 {calculations.error && (

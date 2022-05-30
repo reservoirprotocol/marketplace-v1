@@ -4,7 +4,7 @@ import useUserActivity from 'hooks/useUserActivity'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import EthAccount from 'components/EthAccount'
-import { ethers } from 'ethers'
+import { constants } from 'ethers'
 import { useAccount } from 'wagmi'
 import FormatEth from 'components/FormatEth'
 
@@ -18,28 +18,28 @@ const UserActivityTable: FC<Props> = ({
   chainId,
 }) => {
   const { data } = transfers
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
 
   const transfersFlat = data ? data.flatMap(({ transfers }) => transfers) : []
 
   if (transfersFlat.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center">
+      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         No trading history yet.
       </div>
     )
   }
 
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
+      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
+        <thead className="bg-gray-50 dark:bg-neutral-900">
           <tr>
             {['Type', 'Item', 'Price', 'From', 'To', 'Time'].map((item) => (
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left"
+                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
               >
                 {item}
               </th>
@@ -64,15 +64,15 @@ const UserActivityTable: FC<Props> = ({
               <tr
                 key={`${transfer?.token?.tokenId}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] bg-white even:bg-gray-50"
+                className="group h-[80px] bg-white even:bg-gray-50 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
               >
                 {/* TYPE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {type}
                 </td>
 
                 {/* ITEM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {tokenHref && (
                     <Link href={tokenHref}>
                       <a className="flex items-center gap-2">
@@ -90,7 +90,7 @@ const UserActivityTable: FC<Props> = ({
                         </div>
                         <span className="whitespace-nowrap">
                           <div className="reservoir-body">{collectionName}</div>
-                          <div className="reservoir-h6">{name}</div>
+                          <div className="reservoir-h6 ">{name}</div>
                         </span>
                       </a>
                     </Link>
@@ -98,12 +98,12 @@ const UserActivityTable: FC<Props> = ({
                 </td>
 
                 {/* PRICE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
-                  <FormatEth amount={price} maximumFractionDigits={4} />
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                  <FormatEth amount={price} />
                 </td>
 
                 {/* FROM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4">
+                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   {from && (
                     <Link href={`/address/${from}`}>
                       <a>
@@ -165,7 +165,7 @@ function processTransfer(
       : transfer?.from?.toLowerCase() === address?.toLowerCase() &&
         transfer?.price !== null
       ? 'Sell'
-      : transfer?.from === ethers.constants.AddressZero
+      : transfer?.from === constants.AddressZero
       ? 'Mint'
       : 'Transfer'
 

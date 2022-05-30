@@ -41,7 +41,6 @@ const StepsModalHeader: FC<Props> = ({ data }) => {
               <div className="font-semibold">
                 <FormatEth
                   amount={data.token.topBuyValue}
-                  maximumFractionDigits={4}
                   logoWidth={7}
                 />
               </div>
@@ -53,7 +52,6 @@ const StepsModalHeader: FC<Props> = ({ data }) => {
               <div className="font-semibold">
                 <FormatEth
                   amount={data.token.floorSellValue}
-                  maximumFractionDigits={4}
                   logoWidth={7}
                 />
               </div>

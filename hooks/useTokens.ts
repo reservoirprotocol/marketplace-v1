@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
@@ -7,13 +7,15 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 
 type Tokens = paths['/tokens/v4']['get']['responses']['200']['schema']
 
 export default function useTokens(
   collectionId: string | undefined,
   fallbackData: Tokens[],
-  router: NextRouter
+  router: NextRouter,
+  source?: boolean | undefined
 ) {
   const { ref, inView } = useInView()
 
@@ -29,7 +31,7 @@ export default function useTokens(
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey(pathname, collectionId, router, index, previousPageData),
+      getKey(pathname, collectionId, source, router, index, previousPageData),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -50,17 +52,23 @@ export default function useTokens(
 const getKey: (
   pathname: string | undefined,
   collectionId: string | undefined,
+  source: boolean | undefined,
   router: NextRouter,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   pathname: string | undefined,
   collectionId: string | undefined,
+  source: boolean | undefined,
   router: NextRouter,
   index: number,
   previousPageData: paths['/tokens/v4']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
-  if (previousPageData && previousPageData?.tokens?.length === 0) return null
+  if (
+    previousPageData &&
+    (previousPageData.tokens?.length === 0 || !previousPageData.continuation)
+  )
+    return null
 
   if (!pathname) return null
 
@@ -69,7 +77,11 @@ const getKey: (
     collection: collectionId,
   }
 
-  if (index !== 0) query.continuation = previousPageData.continuation
+  if (index !== 0 && previousPageData.continuation !== null) {
+    query.continuation = previousPageData.continuation
+  }
+
+  if (source) query.source = SOURCE_ID
 
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {

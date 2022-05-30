@@ -1,6 +1,6 @@
 import { toggleOffAttribute } from 'lib/url'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { FC } from 'react'
 import { HiX } from 'react-icons/hi'
 
 type Attribute = {
@@ -8,7 +8,11 @@ type Attribute = {
   value: string
 }[]
 
-const AttributesFlex = () => {
+type Props = {
+  className: string
+}
+
+const AttributesFlex: FC<Props> = ({ className }) => {
   const router = useRouter()
 
   const [filters, setFilters] = React.useState<Attribute>([])
@@ -32,27 +36,27 @@ const AttributesFlex = () => {
     )
   }, [router.query])
 
+  if (filters.length === 0) return null
+
   return (
-    <div className="flex flex-wrap gap-3">
-      {filters.map(({ key, value }) => {
-        return (
-          <div
-            key={key}
-            className="relative flex rounded-md border border-neutral-300 dark:border-neutral-700"
-          >
-            <div className="reservoir-label-l flex items-center justify-between gap-1.5 px-4 py-1 lg:py-2">
-              <p className="capitalize">{key}</p>
-              <p>{value}</p>
-            </div>
-            <button
-              className="absolute -top-2.5 -right-2.5 rounded-full bg-neutral-200 p-1 text-neutral-500 transition hover:bg-red-200 hover:text-neutral-900 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-red-700 dark:hover:text-neutral-100"
-              onClick={() => toggleOffAttribute(router, key)}
-            >
-              <HiX className="h-3.5 w-3.5" />
-            </button>
+    <div className={className}>
+      {filters.map(({ key, value }) => (
+        <div
+          key={key}
+          className="flex rounded-full border border-neutral-300 bg-primary-100 px-4 py-3 dark:border-neutral-600 dark:bg-primary-900 dark:text-white"
+        >
+          <div className="reservoir-label-l flex items-center justify-between gap-1.5 dark:text-white ">
+            <p className="capitalize">{key}</p>
+            <p>{value}</p>
           </div>
-        )
-      })}
+          <button
+            className="ml-4"
+            onClick={() => toggleOffAttribute(router, key)}
+          >
+            <HiX className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ))}
     </div>
   )
 }

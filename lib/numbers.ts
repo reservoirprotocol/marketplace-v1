@@ -6,8 +6,13 @@ const { format: formatDollar } = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 
-function formatNumber(amount: number | null | undefined) {
-  const { format } = new Intl.NumberFormat('en-US')
+function formatNumber(
+  amount: number | null | undefined,
+  maximumFractionDigits: number = 2
+) {
+  const { format } = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maximumFractionDigits,
+  })
   if (!amount) {
     return '-'
   }
@@ -31,10 +36,14 @@ function formatBN(
   if (typeof amount === 'number') {
     value = new Intl.NumberFormat('en-US', {
       maximumFractionDigits,
+      notation: 'compact',
+      compactDisplay: 'short',
     }).format(amount)
   } else {
     value = new Intl.NumberFormat('en-US', {
       maximumFractionDigits,
+      notation: 'compact',
+      compactDisplay: 'short',
     }).format(+utils.formatEther(amount))
   }
 

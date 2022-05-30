@@ -5,7 +5,7 @@ import { matchSorter } from 'match-sorter'
 import { sortAttributes } from './functions'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 
 type Props = {
   attribute: NonNullable<
@@ -35,7 +35,7 @@ const AttributeSelector: FC<Props> = ({
   }
 
   return (
-    <div className="border-b-[1px] border-gray-300">
+    <div className="border-b-[1px] border-gray-300 dark:border-neutral-600">
       <div className="relative m-4">
         <FiSearch
           className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
@@ -43,7 +43,7 @@ const AttributeSelector: FC<Props> = ({
           }`}
         />
         <DebounceInput
-          className="reservoir-label-l input-primary-outline w-full pl-9"
+          className="reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:ring-primary-900 dark:ring-primary-900 dark:focus:ring-4"
           type="text"
           autoFocus
           value={query}
@@ -68,8 +68,8 @@ const AttributeSelector: FC<Props> = ({
               key={`${value}${index}`}
               setTokensSize={setTokensSize}
             >
-              <span className="reservoir-body">{value}</span>
-              <span className="reservoir-body">{count}</span>
+              <span className="reservoir-body dark:text-white">{value}</span>
+              <span className="reservoir-body dark:text-white">{count}</span>
             </AttributeButton>
           )
         })}

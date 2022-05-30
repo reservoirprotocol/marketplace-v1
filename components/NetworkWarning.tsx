@@ -4,10 +4,10 @@ import { useNetwork, useSigner } from 'wagmi'
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 
 function NetworkWarning() {
-  const [{ data }] = useNetwork()
-  const [{ data: signer }] = useSigner()
+  const { activeChain } = useNetwork()
+  const { data: signer } = useSigner()
 
-  if (chainId && signer && data.chain?.id !== +chainId) {
+  if (chainId && signer && activeChain?.id !== +chainId) {
     return (
       <div className="flex w-screen items-center justify-center bg-yellow-200 p-4 text-black">
         <span>

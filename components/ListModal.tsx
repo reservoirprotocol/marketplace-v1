@@ -1,9 +1,9 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
 import { DateTime } from 'luxon'
 import { BigNumber, constants, ethers } from 'ethers'
-import { useConnect } from 'wagmi'
+import { useConnect, useSigner } from 'wagmi'
 import FormatEth from './FormatEth'
 import { SWRResponse } from 'swr'
 import ModalCard from './modal/ModalCard'
@@ -12,15 +12,17 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { Execute, listToken, paths } from '@reservoir0x/client-sdk'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
+const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
+const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
+const OPENSEA_CROSS_POST = process.env.NEXT_PUBLIC_OPENSEA_CROSS_POST
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
 
 type Props = {
   data:
@@ -37,7 +39,7 @@ type Props = {
   maker: string | undefined
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
-  signer: ethers.Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const ListModal: FC<Props> = ({
@@ -47,9 +49,10 @@ const ListModal: FC<Props> = ({
   signer,
   mutate,
   setToast,
+  children,
 }) => {
   // wagmi
-  const [{ data: connectData }, connect] = useConnect()
+  const { connect, connectors } = useConnect()
 
   // User input
   const [expiration, setExpiration] = useState('oneWeek')
@@ -78,6 +81,8 @@ const ListModal: FC<Props> = ({
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
+  const { dispatch } = useContext(GlobalContext)
+
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -99,16 +104,24 @@ const ListModal: FC<Props> = ({
     }
   }, [data, open])
 
-  let bps = 0
+  let apiBps = 0
 
   if ('details' in data) {
-    bps = data?.collection?.collection?.royalties?.bps || 0
+    apiBps = data?.collection?.collection?.royalties?.bps || 0
   }
   if ('tokenId' in data) {
-    bps = collection?.collection?.royalties?.bps || 0
+    apiBps = collection?.collection?.royalties?.bps || 0
   }
 
-  const royaltyPercentage = `${bps / 100}%`
+  const royaltyPercentage = `${(apiBps / 10000) * 100}%`
+
+  function getBps(royalties: number | undefined, envBps: string | undefined) {
+    let sum = 0
+    if (royalties) sum += royalties
+    if (envBps) sum += +envBps
+    return sum
+  }
+  const bps = getBps(apiBps, FEE_BPS)
 
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }
@@ -124,17 +137,6 @@ const ListModal: FC<Props> = ({
   }
 
   const { market, token: token_ } = token
-
-  const tokenData: ComponentProps<typeof ModalCard>['data'] = {
-    token: {
-      contract: token_?.contract,
-      floorSellValue: market?.floorAsk?.price,
-      id: token_?.tokenId,
-      image: token_?.image,
-      name: token_?.name,
-      topBuyValue: market?.topBid?.value,
-    },
-  }
 
   const handleError: Parameters<typeof listToken>[0]['handleError'] = (
     err: any
@@ -167,8 +169,6 @@ const ListModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    await checkWallet(signer, setToast, connect, connectData)
-
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
@@ -185,8 +185,12 @@ const ListModal: FC<Props> = ({
       expirationTime: expirationValue,
     }
 
+    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
+
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
+    if (FEE_BPS) query.fee = FEE_BPS
+    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
 
     await listToken({
       query,
@@ -216,10 +220,10 @@ const ListModal: FC<Props> = ({
       weiPrice: ethers.utils.parseEther(listingPrice).toString(),
       token: `${token_?.contract}:${token_?.tokenId}`,
       expirationTime: expirationValue,
+      orderKind: 'wyvern-v2.3',
     }
 
-    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (NAVBAR_TITLE || SOURCE_ID) query.source = NAVBAR_TITLE || SOURCE_ID
+    if (SOURCE_ID) query.source = SOURCE_ID
 
     if (postOnOpenSea) {
       await listToken({
@@ -238,17 +242,24 @@ const ListModal: FC<Props> = ({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button
-          disabled={isInTheWrongNetwork}
-          onClick={async () => {
-            setPostOnOpenSea(false)
-            setOrderbook(['reservoir'])
-            await checkWallet(signer, setToast, connect, connectData)
-          }}
-          className="btn-primary-fill w-full"
-        >
-          {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
-        </button>
+        {children ? (
+          children
+        ) : (
+          <button
+            disabled={isInTheWrongNetwork}
+            onClick={async (e) => {
+              setPostOnOpenSea(false)
+              setOrderbook(['reservoir'])
+            }}
+            className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
+          >
+            {children
+              ? children
+              : token?.market?.floorAsk?.price
+              ? 'Edit Listing'
+              : 'List for Sale'}
+          </button>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay>
@@ -262,8 +273,14 @@ const ListModal: FC<Props> = ({
             actionButton={
               <button
                 disabled={waitingTx || isInTheWrongNetwork}
-                onClick={execute}
-                className="btn-primary-fill w-full"
+                onClick={() => {
+                  if (!signer) {
+                    dispatch({ type: 'CONNECT_WALLET', payload: true })
+                    return
+                  }
+                  execute()
+                }}
+                className="btn-primary-fill w-full dark:text-white  dark:ring-primary-900 dark:focus:ring-4"
               >
                 {waitingTx ? (
                   <CgSpinner className="h-4 w-4 animate-spin" />
@@ -275,7 +292,10 @@ const ListModal: FC<Props> = ({
           >
             <div className="mb-8 space-y-5">
               <div className="flex items-center justify-between">
-                <label htmlFor="price" className="reservoir-h6">
+                <label
+                  htmlFor="price"
+                  className="reservoir-h6 font-headings dark:text-white"
+                >
                   Price (ETH)
                 </label>
                 <input
@@ -286,7 +306,7 @@ const ListModal: FC<Props> = ({
                   step={0.01}
                   value={listingPrice}
                   onChange={(e) => setListingPrice(e.target.value)}
-                  className="input-primary-outline w-[160px]"
+                  className="input-primary-outline w-[160px] dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -296,30 +316,43 @@ const ListModal: FC<Props> = ({
                   expiration={expiration}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <label htmlFor="postOpenSea" className="reservoir-h6">
-                  Post listing to OpenSea
-                </label>
-                <input
-                  type="checkbox"
-                  name="postOpenSea"
-                  id="postOpenSea"
-                  className="scale-125 transform"
-                  checked={postOnOpenSea}
-                  onChange={(e) => {
-                    setPostOnOpenSea(e.target.checked)
-                    if (e.target.checked) {
-                      setOrderbook(['reservoir', 'opensea'])
-                    } else {
-                      setOrderbook(['reservoir'])
-                    }
-                  }}
-                />
-              </div>
+              {!!OPENSEA_CROSS_POST && (
+                <div className="flex items-center gap-3">
+                  <label
+                    htmlFor="postOpenSea"
+                    className="reservoir-h6 font-headings dark:text-white"
+                  >
+                    Post listing to OpenSea
+                  </label>
+                  <input
+                    type="checkbox"
+                    name="postOpenSea"
+                    id="postOpenSea"
+                    className="scale-125 transform"
+                    checked={postOnOpenSea}
+                    onChange={(e) => {
+                      setPostOnOpenSea(e.target.checked)
+                      if (e.target.checked) {
+                        setOrderbook(['reservoir', 'opensea'])
+                      } else {
+                        setOrderbook(['reservoir'])
+                      }
+                    }}
+                  />
+                </div>
+              )}
               <div className="flex justify-between">
-                <div className="reservoir-h6">Fees</div>
-                <div className="reservoir-body text-right">
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  Fees
+                </div>
+                <div className="reservoir-body text-right dark:text-white">
                   <div>Royalty {royaltyPercentage}</div>
+                  {FEE_BPS && (
+                    <div>
+                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {(+FEE_BPS / 10000) * 100}%
+                    </div>
+                  )}
                   {postOnOpenSea && (
                     <div>
                       OpenSea 2.5%<sup>*</sup>
@@ -328,19 +361,16 @@ const ListModal: FC<Props> = ({
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="reservoir-h6">You get</div>
-                <div className="reservoir-h6">
-                  <FormatEth
-                    amount={youGet}
-                    maximumFractionDigits={4}
-                    logoWidth={10}
-                  />
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  You get
+                </div>
+                <div className="reservoir-h6 font-headings dark:text-white">
+                  <FormatEth amount={youGet} logoWidth={10} />
                 </div>
               </div>
               {postOnOpenSea && (
-                <div className="reservoir-small">
-                  <sup>*</sup>OpenSea fee is taken out of the above amount if
-                  item is sold on OpenSea.
+                <div className="reservoir-small dark:text-white">
+                  <sup>*</sup>Only one marketplace fee will be applied to this listing at time of sale. Note: Fees may vary based on where the item is sold.
                 </div>
               )}
             </div>

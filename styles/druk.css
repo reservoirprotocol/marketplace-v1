@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'Druk Text Wide Web Medium Regular';
+  size-adjust: 90%;
+  src: url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.eot'); /* IE9*/
+  src: url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.eot?#iefix')
+      format('embedded-opentype'),
+    /* IE6-IE8 */ url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.woff2')
+      format('woff2'),
+    /* chrome、firefox */
+      url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.woff') format('woff'),
+    /* chrome、firefox */
+      url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.ttf') format('truetype'),
+    /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+      url('/fonts/druk/3724259186746d86859fbb0fde0fa44a.svg#Druk Text Wide Web Medium Regular')
+      format('svg'); /* iOS 4.1- */
+}

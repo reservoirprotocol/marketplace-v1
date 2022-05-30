@@ -1,24 +1,35 @@
 import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
-import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from 'next'
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next'
 import { useRouter } from 'next/router'
-import { useAccount, useNetwork, useSigner } from 'wagmi'
-import useDataDog from 'hooks/useAnalytics'
-import getMode from 'lib/getMode'
+import {
+  useAccount,
+  useNetwork,
+  useSigner,
+  useEnsName,
+  useEnsAvatar,
+} from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import useUserTokens from 'hooks/useUserTokens'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
-import UserTokensTable from 'components/tables/UserTokensTable'
+import UserTokensGrid from 'components/UserTokensGrid'
+import Avatar from 'components/Avatar'
 import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
-import { paths } from '@reservoir0x/client-sdk'
-import setParams from 'lib/params'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
+import { paths, setParams } from '@reservoir0x/client-sdk'
+import useSearchCommunity from 'hooks/useSearchCommunity'
+import { truncateAddress } from 'lib/truncateText'
 
 // Environment variables
 // For more information about these variables
@@ -26,28 +37,33 @@ import useUserBids from 'hooks/useUserBids'
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-const USE_WILDCARD = process.env.NEXT_PUBLIC_USE_WILDCARD
-const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-const Address: NextPage<Props> = ({ mode, collectionId }) => {
-  const [{ data: accountData }] = useAccount()
-  const [{ data: network }] = useNetwork()
-  const [{ data: signer }] = useSigner()
+const metadata = {
+  title: (title: string) => <title>{title}</title>,
+}
+
+const Address: NextPage<Props> = ({ address, fallback }) => {
+  const { data: accountData } = useAccount()
+
+  const { data: ensAvatar } = useEnsAvatar({
+    addressOrName: address,
+  })
+  const { data: ensName } = useEnsName({ address })
+  const { activeChain } = useNetwork()
+  const { data: signer } = useSigner()
   const router = useRouter()
-  useDataDog(accountData)
-  const address = router.query?.address?.toString()?.toLowerCase()
-  const userTokens = useUserTokens(collectionId, [], mode, address)
+  const userTokens = useUserTokens(address)
   // const userActivity = useUserActivity([], address)
-  const sellPositions = useUserAsks([], address)
-  const buyPositions = useUserBids([], address)
+  const collections = useSearchCommunity()
+  const sellPositions = useUserAsks([], address, collections)
+  const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
@@ -58,7 +74,7 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
     data
   ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
 
-  const isInTheWrongNetwork = network.chain?.id !== +CHAIN_ID
+  const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
   let tabs = [
@@ -68,122 +84,143 @@ const Address: NextPage<Props> = ({ mode, collectionId }) => {
 
   if (isOwner) {
     tabs = [
-      { name: 'Portfolio', id: 'portfolio' },
-      { name: 'Buying', id: 'buying' },
-      { name: 'Selling', id: 'selling' },
+      { name: 'Tokens', id: 'portfolio' },
+      { name: 'Offers', id: 'buying' },
+      { name: 'Listings', id: 'selling' },
       // { name: 'History', id: 'history' },
     ]
   }
 
-  const title = META_TITLE ? (
-    <title>{META_TITLE}</title>
-  ) : (
-    <title>{address} Profile | Reservoir Market</title>
-  )
-
   return (
-    <Layout navbar={{ mode, communityId: collectionId }}>
-      <Head>{title}</Head>
-      <div className="col-span-full mt-4 mb-10 justify-self-center">
-        {address && <EthAccount address={address} />}
-      </div>
-      <Tabs.Root
-        value={router.query?.tab?.toString() || 'portfolio'}
-        className="col-span-full grid grid-cols-4 gap-4 md:grid-cols-8 lg:grid-cols-12"
-      >
-        <Tabs.List className="col-span-full mb-4 flex overflow-hidden rounded-lg shadow md:col-span-4 md:col-start-3 lg:col-span-4 lg:col-start-5">
-          {tabs.map(({ name, id }) => (
-            <Tabs.Trigger
-              key={id}
-              id={id}
-              value={id}
-              className={
-                'group reservoir-label-l relative w-full min-w-0 whitespace-nowrap border-b-2 border-transparent bg-white py-4 px-12 text-center hover:bg-gray-50 hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900'
-              }
-              onClick={() => toggleOnItem(router, 'tab', id)}
-            >
-              <span>{name}</span>
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-        <Tabs.Content value="portfolio" className="col-span-full">
-          <UserTokensTable
-            data={userTokens}
-            mutate={() => {
-              buyPositions.orders.mutate()
-              userTokens.tokens.mutate()
-              // userActivity.transfers.mutate()
-              sellPositions.orders.mutate()
-            }}
-            isOwner={isOwner}
-            modal={{
-              accountData,
-              isInTheWrongNetwork,
-              collectionId,
-              setToast,
-              signer,
-            }}
-          />
-          {/* <UserTokensGrid data={userTokens} /> */}
-        </Tabs.Content>
-        <Tabs.Content value="history" className="col-span-full">
-          {/* <UserActivityTable
+    <Layout navbar={{}}>
+      <Head>{metadata.title(`${address} Profile`)}</Head>
+      <div className="col-span-full">
+        <div className="mt-4 mb-4 w-full px-4 md:px-16">
+          <div className="flex">
+            {address && (
+              <Avatar address={address} avatar={ensAvatar} size={80} />
+            )}
+            <div className="ml-4">
+              <p className="reservoir-h6 text-xl font-semibold dark:text-white">
+                {ensName || truncateAddress(address as string)}
+              </p>
+
+              <p className="reservoir-label text-md font-semibold opacity-60">
+                {truncateAddress(address as string)}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="px-4 md:px-16">
+          <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
+            <Tabs.List className="mb-4 flex w-full overflow-hidden border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)]">
+              {tabs.map(({ name, id }) => (
+                <Tabs.Trigger
+                  key={id}
+                  id={id}
+                  value={id}
+                  className={
+                    'group reservoir-label-l relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4  px-8 text-center hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900 dark:text-white dark:radix-state-active:border-primary-900'
+                  }
+                  onClick={() => toggleOnItem(router, 'tab', id)}
+                >
+                  <span>{name}</span>
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+            <Tabs.Content value="portfolio">
+              <div className="mt-6">
+                <UserTokensGrid
+                  data={userTokens}
+                  mutate={() => {
+                    buyPositions.orders.mutate()
+                    userTokens.tokens.mutate()
+                    // userActivity.transfers.mutate()
+                    sellPositions.orders.mutate()
+                  }}
+                  isOwner={isOwner}
+                  modal={{
+                    accountData,
+                    isInTheWrongNetwork,
+                    collectionId: undefined,
+                    setToast,
+                    signer,
+                  }}
+                />
+              </div>
+              {/* <UserTokensGrid data={userTokens} /> */}
+            </Tabs.Content>
+            <Tabs.Content value="history">
+              {/* <UserActivityTable
             data={userActivity}
             CHAIN_ID={+CHAIN_ID as CHAIN_ID}
           /> */}
-        </Tabs.Content>
-        {isOwner && (
-          <>
-            <Tabs.Content value="buying" className="col-span-full">
-              <UserOffersTable
-                data={buyPositions}
-                mutate={() => {
-                  buyPositions.orders.mutate()
-                  userTokens.tokens.mutate()
-                }}
-                isOwner={isOwner}
-                maker={address || ''}
-                modal={{
-                  accountData,
-                  isInTheWrongNetwork,
-                  collectionId,
-                  setToast,
-                  signer,
-                }}
-              />
             </Tabs.Content>
-            <Tabs.Content value="selling" className="col-span-full">
-              <UserListingsTable
-                data={sellPositions}
-                mutate={() => {
-                  userTokens.tokens.mutate()
-                  sellPositions.orders.mutate()
-                }}
-                isOwner={isOwner}
-                maker={address || ''}
-                modal={{
-                  accountData,
-                  isInTheWrongNetwork,
-                  collectionId,
-                  setToast,
-                  signer,
-                }}
-              />
-            </Tabs.Content>
-          </>
-        )}
-      </Tabs.Root>
+            {isOwner && (
+              <>
+                <Tabs.Content value="buying">
+                  <UserOffersTable
+                    data={buyPositions}
+                    mutate={() => {
+                      buyPositions.orders.mutate()
+                      userTokens.tokens.mutate()
+                    }}
+                    isOwner={isOwner}
+                    maker={address || ''}
+                    modal={{
+                      accountData,
+                      isInTheWrongNetwork,
+                      collectionId: undefined,
+                      setToast,
+                      signer,
+                    }}
+                  />
+                </Tabs.Content>
+                <Tabs.Content value="selling" className="col-span-full">
+                  <UserListingsTable
+                    data={sellPositions}
+                    mutate={() => {
+                      userTokens.tokens.mutate()
+                      sellPositions.orders.mutate()
+                    }}
+                    isOwner={isOwner}
+                    maker={address || ''}
+                    modal={{
+                      accountData,
+                      isInTheWrongNetwork,
+                      collectionId: undefined,
+                      setToast,
+                      signer,
+                    }}
+                  />
+                </Tabs.Content>
+              </>
+            )}
+          </Tabs.Root>
+        </div>
+      </div>
     </Layout>
   )
 }
 
 export default Address
 
-export const getServerSideProps: GetServerSideProps<{
-  mode: ReturnType<typeof getMode>['mode']
-  collectionId: string
-}> = async ({ req }) => {
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps: GetStaticProps<{
+  address: string | undefined
+  fallback: {
+    tokens: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
+  }
+}> = async ({ params }) => {
   const options: RequestInit | undefined = {}
+
+  const address = params?.address?.toString()
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
@@ -191,30 +228,27 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  let { collectionId, mode } = getMode(req, USE_WILDCARD, COMMUNITY, COLLECTION)
+  const url = new URL(`/users/${address}/tokens/v2`, RESERVOIR_API_BASE)
 
-  if (mode === 'collection') {
-    const url = new URL('/collection/v1', RESERVOIR_API_BASE)
-
-    const query: paths['/collection/v1']['get']['parameters']['query'] = {
-      id: collectionId,
-    }
-
-    const href = setParams(url, query)
-
-    const res = await fetch(href, options)
-
-    const json =
-      (await res.json()) as paths['/collection/v1']['get']['responses']['200']['schema']
-
-    if (!json.collection?.id) {
-      return {
-        notFound: true,
-      }
-    }
-
-    collectionId = json.collection?.id
+  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: 0,
   }
 
-  return { props: { collectionId, mode } }
+  if (COMMUNITY) query.community = COMMUNITY
+
+  setParams(url, query)
+
+  const res = await fetch(url.href, options)
+
+  const tokens = (await res.json()) as Props['fallback']['tokens']
+
+  return {
+    props: {
+      address,
+      fallback: {
+        tokens,
+      },
+    },
+  }
 }

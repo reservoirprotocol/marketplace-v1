@@ -1,19 +1,19 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import ClearFilters from './ClearFilters'
 import ExploreTable from './ExploreTable'
 import FormatEth from './FormatEth'
 
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
   attributes: SWRInfiniteResponse<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema'],
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema'],
     any
   >
 }
@@ -34,7 +34,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
   if (isLoadingInitialData) {
     return (
       <div className="mx-auto mb-10 max-w-[2400px]">
-        <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
           {Array(20)
             .fill(null)
             .map((_, index) => (
@@ -52,7 +52,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
           <ExploreTable viewRef={viewRef} mappedAttributes={mappedAttributes} />
         ) : (
           <div className="mx-auto mb-10 max-w-[2400px]">
-            <div className="3xl:grid-cols-5 mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="mx-auto mb-5 grid max-w-[2400px] gap-5 sm:grid-cols-2 md:gap-7 lg:gap-8 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
               {mappedAttributes.map((attribute, idx, arr) => (
                 <Link
                   key={`${attribute?.value}${idx}`}
@@ -68,7 +68,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                 >
                   <a
                     ref={idx === arr.length - 1 ? viewRef : null}
-                    className="flex flex-col rounded-[16px] border border-neutral-200 bg-white p-3 shadow transition hover:-translate-y-0.5 hover:shadow-lg dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
+                    className="flex transform-gpu flex-col rounded-[16px] border border-[#D4D4D4] bg-white p-3 transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-neutral-800 dark:bg-black dark:hover:border-neutral-600 lg:p-6"
                   >
                     <div className="flex-grow"></div>
                     <ExploreImagesGrid
@@ -77,7 +77,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                       value={attribute?.value}
                     />
                     <div className="flex-grow"></div>
-                    <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 lg:mt-4">
+                    <div className="reservoir-subtitle mb-2 mt-2.5 flex items-baseline gap-2 dark:text-white lg:mt-4">
                       <span className="truncate" title={attribute?.value}>
                         {attribute?.value}
                       </span>
@@ -87,13 +87,12 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="grid">
-                        <span className="reservoir-subtitle text-gray-400">
+                        <span className="reservoir-subtitle text-gray-400 dark:text-white">
                           Offer
                         </span>
-                        <span className="reservoir-h6">
+                        <span className="reservoir-h6 font-headings dark:text-white">
                           <FormatEth
                             amount={attribute?.topBid?.value}
-                            maximumFractionDigits={4}
                             logoWidth={7}
                           />
                         </span>
@@ -102,10 +101,9 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                         <span className="reservoir-subtitle text-gray-400">
                           Price
                         </span>
-                        <span className="reservoir-h6">
+                        <span className="reservoir-h6 font-headings dark:text-white">
                           <FormatEth
                             amount={attribute?.floorAskPrices?.[0]}
-                            maximumFractionDigits={4}
                             logoWidth={5}
                           />
                         </span>
@@ -186,10 +184,10 @@ const ExploreImagesGrid = ({
   value,
 }: {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
   <>
@@ -197,8 +195,8 @@ const ExploreImagesGrid = ({
       <div className="flex gap-2">
         {sample_images.length > 1 ? (
           // SMALLER IMAGE, HAS SIDE IMAGES
-          <img
-            alt={`${value}`}
+          <Image
+            loader={({ src }) => src}
             src={optimizeImage(
               sample_images[0],
               window?.innerWidth < 639
@@ -213,14 +211,15 @@ const ExploreImagesGrid = ({
                 ? 196
                 : 170
             )}
+            alt={`${value}`}
             className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
-            width="250"
-            height="250"
+            width={250}
+            height={250}
+            objectFit="cover"
           />
         ) : (
-          // BIG IMAGE, NO SIDE IMAGES
-          <img
-            alt={`${value}`}
+          <Image
+            loader={({ src }) => src}
             src={optimizeImage(
               sample_images[0],
               window?.innerWidth < 639
@@ -235,16 +234,19 @@ const ExploreImagesGrid = ({
                 ? 261
                 : 226
             )}
+            alt={`${value}`}
             className={`${sample_images.length > 1 ? 'w-[75%]' : 'w-full'}`}
-            width="300"
-            height="300"
+            width={300}
+            height={300}
+            objectFit="cover"
           />
         )}
         {sample_images.length > 1 && (
           <div className="w-[25%] space-y-2">
             {sample_images.slice(1).map((image) => (
-              <img
+              <Image
                 key={image}
+                loader={({ src }) => src}
                 src={optimizeImage(
                   image,
                   window?.innerWidth < 639
@@ -260,9 +262,10 @@ const ExploreImagesGrid = ({
                     : 66
                 )}
                 alt={`${value}`}
-                width="70"
-                height="70"
                 className="w-full"
+                width={70}
+                height={70}
+                objectFit="cover"
               />
             ))}
           </div>

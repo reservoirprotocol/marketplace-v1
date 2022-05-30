@@ -1,0 +1,5 @@
+@font-face {
+    font-family: 'Gothicus Roman';
+    src: url('/fonts/gothicusroman/GothicusRoman.woff2') format('woff2');
+    unicode-range: U+0000-001F, U+0021-007F;
+}

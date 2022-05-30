@@ -1,20 +1,26 @@
 import { Signer } from 'ethers'
-import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
+import React, {
+  ComponentProps,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { checkWallet } from 'lib/wallet'
+import { GlobalContext } from 'context/GlobalState'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v1']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
 
 type Props = {
   data:
@@ -31,7 +37,7 @@ type Props = {
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
-  signer: Signer | undefined
+  signer: ReturnType<typeof useSigner>['data']
 }
 
 const BuyNow: FC<Props> = ({
@@ -43,14 +49,13 @@ const BuyNow: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const [{ data: connectData }, connect] = useConnect()
-  const [{ data: accountData }] = useAccount()
+  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
-
   // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const { dispatch } = useContext(GlobalContext)
 
   useEffect(() => {
     if (data) {
@@ -101,6 +106,15 @@ const BuyNow: FC<Props> = ({
   const handleError: Parameters<typeof buyToken>[0]['handleError'] = (
     err: any
   ) => {
+    if (err?.type === 'price mismatch') {
+      setToast({
+        kind: 'error',
+        message: 'Price was greater than expected.',
+        title: 'Could not buy token',
+      })
+      return
+    }
+
     if (err?.message === 'Not enough ETH balance') {
       setToast({
         kind: 'error',
@@ -132,11 +146,14 @@ const BuyNow: FC<Props> = ({
     mutate && mutate()
   }
 
-  const execute = async (token: string, taker: string) => {
-    await checkWallet(signer, setToast, connect, connectData)
-
+  const execute = async (
+    token: string,
+    taker: string,
+    expectedPrice: number
+  ) => {
     setWaitingTx(true)
-    await buyToken({
+    await buyTokenBeta({
+      expectedPrice,
       query: {
         taker,
         token,
@@ -147,12 +164,15 @@ const BuyNow: FC<Props> = ({
       handleSuccess,
       handleError,
     })
+
     setWaitingTx(false)
   }
 
   const tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
 
   const taker = accountData?.address
+
+  const expectedPrice = token?.market?.floorAsk?.price
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -163,7 +183,14 @@ const BuyNow: FC<Props> = ({
             waitingTx ||
             isInTheWrongNetwork
           }
-          onClick={() => taker && tokenString && execute(tokenString, taker)}
+          onClick={() => {
+            if (!taker || !tokenString || !expectedPrice) {
+              dispatch({ type: 'CONNECT_WALLET', payload: true })
+              return
+            }
+
+            execute(tokenString, taker, expectedPrice)
+          }}
           className="btn-primary-fill w-full"
         >
           {waitingTx ? (

@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -12,7 +12,7 @@ const ExploreTable = ({
 }: {
   mappedAttributes: (
     | NonNullable<
-        paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+        paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
       >[0]
     | undefined
   )[]
@@ -64,14 +64,12 @@ const ExploreTable = ({
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.floorAskPrices?.[0]}
-                maximumFractionDigits={4}
                 logoWidth={7}
               />
             </td>
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.topBid?.value}
-                maximumFractionDigits={4}
                 logoWidth={7}
               />
             </td>
@@ -111,10 +109,10 @@ const ExploreImages = ({
   value,
 }: {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
   <div className="flex justify-start gap-1.5 py-1">

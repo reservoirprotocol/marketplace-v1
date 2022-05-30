@@ -5,7 +5,6 @@ import InfoModal from './InfoModal'
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-const NAVBAR_TITLE = process.env.NEXT_PUBLIC_NAVBAR_TITLE
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
@@ -23,7 +22,6 @@ const InfoBanner = () => {
   const envExists =
     COLLECTION ||
     COMMUNITY ||
-    NAVBAR_TITLE ||
     NAVBAR_LOGO ||
     META_TITLE ||
     META_DESCRIPTION ||

@@ -2,12 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Obvia';
-  src: url('/fonts/obvia/obvia_medium-webfont.woff2') format('woff2'),
-    url('/fonts/obvia/obvia_bold-webfont.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400 500 700;
+@layer components {
+  .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
+    @apply font-headings;
+  }
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  @apply bg-primary-700 rounded-full h-3;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+   -webkit-appearance: none;
+  @apply bg-black w-6 h-6 rounded-full dark:bg-white ring ring-white dark:ring-black;
+}
+
+model-viewer {
+  width: 100%;
+  min-height: 500px;
 }
 
 .masonry-grid {
@@ -21,4 +34,11 @@
 .masonry-grid_column {
   padding-left: 30px; /* gutter size */
   background-clip: padding-box;
+}
+
+.clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }

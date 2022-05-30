@@ -5,30 +5,30 @@ import { useRouter } from 'next/router'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+
+type SearchCollectionsAPISuccessResponse =
+  paths['/search/collections/v1']['get']['responses']['200']['schema']
 
 type Props = {
   communityId?: string
+  initialResults?: SearchCollectionsAPISuccessResponse
 }
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-const SearchCollections: FC<Props> = ({ communityId }) => {
+const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
-  const [results, setResults] = useState<
-    paths['/collections/v2']['get']['responses']['200']['schema']
-  >({})
-  const [initialResults, setInitialResults] = useState<
-    paths['/collections/v2']['get']['responses']['200']['schema'] | undefined
-  >(undefined)
+  const [results, setResults] = useState<SearchCollectionsAPISuccessResponse>(
+    {}
+  )
 
   function getHref(search?: string) {
-    const pathname = `${PROXY_API_BASE}/collections/v2`
+    const pathname = `${PROXY_API_BASE}/search/collections/v1`
 
-    const query: paths['/collections/v2']['get']['parameters']['query'] = {
-      sortBy: '7DayVolume',
-    }
+    const query: paths['/search/collections/v1']['get']['parameters']['query'] =
+      {}
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost') {
       query.community = communityId
@@ -36,28 +36,8 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
 
     if (search) query.name = search
 
-    const href = setParams(pathname, query)
-
-    return href
+    return setParams(pathname, query)
   }
-
-  async function loadInitialResults(href: string) {
-    const res = await fetch(href)
-
-    const json =
-      (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
-
-    setResults(json)
-    setInitialResults(json)
-  }
-
-  // LOAD INITIAL RESULTS
-  useEffect(() => {
-    if (focused && !initialResults) {
-      const href = getHref()
-      loadInitialResults(href)
-    }
-  }, [focused])
 
   const [count, setCount] = useState(0)
   const countRef = useRef(count)
@@ -79,8 +59,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
       try {
         const res = await fetch(href)
 
-        const data =
-          (await res.json()) as paths['/collections/v2']['get']['responses']['200']['schema']
+        const data = (await res.json()) as SearchCollectionsAPISuccessResponse
 
         if (!data) throw new ReferenceError('Data does not exist.')
 
@@ -116,13 +95,14 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           className="relative"
         >
           <FiSearch
-            className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] ${
+            className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#4b5563] dark:text-neutral-300 ${
               focused ? 'text-[#9CA3AF]' : ''
             }`}
           />
           <input
             type="text"
-            className="reservoir-label-l input-primary-outline w-full pl-9"
+            tabIndex={-1}
+            className="reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:ring-primary-900 dark:placeholder:text-neutral-400  dark:focus:ring-4 lg:w-[447px]"
             placeholder="Search for a collection"
             {...getInputProps()}
           />
@@ -142,21 +122,15 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
             initialResults?.collections &&
             initialResults?.collections.length > 0 && (
               <div
-                className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+                className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
                 {...getMenuProps()}
               >
                 {initialResults?.collections
-                  ?.filter((collection) => {
-                    if (collection.tokenCount) {
-                      return +collection.tokenCount <= 30000
-                    }
-                    return false
-                  })
                   .slice(0, 6)
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
-                      href={`/collections/${collection?.id}`}
+                      href={`/collections/${collection?.contract}`}
                     >
                       <a
                         {...getItemProps({
@@ -168,20 +142,21 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
                           reset()
                           setFocused(false)
                         }}
-                        className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
-                          highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
+                        className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
+                          highlightedIndex === index
+                            ? 'bg-[#F3F4F6] dark:bg-neutral-600'
+                            : ''
                         }`}
                       >
                         <img
                           src={
-                            // @ts-ignore
                             collection?.image ??
                             'https://via.placeholder.com/30'
                           }
                           alt={`${collection?.name}'s logo.`}
                           className="h-9 w-9 overflow-hidden rounded-full"
                         />
-                        <span className="reservoir-subtitle ml-2">
+                        <span className="reservoir-subtitle ml-2 dark:text-white">
                           {collection?.name}
                         </span>
                       </a>
@@ -191,7 +166,7 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
             )}
           {(focused || isOpen) && inputValue !== '' && isEmpty && (
             <div
-              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
               {...getMenuProps()}
             >
               <div className="flex items-center p-4">No collections found</div>
@@ -199,50 +174,43 @@ const SearchCollections: FC<Props> = ({ communityId }) => {
           )}
           {(focused || isOpen) && inputValue !== '' && !isEmpty && (
             <div
-              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white"
+              className="absolute top-[50px] z-10 w-full divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border border-[#D1D5DB] bg-white dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-900"
               {...getMenuProps()}
             >
-              {results?.collections
-                ?.filter((collection) => {
-                  if (collection.tokenCount) {
-                    return +collection.tokenCount <= 30000
-                  }
-                  return false
-                })
-                .slice(0, 6)
-                .map((collection, index) => (
-                  <Link
-                    key={collection?.name}
-                    href={`/collections/${collection?.id}`}
+              {results?.collections?.slice(0, 6).map((collection, index) => (
+                <Link
+                  key={collection?.name}
+                  href={`/collections/${collection?.contract}`}
+                >
+                  <a
+                    {...getItemProps({
+                      key: collection?.name,
+                      index,
+                      item: collection,
+                    })}
+                    onClick={() => {
+                      reset()
+                      setFocused(false)
+                    }}
+                    className={`flex items-center p-4 hover:bg-[#F3F4F6] dark:hover:bg-neutral-600 ${
+                      highlightedIndex === index
+                        ? 'bg-[#F3F4F6] dark:bg-neutral-600'
+                        : ''
+                    }`}
                   >
-                    <a
-                      {...getItemProps({
-                        key: collection?.name,
-                        index,
-                        item: collection,
-                      })}
-                      onClick={() => {
-                        reset()
-                        setFocused(false)
-                      }}
-                      className={`flex items-center p-4 hover:bg-[#F3F4F6] ${
-                        highlightedIndex === index ? 'bg-[#F3F4F6]' : ''
-                      }`}
-                    >
-                      <img
-                        src={
-                          // @ts-ignore
-                          collection?.image ?? 'https://via.placeholder.com/30'
-                        }
-                        alt={`${collection?.name}'s logo.`}
-                        className="h-9 w-9 overflow-hidden rounded-full"
-                      />
-                      <span className="reservoir-subtitle ml-2">
-                        {collection?.name}
-                      </span>
-                    </a>
-                  </Link>
-                ))}
+                    <img
+                      src={
+                        collection?.image ?? 'https://via.placeholder.com/30'
+                      }
+                      alt={`${collection?.name}'s logo.`}
+                      className="h-9 w-9 overflow-hidden rounded-full"
+                    />
+                    <span className="reservoir-subtitle ml-2 dark:text-white">
+                      {collection?.name}
+                    </span>
+                  </a>
+                </Link>
+              ))}
             </div>
           )}
         </div>

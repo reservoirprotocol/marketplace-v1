@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'Gazpacho';
+    src: url('/fonts/gazpacho/gazpacho_heavy-webfont.woff2') format('woff2'),
+         url('/fonts/gazpacho/gazpacho_heavy-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
