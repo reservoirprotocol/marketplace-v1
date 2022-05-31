@@ -1,4 +1,3 @@
-import { Signer } from 'ethers'
 import { acceptOffer, Execute, paths } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
@@ -10,7 +9,7 @@ import React, {
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import { useAccount, useConnect, useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
@@ -49,18 +48,16 @@ const AcceptOffer: FC<Props> = ({
   setToast,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { connect, connectors } = useConnect()
   const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
   const { dispatch } = useContext(GlobalContext)
 
-  // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
   useEffect(() => {
-    if (data && open) {
+    if (data) {
       // Load data if missing
       if ('tokenId' in data) {
         getDetails(data.contract, data.tokenId, setDetails)
@@ -71,7 +68,7 @@ const AcceptOffer: FC<Props> = ({
         setCollection(data.collection)
       }
     }
-  }, [data, open])
+  }, [data])
 
   let tokenId: string | undefined = undefined
   let contract: string | undefined = undefined
@@ -100,20 +97,6 @@ const AcceptOffer: FC<Props> = ({
   if (details && 'data' in details && details?.data?.tokens?.[0]) {
     token = details.data?.tokens?.[0]
     topBuyValueExists = !token?.market?.topBid?.value
-  }
-
-  const modalData = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
   }
 
   const handleError: Parameters<typeof acceptOffer>[0]['handleError'] = (
@@ -195,18 +178,17 @@ const AcceptOffer: FC<Props> = ({
 
             execute(tokenString, taker)
           }}
-          //className="btn-primary-outline w-full dark:text-white"
         >
           {children ? (
             children
           ) : (
-            <button className="btn-primary-outline w-full dark:text-white">
+            <div className="btn-primary-outline w-full dark:text-white">
               {waitingTx ? (
                 <CgSpinner className="h-4 w-4 animate-spin" />
               ) : (
                 'Accept Offer'
               )}
-            </button>
+            </div>
           )}
         </Dialog.Trigger>
       )}
