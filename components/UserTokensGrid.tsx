@@ -27,7 +27,6 @@ type Props = {
 
 const Token = ({ token, modal, mutate, isOwner }: any) => {
   const [isBroken, setIsBroken] = useState(false)
-  console.log(token)
 
   return (
     <Link href={`/${token?.token?.contract}/${token?.token?.tokenId}`}>
@@ -128,7 +127,6 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
             </div>
           )}
         </div>
-
         {isOwner && (
           <div
             onClick={(e) => e.preventDefault()}
@@ -147,7 +145,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
               setToast={modal.setToast}
             >
               <p className="hover:color-primary mr-6 text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                List
+                {token?.ownership?.floorAskPrice ? 'Edit Listing' : 'List'}
               </p>
             </ListModal>
             {token?.token?.topBid?.value && (
