@@ -1,6 +1,7 @@
 @font-face {
     font-family: 'Editorial New';
-    src: url('/fonts/editorialnew/PPEditorialNew-Ultralight.otf') format('woff2');
-    font-weight: 200;
+    src: url('/fonts/editorialnew/PPEditorialNew-Light.woff2') format('woff2'),
+         url('/fonts/editorialnew/PPEditorialNew-Light.woff') format('woff');
+    font-weight: 300;
     font-style: normal;
 }
