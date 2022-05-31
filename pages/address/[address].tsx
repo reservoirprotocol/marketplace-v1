@@ -1,4 +1,3 @@
-import EthAccount from 'components/EthAccount'
 import Layout from 'components/Layout'
 import {
   GetStaticPaths,
