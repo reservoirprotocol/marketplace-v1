@@ -1,11 +1,6 @@
 import Layout from 'components/Layout'
 import setParams from 'lib/params'
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
 import Head from 'next/head'
@@ -20,6 +15,7 @@ import Owner from 'components/token/Owner'
 import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
 import { useEffect, useState } from 'react'
+import { TokenDetails } from 'types/reservoir'
 
 // Environment variables
 // For more information about these variables
@@ -38,7 +34,10 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-type Props = InferGetStaticPropsType<typeof getStaticProps>
+type Props = {
+  collectionId: string
+  tokenDetails?: TokenDetails
+}
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
@@ -56,7 +55,7 @@ const metadata = {
   ),
 }
 
-const Index: NextPage<Props> = ({ collectionId }) => {
+const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
   const [tokenOpenSea, setTokenOpenSea] = useState<any>({
     animation_url: null,
     extension: null,
@@ -131,14 +130,14 @@ const Index: NextPage<Props> = ({ collectionId }) => {
   if (details.error) {
     return <div>There was an error</div>
   }
-
-  const token = details.data?.tokens?.[0]
+  const token = details.data?.tokens?.[0] || { token: tokenDetails }
+  const tokenName = `${token?.token?.name || `#${token?.token?.tokenId}`}`
 
   // META
   const title = META_TITLE
-    ? metadata.title(META_TITLE)
-    : metadata.title(`${token?.token?.name || `#${token?.token?.tokenId}`} - 
-    ${collection.data?.collection?.name}`)
+    ? metadata.title(`${tokenName} ${META_TITLE}`)
+    : metadata.title(`${tokenName} - 
+    ${token.token?.collection?.name}`)
 
   const description = META_DESCRIPTION
     ? metadata.description(META_DESCRIPTION)
@@ -239,5 +238,7 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  return { props: { collectionId } }
+  return {
+    props: { collectionId, tokenDetails: tokenDetails?.tokens?.[0]?.token },
+  }
 }
