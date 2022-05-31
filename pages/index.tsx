@@ -2,11 +2,12 @@ import Layout from 'components/Layout'
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
-import CollectionsGrid from 'components/CollectionsGrid'
 import Head from 'next/head'
-import useCollections from 'hooks/useCollections'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import TrendingCollectionTable from 'components/TrendingCollectionTable'
+import SortTrendingCollections from 'components/SortTrendingCollections'
+import { useMediaQuery } from '@react-hookz/web'
 
 // Environment variables
 // For more information about these variables
@@ -49,8 +50,8 @@ const metadata = {
 }
 
 const Home: NextPage<Props> = ({ fallback }) => {
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
-  const collections = useCollections(fallback.collections)
 
   const title = META_TITLE && metadata.title(META_TITLE)
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
@@ -82,7 +83,15 @@ const Home: NextPage<Props> = ({ fallback }) => {
       <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
         <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
       </header>
-      <CollectionsGrid collections={collections} />
+      <div className="col-span-full px-6 md:px-16">
+        <div className="mb-9 flex w-full items-center justify-between">
+          <div className="reservoir-h4 dark:text-white">
+            Trending Collections
+          </div>
+          {!isSmallDevice && <SortTrendingCollections />}
+        </div>
+        <TrendingCollectionTable fallback={fallback} />
+      </div>
     </Layout>
   )
 }
