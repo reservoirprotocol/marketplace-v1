@@ -42,6 +42,7 @@ const AcceptOffer: FC<Props> = ({
   isInTheWrongNetwork,
   mutate,
   data,
+  children,
   signer,
   show,
   setToast,
@@ -52,7 +53,6 @@ const AcceptOffer: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const { dispatch } = useContext(GlobalContext)
 
-  // Data from props
   const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
@@ -86,6 +86,8 @@ const AcceptOffer: FC<Props> = ({
   // Set the token either from SWR or fetch
   let token: NonNullable<Details['tokens']>[0] = { token: undefined }
 
+  let topBuyValueExists = false
+
   // From fetch
   if (details && 'tokens' in details && details.tokens?.[0]) {
     token = details.tokens?.[0]
@@ -94,6 +96,7 @@ const AcceptOffer: FC<Props> = ({
   // From SWR
   if (details && 'data' in details && details?.data?.tokens?.[0]) {
     token = details.data?.tokens?.[0]
+    topBuyValueExists = !token?.market?.topBid?.value
   }
 
   const handleError: Parameters<typeof acceptOffer>[0]['handleError'] = (
@@ -166,9 +169,7 @@ const AcceptOffer: FC<Props> = ({
     <Dialog.Root open={open} onOpenChange={setOpen}>
       {show && (
         <Dialog.Trigger
-          disabled={
-            waitingTx || !token?.market?.topBid?.value || isInTheWrongNetwork
-          }
+          disabled={waitingTx || topBuyValueExists || isInTheWrongNetwork}
           onClick={() => {
             if (!taker || !tokenString) {
               dispatch({ type: 'CONNECT_WALLET', payload: true })
@@ -177,12 +178,17 @@ const AcceptOffer: FC<Props> = ({
 
             execute(tokenString, taker)
           }}
-          className="btn-primary-outline w-full dark:text-white"
         >
-          {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
+          {children ? (
+            children
           ) : (
-            'Accept Offer'
+            <div className="btn-primary-outline w-full dark:text-white">
+              {waitingTx ? (
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                'Accept Offer'
+              )}
+            </div>
           )}
         </Dialog.Trigger>
       )}
