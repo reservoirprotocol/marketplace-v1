@@ -10,19 +10,28 @@ type Props = {
     | undefined
 }
 
+const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
+
 const HeroSocialLinks: FC<Props> = ({ collection }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const social = {
     twitterUsername: collection?.metadata?.twitterUsername,
     externalUrl: collection?.metadata?.externalUrl,
     discordUrl: collection?.metadata?.discordUrl,
+    etherscanUrl: `https://etherscan.io/address/${collection?.id}`,
   }
 
   if (!social.twitterUsername && !social.externalUrl && !social.discordUrl) {
     return null
   }
 
+  const etherscanLogo = DARK_MODE
+    ? '/icons/etherscan-logo-light-circle.svg'
+    : '/icons/etherscan-logo-circle.svg'
+
   if (isSmallDevice) {
+    const dropdownItemClasses =
+      'reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800'
     return (
       <div className="absolute top-6 right-12">
         <DropdownMenu.Root>
@@ -36,7 +45,7 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
             {typeof social.discordUrl === 'string' && (
               <DropdownMenu.Item asChild>
                 <a
-                  className="reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                  className={dropdownItemClasses}
                   target="_blank"
                   rel="noopener noreferrer"
                   href={social.discordUrl}
@@ -53,7 +62,7 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
             {typeof social.twitterUsername === 'string' && (
               <DropdownMenu.Item asChild>
                 <a
-                  className="reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                  className={dropdownItemClasses}
                   target="_blank"
                   rel="noopener noreferrer"
                   href={`https://twitter.com/${social.twitterUsername}`}
@@ -67,10 +76,25 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
                 </a>
               </DropdownMenu.Item>
             )}
+            <DropdownMenu.Item asChild>
+              <a
+                className={dropdownItemClasses}
+                target="_blank"
+                rel="noopener noreferrer"
+                href={social.etherscanUrl}
+              >
+                <img
+                  src={etherscanLogo}
+                  alt="Etherscan Icon"
+                  className="h-6 w-6"
+                />
+                Etherscan
+              </a>
+            </DropdownMenu.Item>
             {typeof social.externalUrl === 'string' && (
               <DropdownMenu.Item asChild>
                 <a
-                  className="reservoir-gray-dropdown-item flex gap-2 rounded-none border-b-0 text-black dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                  className={dropdownItemClasses}
                   target="_blank"
                   rel="noopener noreferrer"
                   href={social.externalUrl}
@@ -115,6 +139,14 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
             />
           </a>
         )}
+        <a
+          className="flex-none text-black dark:text-white"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={social.etherscanUrl}
+        >
+          <img src={etherscanLogo} alt="Etherscan Icon" className="h-6 w-6" />
+        </a>
         {typeof social.externalUrl === 'string' && (
           <a
             className="flex-none text-black dark:text-white"
