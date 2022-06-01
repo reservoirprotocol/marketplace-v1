@@ -40,7 +40,13 @@ type Props = {
 }
 
 const metadata = {
-  title: (title: string) => <title>{title}</title>,
+  title: (title: string) => (
+    <>
+      <title>{title}</title>
+      <meta property="twitter:title" content={title} />
+      <meta property="og:title" content={title} />
+    </>
+  ),
   description: (description: string) => (
     <meta name="description" content={description} />
   ),
@@ -135,7 +141,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
 
   // META
   const title = META_TITLE
-    ? metadata.title(`${tokenName} ${META_TITLE}`)
+    ? metadata.title(`${tokenName} - ${META_TITLE}`)
     : metadata.title(`${tokenName} - 
     ${token.token?.collection?.name}`)
 
