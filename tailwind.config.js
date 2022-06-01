@@ -123,6 +123,13 @@ const primaryColors = {
     700: '#9b5ddc',
     900: '#8a53c5',
   },
+    darkpurple: {
+    100: '#c2c0ed',
+    300: '#8c87dc',
+    500: '#5f59cb',
+    700: '#4C46C5',
+    900: '#4540b1',
+  },
   default: {
     100: '#F1E5FF',
     300: '#E2CCFF',
