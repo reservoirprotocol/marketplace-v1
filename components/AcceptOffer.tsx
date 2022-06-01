@@ -195,18 +195,17 @@ const AcceptOffer: FC<Props> = ({
 
             execute(tokenString, taker)
           }}
-          //className="btn-primary-outline w-full dark:text-white"
         >
           {children ? (
             children
+          ) : waitingTx ? (
+            <p className="btn-primary-outline w-full dark:text-white">
+              <CgSpinner className="h-4 w-4 animate-spin" />
+            </p>
           ) : (
-            <button className="btn-primary-outline w-full dark:text-white">
-              {waitingTx ? (
-                <CgSpinner className="h-4 w-4 animate-spin" />
-              ) : (
-                'Accept Offer'
-              )}
-            </button>
+            <p className="btn-primary-outline w-full dark:text-white">
+              Accept Offer
+            </p>
           )}
         </Dialog.Trigger>
       )}

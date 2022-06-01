@@ -241,24 +241,23 @@ const ListModal: FC<Props> = ({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
+      <Dialog.Trigger
+        disabled={isInTheWrongNetwork}
+        onClick={async (e) => {
+          setPostOnOpenSea(false)
+          setOrderbook(['reservoir'])
+        }}
+      >
         {children ? (
           children
+        ) : token?.market?.floorAsk?.price ? (
+          <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+            Edit Listing
+          </p>
         ) : (
-          <button
-            disabled={isInTheWrongNetwork}
-            onClick={async (e) => {
-              setPostOnOpenSea(false)
-              setOrderbook(['reservoir'])
-            }}
-            className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
-          >
-            {children
-              ? children
-              : token?.market?.floorAsk?.price
-              ? 'Edit Listing'
-              : 'List for Sale'}
-          </button>
+          <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+            List for Sale
+          </p>
         )}
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -370,7 +369,9 @@ const ListModal: FC<Props> = ({
               </div>
               {postOnOpenSea && (
                 <div className="reservoir-small dark:text-white">
-                  <sup>*</sup>Only one marketplace fee will be applied to this listing at time of sale. Note: Fees may vary based on where the item is sold.
+                  <sup>*</sup>Only one marketplace fee will be applied to this
+                  listing at time of sale. Note: Fees may vary based on where
+                  the item is sold.
                 </div>
               )}
             </div>
