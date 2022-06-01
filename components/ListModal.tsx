@@ -247,6 +247,10 @@ const ListModal: FC<Props> = ({
       >
         {children ? (
           children
+        ) : token?.market?.floorAsk?.price ? (
+          <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+            Edit Listing
+          </p>
         ) : (
           <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
             {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
@@ -362,7 +366,9 @@ const ListModal: FC<Props> = ({
               </div>
               {postOnOpenSea && (
                 <div className="reservoir-small dark:text-white">
-                  <sup>*</sup>Only one marketplace fee will be applied to this listing at time of sale. Note: Fees may vary based on where the item is sold.
+                  <sup>*</sup>Only one marketplace fee will be applied to this
+                  listing at time of sale. Note: Fees may vary based on where
+                  the item is sold.
                 </div>
               )}
             </div>
