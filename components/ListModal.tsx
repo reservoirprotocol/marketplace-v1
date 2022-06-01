@@ -47,13 +47,10 @@ const ListModal: FC<Props> = ({
   maker,
   isInTheWrongNetwork,
   signer,
+  children,
   mutate,
   setToast,
-  children,
 }) => {
-  // wagmi
-  const { connect, connectors } = useConnect()
-
   // User input
   const [expiration, setExpiration] = useState('oneWeek')
   const [postOnOpenSea, setPostOnOpenSea] = useState<boolean>(false)
@@ -86,7 +83,7 @@ const ListModal: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (data && open) {
+    if (data) {
       // Load data if missing
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
@@ -102,7 +99,7 @@ const ListModal: FC<Props> = ({
         setCollection(collection)
       }
     }
-  }, [data, open])
+  }, [data])
 
   let apiBps = 0
 
@@ -255,9 +252,9 @@ const ListModal: FC<Props> = ({
             Edit Listing
           </p>
         ) : (
-          <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-            List for Sale
-          </p>
+          <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+            {token?.market?.floorAsk?.price ? 'Edit Listing' : 'List for Sale'}
+          </div>
         )}
       </Dialog.Trigger>
       <Dialog.Portal>
