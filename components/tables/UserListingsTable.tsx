@@ -72,7 +72,7 @@ const UserListingsTable: FC<Props> = ({
               name,
               tokenHref,
               tokenId,
-              value,
+              price,
             } = processPosition(position)
 
             return (
@@ -111,7 +111,7 @@ const UserListingsTable: FC<Props> = ({
 
                 {/* PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={value} />
+                  <FormatEth amount={price} />
                 </td>
 
                 {/* EXPIRATION */}
@@ -166,7 +166,7 @@ function processPosition(
         : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
     id: position?.id,
     collectionName: position?.metadata?.data?.collectionName,
-    value: position?.value,
+    price: position?.price,
   }
 
   const tokenHref =

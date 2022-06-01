@@ -14,6 +14,7 @@ import HeroSocialLinks from 'components/hero/HeroSocialLinks'
 import HeroBackground from 'components/hero/HeroBackground'
 import HeroStats from 'components/hero/HeroStats'
 import Sweep from './Sweep'
+import ReactMarkdown from 'react-markdown'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -190,7 +191,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   ref={descriptionRef}
                   className="text-center text-sm text-[#262626] transition-[width] duration-300 ease-in-out dark:text-white"
                 >
-                  {header.description}
+                  <ReactMarkdown linkTarget="_blank">
+                   {header.description}
+                  </ReactMarkdown>
                 </p>
               </div>
               {isLongDescription && (

@@ -133,9 +133,7 @@ const UserTokensTable: FC<Props> = ({
                     isOwner ? (
                       <div className="min-w-[160px]">
                         <span className="group-hover:hidden">
-                          <FormatEth
-                            amount={topOffer}
-                          />
+                          <FormatEth amount={topOffer} />
                         </span>
                         <div className="hidden group-hover:inline-block">
                           <AcceptOffer

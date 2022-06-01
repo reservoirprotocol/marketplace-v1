@@ -9,11 +9,12 @@ import Document, {
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
-const OG_IMAGE = process.env.NEXT_PUBLIC_OG_IMAGE
+const OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const META_URL = process.env.NEXT_PUBLIC_META_URL
 const FAVICON = process.env.NEXT_PUBLIC_FAVICON
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const META_TWITTER_USERNAME = process.env.NEXT_PUBLIC_META_TWITTER_USERNAME
+const FONT_URLS = process.env.NEXT_PUBLIC_FONT_URLS
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -64,6 +65,13 @@ class MyDocument extends Document {
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="640" />
         <meta property="og:image:alt" content={`${SOURCE_ID} banner`} />
+
+        {FONT_URLS
+          ? FONT_URLS.split(',').map((link, i) => (
+              <link key={i} href={link} rel="stylesheet" />
+            ))
+          : null}
+
         <body className="bg-white text-neutral-800 dark:bg-black dark:text-white">
           <Main />
           <NextScript />
