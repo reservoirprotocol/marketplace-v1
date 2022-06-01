@@ -43,6 +43,7 @@ const metadata = {
   title: (title: string) => (
     <>
       <title>{title}</title>
+      <meta property="twitter:title" content={title} />
       <meta property="og:title" content={title} />
     </>
   ),
