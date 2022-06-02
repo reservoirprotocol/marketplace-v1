@@ -64,6 +64,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               days1Change,
               days7Change,
               days30Change,
+              floorSaleChange1Days,
               floorPrice,
               supply,
             } = processCollection(collection)
@@ -126,10 +127,10 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                   <PercentageChange
                     value={
                       sort === '7DayVolume'
-                        ? getFloorDelta(floorPrice, days7Change)
+                        ? 0
                         : sort === '30DayVolume'
-                        ? getFloorDelta(floorPrice, days30Change)
-                        : getFloorDelta(floorPrice, days1Change)
+                        ? 0
+                        : floorSaleChange1Days
                     }
                   />
                 </td>
@@ -180,6 +181,8 @@ function processCollection(
     floor1Days: collection?.floorSale?.['1day'],
     floor7Days: collection?.floorSale?.['7day'],
     floor30Days: collection?.floorSale?.['30day'],
+    // @ts-ignore
+    floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
     floorPrice: collection?.floorAskPrice,
     supply: collection?.tokenCount,
   }
