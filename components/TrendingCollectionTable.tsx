@@ -183,11 +183,8 @@ function processCollection(
     floor1Days: collection?.floorSale?.['1day'],
     floor7Days: collection?.floorSale?.['7day'],
     floor30Days: collection?.floorSale?.['30day'],
-    // @ts-ignore
     floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
-    // @ts-ignore
     floorSaleChange7Days: collection?.floorSaleChange?.['7day'],
-    // @ts-ignore
     floorSaleChange30Days: collection?.floorSaleChange?.['30day'],
     floorPrice: collection?.floorAskPrice,
     supply: collection?.tokenCount,
