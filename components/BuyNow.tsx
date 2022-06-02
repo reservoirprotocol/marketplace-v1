@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
+import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -152,7 +152,7 @@ const BuyNow: FC<Props> = ({
     expectedPrice: number
   ) => {
     setWaitingTx(true)
-    await buyTokenBeta({
+    await buyToken({
       expectedPrice,
       query: {
         taker,

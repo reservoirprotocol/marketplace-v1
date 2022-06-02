@@ -1,4 +1,4 @@
-import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
+import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -193,7 +193,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const execute = async (taker: string) => {
     setWaitingTx(true)
 
-    const query: Parameters<typeof buyTokenBeta>['0']['query'] = {
+    const query: Parameters<typeof buyToken>['0']['query'] = {
       taker,
     }
 
@@ -203,7 +203,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
     )
 
-    await buyTokenBeta({
+    await buyToken({
       expectedPrice: sweepTotal,
       query,
       signer,
