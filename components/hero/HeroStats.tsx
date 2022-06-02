@@ -48,7 +48,7 @@ const Stat: FC<{ name: string }> = ({ name, children }) => (
   </div>
 )
 
-const PercentageChange: FC<{ value: number | undefined | null }> = ({
+export const PercentageChange: FC<{ value: number | undefined | null }> = ({
   value,
 }) => {
   if (value === undefined || value === null) return null

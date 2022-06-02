@@ -28,7 +28,9 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
     const pathname = `${PROXY_API_BASE}/search/collections/v1`
 
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
-      {}
+      {
+        limit: 6,
+      }
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost') {
       query.community = communityId
@@ -67,7 +69,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
       } catch (err) {
         console.error(err)
       }
-    }, 700),
+    }, 100),
     []
   )
 

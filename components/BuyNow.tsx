@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { buyToken, buyTokenBeta, Execute, paths } from '@reservoir0x/client-sdk'
+import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -152,7 +152,7 @@ const BuyNow: FC<Props> = ({
     expectedPrice: number
   ) => {
     setWaitingTx(true)
-    await buyTokenBeta({
+    await buyToken({
       expectedPrice,
       query: {
         taker,
@@ -191,12 +191,13 @@ const BuyNow: FC<Props> = ({
 
             execute(tokenString, taker, expectedPrice)
           }}
-          className="btn-primary-fill w-full"
         >
           {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
+            <p className="btn-primary-fill w-full">
+              <CgSpinner className="h-4 w-4 animate-spin" />
+            </p>
           ) : (
-            'Buy Now'
+            <p className="btn-primary-fill w-full">Buy Now</p>
           )}
         </Dialog.Trigger>
       )}
