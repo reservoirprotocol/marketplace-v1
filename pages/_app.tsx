@@ -70,7 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <GlobalProvider>
       <Provider client={client}>
         <AnalyticsProvider>
-          <ThemeProvider attribute="class">
+          <ThemeProvider attribute="class" defaultTheme="light">
             <Component {...pageProps} />
           </ThemeProvider>
         </AnalyticsProvider>
