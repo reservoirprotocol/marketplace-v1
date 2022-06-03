@@ -15,27 +15,27 @@ const ThemeSwitcher = () => {
                 onClick={() => setTheme('light')}
                 value="light"
                 disabled={theme == "light"}
-                className={`block select-none p-3 transition  ${
+                className={`flex flex-auto select-none p-3 transition  ${
                   theme == "light"
                     ? 'cursor-not-allowed bg-[#F1E5FF] dark:bg-primary-900'
                     : 'hover:bg-[#F1E5FF] dark:hover:bg-primary-900'
                 }`}
                 aria-label="Light Mode"
             >
-                <FiSun />
+                <FiSun className="flex-auto" />
             </ToggleGroup.Item>
             <ToggleGroup.Item
                 onClick={() => setTheme('dark')}
                 value="dark"
                 disabled={theme == "dark"}
-                className={`block select-none p-3 transition  ${
+                className={`flex flex-auto select-none p-3 transition  ${
                   theme == "dark"
                     ? 'cursor-not-allowed bg-[#F1E5FF] dark:bg-primary-900'
                     : 'hover:bg-[#F1E5FF] dark:hover:bg-primary-900'
                 }`}
                 aria-label="Dark Mode"
             >
-                <FiMoon />
+                <FiMoon className="flex-auto" />
             </ToggleGroup.Item>
         </ToggleGroup.Root>
     )
