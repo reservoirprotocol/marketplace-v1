@@ -4,8 +4,12 @@ import { HiX } from 'react-icons/hi'
 import Steps from 'components/Steps'
 import { Execute } from '@reservoir0x/client-sdk/dist/types/index'
 import FormatEth from 'components/FormatEth'
+import Link from 'next/link'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
+const DISABLE_POWERED_BY_RESERVOIR =
+  process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 
 type Props = {
   loading: boolean
@@ -44,7 +48,11 @@ const ModalCard: FC<Props> = ({
     <Dialog.Content className="fixed inset-0 z-[1000] bg-[#000000b6]">
       <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
         <div className="px-5">
-          <div className="mx-auto rounded-2xl border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[510px]">
+          <div
+            className={`mx-auto overflow-hidden border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[510px] ${
+              DISABLE_POWERED_BY_RESERVOIR ? ' rounded-2xl' : ' rounded-t-2xl'
+            }`}
+          >
             <div className="mb-4 flex items-center justify-between">
               <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
                 {modalTitle}
@@ -85,6 +93,25 @@ const ModalCard: FC<Props> = ({
               </div>
             )}
           </div>
+          {!DISABLE_POWERED_BY_RESERVOIR && (
+            <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[510px]">
+              <Link href="https://reservoirprotocol.github.io/">
+                <a
+                  className="reservoir-tiny flex gap-2 dark:text-white"
+                  target="_blank"
+                >
+                  Powered by{' '}
+                  <img
+                    src={
+                      !!DARK_MODE
+                        ? `/reservoir_watermark_dark.svg`
+                        : `/reservoir_watermark_light.svg`
+                    }
+                  />
+                </a>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </Dialog.Content>
