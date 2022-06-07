@@ -93,7 +93,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     count: Number(collection.data?.collection?.tokenCount ?? 0),
     topOffer: collection.data?.collection?.topBid?.value,
     floor: floor?.price,
-    vol24: collection.data?.collection?.volume?.['1day'],
+    allTime: collection.data?.collection?.volume?.allTime,
     volumeChange: collection.data?.collection?.volumeChange?.['1day'],
     floorChange: collection.data?.collection?.floorSaleChange?.['1day'],
   }
@@ -192,7 +192,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   className="text-center text-sm text-[#262626] transition-[width] duration-300 ease-in-out dark:text-white"
                 >
                   <ReactMarkdown linkTarget="_blank">
-                   {header.description}
+                    {header.description}
                   </ReactMarkdown>
                 </p>
               </div>
