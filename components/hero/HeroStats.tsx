@@ -31,7 +31,7 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
           <PercentageChange value={stats.floorChange} />
         </h3>
       </Stat>
-      <Stat name="all time">
+      <Stat name="total volume">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
           <FormatEth amount={stats.allTime} maximumFractionDigits={2} />
         </h3>
