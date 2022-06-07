@@ -48,8 +48,8 @@ const Navbar: FC = () => {
     })
   }
 
-  const isGlobal = !COMMUNITY && !COLLECTION
-  const filterableCollection = isGlobal || COMMUNITY
+  const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
+  const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -72,7 +72,7 @@ const Navbar: FC = () => {
           initialResults.collections.length >= 2 &&
           initialResults.collections.length <= 10
 
-        if (COMMUNITY && smallCommunity) {
+        if ((COMMUNITY || COLLECTION_SET_ID) && smallCommunity) {
           setFilterComponent(
             <CommunityDropdown
               collections={initialResults?.collections}
