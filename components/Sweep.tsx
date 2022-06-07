@@ -22,9 +22,13 @@ import ModalCard from './modal/ModalCard'
 import { styled } from '@stitches/react'
 import { violet, blackA } from '@radix-ui/colors'
 import * as SliderPrimitive from '@radix-ui/react-slider'
+import Link from 'next/link'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
+const DISABLE_POWERED_BY_RESERVOIR =
+  process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 
@@ -240,7 +244,13 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
             <Dialog.Content className="fixed inset-0 z-10 bg-[#000000b6] px-8">
               <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
                 <div className="px-5">
-                  <div className="mx-auto rounded-2xl border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[639px]">
+                  <div
+                    className={`mx-auto  border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[639px] ${
+                      DISABLE_POWERED_BY_RESERVOIR
+                        ? 'rounded-2xl'
+                        : 'rounded-t-2xl'
+                    }`}
+                  >
                     <div className="mb-4 flex items-center justify-between">
                       <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
                         <div className="flex items-center gap-4">
@@ -346,6 +356,25 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       Buy Now
                     </button>
                   </div>
+                  {!DISABLE_POWERED_BY_RESERVOIR && (
+                    <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[639px]">
+                      <Link href="https://reservoirprotocol.github.io/">
+                        <a
+                          className="reservoir-tiny flex gap-2 dark:text-white"
+                          target="_blank"
+                        >
+                          Powered by{' '}
+                          <img
+                            src={
+                              !!DARK_MODE
+                                ? `/reservoir_watermark_dark.svg`
+                                : `/reservoir_watermark_light.svg`
+                            }
+                          />
+                        </a>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </Dialog.Content>
