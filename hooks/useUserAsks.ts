@@ -89,17 +89,12 @@ const getKey: InfiniteKeyLoader = (
     query.contracts = COLLECTION
   }
 
-  if (COLLECTION_SET_ID) {
-    // @ts-ignore
-    query.collectionsSetId = COLLECTION_SET_ID
-  } else {
-    if (COMMUNITY) {
-      collections?.data?.collections
-        ?.map(({ contract }) => contract)
-        .filter((contract) => !!contract)
-        // @ts-ignore
-        .forEach((contract, index) => (query[`contracts[${index}]`] = contract))
-    }
+  if (COMMUNITY || COLLECTION_SET_ID) {
+    collections?.data?.collections
+      ?.map(({ contract }) => contract)
+      .filter((contract) => !!contract)
+      // @ts-ignore
+      .forEach((contract, index) => (query[`contracts[${index}]`] = contract))
   }
 
   if (previousPageData) query.continuation = previousPageData.continuation
