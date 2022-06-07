@@ -15,8 +15,7 @@ import { setToast } from './setToast'
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
-
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
+const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 
 type Props = {
   details: ReturnType<typeof useDetails>
@@ -38,7 +37,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
     SOURCE_ID === sourceName
 
   const sourceLogo = isLocalListed
-    ? NAVBAR_LOGO
+    ? SOURCE_ICON || NAVBAR_LOGO
     : `https://api.reservoir.tools/redirect/logo/v1?source=${sourceName}`
 
   const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${sourceName}&token=${token?.token?.contract}:${token?.token?.tokenId}`
