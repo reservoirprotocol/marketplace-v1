@@ -7,7 +7,7 @@ type Props = {
   count: number
   topOffer: number | undefined
   floor: number | undefined
-  vol24: number | undefined
+  allTime: number | undefined
   volumeChange: number | undefined
   floorChange: number | undefined
 }
@@ -31,10 +31,9 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
           <PercentageChange value={stats.floorChange} />
         </h3>
       </Stat>
-      <Stat name="24h">
+      <Stat name="total volume">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
-          <FormatEth amount={stats.vol24} maximumFractionDigits={2} />
-          <PercentageChange value={stats.volumeChange} />
+          <FormatEth amount={stats.allTime} maximumFractionDigits={2} />
         </h3>
       </Stat>
     </div>
