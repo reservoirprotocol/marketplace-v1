@@ -12,6 +12,7 @@ import LoadingIcon from 'components/LoadingIcon'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
+const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 
 type Props = {
   collection: Collection
@@ -135,7 +136,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   const saleSourceImgSrc =
     SOURCE_ID && sale.orderSource && SOURCE_ID === sale.orderSource
-      ? NAVBAR_LOGO
+      ? SOURCE_ICON || NAVBAR_LOGO
       : `https://api.reservoir.tools/redirect/logo/v1?source=${sale.orderSource}`
 
   let saleDescription = 'Sale'
