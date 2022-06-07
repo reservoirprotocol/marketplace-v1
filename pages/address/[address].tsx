@@ -41,6 +41,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -234,7 +235,11 @@ export const getStaticProps: GetStaticProps<{
     offset: 0,
   }
 
-  if (COMMUNITY) query.community = COMMUNITY
+  if (COLLECTION_SET_ID) {
+    query.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) query.community = COMMUNITY
+  }
 
   setParams(url, query)
 

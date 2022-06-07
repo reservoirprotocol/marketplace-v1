@@ -9,6 +9,7 @@ import useSearchCommunity from './useSearchCommunity'
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Orders = paths['/orders/asks/v2']['get']['responses']['200']['schema']
 
@@ -83,10 +84,12 @@ const getKey: InfiniteKeyLoader = (
     limit: 20,
   }
 
-  // @ts-ignore
-  if (COLLECTION && !COMMUNITY) query.contracts = COLLECTION
+  if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
+    // @ts-ignore
+    query.contracts = COLLECTION
+  }
 
-  if (COMMUNITY) {
+  if (COMMUNITY || COLLECTION_SET_ID) {
     collections?.data?.collections
       ?.map(({ contract }) => contract)
       .filter((contract) => !!contract)
