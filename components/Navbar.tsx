@@ -11,6 +11,7 @@ const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
 const EXTERNAL_LINKS = process.env.NEXT_PUBLIC_EXTERNAL_LINKS || null
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 function getInitialSearchHref() {
   const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
@@ -18,8 +19,10 @@ function getInitialSearchHref() {
   const query: paths['/search/collections/v1']['get']['parameters']['query'] =
     {}
 
-  if (COMMUNITY) {
-    query.community = COMMUNITY
+  if (COLLECTION_SET_ID) {
+    query.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) query.community = COMMUNITY
   }
 
   return setParams(pathname, query)
@@ -45,8 +48,8 @@ const Navbar: FC = () => {
     })
   }
 
-  const isGlobal = !COMMUNITY && !COLLECTION
-  const filterableCollection = isGlobal || COMMUNITY
+  const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
+  const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -69,7 +72,7 @@ const Navbar: FC = () => {
           initialResults.collections.length >= 2 &&
           initialResults.collections.length <= 10
 
-        if (COMMUNITY && smallCommunity) {
+        if ((COMMUNITY || COLLECTION_SET_ID) && smallCommunity) {
           setFilterComponent(
             <CommunityDropdown
               collections={initialResults?.collections}

@@ -52,6 +52,7 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
@@ -299,18 +300,24 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 export default Home
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  if (COLLECTION && !COMMUNITY) {
+  if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
     return {
       paths: [{ params: { id: COLLECTION } }],
       fallback: false,
     }
   }
 
-  if (COLLECTION && COMMUNITY) {
+  if (COLLECTION && (COMMUNITY || COLLECTION_SET_ID)) {
     const url = new URL(`/search/collections/v1`, RESERVOIR_API_BASE)
 
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
-      { community: COMMUNITY, limit: 20 }
+      { limit: 20 }
+
+    if (COLLECTION_SET_ID) {
+      query.collectionsSetId = COLLECTION_SET_ID
+    } else {
+      if (COMMUNITY) query.community = COMMUNITY
+    }
 
     setParams(url, query)
 

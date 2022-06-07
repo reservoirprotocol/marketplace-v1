@@ -32,6 +32,7 @@ const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Props = {
@@ -207,7 +208,7 @@ export const getStaticProps: GetStaticProps<{
 
   if (
     COLLECTION &&
-    !COMMUNITY &&
+    (!COMMUNITY || !COLLECTION_SET_ID) &&
     COLLECTION.toLowerCase() !== contract?.toLowerCase()
   ) {
     return {
