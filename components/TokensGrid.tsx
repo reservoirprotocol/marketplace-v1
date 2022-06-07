@@ -12,6 +12,7 @@ import Image from 'next/image'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
+const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 
 type Props = {
   tokens: SWRInfiniteResponse<
@@ -69,7 +70,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                         SOURCE_ID &&
                         token?.source &&
                         SOURCE_ID === token?.source
-                          ? NAVBAR_LOGO
+                          ? SOURCE_ICON || NAVBAR_LOGO
                           : `https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`
                       }
                       alt=""
