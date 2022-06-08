@@ -210,6 +210,7 @@ export const getStaticProps: GetStaticProps<{
   if (
     COLLECTION &&
     !COMMUNITY &&
+    !COLLECTION_SET_ID &&
     COLLECTION.toLowerCase() !== contract?.toLowerCase()
   ) {
     return {
