@@ -205,10 +205,12 @@ export const getStaticProps: GetStaticProps<{
   communityId?: string
 }> = async ({ params }) => {
   const contract = params?.contract?.toString()
+  const tokenId = params?.tokenId?.toString()
 
   if (
     COLLECTION &&
-    (!COMMUNITY || !COLLECTION_SET_ID) &&
+    !COMMUNITY &&
+    !COLLECTION_SET_ID &&
     COLLECTION.toLowerCase() !== contract?.toLowerCase()
   ) {
     return {
@@ -227,7 +229,7 @@ export const getStaticProps: GetStaticProps<{
   const url = new URL('/tokens/details/v4', RESERVOIR_API_BASE)
 
   const query: paths['/tokens/details/v4']['get']['parameters']['query'] = {
-    tokens: [`${params?.contract?.toString()}:${params?.tokenId?.toString()}`],
+    tokens: [`${contract}:${tokenId}`],
   }
 
   const href = setParams(url, query)
