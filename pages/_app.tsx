@@ -21,6 +21,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
+import { ThemeProvider } from 'next-themes'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -33,6 +34,9 @@ const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const chains = defaultChains
 const defaultChain = chain.mainnet
+
+const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
+const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
 
 // Set up connectors
 const client = createClient({
@@ -67,11 +71,19 @@ const client = createClient({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
+
   return (
     <GlobalProvider>
       <Provider client={client}>
         <AnalyticsProvider>
-          <Component {...pageProps} />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={defaultTheme}
+            forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+          >
+            <Component {...pageProps} />
+          </ThemeProvider>
         </AnalyticsProvider>
       </Provider>
     </GlobalProvider>
