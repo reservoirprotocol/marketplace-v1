@@ -1,8 +1,9 @@
 
 @font-face {
   font-family: 'Rodger';
+  size-adjust: 130%;
   font-weight: 100;
   font-style: normal;
-  src: url('/fonts/Rodger/Rodger-Regular.woff2') format('woff2'),
-    url('/fonts/Rodger/Rodger-Regular.woff') format('woff');
+  src: url('/fonts/Rodger/Rodger-Black-Uppercase.woff2') format('woff2'),
+    url('/fonts/Rodger/Rodger-Black-Uppercase.woff') format('woff');
 }
