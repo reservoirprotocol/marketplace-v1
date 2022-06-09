@@ -21,6 +21,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
+import { ThemeProvider } from 'next-themes'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -71,7 +72,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <GlobalProvider>
       <Provider client={client}>
         <AnalyticsProvider>
-          <Component {...pageProps} />
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <Component {...pageProps} />
+          </ThemeProvider>
         </AnalyticsProvider>
       </Provider>
     </GlobalProvider>
