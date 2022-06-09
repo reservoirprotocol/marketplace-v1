@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { paths } from '@reservoir0x/client-sdk'
 import setParams from 'lib/params'
 import NavbarLogo from 'components/navbar/NavbarLogo'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -116,8 +117,9 @@ const Navbar: FC = () => {
         </div>
       </div>
       <HamburgerMenu externalLinks={externalLinks} />
-      <div className="z-10 ml-auto hidden shrink-0 md:block">
+      <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
         <ConnectWallet />
+        <ThemeSwitcher />
       </div>
     </nav>
   )
