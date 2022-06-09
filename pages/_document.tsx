@@ -72,7 +72,7 @@ class MyDocument extends Document {
             ))
           : null}
 
-        <body className="bg-white text-neutral-800 dark:bg-black dark:text-white">
+        <body className="bg-cpg text-cpg-text dark:bg-black dark:text-white">
           <Main />
           <NextScript />
         </body>
