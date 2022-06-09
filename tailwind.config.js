@@ -14,12 +14,19 @@ const primaryColors = {
     700: '#b91c1c',
     900: '#7f1d1d',
   },
-  orange: {
+  darkorange: {
     100: '#ffedd5',
     300: '#fdba74',
     500: '#f97316',
     700: '#c2410c',
     900: '#7c2d12',
+  },
+    orange: {
+    100: '#fdccb8',
+    300: '#fa9b72',
+    500: '#f86d31',
+    700: '#f85A17',
+    900: '#df5114',
   },
   lime: {
     100: '#ecfccb',
