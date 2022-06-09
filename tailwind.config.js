@@ -21,7 +21,7 @@ const primaryColors = {
     700: '#c2410c',
     900: '#7c2d12',
   },
-    orange: {
+  orange: {
     100: '#fdccb8',
     300: '#fa9b72',
     500: '#f86d31',
@@ -133,21 +133,21 @@ const primaryColors = {
     700: '#9b5ddc',
     900: '#8a53c5',
   },
-    darkpurple: {
+  darkpurple: {
     100: '#cdcbfc',
     300: '#9d98f9',
     500: '#7069f6',
     700: '#5F57F6',
     900: '#544ddc',
   },
-    zinc: {
+  zinc: {
     100: '#f4f4f5',
     300: '#d4d4d8',
     500: '#71717a',
     700: '#3f3f46',
     900: '#18181b',
   },
-    gray: {
+  gray: {
     100: '#f3f4f6',
     300: '#d1d5db',
     500: '#6b7280',
@@ -198,12 +198,9 @@ module.exports = {
 
       colors: {
         primary: primaryColors[PRIMARY_COLOR],
-        'cpg': '#FBF8EB',
-        'cpg-text': '#002800',
-        'cpg-backdrop': 'rgba(251, 248, 235, 0.8)',
         'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
         backdrop: 'rgba(255, 255, 255, 0.8)',
-      }, 
+      },
     },
   },
   plugins: [
