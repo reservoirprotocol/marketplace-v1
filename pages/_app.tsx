@@ -35,6 +35,9 @@ const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 const chains = defaultChains
 const defaultChain = chain.mainnet
 
+const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
+const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
+
 // Set up connectors
 const client = createClient({
   autoConnect: true,
@@ -68,11 +71,17 @@ const client = createClient({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
+
   return (
     <GlobalProvider>
       <Provider client={client}>
         <AnalyticsProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={defaultTheme}
+            forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+          >
             <Component {...pageProps} />
           </ThemeProvider>
         </AnalyticsProvider>
