@@ -137,6 +137,10 @@ This is a Next.js app that can be easily deployed using  [Vercel](https://vercel
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
+### Contributing
+
+If you'd like to contribute please follow the [guidelines](https://github.com/reservoirprotocol/marketplace/blob/main/CONTRIBUTING.md).
+
 <!-- CONTACT -->
 ## Contact
 
