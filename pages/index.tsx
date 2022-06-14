@@ -6,6 +6,8 @@ import Head from 'next/head'
 import TrendingCollectionTable from 'components/TrendingCollectionTable'
 import SortTrendingCollections from 'components/SortTrendingCollections'
 import { useMediaQuery } from '@react-hookz/web'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 // Environment variables
 // For more information about these variables
@@ -51,11 +53,18 @@ const metadata = {
 
 const Home: NextPage<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
+  const router = useRouter()
 
   const title = META_TITLE && metadata.title(META_TITLE)
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
   const image = metadata.image(META_IMAGE)
   const tagline = metadata.tagline(TAGLINE)
+
+  useEffect(() => {
+    if (REDIRECT_HOMEPAGE && COLLECTION) {
+      router.push(`/collections/${COLLECTION}`)
+    }
+  }, [COLLECTION, REDIRECT_HOMEPAGE])
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
@@ -63,6 +72,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
     console.debug({ CHAIN_ID })
     return <div>There was an error</div>
   }
+
+  if (REDIRECT_HOMEPAGE && COLLECTION) return null
 
   return (
     <Layout navbar={{}}>
@@ -95,15 +106,6 @@ export const getStaticProps: GetStaticProps<{
   }
 }> = async () => {
   const options: RequestInit | undefined = {}
-
-  if (REDIRECT_HOMEPAGE && COLLECTION) {
-    return {
-      redirect: {
-        destination: `/collections/${COLLECTION}`,
-        permanent: false,
-      },
-    }
-  }
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
