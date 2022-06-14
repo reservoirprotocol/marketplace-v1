@@ -3,8 +3,6 @@ import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import setParams from 'lib/params'
 import Head from 'next/head'
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 import TrendingCollectionTable from 'components/TrendingCollectionTable'
 import SortTrendingCollections from 'components/SortTrendingCollections'
 import { useMediaQuery } from '@react-hookz/web'
@@ -19,12 +17,14 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // OPTIONAL
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
-
+const REDIRECT_HOMEPAGE = process.env.NEXT_PUBLIC_REDIRECT_HOMEPAGE
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
 const META_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -51,18 +51,11 @@ const metadata = {
 
 const Home: NextPage<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
-  const router = useRouter()
 
   const title = META_TITLE && metadata.title(META_TITLE)
   const description = META_DESCRIPTION && metadata.description(META_DESCRIPTION)
   const image = metadata.image(META_IMAGE)
   const tagline = metadata.tagline(TAGLINE)
-
-  useEffect(() => {
-    if (COLLECTION) {
-      router.push(`/collections/${COLLECTION}`)
-    }
-  }, [COLLECTION])
 
   // Return error page if the API base url or the environment's
   // chain ID are missing
@@ -70,8 +63,6 @@ const Home: NextPage<Props> = ({ fallback }) => {
     console.debug({ CHAIN_ID })
     return <div>There was an error</div>
   }
-
-  if (COLLECTION) return null
 
   return (
     <Layout navbar={{}}>
@@ -105,6 +96,15 @@ export const getStaticProps: GetStaticProps<{
 }> = async () => {
   const options: RequestInit | undefined = {}
 
+  if (REDIRECT_HOMEPAGE && COLLECTION) {
+    return {
+      redirect: {
+        destination: `/collections/${COLLECTION}`,
+        permanent: false,
+      },
+    }
+  }
+
   if (RESERVOIR_API_KEY) {
     options.headers = {
       'x-api-key': RESERVOIR_API_KEY,
@@ -117,6 +117,10 @@ export const getStaticProps: GetStaticProps<{
     limit: 20,
     sortBy: '7DayVolume',
   }
+
+  if (COLLECTION && !COMMUNITY) query.contract = COLLECTION
+  if (COMMUNITY) query.community = COMMUNITY
+  if (COLLECTION_SET_ID) query.collectionsSetId = COLLECTION_SET_ID
 
   const href = setParams(url, query)
   const res = await fetch(href, options)
