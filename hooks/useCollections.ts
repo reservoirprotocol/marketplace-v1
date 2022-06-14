@@ -7,6 +7,9 @@ import { useInView } from 'react-intersection-observer'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Collections = paths['/collections/v4']['get']['responses']['200']['schema']
 
@@ -61,6 +64,10 @@ const getKey: (
     limit: 20,
     sortBy: '1DayVolume',
   }
+
+  if (COLLECTION && !COMMUNITY) query.contract = COLLECTION
+  if (COMMUNITY) query.community = COMMUNITY
+  if (COLLECTION_SET_ID) query.collectionsSetId = COLLECTION_SET_ID
 
   if (previousPageData) query.continuation = previousPageData.continuation
 
