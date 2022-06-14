@@ -172,6 +172,7 @@ function processCollection(
 ) {
   const data = {
     contract: collection?.primaryContract,
+    id: collection?.id,
     image: collection?.image,
     name: collection?.name,
     days1: collection?.volume?.['1day'],
@@ -190,7 +191,7 @@ function processCollection(
     supply: collection?.tokenCount,
   }
 
-  const tokenHref = `/collections/${data.contract}`
+  const tokenHref = `/collections/${data.id}`
 
   return { ...data, tokenHref }
 }
