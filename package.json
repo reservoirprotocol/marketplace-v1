@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@react-hookz/web": "^14.2.2",
+    "@thirdweb-dev/sdk": "^2.3.13",
     "next": "latest",
     "next-themes": "^0.2.0",
     "react": "17.0.2",
