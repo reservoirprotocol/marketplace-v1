@@ -132,7 +132,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
-                      href={`/collections/${collection?.collectionId}`}
+                      href={`/collections/${collection?.contract}`}
                     >
                       <a
                         {...getItemProps({
@@ -182,7 +182,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
               {results?.collections?.slice(0, 6).map((collection, index) => (
                 <Link
                   key={collection?.name}
-                  href={`/collections/${collection?.collectionId}`}
+                  href={`/collections/${collection?.contract}`}
                 >
                   <a
                     {...getItemProps({

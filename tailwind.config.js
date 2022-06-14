@@ -7,13 +7,6 @@ const MONO_FONT_FAMILY =
 const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 
 const primaryColors = {
-  black: {
-    100: '#edebe9',
-    300: '#c8c6c4',
-    500: '#2f2f2f',
-    700: '#000000',
-    900: '#252525',
-  },
   red: {
     100: '#fee2e2',
     300: '#fca5a5',
