@@ -173,7 +173,7 @@ const AttributeOfferModal: FC<Props> = ({
       attributeKey: data.attribute.key,
       attributeValue: data.attribute.value,
       collection: data.collection.id,
-      orderKind: 'seaport',
+      orderKind: 'seaport' as any,
     }
 
     if (SOURCE_ID) query.source = SOURCE_ID
