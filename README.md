@@ -71,7 +71,7 @@ Note: Environment variables can also be added during deployment via deployment p
 | RESERVOIR_API_KEY              | `true`   | Reservoir API key provided by the Reservoir Protocol. [Get your own API key](https://api.reservoir.tools/#/0.%20Auth/postApikeys).         | 123e4567-e89b-12d3-a456-426614174000                              |
 | NEXT_PUBLIC_ALCHEMY_ID              | `true`   | Alchemy API key required for buying items on mobile. [Get your own API key here](https://docs.alchemy.com/alchemy/introduction/getting-started#1.create-an-alchemy-key).         | 123e4567-e89b-12d3-a456-426614174000                              |
 
-Please visit [our docs](https://docs.reservoir.tools/docs/getting-started-self-hosted) to view all optional environment variables.
+Please visit [our docs](https://docs.reservoir.tools/docs/getting-started-self-hosted#configuration) to view all supported environment variables.
 
 ### Run the App
 
@@ -91,8 +91,8 @@ This is a Next.js app that can be easily deployed using  [Vercel](https://vercel
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-### Contributing
+<!-- Contributing -->
+## Contributing
 
 If you'd like to contribute please follow the [guidelines](https://github.com/reservoirprotocol/marketplace/blob/main/CONTRIBUTING.md).
 
