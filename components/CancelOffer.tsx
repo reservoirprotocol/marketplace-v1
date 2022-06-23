@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { cancelOrder, Execute, paths } from '@reservoir0x/client-sdk'
+import { Execute, paths, ReservoirSDK } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -10,14 +10,12 @@ import React, {
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import { useConnect, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -35,7 +33,6 @@ type Props = {
         id?: string | undefined
       }
   isInTheWrongNetwork: boolean | undefined
-  maker?: string
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
@@ -45,19 +42,16 @@ type Props = {
 const CancelOffer: FC<Props> = ({
   data,
   isInTheWrongNetwork,
-  maker,
   mutate,
   setToast,
   show,
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { connect, connectors } = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
   // Data from props
-  const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
 
@@ -65,17 +59,15 @@ const CancelOffer: FC<Props> = ({
     if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId, collectionId } = data
+        const { contract, tokenId } = data
 
         getDetails(contract, tokenId, setDetails)
-        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
-        const { details, collection } = data
+        const { details } = data
 
         setDetails(details)
-        setCollection(collection)
       }
     }
   }, [data, open])
@@ -93,9 +85,7 @@ const CancelOffer: FC<Props> = ({
     token = details.data?.tokens?.[0]
   }
 
-  const handleError: Parameters<typeof cancelOrder>[0]['handleError'] = (
-    err: any
-  ) => {
+  const handleError = (err: any) => {
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -114,9 +104,7 @@ const CancelOffer: FC<Props> = ({
     })
   }
 
-  const handleSuccess: Parameters<
-    typeof cancelOrder
-  >[0]['handleSuccess'] = async () => {
+  const handleSuccess = () => {
     details && 'mutate' in details && details.mutate()
     mutate && mutate()
   }
@@ -131,16 +119,18 @@ const CancelOffer: FC<Props> = ({
     id = data?.id
   }
 
-  const execute = async (id: string, maker: string) => {
+  const execute = async (id: string, signer: Signer) => {
     setWaitingTx(true)
-    await cancelOrder({
-      query: { id, maker },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+
+    await ReservoirSDK.client()
+      .actions.cancelOrder({
+        id,
+        signer,
+        onProgress: setSteps,
+      })
+      .then(handleSuccess)
+      .catch(handleError)
+
     setWaitingTx(false)
   }
 
@@ -150,11 +140,11 @@ const CancelOffer: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
           onClick={() => {
-            if (!id || !maker) {
+            if (!id || !signer) {
               dispatch({ type: 'CONNECT_WALLET', payload: true })
               return
             }
-            execute(id, maker)
+            execute(id, signer)
           }}
           className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
         >

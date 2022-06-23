@@ -140,7 +140,6 @@ const UserOffersTable: FC<Props> = ({
                         contract,
                         tokenId,
                       }}
-                      maker={maker}
                       signer={modal.signer}
                       show={true}
                       isInTheWrongNetwork={modal.isInTheWrongNetwork}
