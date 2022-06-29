@@ -206,10 +206,7 @@ export const getStaticProps: GetStaticProps<{
 }> = async ({ params }) => {
   const contract = params?.contract?.toString()
   const tokenId = params?.tokenId?.toString()
-  let collectionAddress = COLLECTION
-  if (COLLECTION && COLLECTION.includes(':')) {
-    collectionAddress = COLLECTION.split(':')[0]
-  }
+  const collectionAddress = COLLECTION ? COLLECTION.split(':')[0] : COLLECTION
 
   if (
     collectionAddress &&
