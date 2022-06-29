@@ -28,6 +28,8 @@ const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
+const ARTBLOCKS = '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270'
+
 type Props = {
   env: {
     chainId: ChainId
@@ -169,7 +171,12 @@ const CollectionOfferModal: FC<Props> = ({
       weiPrice: calculations.total.toString(),
       expirationTime: expirationValue,
       collection: data.collection.id,
-      orderKind: 'seaport',
+    }
+
+    if (data.collection.id?.toLowerCase() !== ARTBLOCKS.toLowerCase()) {
+      query.orderKind = 'seaport'
+    } else {
+      query.orderKind = 'zeroex-v4'
     }
 
     if (SOURCE_ID) query.source = SOURCE_ID
