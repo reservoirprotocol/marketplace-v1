@@ -58,7 +58,7 @@ const wallets: { [key: string]: any } = {
   // This is how it was requested to be labeled
   injected: {
     icon: '/icons/MetaMask.svg',
-    name: 'MetaMask (or Injected Wallets)',
+    name: 'MetaMask',
     href: 'https://metamask.io/download/',
   },
   walletConnect: {
@@ -88,9 +88,7 @@ export const Wallets: FC = () => {
           <a
             target="_blank"
             rel="noreferrer noopener"
-            className={`reservoir-h6 flex items-center justify-between py-2 px-12 font-headings dark:text-white ${
-              connector?.id === 'injected' ? 'hidden md:flex' : ''
-            }`}
+            className="reservoir-h6 flex items-center justify-between py-2 px-12 font-headings dark:text-white"
           >
             <div className="flex items-center gap-2">
               {Boolean(wallets[connector.id]?.icon) && (

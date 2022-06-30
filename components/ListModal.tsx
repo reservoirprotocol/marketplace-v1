@@ -182,7 +182,7 @@ const ListModal: FC<Props> = ({
       expirationTime: expirationValue,
     }
 
-    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
+    if (!ORDER_KIND) query.orderKind = 'seaport'
 
     if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
     if (SOURCE_ID) query.source = SOURCE_ID
