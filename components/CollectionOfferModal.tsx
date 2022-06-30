@@ -175,8 +175,8 @@ const CollectionOfferModal: FC<Props> = ({
     }
 
     if (
-      data.collection.id?.toLowerCase() !== ARTBLOCKS.toLowerCase() &&
-      data.collection.id?.toLowerCase() !== ARTBLOCKS2.toLowerCase()
+      !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
+      !data.collection.id?.toLowerCase().includes(ARTBLOCKS2.toLowerCase())
     ) {
       query.orderKind = 'seaport'
     } else {
