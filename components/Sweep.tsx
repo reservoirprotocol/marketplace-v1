@@ -1,4 +1,4 @@
-import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
+import { Execute, paths, ReservoirSDK } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -23,8 +23,8 @@ import { styled } from '@stitches/react'
 import { violet, blackA } from '@radix-ui/colors'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
+import { Signer } from 'ethers'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const DISABLE_POWERED_BY_RESERVOIR =
@@ -151,71 +151,63 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
     token = details.data?.tokens?.[0]
   }
 
-  const handleError: Parameters<typeof buyToken>[0]['handleError'] = (
-    err: any
-  ) => {
-    if (err?.type === 'price mismatch') {
-      setToast({
-        kind: 'error',
-        message: 'Price was greater than expected.',
-        title: 'Could not buy token',
-      })
-      return
-    }
-
-    if (err?.message === 'Not enough ETH balance') {
-      setToast({
-        kind: 'error',
-        message: 'You have insufficient funds to buy this token.',
-        title: 'Not enough ETH balance',
-      })
-      return
-    }
-    // Handle user rejection
-    if (err?.code === 4001) {
-      setOpen(false)
-      setSteps(undefined)
-      setToast({
-        kind: 'error',
-        message: 'You have canceled the transaction.',
-        title: 'User canceled transaction',
-      })
-      return
-    }
-    setToast({
-      kind: 'error',
-      message: 'The transaction was not completed.',
-      title: 'Could not buy token',
-    })
-  }
-
-  const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () => {
-    details && 'mutate' in details && details.mutate()
-    mutate && mutate()
-  }
-
-  const execute = async (taker: string) => {
+  const execute = async (signer: Signer) => {
     setWaitingTx(true)
 
-    const query: Parameters<typeof buyToken>['0']['query'] = {
-      taker,
+    if (!signer) {
+      throw 'Missing a signer'
     }
 
-    sweepTokens?.forEach(
-      (token, index) =>
-        // @ts-ignore
-        (query[`tokens[${index}]`] = `${token.contract}:${token.tokenId}`)
-    )
+    if (!sweepTokens) {
+      throw 'Missing tokens to sweep'
+    }
 
-    await buyToken({
-      expectedPrice: sweepTotal,
-      query,
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+    await ReservoirSDK.client()
+      .actions.buyToken({
+        expectedPrice: sweepTotal,
+        tokens: sweepTokens,
+        signer,
+        onProgress: setSteps,
+      })
+      .then(() => {
+        details && 'mutate' in details && details.mutate()
+        mutate && mutate()
+      })
+      .catch((err: any) => {
+        if (err?.type === 'price mismatch') {
+          setToast({
+            kind: 'error',
+            message: 'Price was greater than expected.',
+            title: 'Could not buy token',
+          })
+          return
+        }
+
+        if (err?.message === 'Not enough ETH balance') {
+          setToast({
+            kind: 'error',
+            message: 'You have insufficient funds to buy this token.',
+            title: 'Not enough ETH balance',
+          })
+          return
+        }
+        // Handle user rejection
+        if (err?.code === 4001) {
+          setOpen(false)
+          setSteps(undefined)
+          setToast({
+            kind: 'error',
+            message: 'You have canceled the transaction.',
+            title: 'User canceled transaction',
+          })
+          return
+        }
+        setToast({
+          kind: 'error',
+          message: 'The transaction was not completed.',
+          title: 'Could not buy token',
+        })
+      })
 
     setWaitingTx(false)
   }
@@ -344,12 +336,12 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                         sweepTokens?.length === 0
                       }
                       onClick={async () => {
-                        if (!taker) {
+                        if (!signer) {
                           dispatch({ type: 'CONNECT_WALLET', payload: true })
                           return
                         }
 
-                        await execute(taker)
+                        await execute(signer)
                       }}
                       className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:mx-auto md:w-[248px]"
                     >

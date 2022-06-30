@@ -150,7 +150,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               collection: collection.data,
               details,
             }}
-            maker={accountData?.address?.toLowerCase()}
             signer={signer}
             show={isTopBidder}
             isInTheWrongNetwork={isInTheWrongNetwork}
@@ -161,7 +160,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               collection: collection.data,
               details,
             }}
-            maker={accountData?.address?.toLowerCase()}
             signer={signer}
             show={isOwner && isListed}
             isInTheWrongNetwork={isInTheWrongNetwork}
