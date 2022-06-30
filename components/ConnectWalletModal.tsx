@@ -58,7 +58,7 @@ const wallets: { [key: string]: any } = {
   // This is how it was requested to be labeled
   injected: {
     icon: '/icons/MetaMask.svg',
-    name: 'MetaMask (or Injected Wallets)',
+    name: 'MetaMask',
     href: 'https://metamask.io/download/',
   },
   walletConnect: {
