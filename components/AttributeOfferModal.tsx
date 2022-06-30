@@ -16,13 +16,16 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useTokens from 'hooks/useTokens'
-import { Execute, placeBid } from '@reservoir0x/client-sdk'
+import {
+  Execute,
+  ReservoirSDK,
+  ReservoirSDKActions,
+} from '@reservoir0x/client-sdk'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
@@ -131,7 +134,7 @@ const AttributeOfferModal: FC<Props> = ({
     }
   }, [offerPrice])
 
-  const handleError: Parameters<typeof placeBid>[0]['handleError'] = (err) => {
+  const handleError = (err: any) => {
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -150,7 +153,7 @@ const AttributeOfferModal: FC<Props> = ({
     })
   }
 
-  const handleSuccess: Parameters<typeof placeBid>[0]['handleSuccess'] = () => {
+  const handleSuccess = () => {
     stats.mutate()
     tokens.mutate()
   }
@@ -166,28 +169,29 @@ const AttributeOfferModal: FC<Props> = ({
 
     if (!signer) return
 
-    const query: Parameters<typeof placeBid>['0']['query'] = {
-      maker: await signer.getAddress(),
-      weiPrice: calculations.total.toString(),
-      expirationTime: expirationValue,
-      attributeKey: data.attribute.key,
-      attributeValue: data.attribute.value,
-      collection: data.collection.id,
-      orderKind: 'zeroex-v4',
-    }
+    const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
+      {
+        expirationTime: expirationValue,
+        orderKind: 'seaport',
+      }
 
-    if (SOURCE_ID) query.source = SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
+    if (SOURCE_ID) options.source = SOURCE_ID
+    if (FEE_BPS) options.fee = FEE_BPS
+    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    await placeBid({
-      query,
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+    ReservoirSDK.client()
+      .actions.placeBid({
+        signer,
+        collection: data.collection.id,
+        attributeKey: data.attribute.key,
+        attributeValue: data.attribute.value,
+        weiPrice: calculations.total.toString(),
+        options: options,
+        onProgress: setSteps,
+      })
+      .then(handleSuccess)
+      .catch(handleError)
+
     setWaitingTx(false)
   }
 

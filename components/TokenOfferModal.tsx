@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, utils } from 'ethers'
+import { BigNumber, constants, Signer, utils } from 'ethers'
 import {
   useAccount,
   useBalance,
@@ -15,14 +15,18 @@ import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
 import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import getWeth from 'lib/getWeth'
-import { Execute, paths, placeBid } from '@reservoir0x/client-sdk/dist'
+import {
+  Execute,
+  paths,
+  ReservoirSDK,
+  ReservoirSDKActions,
+} from '@reservoir0x/client-sdk/dist'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
@@ -122,7 +126,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }, [offerPrice])
 
   // Data from props
-  const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
 
   useEffect(() => {
@@ -132,14 +135,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         const { contract, tokenId, collectionId } = data
 
         getDetails(contract, tokenId, setDetails)
-        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
         const { details, collection } = data
 
         setDetails(details)
-        setCollection(collection)
       }
     }
   }, [data, open])
@@ -157,21 +158,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     token = details.data?.tokens?.[0]
   }
 
-  const modalData = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
-  }
-
-  const handleError: Parameters<typeof placeBid>[0]['handleError'] = (err) => {
+  const handleError = (err: any) => {
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -190,11 +177,11 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     })
   }
 
-  const handleSuccess: Parameters<typeof placeBid>[0]['handleSuccess'] = () => {
+  const handleSuccess = () => {
     details && 'mutate' in details && details.mutate()
   }
 
-  const execute = async () => {
+  const execute = async (signer: Signer) => {
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
@@ -203,29 +190,29 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
     if (!signer) throw 'signer is undefined'
 
-    const query: Parameters<typeof placeBid>['0']['query'] = {
-      maker: await signer.getAddress(),
-      weiPrice: calculations.total.toString(),
-      orderbook: 'reservoir',
-      expirationTime: expirationValue,
-      token: `${token.token?.contract}:${token.token?.tokenId}`,
-    }
+    const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
+      {
+        orderbook: 'reservoir',
+        expirationTime: expirationValue,
+      }
 
-    if (!ORDER_KIND) query.orderKind = 'zeroex-v4'
+    if (!ORDER_KIND) options.orderKind = 'seaport'
 
-    if (ORDER_KIND) query.orderKind = ORDER_KIND as typeof query.orderKind
-    if (SOURCE_ID) query.source = SOURCE_ID
-    if (FEE_BPS) query.fee = FEE_BPS
-    if (FEE_RECIPIENT) query.feeRecipient = FEE_RECIPIENT
+    if (ORDER_KIND) options.orderKind = ORDER_KIND as typeof options.orderKind
+    if (SOURCE_ID) options.source = SOURCE_ID
+    if (FEE_BPS) options.fee = FEE_BPS
+    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    await placeBid({
-      query,
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+    await ReservoirSDK.client()
+      .actions.placeBid({
+        token: `${token.token?.contract}:${token.token?.tokenId}`,
+        weiPrice: calculations.total.toString(),
+        options,
+        signer,
+        onProgress: setSteps,
+      })
+      .then(handleSuccess)
+      .catch(handleError)
 
     setWaitingTx(false)
   }
@@ -256,7 +243,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                     dispatch({ type: 'CONNECT_WALLET', payload: true })
                     return
                   }
-                  execute()
+                  execute(signer)
                 }}
                 className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4"
               >

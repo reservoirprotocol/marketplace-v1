@@ -87,7 +87,7 @@ With npm:
 
 ### Deploy with Vercel
 
-This is a Next.js app that can be easily deployed using  [Vercel](https://vercel.com/). For  more information on how to deploy your Github reposistory with Vercel visit their [docs](https://vercel.com/docs/concepts/projects/overview).
+This is a Next.js app that can be easily deployed using  [Vercel](https://vercel.com/). For  more information on how to deploy your Github repository with Vercel visit their [docs](https://vercel.com/docs/concepts/projects/overview).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

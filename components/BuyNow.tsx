@@ -1,5 +1,9 @@
-import { Signer } from 'ethers'
-import { buyToken, Execute, paths } from '@reservoir0x/client-sdk'
+import {
+  Execute,
+  paths,
+  ReservoirSDK,
+  ReservoirSDKActions,
+} from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -11,13 +15,11 @@ import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
-import { useAccount, useConnect, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -49,11 +51,9 @@ const BuyNow: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { data: accountData } = useAccount()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
   // Data from props
-  const [collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
 
@@ -64,14 +64,12 @@ const BuyNow: FC<Props> = ({
         const { contract, tokenId, collectionId } = data
 
         getDetails(contract, tokenId, setDetails)
-        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
         const { details, collection } = data
 
         setDetails(details)
-        setCollection(collection)
       }
     }
   }, [data])
@@ -89,88 +87,63 @@ const BuyNow: FC<Props> = ({
     token = details.data?.tokens?.[0]
   }
 
-  const modalData = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
-  }
+  type TokenData = Parameters<ReservoirSDKActions['buyToken']>['0']['tokens'][0]
 
-  const handleError: Parameters<typeof buyToken>[0]['handleError'] = (
-    err: any
-  ) => {
-    if (err?.type === 'price mismatch') {
-      setToast({
-        kind: 'error',
-        message: 'Price was greater than expected.',
-        title: 'Could not buy token',
-      })
-      return
-    }
-
-    if (err?.message === 'Not enough ETH balance') {
-      setToast({
-        kind: 'error',
-        message: 'You have insufficient funds to buy this token.',
-        title: 'Not enough ETH balance',
-      })
-      return
-    }
-    // Handle user rejection
-    if (err?.code === 4001) {
-      setOpen(false)
-      setSteps(undefined)
-      setToast({
-        kind: 'error',
-        message: 'You have canceled the transaction.',
-        title: 'User canceled transaction',
-      })
-      return
-    }
-    setToast({
-      kind: 'error',
-      message: 'The transaction was not completed.',
-      title: 'Could not buy token',
-    })
-  }
-
-  const handleSuccess: Parameters<typeof buyToken>[0]['handleSuccess'] = () => {
-    details && 'mutate' in details && details.mutate()
-    mutate && mutate()
-  }
-
-  const execute = async (
-    token: string,
-    taker: string,
-    expectedPrice: number
-  ) => {
+  const execute = async (token: TokenData, expectedPrice: number) => {
     setWaitingTx(true)
-    await buyToken({
-      expectedPrice,
-      query: {
-        taker,
-        token,
-      },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+    if (!signer) {
+      throw 'Missing a signer'
+    }
+
+    await ReservoirSDK.client()
+      .actions.buyToken({
+        expectedPrice,
+        tokens: [token],
+        signer,
+        onProgress: setSteps,
+      })
+      .then(() => {
+        details && 'mutate' in details && details.mutate()
+        mutate && mutate()
+      })
+      .catch((err) => {
+        if (err?.type === 'price mismatch') {
+          setToast({
+            kind: 'error',
+            message: 'Price was greater than expected.',
+            title: 'Could not buy token',
+          })
+          return
+        }
+
+        if (err?.message === 'Not enough ETH balance') {
+          setToast({
+            kind: 'error',
+            message: 'You have insufficient funds to buy this token.',
+            title: 'Not enough ETH balance',
+          })
+          return
+        }
+        // Handle user rejection
+        if (err?.code === 4001) {
+          setOpen(false)
+          setSteps(undefined)
+          setToast({
+            kind: 'error',
+            message: 'You have canceled the transaction.',
+            title: 'User canceled transaction',
+          })
+          return
+        }
+        setToast({
+          kind: 'error',
+          message: 'The transaction was not completed.',
+          title: 'Could not buy token',
+        })
+      })
 
     setWaitingTx(false)
   }
-
-  const tokenString = `${token?.token?.contract}:${token?.token?.tokenId}`
-
-  const taker = accountData?.address
 
   const expectedPrice = token?.market?.floorAsk?.price
 
@@ -184,12 +157,12 @@ const BuyNow: FC<Props> = ({
             isInTheWrongNetwork
           }
           onClick={() => {
-            if (!taker || !tokenString || !expectedPrice) {
+            if (!signer || !token.token || !expectedPrice) {
               dispatch({ type: 'CONNECT_WALLET', payload: true })
               return
             }
 
-            execute(tokenString, taker, expectedPrice)
+            execute(token.token, expectedPrice)
           }}
         >
           {waitingTx ? (

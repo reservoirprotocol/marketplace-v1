@@ -1,5 +1,4 @@
-import { Signer } from 'ethers'
-import { cancelOrder, Execute, paths } from '@reservoir0x/client-sdk'
+import { Execute, paths, ReservoirSDK } from '@reservoir0x/client-sdk'
 import React, {
   ComponentProps,
   FC,
@@ -16,8 +15,6 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -45,7 +42,6 @@ type Props = {
 const CancelListing: FC<Props> = ({
   data,
   isInTheWrongNetwork,
-  maker,
   mutate,
   setToast,
   show,
@@ -93,23 +89,7 @@ const CancelListing: FC<Props> = ({
     token = details.data?.tokens?.[0]
   }
 
-  const modalData = {
-    collection: {
-      name: collection?.collection?.name,
-    },
-    token: {
-      contract: token?.token?.contract,
-      id: token?.token?.tokenId,
-      image: token?.token?.image,
-      name: token?.token?.name,
-      topBuyValue: token?.market?.topBid?.value,
-      floorSellValue: token?.market?.floorAsk?.price,
-    },
-  }
-
-  const handleError: Parameters<typeof cancelOrder>[0]['handleError'] = (
-    err: any
-  ) => {
+  const handleError = (err: any) => {
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -128,9 +108,7 @@ const CancelListing: FC<Props> = ({
     })
   }
 
-  const handleSuccess: Parameters<
-    typeof cancelOrder
-  >[0]['handleSuccess'] = () => {
+  const handleSuccess = () => {
     details && 'mutate' in details && details.mutate()
     mutate && mutate()
   }
@@ -145,16 +123,21 @@ const CancelListing: FC<Props> = ({
     id = data?.id
   }
 
-  const execute = async (id: string, maker: string) => {
+  const execute = async (id: string) => {
     setWaitingTx(true)
-    await cancelOrder({
-      query: { id, maker },
-      signer,
-      apiBase: RESERVOIR_API_BASE,
-      setState: setSteps,
-      handleSuccess,
-      handleError,
-    })
+
+    if (!signer) {
+      throw 'Signer is missing'
+    }
+
+    await ReservoirSDK.client()
+      .actions.cancelOrder({
+        id,
+        signer,
+        onProgress: setSteps,
+      })
+      .then(handleSuccess)
+      .catch(handleError)
     setWaitingTx(false)
   }
 
@@ -164,11 +147,11 @@ const CancelListing: FC<Props> = ({
         <Dialog.Trigger
           disabled={waitingTx || isInTheWrongNetwork}
           onClick={() => {
-            if (!id || !maker) {
+            if (!id || !signer) {
               dispatch({ type: 'CONNECT_WALLET', payload: true })
               return
             }
-            execute(id, maker)
+            execute(id)
           }}
         >
           {waitingTx ? (

@@ -206,12 +206,13 @@ export const getStaticProps: GetStaticProps<{
 }> = async ({ params }) => {
   const contract = params?.contract?.toString()
   const tokenId = params?.tokenId?.toString()
+  const collectionAddress = COLLECTION ? COLLECTION.split(':')[0] : COLLECTION
 
   if (
-    COLLECTION &&
+    collectionAddress &&
     !COMMUNITY &&
     !COLLECTION_SET_ID &&
-    COLLECTION.toLowerCase() !== contract?.toLowerCase()
+    collectionAddress.toLowerCase() !== contract?.toLowerCase()
   ) {
     return {
       notFound: true,
