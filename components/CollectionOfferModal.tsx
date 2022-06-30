@@ -29,6 +29,7 @@ const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 const ARTBLOCKS = '0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270'
+const ARTBLOCKS2 = '0x059edd72cd353df5106d2b9cc5ab83a52287ac3a'
 
 type Props = {
   env: {
@@ -173,7 +174,10 @@ const CollectionOfferModal: FC<Props> = ({
       collection: data.collection.id,
     }
 
-    if (data.collection.id?.toLowerCase() !== ARTBLOCKS.toLowerCase()) {
+    if (
+      data.collection.id?.toLowerCase() !== ARTBLOCKS.toLowerCase() &&
+      data.collection.id?.toLowerCase() !== ARTBLOCKS2.toLowerCase()
+    ) {
       query.orderKind = 'seaport'
     } else {
       query.orderKind = 'zeroex-v4'
