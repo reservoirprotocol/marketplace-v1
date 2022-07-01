@@ -215,7 +215,7 @@ const ListModal: FC<Props> = ({
     const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
       {
         orderbook: 'opensea',
-        orderKind: 'wyvern-v2.3',
+        orderKind: 'seaport',
       }
 
     if (SOURCE_ID) options.source = SOURCE_ID
