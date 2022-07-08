@@ -177,6 +177,7 @@ const ListModal: FC<Props> = ({
     const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
       {
         orderbook: 'reservoir',
+      automatedRoyalties: false,
       }
 
     if (!ORDER_KIND) options.orderKind = 'seaport'
