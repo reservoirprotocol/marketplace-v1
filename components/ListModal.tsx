@@ -174,10 +174,10 @@ const ListModal: FC<Props> = ({
 
     if (!signer) throw 'signer is undefined'
 
-    const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
+    const options: Parameters<ReservoirSDKActions['listToken']>[0]['automatedRoyalties: false'] =
       {
         orderbook: 'reservoir',
-      automatedRoyalties: false,
+      
       }
 
     if (!ORDER_KIND) options.orderKind = 'seaport'
@@ -213,7 +213,7 @@ const ListModal: FC<Props> = ({
 
     if (!signer) throw 'signer is undefined'
 
-    const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
+    const options: Parameters<ReservoirSDKActions['listToken']>[0]['automatedRoyalties: false'] =
       {
         automatedRoyalties: false,
         orderbook: 'opensea',
