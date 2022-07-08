@@ -107,13 +107,13 @@ const ListModal: FC<Props> = ({
 
   let apiBps = 0
 
-  if ('details' in data) {
+ /*if ('details' in data) {
     apiBps = data?.collection?.collection?.royalties?.bps || 0
   }
   if ('tokenId' in data) {
     apiBps = collection?.collection?.royalties?.bps || 0
   }
-
+  */
   const royaltyPercentage = `${(apiBps / 10000) * 100}%`
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
