@@ -107,13 +107,13 @@ const ListModal: FC<Props> = ({
 
   let apiBps = 0
 
-  if ('details' in data) {
+ /*if ('details' in data) {
     apiBps = data?.collection?.collection?.royalties?.bps || 0
   }
   if ('tokenId' in data) {
     apiBps = collection?.collection?.royalties?.bps || 0
   }
-
+  */
   const royaltyPercentage = `${(apiBps / 10000) * 100}%`
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
@@ -177,6 +177,8 @@ const ListModal: FC<Props> = ({
     const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
       {
         orderbook: 'reservoir',
+        automatedRoyalties: false,
+      
       }
 
     if (!ORDER_KIND) options.orderKind = 'seaport'
@@ -214,6 +216,7 @@ const ListModal: FC<Props> = ({
 
     const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
       {
+        automatedRoyalties: false,
         orderbook: 'opensea',
         orderKind: 'seaport',
       }
