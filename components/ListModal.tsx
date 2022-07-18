@@ -87,13 +87,22 @@ const ListModal: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    let isSubscribed = true
     if (data) {
       // Load data if missing
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(contract, tokenId, setDetails)
-        getCollection(collectionId, setCollection)
+        getDetails(contract, tokenId, (details) => {
+          if (isSubscribed) {
+            setDetails(details)
+          }
+        })
+        getCollection(collectionId, (collection) => {
+          if (isSubscribed) {
+            setCollection(collection)
+          }
+        })
       }
       // Load data if provided
       if ('details' in data) {
@@ -102,6 +111,9 @@ const ListModal: FC<Props> = ({
         setDetails(details)
         setCollection(collection)
       }
+    }
+    return () => {
+      isSubscribed = false
     }
   }, [data])
 

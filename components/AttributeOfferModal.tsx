@@ -68,7 +68,7 @@ const AttributeOfferModal: FC<Props> = ({
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { dispatch } = useContext(GlobalContext)
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
@@ -86,7 +86,7 @@ const AttributeOfferModal: FC<Props> = ({
     balance: BigNumber
   } | null>(null)
   const { data: signer } = useSigner()
-  const { data: account } = useAccount()
+  const account = useAccount()
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })

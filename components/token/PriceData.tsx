@@ -23,9 +23,9 @@ type Props = {
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
-  const { data: accountData } = useAccount()
+  const accountData = useAccount()
   const { data: signer } = useSigner()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
 
   const token = details.data?.tokens?.[0]
 

@@ -61,7 +61,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { dispatch } = useContext(GlobalContext)
   const [calculations, setCalculations] = useState<
     ReturnType<typeof calculateOffer>
@@ -79,7 +79,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     balance: BigNumber
   } | null>(null)
   const { data: signer } = useSigner()
-  const { data: account } = useAccount()
+  const account = useAccount()
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
@@ -100,16 +100,21 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   useEffect(() => {
+    let isSubscribed = true
     async function loadWeth() {
       if (signer) {
         await refetch()
         const weth = await getWeth(env.chainId as ChainId, provider, signer)
-        if (weth) {
+        if (weth && isSubscribed) {
+          console.log(weth)
           setWeth(weth)
         }
       }
     }
     loadWeth()
+    return () => {
+      isSubscribed = false
+    }
   }, [signer])
 
   useEffect(() => {
@@ -132,13 +137,13 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId, collectionId } = data
+        const { contract, tokenId } = data
 
         getDetails(contract, tokenId, setDetails)
       }
       // Load data if provided
       if ('details' in data) {
-        const { details, collection } = data
+        const { details } = data
 
         setDetails(details)
       }

@@ -87,8 +87,8 @@ const StyledThumb = styled(SliderPrimitive.Thumb, {
 
 const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { data: accountData } = useAccount()
-  const { activeChain } = useNetwork()
+  const accountData = useAccount()
+  const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [sweepAmount, setSweepAmount] = useState<number>(1)
@@ -211,8 +211,6 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
 
     setWaitingTx(false)
   }
-
-  const taker = accountData?.address
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>

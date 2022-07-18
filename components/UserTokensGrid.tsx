@@ -17,7 +17,7 @@ type Props = {
   mutate: () => any
   isOwner: boolean
   modal: {
-    accountData: ReturnType<typeof useAccount>['data']
+    accountData: ReturnType<typeof useAccount>
     collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any

@@ -5,20 +5,19 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import EthAccount from 'components/EthAccount'
 import { constants } from 'ethers'
-import { useAccount } from 'wagmi'
+import { Chain, useAccount } from 'wagmi'
 import FormatEth from 'components/FormatEth'
+import useEnvChain from 'hooks/useEnvChain'
 
 type Props = {
   data: ReturnType<typeof useUserActivity>
   chainId: ChainId
 }
 
-const UserActivityTable: FC<Props> = ({
-  data: { transfers, ref },
-  chainId,
-}) => {
+const UserActivityTable: FC<Props> = ({ data: { transfers, ref } }) => {
   const { data } = transfers
-  const { data: accountData } = useAccount()
+  const accountData = useAccount()
+  const envChain = useEnvChain()
 
   const transfersFlat = data ? data.flatMap(({ transfers }) => transfers) : []
 
@@ -59,7 +58,7 @@ const UserActivityTable: FC<Props> = ({
               timestamp,
               price,
               collectionName,
-            } = processTransfer(transfer, accountData?.address, chainId)
+            } = processTransfer(transfer, accountData?.address, envChain)
             return (
               <tr
                 key={`${transfer?.token?.tokenId}-${index}`}
@@ -80,6 +79,7 @@ const UserActivityTable: FC<Props> = ({
                           {image && (
                             <div className="aspect-w-1 aspect-h-1 relative">
                               <img
+                                alt={`${name} Image`}
                                 src={optimizeImage(image, 35)}
                                 className="w-9 object-contain"
                                 width="36"
@@ -156,7 +156,7 @@ function processTransfer(
       >[0]
     | undefined,
   address: string | undefined,
-  chainId: ChainId | undefined
+  envChain: Chain | undefined
 ) {
   const type =
     transfer?.to?.toLowerCase() === address?.toLowerCase() &&
@@ -168,11 +168,8 @@ function processTransfer(
       : transfer?.from === constants.AddressZero
       ? 'Mint'
       : 'Transfer'
-
-  const etherscan = {
-    4: 'https://rinkeby.etherscan.io/tx/',
-    1: 'https://etherscan.io/tx/',
-  }
+  const etherscanBaseUrl =
+    envChain?.blockExplorers?.etherscan || 'https://etherscan.io'
 
   const data = {
     contract: transfer?.token?.contract,
@@ -182,7 +179,9 @@ function processTransfer(
     to: transfer?.to,
     from: transfer?.from,
     txUrl:
-      transfer?.txHash && chainId && `${etherscan[chainId]}${transfer?.txHash}`,
+      transfer?.txHash &&
+      etherscanBaseUrl &&
+      `${etherscanBaseUrl}/tx/${transfer?.txHash}`,
     timestamp:
       transfer?.timestamp &&
       DateTime.fromMillis(+`${transfer?.timestamp}000`).toRelative(),

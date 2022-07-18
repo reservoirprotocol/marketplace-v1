@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink } from 'react-icons/fi'
+import useEnvChain from 'hooks/useEnvChain'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -113,6 +114,9 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
     sale.token?.image || collectionImage || ''
   )
   const [timeAgo, setTimeAgo] = useState(sale.timestamp || '')
+  const envChain = useEnvChain()
+  const etherscanBaseUrl =
+    envChain?.blockExplorers?.etherscan || 'https://etherscan.io'
 
   useEffect(() => {
     setToShortAddress(truncateAddress(sale?.to || ''))
@@ -205,11 +209,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 {toShortAddress}
               </a>
             </Link>
-            <Link
-              href={`https://${
-                CHAIN_ID === '4' ? 'rinkeby.' : ''
-              }etherscan.io/tx/${sale.txHash}`}
-            >
+            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -280,11 +280,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         </Link>
       </td>
       <td>
-        <Link
-          href={`https://${CHAIN_ID === '4' ? 'rinkeby.' : ''}etherscan.io/tx/${
-            sale.txHash
-          }`}
-        >
+        <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
           <a
             target="_blank"
             rel="noopener noreferrer"
