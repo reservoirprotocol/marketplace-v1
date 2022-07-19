@@ -50,13 +50,13 @@ const metadata = {
 }
 
 const Address: NextPage<Props> = ({ address, fallback }) => {
-  const { data: accountData } = useAccount()
+  const accountData = useAccount()
 
   const { data: ensAvatar } = useEnsAvatar({
     addressOrName: address,
   })
   const { data: ensName } = useEnsName({ address })
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
   const userTokens = useUserTokens(address)
@@ -153,7 +153,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             <Tabs.Content value="history">
               {/* <UserActivityTable
             data={userActivity}
-            CHAIN_ID={+CHAIN_ID as CHAIN_ID}
           /> */}
             </Tabs.Content>
             {isOwner && (

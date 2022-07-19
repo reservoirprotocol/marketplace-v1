@@ -9,7 +9,7 @@ import React, {
 import { SWRResponse } from 'swr'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalCard from './modal/ModalCard'
-import { useConnect, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
@@ -48,7 +48,6 @@ const CancelListing: FC<Props> = ({
   signer,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { connect, connectors } = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
