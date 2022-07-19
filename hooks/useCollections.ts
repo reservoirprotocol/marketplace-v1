@@ -65,7 +65,7 @@ const getKey: (
     sortBy: '1DayVolume',
   }
 
-  if (COLLECTION && !COMMUNITY) query.contract = COLLECTION
+  if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
   if (COMMUNITY) query.community = COMMUNITY
   if (COLLECTION_SET_ID) query.collectionsSetId = COLLECTION_SET_ID
 

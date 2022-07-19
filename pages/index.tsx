@@ -120,7 +120,7 @@ export const getStaticProps: GetStaticProps<{
     sortBy: '7DayVolume',
   }
 
-  if (COLLECTION && !COMMUNITY) query.contract = COLLECTION
+  if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
   if (COMMUNITY) query.community = COMMUNITY
   if (COLLECTION_SET_ID) query.collectionsSetId = COLLECTION_SET_ID
 
