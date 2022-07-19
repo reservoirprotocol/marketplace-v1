@@ -25,7 +25,7 @@ type Props = {
 
 const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
   const { connectors } = useConnect()
-  const { data: accountData } = useAccount()
+  const accountData = useAccount()
   const { disconnect } = useDisconnect()
   const { data: ensName } = useEnsName()
   const { data: ensAvatar } = useEnsAvatar()

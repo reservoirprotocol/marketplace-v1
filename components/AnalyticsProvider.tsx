@@ -13,7 +13,7 @@ type Props = {
 }
 
 const AnalyticsProvider: FC<Props> = ({ children }) => {
-  const { data: accountData } = useAccount()
+  const accountData = useAccount()
 
   useEffect(() => {
     if (accountData) {

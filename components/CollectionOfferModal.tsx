@@ -5,7 +5,6 @@ import { BigNumber, constants, ethers } from 'ethers'
 import {
   useAccount,
   useBalance,
-  useConnect,
   useNetwork,
   useProvider,
   useSigner,
@@ -67,9 +66,8 @@ const CollectionOfferModal: FC<Props> = ({
 }) => {
   const [expiration, setExpiration] = useState<string>('oneDay')
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
-  const { data: connectData, connect, connectors } = useConnect()
   const [steps, setSteps] = useState<Execute['steps']>()
-  const { activeChain } = useNetwork()
+  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const { dispatch } = useContext(GlobalContext)
   const [calculations, setCalculations] = useState<
@@ -88,7 +86,7 @@ const CollectionOfferModal: FC<Props> = ({
     balance: BigNumber
   } | null>(null)
   const { data: signer } = useSigner()
-  const { data: account } = useAccount()
+  const account = useAccount()
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
@@ -175,14 +173,14 @@ const CollectionOfferModal: FC<Props> = ({
         expirationTime: expirationValue,
       }
 
-      if (
-        !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
-        !data.collection.id?.toLowerCase().includes(ARTBLOCKS2.toLowerCase())
-      ) {
-        options.orderKind = 'seaport'
-      } else {
-        options.orderKind = 'zeroex-v4'
-      }
+    if (
+      !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
+      !data.collection.id?.toLowerCase().includes(ARTBLOCKS2.toLowerCase())
+    ) {
+      options.orderKind = 'seaport'
+    } else {
+      options.orderKind = 'zeroex-v4'
+    }
 
     if (SOURCE_ID) options.source = SOURCE_ID
     if (FEE_BPS) options.fee = FEE_BPS

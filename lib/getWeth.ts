@@ -5,7 +5,7 @@ import { Common } from '@reservoir0x/sdk'
 /**
  * Get a wETH contract instance and the signers wETH balance
  * @param chainId The Ethereum chain ID (eg: 1 - Ethereum Mainnet,
- *  4 - Rinkeby Testnet)
+ *  4 - Rinkeby Testnet, etc)
  * @param provider An abstraction to access the blockchain data
  * @param signer An Ethereum signer object
  * @returns A wETH contract instance and the signers wETH balance

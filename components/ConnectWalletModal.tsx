@@ -83,7 +83,7 @@ export const Wallets: FC = () => {
           className="rounded-2xl py-4 hover:bg-neutral-100 dark:hover:bg-neutral-900 md:rounded-none"
           disabled={!connector.ready}
           key={connector.id}
-          onClick={() => connect(connector)}
+          onClick={() => connect({ connector: connector })}
         >
           <a
             target="_blank"

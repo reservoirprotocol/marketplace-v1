@@ -20,7 +20,7 @@ const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 
 const ConnectWallet: FC = () => {
-  const { data: account, isLoading } = useAccount()
+  const account = useAccount()
   const { data: ensAvatar } = useEnsAvatar({ addressOrName: account?.address })
   const { data: ensName } = useEnsName({ address: account?.address })
   const { connectors } = useConnect()
@@ -28,9 +28,9 @@ const ConnectWallet: FC = () => {
   const wallet = connectors[0]
   const { dispatch } = useContext(GlobalContext)
 
-  if (isLoading) return null
+  if (account.isConnecting) return null
 
-  if (!account) return <ConnectWalletModal />
+  if (!account.isConnected) return <ConnectWalletModal />
 
   return (
     <DropdownMenu.Root>
