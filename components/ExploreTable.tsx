@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -68,10 +68,7 @@ const ExploreTable = ({
               />
             </td>
             <td className="pr-3">
-              <FormatEth
-                amount={attribute?.topBid?.value}
-                logoWidth={7}
-              />
+              <FormatEth amount={attribute?.topBid?.value} logoWidth={7} />
             </td>
 
             <td className="w-[230px] pr-3">

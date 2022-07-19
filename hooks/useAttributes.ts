@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import { paths } from '@reservoir0x/reservoir-kit-coretypes/api'
 import fetcher from 'lib/fetcher'
 import useSWR from 'swr'
 

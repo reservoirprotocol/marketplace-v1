@@ -101,16 +101,16 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 signer={signer}
               />
             )}
-            <BuyNow
-              data={{
-                collection: collection.data,
-                details,
-              }}
-              signer={signer}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={setToast}
-              show={!isOwner}
-            />
+            {!isOwner && (
+              <BuyNow
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                signer={signer}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+              />
+            )}
             <AcceptOffer
               data={{
                 collection: collection.data,

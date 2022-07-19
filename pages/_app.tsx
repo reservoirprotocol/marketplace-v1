@@ -16,12 +16,7 @@ import 'styles/gothicusroman.css'
 import 'styles/roobert.css'
 import 'styles/rodger.css'
 import type { AppProps } from 'next/app'
-import {
-  WagmiConfig,
-  createClient,
-  allChains,
-  configureChains,
-} from 'wagmi'
+import { WagmiConfig, createClient, allChains, configureChains } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -30,7 +25,13 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
-import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit-ui'
+import {
+  darkTheme,
+  lightTheme,
+  ReservoirKitProvider,
+  ReservoirKitTheme,
+} from '@reservoir0x/reservoir-kit-ui'
+import { useEffect, useState } from 'react'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -77,12 +78,34 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
+  const [reservoirKitTheme, setReservoirKitTheme] = useState<
+    ReservoirKitTheme | undefined
+  >()
+
+  useEffect(() => {
+    if (defaultTheme == 'dark') {
+      setReservoirKitTheme(
+        darkTheme({
+          font: 'Inter',
+          primaryColor: '#7000FF',
+        })
+      )
+    } else {
+      setReservoirKitTheme(
+        lightTheme({
+          font: 'Inter',
+          primaryColor: '#7000FF',
+        })
+      )
+    }
+  }, [defaultTheme])
 
   return (
     <ReservoirKitProvider
       options={{
         apiBase: RESERVOIR_API_BASE || '',
       }}
+      theme={reservoirKitTheme}
     >
       <GlobalProvider>
         <WagmiConfig client={client}>

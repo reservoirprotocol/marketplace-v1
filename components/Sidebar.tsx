@@ -6,7 +6,7 @@ import AttributeSelector from './filter/AttributeSelector'
 import { SWRResponse } from 'swr'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiChevronDown } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import { paths } from '@reservoir0x/reservoir-kit-coretypes/api'
 
 type Props = {
   attributes: SWRResponse<

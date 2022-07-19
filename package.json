@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@react-hookz/web": "^14.2.2",
-    "@reservoir0x/reservoir-kit-ui": "^0.0.1",
+    "@reservoir0x/reservoir-kit-ui": "^0.0.3",
     "next": "latest",
     "next-themes": "^0.2.0",
     "react": "17.0.2",
@@ -27,7 +27,6 @@
     "@radix-ui/react-tooltip": "^0.1.7",
     "@ramosdiego/reservoir": "^0.0.15",
     "@ramosdiego/ui": "^0.0.10",
-    "@reservoir0x/client-sdk": "0.1.0",
     "@reservoir0x/sdk": "^0.0.123",
     "@stitches/react": "^1.2.8",
     "ethers": "^5.6.8",

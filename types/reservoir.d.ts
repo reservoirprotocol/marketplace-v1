@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 
 type TokenSale = NonNullable<
   paths['/sales/v3']['get']['responses']['200']['schema']['sales']

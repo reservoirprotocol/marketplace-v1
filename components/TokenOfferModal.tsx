@@ -18,7 +18,7 @@ import {
   Execute,
   paths,
   ReservoirSDKActions,
-} from '@reservoir0x/client-sdk/dist'
+} from '@reservoir0x/reservoir-kit-core'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { getDetails } from 'lib/fetch/fetch'

@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 import { FiChevronDown } from 'react-icons/fi'
 import Link from 'next/link'
 
