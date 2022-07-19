@@ -1550,13 +1550,13 @@
     "@stitches/react" "^1.2.8"
     framer-motion "^6.4.2"
 
-"@reservoir0x/sdk@^0.0.25":
-  version "0.0.25"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/sdk/-/sdk-0.0.25.tgz#a5d624dbc0423fba2c5d62f88759e866e3ce864e"
-  integrity sha512-HSdLfoWV59RN6haVMTjZxnMtCppQDlUM2x/+FmB9qS4XZpM8d7Svp45mj78/WKEchHJPtrmiFv3UJImmjZDdgQ==
+"@reservoir0x/sdk@^0.0.123":
+  version "0.0.123"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/sdk/-/sdk-0.0.123.tgz#9a3ceeea54175b4965eb7930410a277a588765da"
+  integrity sha512-tnC+QXqYHPFxLE3oQ8wzi7M+QAlkRr5qpRMO9a7LCkPn9xcgB5Bm21K9a+VvhuycZDg51rPcJyqUvOol4nF1RA==
   dependencies:
-    ethers "^5.5.2"
-    merkletreejs "^0.2.27"
+    ethers "^5.6.8"
+    merkletreejs "0.2.31"
 
 "@rushstack/eslint-patch@^1.0.8":
   version "1.1.0"
@@ -3320,7 +3320,7 @@ ethereumjs-util@^7.1.0:
     ethereum-cryptography "^0.1.3"
     rlp "^2.2.4"
 
-ethers@^5.5.2, ethers@^5.6.1:
+ethers@^5.6.1:
   version "5.6.9"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.6.9.tgz#4e12f8dfcb67b88ae7a78a9519b384c23c576a4d"
   integrity sha512-lMGC2zv9HC5EC+8r429WaWu3uWJUCgUCt8xxKCFqkrFuBDZXDYIdzDUECxzjf2BMF8IVBByY1EBoGSL3RTm8RA==
@@ -4303,10 +4303,10 @@ merge2@^1.3.0, merge2@^1.4.1:
   resolved "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-merkletreejs@^0.2.27:
-  version "0.2.32"
-  resolved "https://registry.yarnpkg.com/merkletreejs/-/merkletreejs-0.2.32.tgz#cf1c0760e2904e4a1cc269108d6009459fd06223"
-  integrity sha512-TostQBiwYRIwSE5++jGmacu3ODcKAgqb0Y/pnIohXS7sWxh1gCkSptbmF1a43faehRDpcHf7J/kv0Ml2D/zblQ==
+merkletreejs@0.2.31:
+  version "0.2.31"
+  resolved "https://registry.yarnpkg.com/merkletreejs/-/merkletreejs-0.2.31.tgz#c8ae7bebf1678c0f92d6d8266aeddd3d97cc0c37"
+  integrity sha512-dnK2sE43OebmMe5Qnq1wXvvMIjZjm1u6CcB2KeW6cghlN4p21OpCUr2p56KTVf20KJItNChVsGnimcscp9f+yw==
   dependencies:
     bignumber.js "^9.0.1"
     buffer-reverse "^1.0.1"

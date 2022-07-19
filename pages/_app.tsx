@@ -18,7 +18,6 @@ import 'styles/rodger.css'
 import type { AppProps } from 'next/app'
 import {
   WagmiConfig,
-  chain,
   createClient,
   allChains,
   configureChains,

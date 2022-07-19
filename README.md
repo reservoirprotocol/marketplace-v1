@@ -10,9 +10,9 @@ Reservoir Market is an open source marketplace that enables communities to easil
 
 The marketplace supports 3 different modes:
 
--   Single collection (e.g.  [Crypto Coven](https://cryptocoven.reservoir.market/))
--   Multi collection community (e.g.  [BAYC](https://bayc.reservoir.market/))
--   All collections ([example](https://www.reservoir.market/))
+-  Single collection (e.g.  [Crypto Coven](https://cryptocoven.reservoir.market/))
+-  Multi collection community (e.g.  [BAYC](https://bayc.reservoir.market/))
+-  All collections ([example](https://www.reservoir.market/))
   
 With each deployment, communities are given full control over their marketplace from designing their look and feel to setting their own marketplace fees.
 

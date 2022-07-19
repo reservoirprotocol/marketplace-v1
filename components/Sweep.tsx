@@ -303,14 +303,14 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                           <img
                             className="absolute top-1 right-1 h-4 w-4"
                             src={`https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`}
-                            alt=""
+                            alt={`${token?.source} icon`}
                           />
                           <img
                             src={optimizeImage(token?.image, 72)}
-                            alt=""
-                            className="mb-2 h-[72px] w-full rounded-lg object-contain"
+                            className="mb-2 h-[72px] w-full rounded-lg object-cover"
+                            alt={`${token?.name} image`}
                           />
-                          <div className="reservoir-subtitle text-center dark:text-white">
+                          <div className="reservoir-subtitle text-center text-xs dark:text-white md:text-sm">
                             <FormatEth
                               amount={token?.floorAskPrice}
                               maximumFractionDigits={4}
