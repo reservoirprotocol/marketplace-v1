@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-coretypes/api'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 import setParams from 'lib/params'
 import { Dispatch } from 'react'
 

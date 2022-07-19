@@ -1,6 +1,6 @@
 import Layout from 'components/Layout'
 import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
-import { paths } from '@reservoir0x/reservoir-kit-coretypes/api'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 import setParams from 'lib/params'
 import Head from 'next/head'
 import TrendingCollectionTable from 'components/TrendingCollectionTable'

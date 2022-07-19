@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-coretypes/api'
+import { paths } from '@reservoir0x/reservoir-kit-core'
 
 /**
  * Sort the values of an attribute by count descending, then by name ascending
