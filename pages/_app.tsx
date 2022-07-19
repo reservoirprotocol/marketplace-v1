@@ -31,8 +31,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
-import { ReservoirSDK } from '@reservoir0x/client-sdk'
-import { getDefaultProvider } from 'ethers'
+import { ReservoirKitProvider } from '@reservoir0x/reservoir-kit-ui'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -77,27 +76,29 @@ const client = createClient({
   ],
 })
 
-ReservoirSDK.init({
-  apiBase: RESERVOIR_API_BASE ? RESERVOIR_API_BASE : '',
-})
-
 function MyApp({ Component, pageProps }: AppProps) {
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
 
   return (
-    <GlobalProvider>
-      <WagmiConfig client={client}>
-        <AnalyticsProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme={defaultTheme}
-            forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
-          >
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </AnalyticsProvider>
-      </WagmiConfig>
-    </GlobalProvider>
+    <ReservoirKitProvider
+      options={{
+        apiBase: RESERVOIR_API_BASE || '',
+      }}
+    >
+      <GlobalProvider>
+        <WagmiConfig client={client}>
+          <AnalyticsProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme={defaultTheme}
+              forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+            >
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </AnalyticsProvider>
+        </WagmiConfig>
+      </GlobalProvider>
+    </ReservoirKitProvider>
   )
 }
 

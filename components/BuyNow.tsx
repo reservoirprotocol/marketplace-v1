@@ -1,9 +1,8 @@
 import {
   Execute,
   paths,
-  ReservoirSDK,
   ReservoirSDKActions,
-} from '@reservoir0x/client-sdk'
+} from '@reservoir0x/reservoir-kit-core'
 import React, {
   ComponentProps,
   FC,
@@ -20,6 +19,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
+import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -56,6 +56,7 @@ const BuyNow: FC<Props> = ({
   // Data from props
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
+  const reservoirSdk = useCoreSdk()
 
   useEffect(() => {
     if (data) {
@@ -95,18 +96,26 @@ const BuyNow: FC<Props> = ({
       throw 'Missing a signer'
     }
 
-    await ReservoirSDK.client()
-      .actions.buyToken({
+    if (!reservoirSdk) {
+      throw 'ReservoirSDK is not initialized'
+    }
+
+    setWaitingTx(true)
+
+    await reservoirSdk.actions
+      .buyToken({
         expectedPrice,
         tokens: [token],
         signer,
         onProgress: setSteps,
       })
       .then(() => {
+        setWaitingTx(false)
         details && 'mutate' in details && details.mutate()
         mutate && mutate()
       })
-      .catch((err) => {
+      .catch((err: any) => {
+        setWaitingTx(false)
         if (err?.type === 'price mismatch') {
           setToast({
             kind: 'error',
@@ -141,8 +150,6 @@ const BuyNow: FC<Props> = ({
           title: 'Could not buy token',
         })
       })
-
-    setWaitingTx(false)
   }
 
   const expectedPrice = token?.market?.floorAsk?.price

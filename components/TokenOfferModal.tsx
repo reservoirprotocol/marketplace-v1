@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, Signer, utils } from 'ethers'
+import { constants, Signer, utils } from 'ethers'
 import {
   useAccount,
   useBalance,
@@ -13,12 +13,10 @@ import calculateOffer from 'lib/calculateOffer'
 import { SWRResponse } from 'swr'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
-import { Weth } from '@reservoir0x/sdk/dist/common/helpers'
 import getWeth from 'lib/getWeth'
 import {
   Execute,
   paths,
-  ReservoirSDK,
   ReservoirSDKActions,
 } from '@reservoir0x/client-sdk/dist'
 import ModalCard from './modal/ModalCard'
@@ -26,6 +24,7 @@ import Toast from './Toast'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
+import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
 
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -74,16 +73,14 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     warning: null,
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
-  const [weth, setWeth] = useState<{
-    weth: Weth
-    balance: BigNumber
-  } | null>(null)
+  const [weth, setWeth] = useState<Awaited<ReturnType<typeof getWeth>>>(null)
   const { data: signer } = useSigner()
   const account = useAccount()
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
   const provider = useProvider()
+  const reservoirSdk = useCoreSdk()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
     let sum = 0
@@ -106,7 +103,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
         await refetch()
         const weth = await getWeth(env.chainId as ChainId, provider, signer)
         if (weth && isSubscribed) {
-          console.log(weth)
           setWeth(weth)
         }
       }
@@ -187,13 +183,14 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const execute = async (signer: Signer) => {
+    if (!signer) throw 'signer is undefined'
+    if (!reservoirSdk) throw 'ReservoirSDK is not initialized'
+
     setWaitingTx(true)
 
     const expirationValue = expirationPresets
       .find(({ preset }) => preset === expiration)
       ?.value()
-
-    if (!signer) throw 'signer is undefined'
 
     const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
       {
@@ -208,8 +205,8 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (FEE_BPS) options.fee = FEE_BPS
     if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    await ReservoirSDK.client()
-      .actions.placeBid({
+    await reservoirSdk.actions
+      .placeBid({
         token: `${token.token?.contract}:${token.token?.tokenId}`,
         weiPrice: calculations.total.toString(),
         options,

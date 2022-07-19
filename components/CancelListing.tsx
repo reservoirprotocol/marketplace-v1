@@ -1,4 +1,4 @@
-import { Execute, paths, ReservoirSDK } from '@reservoir0x/client-sdk'
+import { Execute, paths } from '@reservoir0x/reservoir-kit-core'
 import React, {
   ComponentProps,
   FC,
@@ -15,6 +15,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
+import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -52,9 +53,10 @@ const CancelListing: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   // Data from props
-  const [collection, setCollection] = useState<Collection>()
+  const [_collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
+  const reservoirSdk = useCoreSdk()
 
   useEffect(() => {
     if (data && open) {
@@ -89,6 +91,7 @@ const CancelListing: FC<Props> = ({
   }
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -108,6 +111,7 @@ const CancelListing: FC<Props> = ({
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     details && 'mutate' in details && details.mutate()
     mutate && mutate()
   }
@@ -123,21 +127,24 @@ const CancelListing: FC<Props> = ({
   }
 
   const execute = async (id: string) => {
-    setWaitingTx(true)
-
     if (!signer) {
       throw 'Signer is missing'
     }
 
-    await ReservoirSDK.client()
-      .actions.cancelOrder({
+    if (!reservoirSdk) {
+      throw 'ReservoirSDK is not initialized'
+    }
+
+    setWaitingTx(true)
+
+    await reservoirSdk.actions
+      .cancelOrder({
         id,
         signer,
         onProgress: setSteps,
       })
       .then(handleSuccess)
       .catch(handleError)
-    setWaitingTx(false)
   }
 
   return (
