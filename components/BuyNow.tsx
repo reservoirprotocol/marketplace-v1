@@ -51,13 +51,13 @@ const BuyNow: FC<Props> = ({ data, isInTheWrongNetwork, signer }) => {
       disabled={isInTheWrongNetwork && !switchNetworkAsync}
       onClick={async () => {
         if (isInTheWrongNetwork && switchNetworkAsync && CHAIN_ID) {
-          const chain = await switchNetworkAsync?.(+CHAIN_ID)
+          const chain = await switchNetworkAsync(+CHAIN_ID)
           if (chain.id !== +CHAIN_ID) {
             return false
           }
         }
 
-        if (signer && tokenId) {
+        if (!signer) {
           dispatch({ type: 'CONNECT_WALLET', payload: true })
         }
       }}

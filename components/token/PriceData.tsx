@@ -47,7 +47,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const isOwner =
     token?.token?.owner?.toLowerCase() === accountData?.address?.toLowerCase()
   const isTopBidder =
-    !!accountData &&
+    accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
