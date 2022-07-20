@@ -48,7 +48,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
 const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
 const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
-import tailwindConfig from '../tailwind.config'
+import presetColors from '../colors'
 
 // Set up chains
 const { chains, provider } = configureChains(allChains, [
@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
     const primaryColorPalette = (
-      tailwindConfig.presetColors as Record<string, Record<string, string>>
+      presetColors as Record<string, Record<string, string>>
     )[primaryColor]
     if (defaultTheme == 'dark') {
       setReservoirKitTheme(
