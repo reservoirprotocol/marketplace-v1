@@ -88,7 +88,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               />
             }
           />
-          <div className="col-span-2 grid gap-4 md:grid-cols-2 md:gap-6">
+          <div className="col-span-2 grid grid-cols-3 gap-4 md:gap-6">
             {isOwner && (
               <ListModal
                 data={{
@@ -138,6 +138,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 setToast={setToast}
               />
             )}
+            <button className="btn-primary-outline">Add to card</button>
           </div>
         </div>
         <div

@@ -24,6 +24,7 @@ import { violet, blackA } from '@radix-ui/colors'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
 import { Signer } from 'ethers'
+import { FaBroom } from 'react-icons/fa'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -221,8 +222,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           isInTheWrongNetwork ||
           sweepTokens?.length === 0
         }
-        className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4 md:w-[222px]"
+        className="btn-primary-fill gap-2 dark:ring-primary-900 dark:focus:ring-4"
       >
+        <FaBroom className="text-white" />
         Sweep
       </Dialog.Trigger>
 

@@ -7,8 +7,8 @@ import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
-import FormatWEth from 'components/FormatWEth'
 import Image from 'next/image'
+import { FaShoppingCart } from 'react-icons/fa'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
@@ -56,26 +56,15 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
             .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
         : mappedTokens?.map((token, idx) => {
             if (!token) return null
-
             return (
               <Link
                 key={`${token?.collection?.name}${idx}`}
                 href={`/${token?.contract}/${token?.tokenId}`}
               >
                 <a className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#D4D4D4] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
-                  {token?.source && (
-                    <img
-                      className="absolute top-4 left-4 z-10 h-8 w-8"
-                      src={
-                        SOURCE_ID &&
-                        token?.source &&
-                        SOURCE_ID === token?.source
-                          ? SOURCE_ICON || NAVBAR_LOGO
-                          : `https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`
-                      }
-                      alt=""
-                    />
-                  )}
+                  <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full bg-[#7000FF]">
+                    <FaShoppingCart className="h-[18px] w-[18px] text-white" />
+                  </div>
                   {token?.image ? (
                     <Image
                       loader={({ src }) => src}
@@ -119,25 +108,32 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     {token?.name || `#${token?.tokenId}`}
                   </p>
                   <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
-                    <div>
-                      <div className="reservoir-subtitle text-xs text-gray-400">
-                        Price
-                      </div>
-                      <div className="reservoir-h6 dark:text-white">
-                        <FormatEth
-                          amount={token?.floorAskPrice}
-                          logoWidth={7}
-                        />
-                      </div>
+                    <div className="reservoir-h6">
+                      <FormatEth amount={token?.floorAskPrice} logoWidth={7} />
                     </div>
                     <div className="text-right">
-                      <div className="reservoir-subtitle text-xs text-gray-400">
-                        Offer
-                      </div>
-                      <div className="reservoir-h6 dark:text-white">
-                        <FormatWEth amount={token?.topBidValue} logoWidth={7} />
-                      </div>
+                      {token?.source && (
+                        <img
+                          className="h-6 w-6"
+                          src={
+                            SOURCE_ID &&
+                            token?.source &&
+                            SOURCE_ID === token?.source
+                              ? SOURCE_ICON || NAVBAR_LOGO
+                              : `https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`
+                          }
+                          alt=""
+                        />
+                      )}
                     </div>
+                  </div>
+                  <div className="grid grid-cols-2">
+                    <button className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white">
+                      Buy Now
+                    </button>
+                    <button className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 dark:border-neutral-600">
+                      Add to cart
+                    </button>
                   </div>
                 </a>
               </Link>

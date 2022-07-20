@@ -30,6 +30,7 @@ import useAttributes from 'hooks/useAttributes'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import CollectionActivityTable from 'components/tables/CollectionActivityTable'
+import Sweep from 'components/Sweep'
 
 // Environment variables
 // For more information about these variables
@@ -242,6 +243,11 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                         }`}
                       />
                     </button>
+                    <Sweep
+                      collection={collection}
+                      tokens={tokens}
+                      setToast={setToast}
+                    />
                   </div>
                 </div>
                 <div className="mb-10 flex items-center justify-between">

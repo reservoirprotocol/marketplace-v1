@@ -237,11 +237,6 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ))}
-            <Sweep
-              collection={collection}
-              tokens={tokens}
-              setToast={setToast}
-            />
           </div>
         </div>
       </HeroBackground>
