@@ -23,8 +23,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // convert the slug array into a path string: [a, b] -> 'a/b'
   if (typeof slug === 'string') {
     endpoint = slug
-  } else {
+  } else if (slug) {
     endpoint = slug.join('/')
+  } else {
+    res.status(200).json({})
+    return
   }
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`
