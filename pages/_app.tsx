@@ -32,6 +32,7 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useEffect, useState } from 'react'
+import { primaryColors } from '../tailwind.config'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -45,6 +46,10 @@ const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
+const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
+const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
+import tailwindConfig from '../tailwind.config'
 
 // Set up chains
 const { chains, provider } = configureChains(allChains, [
@@ -83,18 +88,27 @@ function MyApp({ Component, pageProps }: AppProps) {
   >()
 
   useEffect(() => {
+    console.log(FONT_FAMILY, BODY_FONT_FAMILY)
+    const primaryColor = (PRIMARY_COLOR as string) || 'default'
+    const primaryColorPalette = (
+      tailwindConfig.presetColors as Record<string, Record<string, string>>
+    )[primaryColor]
     if (defaultTheme == 'dark') {
       setReservoirKitTheme(
         darkTheme({
-          font: 'Inter',
-          primaryColor: '#7000FF',
+          headlineFont: FONT_FAMILY,
+          font: BODY_FONT_FAMILY,
+          primaryColor: primaryColorPalette['700'],
+          primaryHoverColor: primaryColorPalette['900'],
         })
       )
     } else {
       setReservoirKitTheme(
         lightTheme({
-          font: 'Inter',
-          primaryColor: '#7000FF',
+          headlineFont: FONT_FAMILY,
+          font: BODY_FONT_FAMILY,
+          primaryColor: primaryColorPalette['700'],
+          primaryHoverColor: primaryColorPalette['900'],
         })
       )
     }

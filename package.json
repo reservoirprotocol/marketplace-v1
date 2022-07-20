@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@react-hookz/web": "^14.2.2",
-    "@reservoir0x/reservoir-kit-ui": "^0.0.3",
+    "@reservoir0x/reservoir-kit-ui": "^0.0.5",
     "next": "latest",
     "next-themes": "^0.2.0",
     "react": "17.0.2",
