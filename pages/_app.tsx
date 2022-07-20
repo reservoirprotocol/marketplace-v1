@@ -32,7 +32,6 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useEffect, useState } from 'react'
-import { primaryColors } from '../tailwind.config'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -88,7 +87,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   >()
 
   useEffect(() => {
-    console.log(FONT_FAMILY, BODY_FONT_FAMILY)
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
     const primaryColorPalette = (
       tailwindConfig.presetColors as Record<string, Record<string, string>>
