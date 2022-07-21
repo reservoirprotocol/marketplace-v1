@@ -3,6 +3,8 @@ import * as Popover from '@radix-ui/react-popover'
 import { FC } from 'react'
 import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
 import FormatEth from './FormatEth'
+import { useRecoilState, selector, useRecoilValue } from 'recoil'
+import { recoilCartTokens } from './TokensGrid'
 
 const slideDown = keyframes({
   '0%': { opacity: 0, transform: 'translateY(-10px)' },
@@ -22,11 +24,49 @@ const StyledContent = styled(Popover.Content, {
   '&[data-side="bottom"]': { animationName: slideDown },
 })
 
+const recoilCartCount = selector({
+  key: 'cartCount',
+  get: ({ get }) => {
+    const arr = get(recoilCartTokens)
+
+    return arr.length
+  },
+})
+
+const initialValue = 0
+const recoilCartTotal = selector({
+  key: 'cartTotal',
+  get: ({ get }) => {
+    const arr = get(recoilCartTokens)
+
+    const prices = arr.map(({ price }) => {
+      if (!price) return 0
+      return price
+    })
+
+    return prices.reduce(
+      (prevVal, currentVal) => prevVal + currentVal,
+      initialValue
+    )
+  },
+})
+
 const CartMenu: FC = () => {
+  const cartCount = useRecoilValue(recoilCartCount)
+  const cartTotal = useRecoilValue(recoilCartTotal)
+  const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
+
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <FaShoppingCart className="h-[18px] w-[18px]" />
+        <div className="relative grid h-8 w-8 items-center justify-center rounded-full">
+          {cartCount > 0 && (
+            <div className="reservoir-subtitle absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#7000FF] text-white">
+              {cartCount}
+            </div>
+          )}
+          <FaShoppingCart className="h-[18px] w-[18px]" />
+        </div>
       </Popover.Trigger>
       <StyledContent
         sideOffset={22}
@@ -36,38 +76,51 @@ const CartMenu: FC = () => {
           <div className="flex items-center">
             <div className="reservoir-h6 mr-3">My Cart</div>
             <div className="reservoir-subtitle flex h-5 w-5 items-center justify-center rounded-full bg-[#7000FF] text-white">
-              1
+              {cartCount}
             </div>
           </div>
-          <button className="text-[#7000FF] dark:text-white">Clear</button>
+          <button
+            onClick={() => setCartTokens([])}
+            className="text-[#7000FF] dark:text-white"
+          >
+            Clear
+          </button>
         </div>
         <div className="mb-6 grid max-h-[300px] gap-2 overflow-auto">
-          <div className="flex justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-14 w-14 overflow-hidden rounded-[4px]">
-                <img
-                  src="https://lh3.googleusercontent.com/eI4iMn2ffWURlHe5CkxBZZh6q-ExLcYa4uT6CHwpxdRPmhW2JwNmZmUYKiyHsC6NIFBxw2GIX1WQxIuaD-NpFL-millekeVEpmQVF_M"
-                  alt=""
-                />
-              </div>
-              <div>
-                <div className="reservoir-subtitle">Item Name</div>
-                <div className="reservoir-label-s">Collection</div>
-                <div className="reservoir-h6">
-                  <FormatEth amount={2.1231} logoWidth={7} />
+          {cartTokens.map(
+            ({ collection, contract, name, image, price, tokenId }) => {
+              return (
+                <div
+                  key={`${contract}:${tokenId}`}
+                  className="flex justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-14 w-14 overflow-hidden rounded-[4px]">
+                      <img src={image} alt="" />
+                    </div>
+                    <div>
+                      <div className="reservoir-subtitle">
+                        {name || `#${tokenId}`}
+                      </div>
+                      <div className="reservoir-label-s">{collection}</div>
+                      <div className="reservoir-h6">
+                        <FormatEth amount={price} logoWidth={7} />
+                      </div>
+                    </div>
+                  </div>
+                  <button>
+                    <FaTrashAlt />
+                  </button>
                 </div>
-              </div>
-            </div>
-            <button>
-              <FaTrashAlt />
-            </button>
-          </div>
+              )
+            }
+          )}
         </div>
 
         <div className="mb-4 flex justify-between">
           <div className="reservoir-h6">You Pay</div>
           <div className="reservoir-h6">
-            <FormatEth amount={2.1231} logoWidth={7} />
+            <FormatEth amount={cartTotal} logoWidth={7} />
           </div>
         </div>
         <button className="btn-primary-fill w-full">Purchase</button>

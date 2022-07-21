@@ -32,7 +32,7 @@ import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
 import { ReservoirSDK } from '@reservoir0x/client-sdk'
-import { getDefaultProvider } from 'ethers'
+import { RecoilRoot } from 'recoil'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -86,17 +86,19 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <GlobalProvider>
-      <WagmiConfig client={client}>
-        <AnalyticsProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme={defaultTheme}
-            forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
-          >
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </AnalyticsProvider>
-      </WagmiConfig>
+      <RecoilRoot>
+        <WagmiConfig client={client}>
+          <AnalyticsProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme={defaultTheme}
+              forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+            >
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </AnalyticsProvider>
+        </WagmiConfig>
+      </RecoilRoot>
     </GlobalProvider>
   )
 }
