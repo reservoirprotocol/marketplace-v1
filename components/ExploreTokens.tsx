@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'

@@ -1,9 +1,8 @@
 import {
   Execute,
   paths,
-  ReservoirSDK,
-  ReservoirSDKActions,
-} from '@reservoir0x/client-sdk'
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,
@@ -20,6 +19,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -56,6 +56,7 @@ const AcceptOffer: FC<Props> = ({
   const { dispatch } = useContext(GlobalContext)
 
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     if (data) {
@@ -100,6 +101,7 @@ const AcceptOffer: FC<Props> = ({
   }
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     if (err?.type === 'price mismatch') {
@@ -127,12 +129,13 @@ const AcceptOffer: FC<Props> = ({
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     details && 'mutate' in details && details.mutate()
     mutate && mutate()
   }
 
   let acceptOfferToken:
-    | Parameters<ReservoirSDKActions['acceptOffer']>['0']['token']
+    | Parameters<ReservoirClientActions['acceptOffer']>['0']['token']
     | undefined = undefined
 
   if (contract && tokenId) {
@@ -152,16 +155,20 @@ const AcceptOffer: FC<Props> = ({
   const expectedPrice = token?.market?.topBid?.value
 
   const execute = async (
-    token: Parameters<ReservoirSDKActions['acceptOffer']>['0']['token']
+    token: Parameters<ReservoirClientActions['acceptOffer']>['0']['token']
   ) => {
-    setWaitingTx(true)
-
     if (!signer) {
       throw 'Missing a signer'
     }
 
-    ReservoirSDK.client()
-      .actions.acceptOffer({
+    if (!reservoirClient) {
+      throw 'reservoirClient is not initialized'
+    }
+
+    setWaitingTx(true)
+
+    reservoirClient.actions
+      .acceptOffer({
         signer,
         expectedPrice,
         token,
@@ -169,7 +176,6 @@ const AcceptOffer: FC<Props> = ({
       })
       .then(handleSuccess)
       .catch(handleError)
-    setWaitingTx(false)
   }
 
   return (

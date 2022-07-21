@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@react-hookz/web'
-import { paths } from '@reservoir0x/client-sdk'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import { FC } from 'react'
 import { FiGlobe, FiMoreVertical } from 'react-icons/fi'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
