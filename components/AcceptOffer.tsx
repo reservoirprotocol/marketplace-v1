@@ -1,8 +1,8 @@
 import {
   Execute,
   paths,
-  ReservoirSDKActions,
-} from '@reservoir0x/reservoir-kit-core'
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,
@@ -19,7 +19,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -56,7 +56,7 @@ const AcceptOffer: FC<Props> = ({
   const { dispatch } = useContext(GlobalContext)
 
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     if (data) {
@@ -135,7 +135,7 @@ const AcceptOffer: FC<Props> = ({
   }
 
   let acceptOfferToken:
-    | Parameters<ReservoirSDKActions['acceptOffer']>['0']['token']
+    | Parameters<ReservoirClientActions['acceptOffer']>['0']['token']
     | undefined = undefined
 
   if (contract && tokenId) {
@@ -155,19 +155,19 @@ const AcceptOffer: FC<Props> = ({
   const expectedPrice = token?.market?.topBid?.value
 
   const execute = async (
-    token: Parameters<ReservoirSDKActions['acceptOffer']>['0']['token']
+    token: Parameters<ReservoirClientActions['acceptOffer']>['0']['token']
   ) => {
     if (!signer) {
       throw 'Missing a signer'
     }
 
-    if (!reservoirSdk) {
-      throw 'ReservoirSDK is not initialized'
+    if (!reservoirClient) {
+      throw 'reservoirClient is not initialized'
     }
 
     setWaitingTx(true)
 
-    reservoirSdk.actions
+    reservoirClient.actions
       .acceptOffer({
         signer,
         expectedPrice,

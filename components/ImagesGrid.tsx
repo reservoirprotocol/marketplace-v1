@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-core'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import { optimizeImage } from 'lib/optmizeImage'
 import React, { FC } from 'react'
 

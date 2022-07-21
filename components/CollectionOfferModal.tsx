@@ -15,12 +15,15 @@ import expirationPresets from 'lib/offerExpirationPresets'
 import getWeth from 'lib/getWeth'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
-import { Execute, ReservoirSDKActions } from '@reservoir0x/reservoir-kit-core'
+import {
+  Execute,
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
@@ -84,7 +87,7 @@ const CollectionOfferModal: FC<Props> = ({
     addressOrName: account?.address,
   })
   const provider = useProvider()
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
     let sum = 0
@@ -154,8 +157,8 @@ const CollectionOfferModal: FC<Props> = ({
   const execute = async () => {
     if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
 
-    if (!reservoirSdk) {
-      throw 'ReservoirSDK not initialized'
+    if (!reservoirClient) {
+      throw 'reservoirClient not initialized'
     }
 
     setWaitingTx(true)
@@ -164,10 +167,11 @@ const CollectionOfferModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
-      {
-        expirationTime: expirationValue,
-      }
+    const options: Parameters<
+      ReservoirClientActions['placeBid']
+    >['0']['options'] = {
+      expirationTime: expirationValue,
+    }
 
     if (
       !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
@@ -182,7 +186,7 @@ const CollectionOfferModal: FC<Props> = ({
     if (FEE_BPS) options.fee = FEE_BPS
     if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    await reservoirSdk.actions
+    await reservoirClient.actions
       .placeBid({
         weiPrice: calculations.total.toString(),
         collection: data.collection.id,

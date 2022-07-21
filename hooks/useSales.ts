@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-core'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'

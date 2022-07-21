@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { Execute, paths } from '@reservoir0x/reservoir-kit-core'
+import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,
@@ -16,7 +16,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
 type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
@@ -55,7 +55,7 @@ const CancelOffer: FC<Props> = ({
   // Data from props
   const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     if (data && open) {
@@ -124,13 +124,13 @@ const CancelOffer: FC<Props> = ({
   }
 
   const execute = async (id: string, signer: Signer) => {
-    if (!reservoirSdk) {
-      throw 'ReservoirSDK not initialized'
+    if (!reservoirClient) {
+      throw 'reservoirClient not initialized'
     }
 
     setWaitingTx(true)
 
-    await reservoirSdk.actions
+    await reservoirClient.actions
       .cancelOrder({
         id,
         signer,

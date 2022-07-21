@@ -17,14 +17,14 @@ import getWeth from 'lib/getWeth'
 import {
   Execute,
   paths,
-  ReservoirSDKActions,
-} from '@reservoir0x/reservoir-kit-core'
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -80,7 +80,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     addressOrName: account?.address,
   })
   const provider = useProvider()
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
     let sum = 0
@@ -184,7 +184,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
   const execute = async (signer: Signer) => {
     if (!signer) throw 'signer is undefined'
-    if (!reservoirSdk) throw 'ReservoirSDK is not initialized'
+    if (!reservoirClient) throw 'reservoirClient is not initialized'
 
     setWaitingTx(true)
 
@@ -192,11 +192,12 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
-      {
-        orderbook: 'reservoir',
-        expirationTime: expirationValue,
-      }
+    const options: Parameters<
+      ReservoirClientActions['placeBid']
+    >['0']['options'] = {
+      orderbook: 'reservoir',
+      expirationTime: expirationValue,
+    }
 
     if (!ORDER_KIND) options.orderKind = 'seaport'
 
@@ -205,7 +206,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
     if (FEE_BPS) options.fee = FEE_BPS
     if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    await reservoirSdk.actions
+    await reservoirClient.actions
       .placeBid({
         token: `${token.token?.contract}:${token.token?.tokenId}`,
         weiPrice: calculations.total.toString(),

@@ -26,7 +26,7 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-core'
+import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 

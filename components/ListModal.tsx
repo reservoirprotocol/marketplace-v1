@@ -14,10 +14,10 @@ import { CgSpinner } from 'react-icons/cg'
 import {
   Execute,
   paths,
-  ReservoirSDKActions,
-} from '@reservoir0x/reservoir-kit-core'
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import { GlobalContext } from 'context/GlobalState'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -85,7 +85,7 @@ const ListModal: FC<Props> = ({
   const { dispatch } = useContext(GlobalContext)
 
   const [open, setOpen] = useState(false)
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     let isSubscribed = true
@@ -181,7 +181,7 @@ const ListModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    if (!reservoirSdk) throw 'ReservoirSDK is not initialized'
+    if (!reservoirClient) throw 'reservoirClient is not initialized'
 
     if (!signer) throw 'signer is undefined'
 
@@ -191,10 +191,11 @@ const ListModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
-      {
-        orderbook: 'reservoir',
-      }
+    const options: Parameters<
+      ReservoirClientActions['listToken']
+    >[0]['options'] = {
+      orderbook: 'reservoir',
+    }
 
     if (!ORDER_KIND) options.orderKind = 'seaport'
 
@@ -203,7 +204,7 @@ const ListModal: FC<Props> = ({
     if (FEE_BPS) options.fee = FEE_BPS
     if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    reservoirSdk.actions
+    reservoirClient.actions
       .listToken({
         signer,
         weiPrice: ethers.utils.parseEther(listingPrice).toString(),
@@ -219,7 +220,7 @@ const ListModal: FC<Props> = ({
   }
 
   const onContinue = async () => {
-    if (!reservoirSdk) throw 'ReservoirSDK is not initialized'
+    if (!reservoirClient) throw 'reservoirClient is not initialized'
     if (!signer) throw 'signer is undefined'
 
     setWaitingTx(true)
@@ -229,16 +230,17 @@ const ListModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<ReservoirSDKActions['listToken']>[0]['options'] =
-      {
-        orderbook: 'opensea',
-        orderKind: 'seaport',
-      }
+    const options: Parameters<
+      ReservoirClientActions['listToken']
+    >[0]['options'] = {
+      orderbook: 'opensea',
+      orderKind: 'seaport',
+    }
 
     if (SOURCE_ID) options.source = SOURCE_ID
 
     if (postOnOpenSea) {
-      reservoirSdk.actions
+      reservoirClient.actions
         .listToken({
           signer,
           weiPrice: ethers.utils.parseEther(listingPrice).toString(),

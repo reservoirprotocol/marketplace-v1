@@ -6,7 +6,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
-import { paths } from '@reservoir0x/reservoir-kit-core'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import FormatWEth from 'components/FormatWEth'
 import Image from 'next/image'
 

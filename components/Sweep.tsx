@@ -1,4 +1,4 @@
-import { Execute, paths } from '@reservoir0x/reservoir-kit-core'
+import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,
@@ -24,7 +24,7 @@ import { violet, blackA } from '@radix-ui/colors'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
 import { Signer } from 'ethers'
-import { useCoreSdk } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -101,7 +101,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [open, setOpen] = useState(false)
   const [details, _setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
-  const reservoirSdk = useCoreSdk()
+  const reservoirClient = useReservoirClient()
 
   const isInTheWrongNetwork = Boolean(
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
@@ -162,13 +162,13 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
       throw 'Missing tokens to sweep'
     }
 
-    if (!reservoirSdk) {
-      throw 'ReservoirSDK is not initialized'
+    if (!reservoirClient) {
+      throw 'reservoirClient is not initialized'
     }
 
     setWaitingTx(true)
 
-    await reservoirSdk.actions
+    await reservoirClient.actions
       .buyToken({
         expectedPrice: sweepTotal,
         tokens: sweepTokens,
