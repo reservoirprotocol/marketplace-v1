@@ -9,7 +9,8 @@ import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/client-sdk/dist/types/api'
 import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
-import { atom, useRecoilState } from 'recoil'
+import { atom, useRecoilState, useRecoilValue } from 'recoil'
+import { recoilTokensMap } from './CartMenu'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
@@ -40,6 +41,7 @@ export const recoilCartTokens = atom<
 
 const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
+  const tokensMap = useRecoilValue(recoilTokensMap)
   const { data, error } = tokens
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
@@ -71,12 +73,17 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
             .fill(null)
             .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
         : mappedTokens?.map((token, idx) => {
+            const isInCart = Boolean(
+              tokensMap[`${token?.contract}:${token?.tokenId}`]
+            )
             if (!token) return null
             return (
               <div className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#D4D4D4] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600">
-                <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full bg-[#7000FF]">
-                  <FaShoppingCart className="h-[18px] w-[18px] text-white" />
-                </div>
+                {isInCart ? (
+                  <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full bg-[#7000FF]">
+                    <FaShoppingCart className="h-[18px] w-[18px] text-white" />
+                  </div>
+                ) : null}
 
                 <Link
                   key={`${token?.collection?.name}${idx}`}
@@ -151,25 +158,36 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     <button className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white">
                       Buy Now
                     </button>
-                    <button
-                      disabled={!token?.floorAskPrice}
-                      onClick={() => {
-                        setCartTokens([
-                          ...cartTokens,
-                          {
-                            contract: token?.contract,
-                            tokenId: token?.tokenId,
-                            name: token?.name,
-                            collection: token?.collection?.name,
-                            price: token?.floorAskPrice,
-                            image: token?.image,
-                          },
-                        ])
-                      }}
-                      className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
-                    >
-                      Add to cart
-                    </button>
+                    {isInCart ? (
+                      <button
+                        onClick={() => {
+                          const index = cartTokens.findIndex()
+                        }}
+                        className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        disabled={!token?.floorAskPrice}
+                        onClick={() => {
+                          setCartTokens([
+                            ...cartTokens,
+                            {
+                              contract: token?.contract,
+                              tokenId: token?.tokenId,
+                              name: token?.name,
+                              collection: token?.collection?.name,
+                              price: token?.floorAskPrice,
+                              image: token?.image,
+                            },
+                          ])
+                        }}
+                        className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
+                      >
+                        Add to cart
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

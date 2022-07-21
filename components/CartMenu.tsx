@@ -33,6 +33,18 @@ const recoilCartCount = selector({
   },
 })
 
+export const recoilTokensMap = selector({
+  key: 'cartMapping',
+  get: ({ get }) => {
+    const arr = get(recoilCartTokens)
+
+    return arr.reduce<Record<string, any>>((map, token) => {
+      map[`${token.contract}:${token.tokenId}`] = true
+      return map
+    }, {})
+  },
+})
+
 const initialValue = 0
 const recoilCartTotal = selector({
   key: 'cartTotal',
@@ -79,16 +91,18 @@ const CartMenu: FC = () => {
               {cartCount}
             </div>
           </div>
-          <button
-            onClick={() => setCartTokens([])}
-            className="text-[#7000FF] dark:text-white"
-          >
-            Clear
-          </button>
+          {cartCount > 0 && (
+            <button
+              onClick={() => setCartTokens([])}
+              className="text-[#7000FF] dark:text-white"
+            >
+              Clear
+            </button>
+          )}
         </div>
         <div className="mb-6 grid max-h-[300px] gap-2 overflow-auto">
           {cartTokens.map(
-            ({ collection, contract, name, image, price, tokenId }) => {
+            ({ collection, contract, name, image, price, tokenId }, index) => {
               return (
                 <div
                   key={`${contract}:${tokenId}`}
@@ -108,7 +122,13 @@ const CartMenu: FC = () => {
                       </div>
                     </div>
                   </div>
-                  <button>
+                  <button
+                    onClick={() => {
+                      const newCartTokens = [...cartTokens]
+                      newCartTokens.splice(index, 1)
+                      setCartTokens(newCartTokens)
+                    }}
+                  >
                     <FaTrashAlt />
                   </button>
                 </div>
