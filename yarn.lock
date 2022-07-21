@@ -1692,17 +1692,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.2"
 
-"@reservoir0x/reservoir-kit-client@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.1.tgz#6856e6373059f8b22e04f5b2c0af9eecf940befb"
-  integrity sha512-9T8/jHW0X5LhpzxkAGhoyzxgVN4gKn1jsSLx1qFZCxF8LHt3bxJZgsT8lDmyrEDHzMYAOJ4yBDchzLf0W0jAqg==
+"@reservoir0x/reservoir-kit-client@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.2.tgz#3a08c16a08acb0974ba4b5053eb3348cc9e2be3f"
+  integrity sha512-hc5FvTtmJNJ0Md6ZxV7/skWsoXCseborZcNtYAs8QpzxQIs6v3VojKw3hB4/Rvo/znqXqY/nmux0KHWGQg7eLw==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.0.6.tgz#277439619f6a43cc73dabea821529525e5e04780"
-  integrity sha512-pWODRjQHU2KUQOXano2p8tMKmAynwoxa+R5kzyegevGMhy/JFdNC7q5UmFLTlgyJmj73cMdfZIHhbHVDCcbGCg==
+"@reservoir0x/reservoir-kit-ui@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.0.7.tgz#9fad4649702f27e1d4c7c9a01d4f191a2dc131b2"
+  integrity sha512-6HCtxRP3aFOaiboIr4WjFH5fTns1G9G+nd7jItx6YPxZB0NUzO18gLojPCBMg+0lzV3PgO0BbpKb/iedK1iq4g==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1711,7 +1711,7 @@
     "@radix-ui/react-dialog" "0.1.8-rc.50"
     "@radix-ui/react-popover" "0.1.7-rc.46"
     "@rainbow-me/rainbowkit" "^0.4.1"
-    "@reservoir0x/reservoir-kit-client" "0.0.1"
+    "@reservoir0x/reservoir-kit-client" "0.0.2"
     "@stitches/react" "^1.2.8"
     framer-motion "^6.4.2"
 
