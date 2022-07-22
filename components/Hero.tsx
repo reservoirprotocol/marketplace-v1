@@ -1,6 +1,6 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
-import { paths } from '@reservoir0x/client-sdk/dist/types'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 import { useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import CollectionOfferModal from 'components/CollectionOfferModal'

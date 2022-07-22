@@ -1,5 +1,4 @@
-import { paths } from '@reservoir0x/client-sdk/dist/types/api'
-import { setParams } from '@reservoir0x/client-sdk/dist/utils/params'
+import { setParams, paths } from '@reservoir0x/reservoir-kit-client'
 import FormatEth from 'components/FormatEth'
 import useAsks from 'hooks/useAsks'
 import { truncateAddress } from 'lib/truncateText'
