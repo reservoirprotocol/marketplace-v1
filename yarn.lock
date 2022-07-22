@@ -1721,16 +1721,6 @@
   integrity sha512-tnC+QXqYHPFxLE3oQ8wzi7M+QAlkRr5qpRMO9a7LCkPn9xcgB5Bm21K9a+VvhuycZDg51rPcJyqUvOol4nF1RA==
   dependencies:
     ethers "^5.6.8"
-    merkletreejs "0.2.31"
-
-"@rushstack/eslint-patch@^1.0.8":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.1.0.tgz"
-  integrity sha512-JLo+Y592QzIE+q7Dl2pMUtt4q8SKYI5jDrZxrozEQxnGVOyYE+GWK9eLkwTaeN9DDctlaRAQ3TBmzZ1qdLE30A==
-
-"@stitches/react@^1.2.8":
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/@stitches/react/-/react-1.2.8.tgz#954f8008be8d9c65c4e58efa0937f32388ce3a38"
   integrity sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==
 
 "@types/bn.js@^4.11.3":
