@@ -2,13 +2,16 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
+import { recoilTokensMap } from 'components/CartMenu'
 import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
 import ListModal from 'components/ListModal'
 import TokenOfferModal from 'components/TokenOfferModal'
+import { recoilCartTokens } from 'components/TokensGrid'
 import useCollection from 'hooks/useCollection'
 import useDetails from 'hooks/useDetails'
 import React, { FC, ReactNode } from 'react'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
 
@@ -23,6 +26,8 @@ type Props = {
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
+  const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
+  const tokensMap = useRecoilValue(recoilTokensMap)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
@@ -52,6 +57,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
       accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
+
+  const tokenId = token?.token?.tokenId
+  const contract = token?.token?.contract
+
+  const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
@@ -138,7 +148,45 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 setToast={setToast}
               />
             )}
-            <button className="btn-primary-outline">Add to card</button>
+            {isInCart ? (
+              <button
+                onClick={() => {
+                  const newCartTokens = [...cartTokens]
+                  const index = newCartTokens.findIndex(
+                    (cartToken) =>
+                      cartToken.contract === contract &&
+                      cartToken.tokenId === tokenId
+                  )
+                  newCartTokens.splice(index, 1)
+                  setCartTokens(newCartTokens)
+                }}
+                className="btn-primary-outline flex h-[40px] items-center justify-center text-[#FF3B3B] disabled:cursor-not-allowed dark:text-red-300"
+              >
+                Remove
+              </button>
+            ) : (
+              <button
+                disabled={!token?.market?.floorAsk?.price}
+                onClick={() => {
+                  if (tokenId && contract) {
+                    setCartTokens([
+                      ...cartTokens,
+                      {
+                        tokenId,
+                        contract,
+                        collection: { name: token.token?.collection?.name },
+                        image: token.token?.image,
+                        floorAskPrice: token.market?.floorAsk?.price,
+                        name: token.token?.name,
+                      },
+                    ])
+                  }
+                }}
+                className="btn-primary-outline"
+              >
+                Add to card
+              </button>
+            )}
           </div>
         </div>
         <div

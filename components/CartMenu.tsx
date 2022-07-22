@@ -1,10 +1,14 @@
 import { styled, keyframes } from '@stitches/react'
 import * as Popover from '@radix-ui/react-popover'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
 import FormatEth from './FormatEth'
 import { useRecoilState, selector, useRecoilValue } from 'recoil'
 import { recoilCartTokens } from './TokensGrid'
+import { Execute, ReservoirSDK } from '@reservoir0x/client-sdk'
+import { Signer } from 'ethers'
+import { setToast } from './token/setToast'
+import { useAccount, useBalance, useSigner } from 'wagmi'
 
 const slideDown = keyframes({
   '0%': { opacity: 0, transform: 'translateY(-10px)' },
@@ -46,14 +50,14 @@ export const recoilTokensMap = selector({
 })
 
 const initialValue = 0
-const recoilCartTotal = selector({
+export const recoilCartTotal = selector({
   key: 'cartTotal',
   get: ({ get }) => {
     const arr = get(recoilCartTokens)
 
-    const prices = arr.map(({ price }) => {
-      if (!price) return 0
-      return price
+    const prices = arr.map(({ floorAskPrice }) => {
+      if (!floorAskPrice) return 0
+      return floorAskPrice
     })
 
     return prices.reduce(
@@ -67,6 +71,74 @@ const CartMenu: FC = () => {
   const cartCount = useRecoilValue(recoilCartCount)
   const cartTotal = useRecoilValue(recoilCartTotal)
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
+  const tokensMap = useRecoilValue(recoilTokensMap)
+  const [open, setOpen] = useState(false)
+  const [steps, setSteps] = useState<Execute['steps']>()
+  const [waitingTx, setWaitingTx] = useState<boolean>(false)
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
+  const { data: balance } = useBalance({
+    addressOrName: address,
+  })
+
+  const execute = async (signer: Signer) => {
+    setWaitingTx(true)
+
+    if (!signer) {
+      throw 'Missing a signer'
+    }
+
+    if (cartTokens.length === 0) {
+      throw 'Missing tokens to purchase'
+    }
+
+    await ReservoirSDK.client()
+      .actions.buyToken({
+        expectedPrice: cartTotal,
+        tokens: cartTokens,
+        signer,
+        onProgress: setSteps,
+      })
+      .then(() => setCartTokens([]))
+      // .then(() => tokens.mutate())
+      .catch((err: any) => {
+        if (err?.type === 'price mismatch') {
+          setToast({
+            kind: 'error',
+            message: 'Price was greater than expected.',
+            title: 'Could not buy token',
+          })
+          return
+        }
+
+        if (err?.message === 'Not enough ETH balance') {
+          setToast({
+            kind: 'error',
+            message: 'You have insufficient funds to buy this token.',
+            title: 'Not enough ETH balance',
+          })
+          return
+        }
+        // Handle user rejection
+        if (err?.code === 4001) {
+          setOpen(false)
+          setSteps(undefined)
+          setToast({
+            kind: 'error',
+            message: 'You have canceled the transaction.',
+            title: 'User canceled transaction',
+          })
+          return
+        }
+        setToast({
+          kind: 'error',
+          message: 'The transaction was not completed.',
+          title: 'Could not buy token',
+        })
+      })
+
+    setWaitingTx(false)
+  }
 
   return (
     <Popover.Root>
@@ -102,7 +174,10 @@ const CartMenu: FC = () => {
         </div>
         <div className="mb-6 grid max-h-[300px] gap-2 overflow-auto">
           {cartTokens.map(
-            ({ collection, contract, name, image, price, tokenId }, index) => {
+            (
+              { collection, contract, name, image, floorAskPrice, tokenId },
+              index
+            ) => {
               return (
                 <div
                   key={`${contract}:${tokenId}`}
@@ -116,9 +191,11 @@ const CartMenu: FC = () => {
                       <div className="reservoir-subtitle">
                         {name || `#${tokenId}`}
                       </div>
-                      <div className="reservoir-label-s">{collection}</div>
+                      <div className="reservoir-label-s">
+                        {collection?.name}
+                      </div>
                       <div className="reservoir-h6">
-                        <FormatEth amount={price} logoWidth={7} />
+                        <FormatEth amount={floorAskPrice} logoWidth={7} />
                       </div>
                     </div>
                   </div>
@@ -143,7 +220,25 @@ const CartMenu: FC = () => {
             <FormatEth amount={cartTotal} logoWidth={7} />
           </div>
         </div>
-        <button className="btn-primary-fill w-full">Purchase</button>
+        {balance?.formatted && +balance.formatted < cartTotal && (
+          <div className="mb-2 text-center ">
+            <span className="reservoir-headings text-[#FF6369]">
+              Insufficient balance{' '}
+            </span>
+            {<FormatEth amount={+balance.formatted}></FormatEth>}
+          </div>
+        )}
+        <button
+          onClick={() => signer && execute(signer)}
+          disabled={
+            cartCount === 0 ||
+            waitingTx ||
+            Boolean(balance?.formatted && +balance.formatted < cartTotal)
+          }
+          className="btn-primary-fill w-full"
+        >
+          {waitingTx ? 'Waiting' : 'Purchase'}
+        </button>
       </StyledContent>
     </Popover.Root>
   )
