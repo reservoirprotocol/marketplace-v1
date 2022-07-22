@@ -1718,9 +1718,19 @@
 "@reservoir0x/sdk@^0.0.123":
   version "0.0.123"
   resolved "https://registry.yarnpkg.com/@reservoir0x/sdk/-/sdk-0.0.123.tgz#9a3ceeea54175b4965eb7930410a277a588765da"
-  integrity sha512-tnC+QXqYHPFxLE3oQ8wzi7M+QAlkRr5qpRMO9a7LCkPn9xcgB5Bm21K9a+VvhuycZDg51rPcJyqUvOol4nF1RA==
+  integrity "sha1-mjzu6lQXW0ll63kwQQoneliHZdo= sha512-tnC+QXqYHPFxLE3oQ8wzi7M+QAlkRr5qpRMO9a7LCkPn9xcgB5Bm21K9a+VvhuycZDg51rPcJyqUvOol4nF1RA=="
   dependencies:
     ethers "^5.6.8"
+    merkletreejs "0.2.31"
+
+"@rushstack/eslint-patch@^1.0.8":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.4.tgz#0c8b74c50f29ee44f423f7416829c0bf8bb5eb27"
+  integrity sha512-LwzQKA4vzIct1zNZzBmRKI9QuNpLgTQMEjsQLf3BXuGYb3QPTP4Yjf6mkdX+X1mYttZ808QpOwAzZjv28kq7DA==
+
+"@stitches/react@^1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@stitches/react/-/react-1.2.8.tgz#954f8008be8d9c65c4e58efa0937f32388ce3a38"
   integrity sha512-9g9dWI4gsSVe8bNLlb+lMkBYsnIKCZTmvqvDG+Avnn69XfmHZKiaMrx7cgTaddq7aTPPmXiTsbFcUy0xgI4+wA==
 
 "@types/bn.js@^4.11.3":
