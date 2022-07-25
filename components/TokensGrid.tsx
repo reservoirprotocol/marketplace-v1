@@ -17,7 +17,7 @@ import {
   ReservoirSDKActions,
 } from '@reservoir0x/client-sdk'
 import { setToast } from './token/setToast'
-import { useNetwork, useSigner } from 'wagmi'
+import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -53,6 +53,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const cartTotal = useRecoilValue(recoilCartTotal)
   const [steps, setSteps] = useState<Execute['steps']>()
   const { chain: activeChain } = useNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork({
+    chainId: CHAIN_ID ? +CHAIN_ID : undefined,
+  })
   const { data, error } = tokens
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
@@ -229,8 +232,23 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                   </div>
                   <div className="grid grid-cols-2">
                     <button
-                      onClick={() => {
-                        debugger
+                      disabled={
+                        waitingTx ||
+                        !token?.floorAskPrice ||
+                        (isInTheWrongNetwork && !switchNetworkAsync)
+                      }
+                      onClick={async () => {
+                        if (
+                          isInTheWrongNetwork &&
+                          switchNetworkAsync &&
+                          CHAIN_ID
+                        ) {
+                          const chain = await switchNetworkAsync(+CHAIN_ID)
+                          if (chain.id !== +CHAIN_ID) {
+                            return false
+                          }
+                        }
+
                         if (token.floorAskPrice) {
                           if (!signer) {
                             dispatch({ type: 'CONNECT_WALLET', payload: true })
@@ -245,11 +263,6 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           )
                         }
                       }}
-                      disabled={
-                        waitingTx ||
-                        !token?.floorAskPrice ||
-                        isInTheWrongNetwork
-                      }
                       className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white"
                     >
                       Buy Now
@@ -278,7 +291,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                         }}
                         className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
                       >
-                        Add to cart
+                        Add to Cart
                       </button>
                     )}
                   </div>
