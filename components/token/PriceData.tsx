@@ -52,7 +52,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const isOwner =
     token?.token?.owner?.toLowerCase() === accountData?.address?.toLowerCase()
   const isTopBidder =
-    !!accountData &&
+    accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
@@ -111,16 +111,16 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 signer={signer}
               />
             )}
-            <BuyNow
-              data={{
-                collection: collection.data,
-                details,
-              }}
-              signer={signer}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              setToast={setToast}
-              show={!isOwner}
-            />
+            {!isOwner && (
+              <BuyNow
+                data={{
+                  collection: collection.data,
+                  details,
+                }}
+                signer={signer}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+              />
+            )}
             <AcceptOffer
               data={{
                 collection: collection.data,

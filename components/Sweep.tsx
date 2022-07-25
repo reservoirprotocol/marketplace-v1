@@ -1,4 +1,4 @@
-import { Execute, paths, ReservoirSDK } from '@reservoir0x/client-sdk'
+import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,
@@ -25,6 +25,7 @@ import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
 import { Signer } from 'ethers'
 import { FaBroom } from 'react-icons/fa'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -99,8 +100,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   >([])
   const [sweepTotal, setSweepTotal] = useState<number>(0)
   const [open, setOpen] = useState(false)
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, _setDetails] = useState<SWRResponse<Details, any> | Details>()
   const { dispatch } = useContext(GlobalContext)
+  const reservoirClient = useReservoirClient()
 
   const isInTheWrongNetwork = Boolean(
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
@@ -153,8 +155,6 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   }
 
   const execute = async (signer: Signer) => {
-    setWaitingTx(true)
-
     if (!signer) {
       throw 'Missing a signer'
     }
@@ -163,18 +163,26 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
       throw 'Missing tokens to sweep'
     }
 
-    await ReservoirSDK.client()
-      .actions.buyToken({
+    if (!reservoirClient) {
+      throw 'reservoirClient is not initialized'
+    }
+
+    setWaitingTx(true)
+
+    await reservoirClient.actions
+      .buyToken({
         expectedPrice: sweepTotal,
         tokens: sweepTokens,
         signer,
         onProgress: setSteps,
       })
       .then(() => {
+        setWaitingTx(false)
         details && 'mutate' in details && details.mutate()
         mutate && mutate()
       })
       .catch((err: any) => {
+        setWaitingTx(false)
         if (err?.type === 'price mismatch') {
           setToast({
             kind: 'error',
@@ -209,8 +217,6 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           title: 'Could not buy token',
         })
       })
-
-    setWaitingTx(false)
   }
 
   return (

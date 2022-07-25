@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useContext, useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ExpirationSelector from './ExpirationSelector'
-import { BigNumber, constants, ethers } from 'ethers'
+import { constants, ethers } from 'ethers'
 import {
   useAccount,
   useBalance,
@@ -13,18 +13,17 @@ import calculateOffer from 'lib/calculateOffer'
 import FormatEth from './FormatEth'
 import expirationPresets from 'lib/offerExpirationPresets'
 import useCollectionStats from 'hooks/useCollectionStats'
-import { Common } from '@reservoir0x/sdk'
 import getWeth from 'lib/getWeth'
 import useTokens from 'hooks/useTokens'
 import {
   Execute,
-  ReservoirSDK,
-  ReservoirSDKActions,
-} from '@reservoir0x/client-sdk'
+  ReservoirClientActions,
+} from '@reservoir0x/reservoir-kit-client'
 import ModalCard from './modal/ModalCard'
 import Toast from './Toast'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
@@ -81,16 +80,14 @@ const AttributeOfferModal: FC<Props> = ({
     warning: null,
   })
   const [offerPrice, setOfferPrice] = useState<string>('')
-  const [weth, setWeth] = useState<{
-    weth: Common.Helpers.Weth
-    balance: BigNumber
-  } | null>(null)
+  const [weth, setWeth] = useState<Awaited<ReturnType<typeof getWeth>>>(null)
   const { data: signer } = useSigner()
   const account = useAccount()
   const { data: ethBalance, refetch } = useBalance({
     addressOrName: account?.address,
   })
   const provider = useProvider()
+  const reservoirClient = useReservoirClient()
 
   function getBps(royalties: number | undefined, envBps: string | undefined) {
     let sum = 0
@@ -135,6 +132,7 @@ const AttributeOfferModal: FC<Props> = ({
   }, [offerPrice])
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -154,6 +152,7 @@ const AttributeOfferModal: FC<Props> = ({
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     stats.mutate()
     tokens.mutate()
   }
@@ -161,26 +160,29 @@ const AttributeOfferModal: FC<Props> = ({
   const execute = async () => {
     if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
 
-    setWaitingTx(true)
-
     const expirationValue = expirationPresets
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    if (!signer) return
+    if (!reservoirClient) {
+      throw 'reservoirClient is not initialized'
+    }
 
-    const options: Parameters<ReservoirSDKActions['placeBid']>['0']['options'] =
-      {
-        expirationTime: expirationValue,
-        orderKind: 'seaport',
-      }
+    setWaitingTx(true)
+
+    const options: Parameters<
+      ReservoirClientActions['placeBid']
+    >['0']['options'] = {
+      expirationTime: expirationValue,
+      orderKind: 'seaport',
+    }
 
     if (SOURCE_ID) options.source = SOURCE_ID
     if (FEE_BPS) options.fee = FEE_BPS
     if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
 
-    ReservoirSDK.client()
-      .actions.placeBid({
+    reservoirClient.actions
+      .placeBid({
         signer,
         collection: data.collection.id,
         attributeKey: data.attribute.key,
@@ -191,8 +193,6 @@ const AttributeOfferModal: FC<Props> = ({
       })
       .then(handleSuccess)
       .catch(handleError)
-
-    setWaitingTx(false)
   }
 
   return (
