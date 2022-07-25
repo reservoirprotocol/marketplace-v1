@@ -17,9 +17,10 @@ import {
   ReservoirSDKActions,
 } from '@reservoir0x/client-sdk'
 import { setToast } from './token/setToast'
-import { useSigner } from 'wagmi'
+import { useNetwork, useSigner } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
 
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
@@ -51,6 +52,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const { dispatch } = useContext(GlobalContext)
   const cartTotal = useRecoilValue(recoilCartTotal)
   const [steps, setSteps] = useState<Execute['steps']>()
+  const { chain: activeChain } = useNetwork()
   const { data, error } = tokens
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
@@ -60,6 +62,10 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
     data &&
     (data[data.length - 1]?.tokens?.length === 0 ||
       data[data.length - 1]?.continuation === null)
+
+  if (!CHAIN_ID) return null
+
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
   type TokenData = Parameters<ReservoirSDKActions['buyToken']>['0']['tokens'][0]
 
@@ -239,7 +245,11 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           )
                         }
                       }}
-                      disabled={waitingTx || !token?.floorAskPrice}
+                      disabled={
+                        waitingTx ||
+                        !token?.floorAskPrice ||
+                        isInTheWrongNetwork
+                      }
                       className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white"
                     >
                       Buy Now
@@ -262,7 +272,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                       </button>
                     ) : (
                       <button
-                        disabled={!token?.floorAskPrice}
+                        disabled={!token?.floorAskPrice || isInTheWrongNetwork}
                         onClick={() => {
                           setCartTokens([...cartTokens, token])
                         }}

@@ -184,7 +184,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 }}
                 className="btn-primary-outline"
               >
-                Add to card
+                Add to cart
               </button>
             )}
           </div>
