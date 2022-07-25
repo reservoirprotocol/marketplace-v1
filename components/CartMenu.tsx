@@ -5,10 +5,11 @@ import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
 import FormatEth from './FormatEth'
 import { useRecoilState, selector, useRecoilValue } from 'recoil'
 import { recoilCartTokens } from './TokensGrid'
-import { Execute, ReservoirSDK } from '@reservoir0x/client-sdk'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { Signer } from 'ethers'
 import { setToast } from './token/setToast'
 import { useAccount, useBalance, useSigner } from 'wagmi'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const slideDown = keyframes({
   '0%': { opacity: 0, transform: 'translateY(-10px)' },
@@ -77,6 +78,7 @@ const CartMenu: FC = () => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const { data: signer } = useSigner()
   const { address } = useAccount()
+  const reservoirClient = useReservoirClient()
   const { data: balance } = useBalance({
     addressOrName: address,
   })
@@ -92,8 +94,10 @@ const CartMenu: FC = () => {
       throw 'Missing tokens to purchase'
     }
 
-    await ReservoirSDK.client()
-      .actions.buyToken({
+    if (!reservoirClient) throw 'Client not started'
+
+    await reservoirClient.actions
+      .buyToken({
         expectedPrice: cartTotal,
         tokens: cartTokens,
         signer,
