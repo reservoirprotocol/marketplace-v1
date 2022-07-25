@@ -32,6 +32,7 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useEffect, useState } from 'react'
+import { RecoilRoot } from 'recoil'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -125,17 +126,21 @@ function MyApp({ Component, pageProps }: AppProps) {
       theme={reservoirKitTheme}
     >
       <GlobalProvider>
-        <WagmiConfig client={client}>
-          <AnalyticsProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme={defaultTheme}
-              forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
-            >
-              <Component {...pageProps} />
-            </ThemeProvider>
-          </AnalyticsProvider>
-        </WagmiConfig>
+        <RecoilRoot>
+          <WagmiConfig client={client}>
+            <AnalyticsProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme={defaultTheme}
+                forcedTheme={
+                  !THEME_SWITCHING_ENABLED ? defaultTheme : undefined
+                }
+              >
+                <Component {...pageProps} />
+              </ThemeProvider>
+            </AnalyticsProvider>
+          </WagmiConfig>
+        </RecoilRoot>
       </GlobalProvider>
     </ReservoirKitProvider>
   )
