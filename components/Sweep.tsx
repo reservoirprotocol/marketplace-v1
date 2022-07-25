@@ -24,8 +24,8 @@ import { violet, blackA } from '@radix-ui/colors'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
 import { Signer } from 'ethers'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { FaBroom } from 'react-icons/fa'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE

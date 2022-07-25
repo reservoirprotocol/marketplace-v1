@@ -153,7 +153,7 @@ const ListModal: FC<Props> = ({
   const { token: token_ } = token
 
   const handleSuccess = () => {
-    setWaitingTx(true)
+    setWaitingTx(false)
     details && 'mutate' in details && details.mutate()
     mutate && mutate()
   }

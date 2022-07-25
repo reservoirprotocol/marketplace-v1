@@ -7,18 +7,15 @@ import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
 import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import { recoilCartTotal, recoilTokensMap } from './CartMenu'
-import {
-  Execute,
-  ReservoirSDK,
-  ReservoirSDKActions,
-} from '@reservoir0x/client-sdk'
 import { setToast } from './token/setToast'
 import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -53,6 +50,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const cartTotal = useRecoilValue(recoilCartTotal)
   const [steps, setSteps] = useState<Execute['steps']>()
   const { chain: activeChain } = useNetwork()
+  const reservoirClient = useReservoirClient()
   const { switchNetworkAsync } = useSwitchNetwork({
     chainId: CHAIN_ID ? +CHAIN_ID : undefined,
   })
@@ -66,11 +64,14 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
     (data[data.length - 1]?.tokens?.length === 0 ||
       data[data.length - 1]?.continuation === null)
 
+  type TokenData = {
+    contract: string
+    tokenId: string
+  }
+
   if (!CHAIN_ID) return null
 
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
-
-  type TokenData = Parameters<ReservoirSDKActions['buyToken']>['0']['tokens'][0]
 
   const execute = async (token: TokenData, expectedPrice: number) => {
     setWaitingTx(true)
@@ -78,15 +79,17 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
       throw 'Missing a signer'
     }
 
-    await ReservoirSDK.client()
-      .actions.buyToken({
+    if (!reservoirClient) throw 'Client not started'
+
+    await reservoirClient.actions
+      .buyToken({
         expectedPrice,
         tokens: [token],
         signer,
         onProgress: setSteps,
       })
       .then(() => tokens.mutate())
-      .catch((err) => {
+      .catch((err: any) => {
         if (err?.type === 'price mismatch') {
           setToast({
             kind: 'error',

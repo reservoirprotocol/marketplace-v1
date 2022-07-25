@@ -25,6 +25,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
+import { RecoilRoot } from 'recoil'
 import {
   darkTheme,
   lightTheme,
@@ -32,7 +33,6 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useEffect, useState } from 'react'
-import { RecoilRoot } from 'recoil'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
