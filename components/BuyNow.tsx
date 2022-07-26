@@ -84,7 +84,7 @@ const BuyNow: FC<Props> = ({
       tokenId={tokenId}
       collectionId={collectionId}
       onComplete={() => {
-        if (data.details && data.details.mt) {
+        if (data.details && data.details.mutate) {
           data.details.mutate()
         }
       }}
