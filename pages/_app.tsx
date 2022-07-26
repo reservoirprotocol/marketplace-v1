@@ -25,6 +25,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
+import { RecoilRoot } from 'recoil'
 import {
   darkTheme,
   lightTheme,
@@ -125,17 +126,21 @@ function MyApp({ Component, pageProps }: AppProps) {
       theme={reservoirKitTheme}
     >
       <GlobalProvider>
-        <WagmiConfig client={client}>
-          <AnalyticsProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme={defaultTheme}
-              forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
-            >
-              <Component {...pageProps} />
-            </ThemeProvider>
-          </AnalyticsProvider>
-        </WagmiConfig>
+        <RecoilRoot>
+          <WagmiConfig client={client}>
+            <AnalyticsProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme={defaultTheme}
+                forcedTheme={
+                  !THEME_SWITCHING_ENABLED ? defaultTheme : undefined
+                }
+              >
+                <Component {...pageProps} />
+              </ThemeProvider>
+            </AnalyticsProvider>
+          </WagmiConfig>
+        </RecoilRoot>
       </GlobalProvider>
     </ReservoirKitProvider>
   )

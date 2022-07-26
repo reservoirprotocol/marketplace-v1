@@ -4,9 +4,13 @@
 
 @layer components {
   .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
-    @apply font-headings;
+    @apply font-headings dark:text-white;
+  }
+  .reservoir-body, .reservoir-subtitle, .reservoir-label-s,.btn-primary-outline {
+    @apply dark:text-white
   }
 }
+
 
 model-viewer {
   width: 100%;
