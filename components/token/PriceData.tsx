@@ -160,9 +160,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   newCartTokens.splice(index, 1)
                   setCartTokens(newCartTokens)
                 }}
-                className="btn-primary-outline flex h-[40px] items-center justify-center text-[#FF3B3B] disabled:cursor-not-allowed dark:text-red-300"
+                className="outline-none"
               >
-                Remove
+                <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
+                  Remove
+                </div>
               </button>
             ) : (
               <button
@@ -182,9 +184,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                     ])
                   }
                 }}
-                className="btn-primary-outline"
+                className="outline-none"
               >
-                Add to Cart
+                <div className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                  Add to Cart
+                </div>
               </button>
             )}
           </div>
