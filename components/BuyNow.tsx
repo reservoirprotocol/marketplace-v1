@@ -13,14 +13,23 @@ type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
 
 type Props = {
   data: {
-    details: SWRResponse<Details, any>
-    collection: Collection | undefined
+    details?: SWRResponse<Details, any>
+    collection?: Collection
+    token?: NonNullable<
+      paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
+    >[0]
   }
   isInTheWrongNetwork: boolean | undefined
   signer: ReturnType<typeof useSigner>['data']
+  buttonClassName?: string
 }
 
-const BuyNow: FC<Props> = ({ data, isInTheWrongNetwork, signer }) => {
+const BuyNow: FC<Props> = ({
+  data,
+  isInTheWrongNetwork,
+  signer,
+  buttonClassName = 'btn-primary-fill w-full',
+}) => {
   const { dispatch } = useContext(GlobalContext)
   const { switchNetworkAsync } = useSwitchNetwork({
     chainId: CHAIN_ID ? +CHAIN_ID : undefined,
@@ -30,14 +39,19 @@ const BuyNow: FC<Props> = ({ data, isInTheWrongNetwork, signer }) => {
   let tokenId: string | undefined
   let collectionId: string | undefined
 
-  if ('details' in data && data.details.data?.tokens?.[0].token?.tokenId) {
+  if ('details' in data && data?.details?.data?.tokens?.[0].token?.tokenId) {
     const token = data.details.data.tokens[0].token
     tokenId = token.tokenId
     collectionId = token.collection?.id
     forSale = data.details.data.tokens[0].market?.floorAsk?.price != null
+  } else if (data.token) {
+    tokenId = data.token.tokenId
+    collectionId = data.token.collection?.id
+    forSale =
+      data.token.floorAskPrice != null && data.token.floorAskPrice != undefined
   }
 
-  const trigger = <button className="btn-primary-fill w-full">Buy Now</button>
+  const trigger = <button className={buttonClassName}>Buy Now</button>
 
   if (!forSale) {
     return null
@@ -47,7 +61,7 @@ const BuyNow: FC<Props> = ({ data, isInTheWrongNetwork, signer }) => {
 
   return !canBuy ? (
     <button
-      className="btn-primary-fill w-full"
+      className={buttonClassName}
       disabled={isInTheWrongNetwork && !switchNetworkAsync}
       onClick={async () => {
         if (isInTheWrongNetwork && switchNetworkAsync && CHAIN_ID) {
@@ -70,7 +84,7 @@ const BuyNow: FC<Props> = ({ data, isInTheWrongNetwork, signer }) => {
       tokenId={tokenId}
       collectionId={collectionId}
       onComplete={() => {
-        if ('details' in data && 'mutate' in data.details) {
+        if (data.details && data.details.mutate) {
           data.details.mutate()
         }
       }}

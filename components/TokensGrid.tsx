@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react'
+import { FC, useState } from 'react'
 import LoadingCard from './LoadingCard'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import Link from 'next/link'
@@ -7,15 +7,12 @@ import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import { paths } from '@reservoir0x/reservoir-kit-client'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
 import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import { atom, useRecoilState, useRecoilValue } from 'recoil'
-import { recoilCartTotal, recoilTokensMap } from './CartMenu'
-import { setToast } from './token/setToast'
-import { useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
-import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { recoilTokensMap } from './CartMenu'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
+import BuyNow from 'components/BuyNow'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -43,18 +40,11 @@ export const recoilCartTokens = atom<Tokens>({
 const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(recoilTokensMap)
-  const [waitingTx, setWaitingTx] = useState(false)
   const { data: signer } = useSigner()
-  const [open, setOpen] = useState(false)
-  const { dispatch } = useContext(GlobalContext)
-  const cartTotal = useRecoilValue(recoilCartTotal)
-  const [steps, setSteps] = useState<Execute['steps']>()
+  const [_open, setOpen] = useState(false)
   const { chain: activeChain } = useNetwork()
-  const reservoirClient = useReservoirClient()
-  const { switchNetworkAsync } = useSwitchNetwork({
-    chainId: CHAIN_ID ? +CHAIN_ID : undefined,
-  })
   const { data, error } = tokens
+  const account = useAccount()
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedTokens = data ? data.flatMap(({ tokens }) => tokens) : []
@@ -64,69 +54,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
     (data[data.length - 1]?.tokens?.length === 0 ||
       data[data.length - 1]?.continuation === null)
 
-  type TokenData = {
-    contract: string
-    tokenId: string
-  }
-
   if (!CHAIN_ID) return null
 
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
-
-  const execute = async (token: TokenData, expectedPrice: number) => {
-    setWaitingTx(true)
-    if (!signer) {
-      throw 'Missing a signer'
-    }
-
-    if (!reservoirClient) throw 'Client not started'
-
-    await reservoirClient.actions
-      .buyToken({
-        expectedPrice,
-        tokens: [token],
-        signer,
-        onProgress: setSteps,
-      })
-      .then(() => tokens.mutate())
-      .catch((err: any) => {
-        if (err?.type === 'price mismatch') {
-          setToast({
-            kind: 'error',
-            message: 'Price was greater than expected.',
-            title: 'Could not buy token',
-          })
-          return
-        }
-
-        if (err?.message === 'Not enough ETH balance') {
-          setToast({
-            kind: 'error',
-            message: 'You have insufficient funds to buy this token.',
-            title: 'Not enough ETH balance',
-          })
-          return
-        }
-        // Handle user rejection
-        if (err?.code === 4001) {
-          setOpen(false)
-          setSteps(undefined)
-          setToast({
-            kind: 'error',
-            message: 'You have canceled the transaction.',
-            title: 'User canceled transaction',
-          })
-          return
-        }
-        setToast({
-          kind: 'error',
-          message: 'The transaction was not completed.',
-          title: 'Could not buy token',
-        })
-      })
-
-    setWaitingTx(false)
-  }
 
   return (
     <Masonry
@@ -159,7 +89,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                 className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#D4D4D4] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
               >
                 {isInCart ? (
-                  <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] items-center justify-center overflow-hidden rounded-full bg-primary-700">
+                  <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
                     <FaShoppingCart className="h-[18px] w-[18px] text-white" />
                   </div>
                 ) : null}
@@ -234,42 +164,18 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-2">
-                    <button
-                      disabled={
-                        waitingTx ||
-                        !token?.floorAskPrice ||
-                        (isInTheWrongNetwork && !switchNetworkAsync)
-                      }
-                      onClick={async () => {
-                        if (
-                          isInTheWrongNetwork &&
-                          switchNetworkAsync &&
-                          CHAIN_ID
-                        ) {
-                          const chain = await switchNetworkAsync(+CHAIN_ID)
-                          if (chain.id !== +CHAIN_ID) {
-                            return false
-                          }
-                        }
-
-                        if (token.floorAskPrice) {
-                          if (!signer) {
-                            dispatch({ type: 'CONNECT_WALLET', payload: true })
-                            return
-                          }
-                          execute(
-                            {
-                              contract: token.contract,
-                              tokenId: token.tokenId,
-                            },
-                            token.floorAskPrice
-                          )
-                        }
-                      }}
-                      className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white"
-                    >
-                      Buy Now
-                    </button>
+                    {token &&
+                      token.owner?.toLowerCase() !==
+                        account?.address?.toLowerCase() && (
+                        <BuyNow
+                          data={{
+                            token: token,
+                          }}
+                          signer={signer}
+                          isInTheWrongNetwork={isInTheWrongNetwork}
+                          buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"
+                        />
+                      )}
                     {isInCart ? (
                       <button
                         onClick={() => {

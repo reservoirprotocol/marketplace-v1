@@ -72,9 +72,8 @@ const CartMenu: FC = () => {
   const cartCount = useRecoilValue(recoilCartCount)
   const cartTotal = useRecoilValue(recoilCartTotal)
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
-  const tokensMap = useRecoilValue(recoilTokensMap)
-  const [open, setOpen] = useState(false)
-  const [steps, setSteps] = useState<Execute['steps']>()
+  const [_open, setOpen] = useState(false)
+  const [_steps, setSteps] = useState<Execute['steps']>()
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const { data: signer } = useSigner()
   const { address } = useAccount()
@@ -104,7 +103,6 @@ const CartMenu: FC = () => {
         onProgress: setSteps,
       })
       .then(() => setCartTokens([]))
-      // .then(() => tokens.mutate())
       .catch((err: any) => {
         if (err?.type === 'price mismatch') {
           setToast({
@@ -115,7 +113,7 @@ const CartMenu: FC = () => {
           return
         }
 
-        if (err?.message === 'Not enough ETH balance') {
+        if (err?.message.includes('ETH balance')) {
           setToast({
             kind: 'error',
             message: 'You have insufficient funds to buy this token.',
