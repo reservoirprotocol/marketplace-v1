@@ -173,7 +173,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           }}
                           signer={signer}
                           isInTheWrongNetwork={isInTheWrongNetwork}
-                          buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white"
+                          buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"
                         />
                       )}
                     {isInCart ? (
