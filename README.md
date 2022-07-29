@@ -34,6 +34,7 @@ We currently offer hosted and self hosted deployment options. For self hosted de
 
 ### Built With
 
+* [ReservoirKit] https://docs.reservoir.tools/docs/reservoir-kit
 * [Reservoir Protocol and API](https://reservoirprotocol.github.io/)
 * [Next.js](https://nextjs.org/)
 * [React.js](https://reactjs.org/)
@@ -71,7 +72,7 @@ Note: Environment variables can also be added during deployment via deployment p
 | RESERVOIR_API_KEY              | `true`   | Reservoir API key provided by the Reservoir Protocol. [Get your own API key](https://api.reservoir.tools/#/0.%20Auth/postApikeys).         | 123e4567-e89b-12d3-a456-426614174000                              |
 | NEXT_PUBLIC_ALCHEMY_ID              | `true`   | Alchemy API key required for buying items on mobile. [Get your own API key here](https://docs.alchemy.com/alchemy/introduction/getting-started#1.create-an-alchemy-key).         | 123e4567-e89b-12d3-a456-426614174000                              |
 
-Please visit [our docs](https://docs.reservoir.tools/docs/getting-started-self-hosted#configuration) to view all supported environment variables.
+Please visit [our docs](https://docs.reservoir.tools/docs/marketplace-getting-started#configuration) to view all supported environment variables.
 
 ### Run the App
 
