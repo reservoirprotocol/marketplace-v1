@@ -136,7 +136,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     )}
                   </a>
                 </Link>
-                <div className="absolute -bottom-[41px] w-full  bg-white transition-all group-hover:bottom-[0px] dark:bg-neutral-800">
+                <div className="absolute bottom-[0px] w-full bg-white  transition-all group-hover:bottom-[0px] dark:bg-neutral-800 md:-bottom-[41px]">
                   <div
                     className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
                     title={token?.name || token?.tokenId}
