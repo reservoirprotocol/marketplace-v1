@@ -118,7 +118,7 @@ const Navbar: FC = () => {
         </div>
       )}
       <div className="flex h-full w-full items-center justify-center">
-        <div className="z-[1] flex w-full justify-center">
+        <div className="absolute left-0 right-0 z-[1] flex w-full justify-center">
           {filterComponent && filterComponent}
         </div>
       </div>
