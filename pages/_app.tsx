@@ -55,7 +55,7 @@ import presetColors from '../colors'
 
 // Set up chains
 const { chains, provider } = configureChains(allChains, [
-  alchemyProvider({ alchemyId }),
+  alchemyProvider({ apiKey: alchemyId }),
   publicProvider(),
 ])
 
