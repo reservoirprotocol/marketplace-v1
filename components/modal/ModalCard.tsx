@@ -45,7 +45,7 @@ const ModalCard: FC<Props> = ({
   const modalTitle = steps && orderbook ? orderbookTitle : title
 
   return (
-    <Dialog.Content className="fixed inset-0 z-[1000] bg-[#000000b6]">
+    <Dialog.Content className="fixed inset-0 z-[10000000000] bg-[#000000b6]">
       <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
         <div className="px-5">
           <div
