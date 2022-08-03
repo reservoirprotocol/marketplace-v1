@@ -156,7 +156,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                             'https://via.placeholder.com/30'
                           }
                           alt={`${collection?.name}'s logo.`}
-                          className="h-9 w-9 overflow-hidden rounded-full"
+                          className="h-9 w-9 shrink-0 overflow-hidden rounded-full"
                         />
                         <span className="reservoir-subtitle ml-2 dark:text-white">
                           {collection?.name}
@@ -205,7 +205,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                         collection?.image ?? 'https://via.placeholder.com/30'
                       }
                       alt={`${collection?.name}'s logo.`}
-                      className="h-9 w-9 overflow-hidden rounded-full"
+                      className="h-9 w-9 shrink-0 overflow-hidden rounded-full"
                     />
                     <span className="reservoir-subtitle ml-2 dark:text-white">
                       {collection?.name}

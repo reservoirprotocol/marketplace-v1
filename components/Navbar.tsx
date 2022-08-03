@@ -6,8 +6,6 @@ import { paths } from '@reservoir0x/reservoir-kit-client'
 import setParams from 'lib/params'
 import NavbarLogo from 'components/navbar/NavbarLogo'
 import ThemeSwitcher from './ThemeSwitcher'
-import * as Popover from '@radix-ui/react-popover'
-import { FaShoppingCart } from 'react-icons/fa'
 import CartMenu from './CartMenu'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
@@ -102,7 +100,7 @@ const Navbar: FC = () => {
   }, [filterableCollection])
 
   return (
-    <nav className="col-span-full flex items-center justify-between gap-2 px-6 py-4 md:gap-3 md:py-6 md:px-16">
+    <nav className="sticky top-0 z-[10000] col-span-full mb-[10px] flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-4 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-6 md:px-16">
       <NavbarLogo className="z-10 max-w-[300px]" />
       {showLinks && (
         <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
