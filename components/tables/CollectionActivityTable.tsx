@@ -116,7 +116,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const [timeAgo, setTimeAgo] = useState(sale.timestamp || '')
   const envChain = useEnvChain()
   const etherscanBaseUrl =
-    envChain?.blockExplorers?.etherscan || 'https://etherscan.io'
+    envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
   useEffect(() => {
     setToShortAddress(truncateAddress(sale?.to || ''))

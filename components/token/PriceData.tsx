@@ -64,7 +64,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
   const showAcceptOffer =
-    token?.market?.topBid !== null && isOwner ? true : false
+    token?.market?.topBid?.id !== null && isOwner ? true : false
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
