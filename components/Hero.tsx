@@ -15,6 +15,7 @@ import HeroBackground from 'components/hero/HeroBackground'
 import HeroStats from 'components/hero/HeroStats'
 import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
+import { useMediaQuery } from '@react-hookz/web'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -51,6 +52,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { tokens } = useTokens(collectionId, [fallback.tokens], router)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -237,6 +239,13 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ))}
+            {isSmallDevice && (
+              <Sweep
+                collection={collection}
+                tokens={tokens}
+                setToast={setToast}
+              />
+            )}
           </div>
         </div>
       </HeroBackground>

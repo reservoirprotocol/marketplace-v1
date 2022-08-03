@@ -156,7 +156,7 @@ const CartMenu: FC = () => {
       </Popover.Trigger>
       <StyledContent
         sideOffset={22}
-        className="w-[367px] rounded-2xl bg-white p-6 shadow-lg dark:border dark:border-neutral-700 dark:bg-neutral-900"
+        className="z-[10000000] w-[367px] rounded-2xl bg-white p-6 shadow-lg dark:border dark:border-neutral-700 dark:bg-neutral-900"
       >
         <div className="mb-4 flex justify-between">
           <div className="flex items-center">

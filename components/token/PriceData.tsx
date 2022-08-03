@@ -63,6 +63,9 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
+  const showAcceptOffer =
+    token?.market?.topBid !== null && isOwner ? true : false
+
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
@@ -98,106 +101,103 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               />
             }
           />
-          <div className="col-span-2 grid grid-cols-3 gap-4 md:gap-6">
-            {isOwner && (
-              <ListModal
-                data={{
-                  collection: collection.data,
-                  details,
-                }}
-                isInTheWrongNetwork={isInTheWrongNetwork}
-                maker={accountData?.address}
-                setToast={setToast}
-                signer={signer}
-              />
-            )}
-            {!isOwner && (
-              <BuyNow
-                data={{
-                  collection: collection.data,
-                  details,
-                }}
-                signer={signer}
-                isInTheWrongNetwork={isInTheWrongNetwork}
-              />
-            )}
-            <AcceptOffer
+        </div>
+        <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+          {isOwner && !isListed && (
+            <ListModal
               data={{
                 collection: collection.data,
                 details,
               }}
               isInTheWrongNetwork={isInTheWrongNetwork}
+              maker={accountData?.address}
               setToast={setToast}
-              show={isOwner}
               signer={signer}
             />
-            {!isOwner && (
-              <TokenOfferModal
-                signer={signer}
-                data={{
-                  collection: collection.data,
-                  details,
-                }}
-                royalties={{
-                  bps: collection.data?.collection?.royalties?.bps,
-                  recipient: collection.data?.collection?.royalties?.recipient,
-                }}
-                env={{
-                  chainId: +CHAIN_ID as ChainId,
-                }}
-                setToast={setToast}
-              />
-            )}
-            {isInCart ? (
-              <button
-                onClick={() => {
-                  const newCartTokens = [...cartTokens]
-                  const index = newCartTokens.findIndex(
-                    (cartToken) =>
-                      cartToken.contract === contract &&
-                      cartToken.tokenId === tokenId
-                  )
-                  newCartTokens.splice(index, 1)
-                  setCartTokens(newCartTokens)
-                }}
-                className="outline-none"
-              >
-                <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
-                  Remove
-                </div>
-              </button>
-            ) : (
-              <button
-                disabled={!token?.market?.floorAsk?.price}
-                onClick={() => {
-                  if (tokenId && contract) {
-                    setCartTokens([
-                      ...cartTokens,
-                      {
-                        tokenId,
-                        contract,
-                        collection: { name: token.token?.collection?.name },
-                        image: token.token?.image,
-                        floorAskPrice: token.market?.floorAsk?.price,
-                        name: token.token?.name,
-                      },
-                    ])
-                  }
-                }}
-                className="outline-none"
-              >
-                <div className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                  Add to Cart
-                </div>
-              </button>
-            )}
-          </div>
-        </div>
-        <div
-          className={`${
-            (isOwner && isListed) || isTopBidder ? 'mt-6' : ''
-          } flex justify-center`}
-        >
+          )}
+          {!isOwner && (
+            <BuyNow
+              buttonClassName="btn-primary-fill col-span-1"
+              data={{
+                collection: collection.data,
+                details,
+              }}
+              signer={signer}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+            />
+          )}
+          {isInCart && !isOwner && (
+            <button
+              onClick={() => {
+                const newCartTokens = [...cartTokens]
+                const index = newCartTokens.findIndex(
+                  (cartToken) =>
+                    cartToken.contract === contract &&
+                    cartToken.tokenId === tokenId
+                )
+                newCartTokens.splice(index, 1)
+                setCartTokens(newCartTokens)
+              }}
+              className="outline-none"
+            >
+              <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
+                Remove
+              </div>
+            </button>
+          )}
+          {!isInCart && !isOwner && isListed && (
+            <button
+              disabled={!token?.market?.floorAsk?.price}
+              onClick={() => {
+                if (tokenId && contract) {
+                  setCartTokens([
+                    ...cartTokens,
+                    {
+                      tokenId,
+                      contract,
+                      collection: { name: token.token?.collection?.name },
+                      image: token.token?.image,
+                      floorAskPrice: token.market?.floorAsk?.price,
+                      name: token.token?.name,
+                    },
+                  ])
+                }
+              }}
+              className="outline-none"
+            >
+              <div className="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4">
+                Add to Cart
+              </div>
+            </button>
+          )}
+          <AcceptOffer
+            data={{
+              collection: collection.data,
+              details,
+            }}
+            isInTheWrongNetwork={isInTheWrongNetwork}
+            setToast={setToast}
+            show={showAcceptOffer}
+            signer={signer}
+          />
+          {!isOwner && (
+            <TokenOfferModal
+              signer={signer}
+              data={{
+                collection: collection.data,
+                details,
+              }}
+              royalties={{
+                bps: collection.data?.collection?.royalties?.bps,
+                recipient: collection.data?.collection?.royalties?.recipient,
+              }}
+              env={{
+                chainId: +CHAIN_ID as ChainId,
+              }}
+              setToast={setToast}
+            />
+          )}
+
           <CancelOffer
             data={{
               collection: collection.data,
