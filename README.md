@@ -34,7 +34,7 @@ We currently offer hosted and self hosted deployment options. For self hosted de
 
 ### Built With
 
-* [ReservoirKit] https://docs.reservoir.tools/docs/reservoir-kit
+* [ReservoirKit](https://docs.reservoir.tools/docs/reservoir-kit)
 * [Reservoir Protocol and API](https://reservoirprotocol.github.io/)
 * [Next.js](https://nextjs.org/)
 * [React.js](https://reactjs.org/)
