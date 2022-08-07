@@ -16,6 +16,7 @@ import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
 import { useEffect, useState } from 'react'
 import { TokenDetails } from 'types/reservoir'
+import { useTokenOpenseaBanned } from '@reservoir0x/reservoir-kit-ui'
 
 // Environment variables
 // For more information about these variables
@@ -67,8 +68,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     animation_url: null,
     extension: null,
   })
-  const [bannedOnOpenSea, setBannedOnOpenSea] = useState(false)
   const router = useRouter()
+  const bannedOnOpenSea = useTokenOpenseaBanned(
+    collectionId,
+    router.query?.tokenId?.toString() || ''
+  )
 
   const collection = useCollection(undefined, collectionId)
 
@@ -96,43 +100,6 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     `/api/v1/asset/${contract}/${tokenId}`,
     openSeaBaseUrl
   )
-
-  useEffect(() => {
-    async function getOpenSeaData(url: URL) {
-      let result: any = { animation_url: null, extension: null }
-      try {
-        const res = await fetch(url.href)
-        const json = await res.json()
-
-        setBannedOnOpenSea(!json?.supports_wyvern)
-
-        const animation_url = json?.animation_url
-        // Get the last section of the URL
-        // lastPartOfUrl = '874f68834bdf5f05982d01067776acc2.wav' when input is
-        // 'https://storage.opensea.io/files/874f68834bdf5f05982d01067776acc2.wav'
-        const lastPartOfUrl = animation_url?.split('/')?.pop()
-        // Extract the file extension from `lastPartOfUrl`, example: 'wav'
-        let extension = null
-        if (lastPartOfUrl) {
-          const ext = /(?:\.([^.]+))?$/.exec(lastPartOfUrl)?.[1]
-          // This makes a strong assumption and it's not reliable
-          if (ext?.length && ext.length > 10) {
-            extension = 'other'
-          } else {
-            extension = ext
-          }
-        }
-
-        result = { animation_url, extension }
-      } catch (err) {
-        console.error(err)
-      }
-
-      setTokenOpenSea(result)
-    }
-
-    getOpenSeaData(urlOpenSea)
-  }, [])
 
   if (details.error) {
     return <div>There was an error</div>

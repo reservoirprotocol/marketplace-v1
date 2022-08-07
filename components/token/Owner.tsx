@@ -34,7 +34,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
                   className="reservoir-body-2 w-[191px] rounded-2xl bg-neutral-800 py-3 px-4 text-center text-white dark:bg-neutral-100 dark:text-black"
                 >
                   <Tooltip.Arrow className="fill-neutral-800 dark:fill-neutral-100" />
-                  Reported for suspicious activity on OpenSea
+                  Token is not tradeable on OpenSea
                 </Tooltip.Content>
               </Tooltip.Root>
             </Tooltip.Provider>
