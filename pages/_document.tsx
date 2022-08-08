@@ -16,6 +16,7 @@ const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const META_TWITTER_USERNAME = process.env.NEXT_PUBLIC_META_TWITTER_USERNAME
 const FONT_URLS = process.env.NEXT_PUBLIC_FONT_URLS
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -68,8 +69,12 @@ class MyDocument extends Document {
         <meta property="og:image:alt" content={`${SOURCE_ID} banner`} />
 
         {/* Reservoir Meta Tags */}
-        <meta property="reservoir:title" content={SOURCE_ID} />
-        <meta property="reservoir:icon" content={SOURCE_ICON || FAVICON} />
+        {SOURCE_NAME ? (
+          <meta property="reservoir:title" content={SOURCE_NAME} />
+        ) : null}
+        {SOURCE_ICON || FAVICON ? (
+          <meta property="reservoir:icon" content={SOURCE_ICON || FAVICON} />
+        ) : null}
 
         {FONT_URLS
           ? FONT_URLS.split(',').map((link, i) => (
