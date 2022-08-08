@@ -170,25 +170,25 @@ const AttributeOfferModal: FC<Props> = ({
 
     setWaitingTx(true)
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      expirationTime: expirationValue,
-      orderKind: 'seaport',
-    }
-
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
-
-    reservoirClient.actions
-      .placeBid({
-        signer,
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        expirationTime: expirationValue,
+        orderKind: 'seaport',
+        orderbook: 'reservoir',
         collection: data.collection.id,
         attributeKey: data.attribute.key,
         attributeValue: data.attribute.value,
         weiPrice: calculations.total.toString(),
-        options: options,
+      }
+
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
+
+    reservoirClient.actions
+      .placeBid({
+        source: SOURCE_ID,
+        bids: [bid],
+        signer,
         onProgress: setSteps,
       })
       .then(handleSuccess)

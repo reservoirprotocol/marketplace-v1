@@ -131,6 +131,7 @@ const CollectionOfferModal: FC<Props> = ({
   }, [offerPrice])
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -150,6 +151,7 @@ const CollectionOfferModal: FC<Props> = ({
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     stats.mutate()
     tokens.mutate()
   }
@@ -167,36 +169,35 @@ const CollectionOfferModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      expirationTime: expirationValue,
-    }
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        collection: data.collection.id,
+        weiPrice: calculations.total.toString(),
+        expirationTime: expirationValue,
+        orderbook: 'reservoir',
+      }
 
     if (
       !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
       !data.collection.id?.toLowerCase().includes(ARTBLOCKS2.toLowerCase())
     ) {
-      options.orderKind = 'seaport'
+      bid.orderKind = 'seaport'
     } else {
-      options.orderKind = 'zeroex-v4'
+      bid.orderKind = 'zeroex-v4'
     }
 
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     await reservoirClient.actions
       .placeBid({
-        weiPrice: calculations.total.toString(),
-        collection: data.collection.id,
+        source: SOURCE_ID,
+        bids: [bid],
         signer,
-        options,
         onProgress: setSteps,
       })
       .then(handleSuccess)
       .catch(handleError)
-    setWaitingTx(false)
   }
 
   return (

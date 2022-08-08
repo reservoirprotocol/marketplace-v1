@@ -160,6 +160,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -179,6 +180,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     details && 'mutate' in details && details.mutate()
   }
 
@@ -192,32 +194,28 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      orderbook: 'reservoir',
-      expirationTime: expirationValue,
-    }
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        token: `${token.token?.contract}:${token.token?.tokenId}`,
+        weiPrice: calculations.total.toString(),
+        orderbook: 'reservoir',
+        expirationTime: expirationValue,
+      }
 
-    if (!ORDER_KIND) options.orderKind = 'seaport'
-
-    if (ORDER_KIND) options.orderKind = ORDER_KIND as typeof options.orderKind
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
+    if (!ORDER_KIND) bid.orderKind = 'seaport'
+    if (ORDER_KIND) bid.orderKind = ORDER_KIND as typeof bid.orderKind
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     await reservoirClient.actions
       .placeBid({
-        token: `${token.token?.contract}:${token.token?.tokenId}`,
-        weiPrice: calculations.total.toString(),
-        options,
+        source: SOURCE_ID,
+        bids: [bid],
         signer,
         onProgress: setSteps,
       })
       .then(handleSuccess)
       .catch(handleError)
-
-    setWaitingTx(false)
   }
 
   return (

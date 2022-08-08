@@ -5,7 +5,7 @@ import CancelOffer from 'components/CancelOffer'
 import { recoilTokensMap } from 'components/CartMenu'
 import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
-import ListModal from 'components/ListModal'
+import { ListModal } from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
 import { recoilCartTokens } from 'components/TokensGrid'
 import useCollection from 'hooks/useCollection'
@@ -109,14 +109,39 @@ const PriceData: FC<Props> = ({ details, collection }) => {
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {isOwner && (
             <ListModal
-              data={{
-                collection: collection.data,
-                details,
+              trigger={
+                token?.market?.floorAsk?.price ? (
+                  <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                    Edit Listing
+                  </p>
+                ) : (
+                  <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                    {token?.market?.floorAsk?.price
+                      ? 'Edit Listing'
+                      : 'List for Sale'}
+                  </div>
+                )
+              }
+              collectionId={contract}
+              tokenId={tokenId}
+              onListingComplete={() => {
+                details && details.mutate()
               }}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              maker={accountData?.address}
-              setToast={setToast}
-              signer={signer}
+              onListingError={(err: any) => {
+                if (err?.code === 4001) {
+                  setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not list token',
+                })
+              }}
             />
           )}
           {!isOwner && (

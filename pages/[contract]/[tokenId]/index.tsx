@@ -88,19 +88,6 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     `${details.data?.tokens?.[0]?.token?.contract}:${details.data?.tokens?.[0]?.token?.tokenId}`
   )
 
-  const contract = router.query?.contract?.toString()
-  const tokenId = router.query?.tokenId?.toString()
-
-  const openSeaBaseUrl =
-    CHAIN_ID === '4'
-      ? 'https://testnets-api.opensea.io/'
-      : 'https://api.opensea.io/'
-
-  const urlOpenSea = new URL(
-    `/api/v1/asset/${contract}/${tokenId}`,
-    openSeaBaseUrl
-  )
-
   if (details.error) {
     return <div>There was an error</div>
   }

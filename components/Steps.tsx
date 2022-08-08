@@ -8,20 +8,34 @@ type Props = {
 }
 
 const Steps: FC<Props> = ({ steps }) => {
-  const firstIncomplete = steps?.findIndex(
-    ({ status }) => status === 'incomplete'
-  )
+  const validSteps =
+    steps?.filter((step) => step.items && step.items.length > 0) || []
+  let firstInCompleteStepIndex = -1
+  let firstInCompleteStepItemIndex = -1
+  const firstIncompleteStep = validSteps.find((step, i) => {
+    if (!step.items) {
+      return false
+    }
+
+    firstInCompleteStepItemIndex = step.items.findIndex(
+      (item) => item.status == 'incomplete'
+    )
+    if (firstInCompleteStepItemIndex >= 0) {
+      firstInCompleteStepIndex = i
+      return true
+    }
+  })
 
   return (
     <div className="mb-10">
-      {steps?.map(({ action, description, status, message, error }, index) => (
+      {validSteps.map(({ action, description, error }, index) => (
         <div className="mb-5 flex gap-3" key={action + index}>
           <div className="h-10 w-10">
             {error ? (
               <HiXCircle className="mx-auto -mt-1 h-10 w-10 flex-none text-red-600" />
-            ) : status === 'complete' ? (
+            ) : firstInCompleteStepIndex < index ? (
               <HiCheckCircle className="mx-auto -mt-1 h-10 w-10 flex-none text-green-600" />
-            ) : firstIncomplete === index ? (
+            ) : firstInCompleteStepIndex === index ? (
               <CgSpinner className="mr-1 ml-1 -mt-0.5 h-8 w-8 flex-none animate-spin text-black dark:text-white" />
             ) : (
               <div className="reservoir-h6 mr-1 ml-1 flex h-8 w-8 items-center justify-center rounded-full text-center font-headings ring-2 ring-inset ring-neutral-900 dark:text-white  dark:ring-white">
@@ -38,16 +52,18 @@ const Steps: FC<Props> = ({ steps }) => {
                 {error}
               </div>
             )}
-            {firstIncomplete === index && (
+            {firstInCompleteStepIndex === index && (
               <>
                 <div className="reservoir-body mb-2.5 dark:text-white">
                   {description}
                 </div>
-                {message && (
-                  <div className="reservoir-body italic dark:text-white">
-                    {message}
-                  </div>
-                )}
+                {firstIncompleteStep?.items &&
+                  firstIncompleteStep.items.length > 1 && (
+                    <div className="reservoir-body italic dark:text-white">
+                      {firstInCompleteStepItemIndex + 1} /{' '}
+                      {firstIncompleteStep.items.length}
+                    </div>
+                  )}
               </>
             )}
           </div>

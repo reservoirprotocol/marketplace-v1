@@ -17,7 +17,7 @@ type Props = {
   orderbook?: ('opensea' | 'reservoir')[]
   actionButton?: ReactNode
   onContinue?: () => any
-  steps: Execute['steps']
+  steps?: Execute['steps']
   title: string
 }
 
@@ -38,7 +38,15 @@ const ModalCard: FC<Props> = ({
 }) => {
   // If all executed succesfully, then success is true
   const success =
-    !loading && steps && !steps.find(({ status }) => status === 'incomplete')
+    !loading &&
+    steps &&
+    steps.every((step) => {
+      if (!step.items || step.items.length == 0) {
+        return true
+      } else {
+        return step.items.every((item) => item.status === 'complete')
+      }
+    })
 
   const orderbookTitle =
     orderbook && `Submitting to ${orderbooks[orderbook[0]]}`
