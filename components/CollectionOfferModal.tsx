@@ -25,7 +25,10 @@ import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
+
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
@@ -191,7 +194,7 @@ const CollectionOfferModal: FC<Props> = ({
 
     await reservoirClient.actions
       .placeBid({
-        source: SOURCE_ID,
+        source: SOURCE_DOMAIN,
         bids: [bid],
         signer,
         onProgress: setSteps,
@@ -273,7 +276,10 @@ const CollectionOfferModal: FC<Props> = ({
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {SOURCE_NAME ||
+                        SOURCE_ID ||
+                        SOURCE_DOMAIN ||
+                        'Marketplace'}{' '}
                       {(+FEE_BPS / 10000) * 100}%
                     </div>
                   )}

@@ -5,7 +5,7 @@ import CancelOffer from 'components/CancelOffer'
 import { recoilTokensMap } from 'components/CartMenu'
 import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
-import { ListModal } from '@reservoir0x/reservoir-kit-ui'
+import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
 import { recoilCartTokens } from 'components/TokensGrid'
 import useCollection from 'hooks/useCollection'
@@ -31,21 +31,36 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
+  const reservoirClient = useReservoirClient()
 
   const token = details.data?.tokens?.[0]
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
+  const sourceDomain = token?.market?.floorAsk?.source?.domain as
+    | string
+    | undefined
 
-  const isLocalListed =
-    typeof SOURCE_ID === 'string' &&
-    typeof sourceName === 'string' &&
-    SOURCE_ID === sourceName
+  let isLocalListed = false
+
+  if (
+    reservoirClient?.source &&
+    sourceDomain &&
+    reservoirClient.source === sourceDomain
+  ) {
+    isLocalListed = true
+  } else if (SOURCE_ID && sourceName && SOURCE_ID === sourceName) {
+    isLocalListed = true
+  }
 
   const sourceLogo = isLocalListed
     ? SOURCE_ICON || NAVBAR_LOGO
-    : `https://api.reservoir.tools/redirect/logo/v1?source=${sourceName}`
+    : `https://api.reservoir.tools/redirect/logo/v1?source=${
+        sourceDomain || sourceName
+      }`
 
-  const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${sourceName}&token=${token?.token?.contract}:${token?.token?.tokenId}`
+  const sourceRedirect = `https://api.reservoir.tools/redirect/token/v1?source=${
+    sourceDomain || sourceName
+  }&token=${token?.token?.contract}:${token?.token?.tokenId}`
 
   if (!CHAIN_ID) return null
 

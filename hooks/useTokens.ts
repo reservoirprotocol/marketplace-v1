@@ -1,4 +1,5 @@
 import { paths } from '@reservoir0x/reservoir-kit-client'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import { NextRouter } from 'next/router'
@@ -18,6 +19,7 @@ export default function useTokens(
   source?: boolean | undefined
 ) {
   const { ref, inView } = useInView()
+  const reservoirClient = useReservoirClient()
 
   function getUrl() {
     if (!collectionId) return undefined
@@ -31,7 +33,15 @@ export default function useTokens(
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
-      getKey(pathname, collectionId, source, router, index, previousPageData),
+      getKey(
+        pathname,
+        collectionId,
+        source,
+        router,
+        index,
+        previousPageData,
+        reservoirClient?.source
+      ),
     fetcher,
     {
       revalidateFirstPage: false,
@@ -54,12 +64,14 @@ const getKey: (
   collectionId: string | undefined,
   source: boolean | undefined,
   router: NextRouter,
+  sourceDomain: string | undefined,
   ...base: Parameters<SWRInfiniteKeyLoader>
 ) => ReturnType<SWRInfiniteKeyLoader> = (
   pathname: string | undefined,
   collectionId: string | undefined,
   source: boolean | undefined,
   router: NextRouter,
+  sourceDomain: string | undefined,
   index: number,
   previousPageData: paths['/tokens/v4']['get']['responses']['200']['schema']
 ) => {
@@ -81,7 +93,7 @@ const getKey: (
     query.continuation = previousPageData.continuation
   }
 
-  if (source) query.source = SOURCE_ID
+  if (source) query.source = sourceDomain
 
   // Convert the client sort query into the API sort query
   if (router.query?.sort) {

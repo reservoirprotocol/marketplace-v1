@@ -64,7 +64,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     // 200 OK
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
-    res.status(200).json(data)
+    if (contentType?.includes('image/')) {
+      res.setHeader('Content-Type', 'text/html')
+      res.status(200).send(Buffer.from(data))
+    } else {
+      res.status(200).json(data)
+    }
   } catch (error) {
     // 400 Bad Request
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400

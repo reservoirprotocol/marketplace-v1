@@ -32,7 +32,6 @@ class MyDocument extends Document {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content={SOURCE_ID} />
         <meta name="keywords" content="nft, ethereum, protocol" />
         <link rel="shortcut icon" type="image/svg" href={FAVICON} />
         <title>{META_TITLE}</title>
@@ -66,7 +65,10 @@ class MyDocument extends Document {
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="640" />
-        <meta property="og:image:alt" content={`${SOURCE_ID} banner`} />
+        <meta
+          property="og:image:alt"
+          content={`${SOURCE_NAME || SOURCE_ID || 'Market'} banner`}
+        />
 
         {/* Reservoir Meta Tags */}
         {SOURCE_NAME ? (

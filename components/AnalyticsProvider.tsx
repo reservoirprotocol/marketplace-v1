@@ -6,7 +6,7 @@ import { datadogRum } from '@datadog/browser-rum'
 const env = process.env.NODE_ENV
 const ddApplicationId = process.env.NEXT_PUBLIC_DATADOG_APPLICATION_ID
 const ddClientToken = process.env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 type Props = {
   children: ReactElement
@@ -31,7 +31,7 @@ const AnalyticsProvider: FC<Props> = ({ children }) => {
         applicationId: ddApplicationId,
         clientToken: ddClientToken,
         site: 'datadoghq.com',
-        service: SOURCE_ID || 'sample-marketplace',
+        service: SOURCE_DOMAIN || 'sample-marketplace',
         env,
         sampleRate: 100,
         replaySampleRate: 100,

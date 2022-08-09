@@ -11,9 +11,8 @@ import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 
@@ -117,6 +116,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const envChain = useEnvChain()
   const etherscanBaseUrl =
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     setToShortAddress(truncateAddress(sale?.to || ''))
@@ -141,9 +141,11 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   }
 
   const saleSourceImgSrc =
-    SOURCE_ID && sale.orderSource && SOURCE_ID === sale.orderSource
+    reservoirClient?.source &&
+    sale.orderSourceDomain &&
+    reservoirClient?.source === sale.orderSourceDomain
       ? SOURCE_ICON || NAVBAR_LOGO
-      : `https://api.reservoir.tools/redirect/logo/v1?source=${sale.orderSource}`
+      : `https://api.reservoir.tools/redirect/logo/v1?source=${sale.orderSourceDomain}`
 
   let saleDescription = 'Sale'
 

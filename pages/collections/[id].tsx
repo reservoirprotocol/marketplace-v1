@@ -55,6 +55,7 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -255,7 +256,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
                   </div>
-                  {SOURCE_ID && (
+                  {(SOURCE_ID || SOURCE_DOMAIN) && (
                     <div className="flex items-center gap-4">
                       <input
                         type="checkbox"
