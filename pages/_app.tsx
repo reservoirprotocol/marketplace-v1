@@ -173,11 +173,8 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext)
   let baseUrl = ''
 
-  if (appContext.ctx.req?.headers.referer) {
-    const url = appContext.ctx.req?.headers.referer.split('/')
-    var protocol = url[0]
-    var host = url[2]
-    baseUrl = protocol + '//' + host
+  if (appContext.ctx.req?.headers.host) {
+    baseUrl = `http://${appContext.ctx.req?.headers.host}`
   }
 
   return { ...appProps, baseUrl }
