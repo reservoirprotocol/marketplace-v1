@@ -5,7 +5,7 @@ type TokenSale = NonNullable<
 >[0]
 
 type Collection =
-  paths['/collection/v2']['get']['responses']['200']['schema']['collection']
+  paths['/collection/v3']['get']['responses']['200']['schema']['collection']
 
 type TokenDetails = NonNullable<
   NonNullable<

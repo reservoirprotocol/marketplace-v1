@@ -367,7 +367,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
-    collection: paths['/collection/v2']['get']['responses']['200']['schema']
+    collection: paths['/collection/v3']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
   }
   id: string | undefined
