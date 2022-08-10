@@ -20,7 +20,6 @@ import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
 import SortMenuExplore from 'components/SortMenuExplore'
 import ViewMenu from 'components/ViewMenu'
-import SortMenu from 'components/SortMenu'
 import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
@@ -229,9 +228,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                         />
                         <ViewMenu />
                       </>
-                    ) : (
-                      <SortMenu setSize={tokens.setSize} />
-                    )}
+                    ) : null}
                     <button
                       className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                       title="Refresh collection"

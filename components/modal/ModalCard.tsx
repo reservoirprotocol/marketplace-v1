@@ -62,21 +62,12 @@ const ModalCard: FC<Props> = ({
             </div>
             {steps ? <Steps steps={steps} /> : children}
             {success ? (
-              orderbook && orderbook?.length > 1 ? (
-                <button
-                  onClick={onContinue}
-                  className="btn-primary-fill w-full"
-                >
-                  Continue
-                </button>
-              ) : (
-                <Dialog.Close
-                  onClick={onCloseCallback}
-                  className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                >
-                  Success, Close this menu
-                </Dialog.Close>
-              )
+              <Dialog.Close
+                onClick={onCloseCallback}
+                className="btn-primary-outline w-full dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+              >
+                Success, Close this menu
+              </Dialog.Close>
             ) : (
               <div className="flex gap-4">
                 <Dialog.Close
@@ -98,6 +89,7 @@ const ModalCard: FC<Props> = ({
                 >
                   Powered by{' '}
                   <img
+                    alt="watermark"
                     src={
                       !!DARK_MODE
                         ? `/reservoir_watermark_dark.svg`
