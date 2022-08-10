@@ -78,7 +78,9 @@ const MyDocument = function () {
 
       {chain && chain.network ? (
         <meta
-          property={`reservoir:token-url-${chain.network}`}
+          property={`reservoir:token-url-${
+            chain.network === 'homestead' ? 'mainnet' : chain.network
+          }`}
           content="/${contract}/${tokenId}"
         />
       ) : null}
