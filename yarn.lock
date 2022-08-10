@@ -1536,6 +1536,22 @@
     "@radix-ui/react-use-callback-ref" "0.1.0"
     "@radix-ui/react-use-controllable-state" "0.1.0"
 
+"@radix-ui/react-roving-focus@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-roving-focus/-/react-roving-focus-1.0.0.tgz#aadeb65d5dbcdbdd037078156ae1f57c2ff754ee"
+  integrity sha512-lHvO4MhvoWpeNbiJAoyDsEtbKqP2jkkdwsMVJ3kfqbkC71J/aXE6Th6gkZA1xHEqSku+t+UgoDjvE7Z3gsBpcg==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.0"
+    "@radix-ui/react-collection" "1.0.0"
+    "@radix-ui/react-compose-refs" "1.0.0"
+    "@radix-ui/react-context" "1.0.0"
+    "@radix-ui/react-direction" "1.0.0"
+    "@radix-ui/react-id" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.0"
+    "@radix-ui/react-use-callback-ref" "1.0.0"
+    "@radix-ui/react-use-controllable-state" "1.0.0"
+
 "@radix-ui/react-select@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-select/-/react-select-1.0.0.tgz#16d91f493a18e471d40fc06b1faff516b5686784"
@@ -1655,6 +1671,20 @@
     "@radix-ui/react-toggle" "0.1.3"
     "@radix-ui/react-use-controllable-state" "0.1.0"
 
+"@radix-ui/react-toggle-group@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-toggle-group/-/react-toggle-group-1.0.0.tgz#6e78ffb13e0b4c1f789828930330638f4ba9c06d"
+  integrity sha512-R/5sK4/BPgOYWAsheFaFpNFh0sLPHdqsBcqO5KW2+Foy36B2KBYrGd6Hu4HnzgivawVX+mSmVNhAwHA8Yb1hLA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.0"
+    "@radix-ui/react-context" "1.0.0"
+    "@radix-ui/react-direction" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.0"
+    "@radix-ui/react-roving-focus" "1.0.0"
+    "@radix-ui/react-toggle" "1.0.0"
+    "@radix-ui/react-use-controllable-state" "1.0.0"
+
 "@radix-ui/react-toggle@0.1.3":
   version "0.1.3"
   resolved "https://registry.npmjs.org/@radix-ui/react-toggle/-/react-toggle-0.1.3.tgz"
@@ -1664,6 +1694,16 @@
     "@radix-ui/primitive" "0.1.0"
     "@radix-ui/react-primitive" "0.1.3"
     "@radix-ui/react-use-controllable-state" "0.1.0"
+
+"@radix-ui/react-toggle@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-toggle/-/react-toggle-1.0.0.tgz#9c8f655497b26410766b9c01aa2954159c0cb60b"
+  integrity sha512-RvY06eyDlZMC4rZdWK8jNovEDKf2jBvYFOB4rkQ/ypMOjFQuoh2QodlxlGakrZDrLnfxzyNnn/pg88CWVtAAdw==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.0"
+    "@radix-ui/react-use-controllable-state" "1.0.0"
 
 "@radix-ui/react-tooltip@^0.1.7":
   version "0.1.7"
@@ -1930,17 +1970,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.2"
 
-"@reservoir0x/reservoir-kit-client@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.6.tgz#3d54b22d644c70cec24b87ea0d4713bf21e4179b"
-  integrity sha512-0SyKEAAN5epJr95XkqAs1NVSUsp8uGk/n4t+OepyCJb4NgPkR7LYvvHOuINUV5/Nc4eWdEayadEl6+uoHVWvow==
+"@reservoir0x/reservoir-kit-client@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.7.tgz#c75c993f9fd068c0661590be020f5ef32424a77a"
+  integrity sha512-4Yl8xMOpvzD/yJjNPVDR+f5OH2HPyCpTPxm+QZ8OFDS+m5X7lX41YvGAEiHgPdEDcl57y7zl5lcvR2CqbS6AqA==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.1.2.tgz#405ada032a46611f9a49f39f9b7c29b4faee3638"
-  integrity sha512-urihRbq1/D5eL+HvzA1mB8T3CpAeqcdpv0XX71Nl6aJsskrKLF0M8qT2qq4qNbzKIHBvPkto8yORUa7NRWSXdQ==
+"@reservoir0x/reservoir-kit-ui@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.1.3.tgz#3c0b62b5b97015534df3da3be8caeb215a9eda49"
+  integrity sha512-3tCt28ZCHsx2s78FP09jW9BFigmDLK/b4AkhvfujxYO6rPnoUub/F7VVK79519QleUz4Wa4w51EQVn7G8XVfdA==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1950,8 +1990,9 @@
     "@radix-ui/react-popover" "0.1.7-rc.46"
     "@radix-ui/react-select" "^1.0.0"
     "@radix-ui/react-switch" "^0.1.5"
+    "@radix-ui/react-toggle-group" "^1.0.0"
     "@rainbow-me/rainbowkit" "^0.4.1"
-    "@reservoir0x/reservoir-kit-client" "0.0.6"
+    "@reservoir0x/reservoir-kit-client" "0.0.7"
     "@stitches/react" "^1.2.8"
     dayjs "^1.11.4"
     framer-motion "^6.4.2"
