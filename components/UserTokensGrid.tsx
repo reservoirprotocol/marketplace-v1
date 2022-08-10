@@ -140,9 +140,6 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
               }
               collectionId={token?.token?.collection.id}
               tokenId={token?.token?.tokenId}
-              onListingComplete={() => {
-                mutate && mutate()
-              }}
               onListingError={(err: any) => {
                 if (err?.code === 4001) {
                   modal.setToast({
@@ -157,6 +154,9 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
                   message: 'The transaction was not completed.',
                   title: 'Could not list token',
                 })
+              }}
+              onClose={() => {
+                mutate && mutate()
               }}
             />
             {token?.token?.topBid?.value && (

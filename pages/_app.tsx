@@ -57,7 +57,7 @@ const DISABLE_POWERED_BY_RESERVOIR =
 import presetColors from '../colors'
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 // Set up chains
 const { chains, provider } = configureChains(allChains, [
@@ -134,7 +134,7 @@ function MyApp({
     disablePoweredByReservoir:
       DISABLE_POWERED_BY_RESERVOIR != undefined &&
       DISABLE_POWERED_BY_RESERVOIR != null,
-    source: SOURCE_ID,
+    source: SOURCE_DOMAIN,
   }
 
   if (FEE_BPS && FEE_RECIPIENT) {

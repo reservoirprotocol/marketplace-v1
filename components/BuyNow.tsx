@@ -83,7 +83,7 @@ const BuyNow: FC<Props> = ({
       trigger={trigger}
       tokenId={tokenId}
       collectionId={collectionId}
-      onPurchaseComplete={() => {
+      onClose={() => {
         if (data.details && data.details.mutate) {
           data.details.mutate()
         }
