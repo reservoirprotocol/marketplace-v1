@@ -33,7 +33,7 @@ type Props = {
   collectionId: string | undefined
   fallback: {
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
-    collection: paths['/collection/v2']['get']['responses']['200']['schema']
+    collection: paths['/collection/v3']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any

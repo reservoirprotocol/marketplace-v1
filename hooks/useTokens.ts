@@ -86,6 +86,7 @@ const getKey: (
   let query: paths['/tokens/v4']['get']['parameters']['query'] = {
     limit: 20,
     collection: collectionId,
+    includeTopBid: true,
     sortBy: 'floorAskPrice',
   }
 

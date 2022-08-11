@@ -36,7 +36,7 @@ const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   env: {

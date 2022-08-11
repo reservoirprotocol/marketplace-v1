@@ -14,7 +14,7 @@ import CollectionInfo from 'components/token/CollectionInfo'
 import Owner from 'components/token/Owner'
 import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TokenDetails } from 'types/reservoir'
 import { useTokenOpenseaBanned } from '@reservoir0x/reservoir-kit-ui'
 
@@ -80,6 +80,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     tokens: [
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
+    includeTopBid: true,
   })
 
   const asks = useAsks(

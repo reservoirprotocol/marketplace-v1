@@ -29,8 +29,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`
   const url = new URL(endpoint, RESERVOIR_API_BASE)
-
   setParams(url, query)
+
+  if (endpoint.includes('redirect/')) {
+    res.redirect(url.href)
+    return
+  }
 
   try {
     const options: RequestInit | undefined = {

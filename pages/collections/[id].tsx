@@ -365,7 +365,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
-    collection: paths['/collection/v2']['get']['responses']['200']['schema']
+    collection: paths['/collection/v3']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
   }
   id: string | undefined
@@ -381,10 +381,11 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-  const collectionUrl = new URL('/collection/v2', RESERVOIR_API_BASE)
+  const collectionUrl = new URL('/collection/v3', RESERVOIR_API_BASE)
 
-  let collectionQuery: paths['/collection/v2']['get']['parameters']['query'] = {
+  let collectionQuery: paths['/collection/v3']['get']['parameters']['query'] = {
     id,
+    includeTopBid: true,
   }
 
   setParams(collectionUrl, collectionQuery)
@@ -400,6 +401,7 @@ export const getStaticProps: GetStaticProps<{
   let tokensQuery: paths['/tokens/v4']['get']['parameters']['query'] = {
     collection: id,
     sortBy: 'floorAskPrice',
+    includeTopBid: true,
     limit: 20,
   }
 
