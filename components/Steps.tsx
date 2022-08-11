@@ -33,7 +33,8 @@ const Steps: FC<Props> = ({ steps }) => {
           <div className="h-10 w-10">
             {error ? (
               <HiXCircle className="mx-auto -mt-1 h-10 w-10 flex-none text-red-600" />
-            ) : firstIncompleteStepIndex > index ? (
+            ) : firstIncompleteStepIndex > index ||
+              firstIncompleteStepItemIndex === -1 ? (
               <HiCheckCircle className="mx-auto -mt-1 h-10 w-10 flex-none text-green-600" />
             ) : firstIncompleteStepIndex === index ? (
               <CgSpinner className="mr-1 ml-1 -mt-0.5 h-8 w-8 flex-none animate-spin text-black dark:text-white" />
