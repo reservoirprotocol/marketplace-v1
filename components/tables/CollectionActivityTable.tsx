@@ -13,8 +13,9 @@ import { FiExternalLink } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
-const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
   collection: Collection
@@ -144,8 +145,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
     reservoirClient?.source &&
     sale.orderSourceDomain &&
     reservoirClient?.source === sale.orderSourceDomain
-      ? SOURCE_ICON || NAVBAR_LOGO
-      : `https://api.reservoir.tools/redirect/logo/v1?source=${sale.orderSourceDomain}`
+      ? SOURCE_ICON
+      : `${API_BASE}/redirect/logo/v1?source=${sale.orderSourceDomain}`
 
   let saleDescription = 'Sale'
 
