@@ -164,7 +164,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           src={
                             reservoirClient?.source &&
                             token?.sourceDomain &&
-                            reservoirClient?.source === token.sourceDomain
+                            reservoirClient?.source === token.sourceDomain &&
+                            SOURCE_ICON
                               ? SOURCE_ICON
                               : `${API_BASE}/redirect/logo/v1?source=${token?.sourceDomain}`
                           }

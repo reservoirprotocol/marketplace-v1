@@ -144,7 +144,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const saleSourceImgSrc =
     reservoirClient?.source &&
     sale.orderSourceDomain &&
-    reservoirClient?.source === sale.orderSourceDomain
+    reservoirClient?.source === sale.orderSourceDomain && SOURCE_ICON
       ? SOURCE_ICON
       : `${API_BASE}/redirect/logo/v1?source=${sale.orderSourceDomain}`
 
