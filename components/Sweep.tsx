@@ -306,7 +306,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                         <div className="relative" key={token.tokenId}>
                           <img
                             className="absolute top-1 right-1 h-4 w-4"
-                            src={`${API_BASE}/redirect/logo/v1?source=${token?.sourceDomain}`}
+                            src={`${API_BASE}/redirect/sources/${token?.sourceDomain}/logo/v2`}
                             alt={`${token?.source} icon`}
                           />
                           <img

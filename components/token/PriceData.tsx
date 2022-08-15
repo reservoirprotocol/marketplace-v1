@@ -56,11 +56,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const sourceLogo =
     isLocalListed && SOURCE_ICON
       ? SOURCE_ICON
-      : `${API_BASE}/redirect/logo/v1?source=${sourceDomain || sourceName}`
+      : `${API_BASE}/redirect/sources/${sourceDomain || sourceName}/logo/v2`
 
-  const sourceRedirect = `${API_BASE}/redirect/token/v1?source=${
+  const sourceRedirect = `${API_BASE}/redirect/sources/${
     sourceDomain || sourceName
-  }&token=${token?.token?.contract}:${token?.token?.tokenId}`
+  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
 
   if (!CHAIN_ID) return null
 
@@ -168,6 +168,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               }}
               signer={signer}
               isInTheWrongNetwork={isInTheWrongNetwork}
+              mutate={details.mutate}
             />
           )}
           {isInCart && !isOwner && (
