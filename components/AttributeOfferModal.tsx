@@ -25,7 +25,9 @@ import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
@@ -170,25 +172,25 @@ const AttributeOfferModal: FC<Props> = ({
 
     setWaitingTx(true)
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      expirationTime: expirationValue,
-      orderKind: 'seaport',
-    }
-
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
-
-    reservoirClient.actions
-      .placeBid({
-        signer,
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        expirationTime: expirationValue,
+        orderKind: 'seaport',
+        orderbook: 'reservoir',
         collection: data.collection.id,
         attributeKey: data.attribute.key,
         attributeValue: data.attribute.value,
         weiPrice: calculations.total.toString(),
-        options: options,
+      }
+
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
+
+    reservoirClient.actions
+      .placeBid({
+        source: SOURCE_DOMAIN,
+        bids: [bid],
+        signer,
         onProgress: setSteps,
       })
       .then(handleSuccess)
@@ -270,7 +272,10 @@ const AttributeOfferModal: FC<Props> = ({
                     <div>Royalty {royaltyPercentage}</div>
                     {FEE_BPS && (
                       <div>
-                        {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                        {SOURCE_NAME ||
+                          SOURCE_ID ||
+                          SOURCE_DOMAIN ||
+                          'Marketplace'}{' '}
                         {(+FEE_BPS / 10000) * 100}%
                       </div>
                     )}

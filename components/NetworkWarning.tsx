@@ -24,9 +24,9 @@ function NetworkWarning() {
               switchNetworkAsync()
             }
           }}
-          className="btn-primary-outline rounded-full border-transparent bg-gray-100 normal-case focus:ring-0 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4"
+          className="btn-primary-outline gap-1 rounded-full border-transparent bg-gray-100 normal-case focus:ring-0 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4"
         >
-          Switch to{' '}
+          <span>Switch to</span>
           <strong>{+chainId === 1 ? 'Ethereum Mainnet' : chainName}</strong>
         </button>
       </div>

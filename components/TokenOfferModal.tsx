@@ -27,12 +27,16 @@ import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
+
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
+
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   env: {
@@ -160,6 +164,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -179,6 +184,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     details && 'mutate' in details && details.mutate()
   }
 
@@ -192,32 +198,28 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      orderbook: 'reservoir',
-      expirationTime: expirationValue,
-    }
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        token: `${token.token?.contract}:${token.token?.tokenId}`,
+        weiPrice: calculations.total.toString(),
+        orderbook: 'reservoir',
+        expirationTime: expirationValue,
+      }
 
-    if (!ORDER_KIND) options.orderKind = 'seaport'
-
-    if (ORDER_KIND) options.orderKind = ORDER_KIND as typeof options.orderKind
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
+    if (!ORDER_KIND) bid.orderKind = 'seaport'
+    if (ORDER_KIND) bid.orderKind = ORDER_KIND as typeof bid.orderKind
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     await reservoirClient.actions
       .placeBid({
-        token: `${token.token?.contract}:${token.token?.tokenId}`,
-        weiPrice: calculations.total.toString(),
-        options,
+        source: SOURCE_DOMAIN,
+        bids: [bid],
         signer,
         onProgress: setSteps,
       })
       .then(handleSuccess)
       .catch(handleError)
-
-    setWaitingTx(false)
   }
 
   return (
@@ -292,7 +294,10 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {SOURCE_NAME ||
+                        SOURCE_ID ||
+                        SOURCE_DOMAIN ||
+                        'Marketplace'}{' '}
                       {(+FEE_BPS / 10000) * 100}%
                     </div>
                   )}

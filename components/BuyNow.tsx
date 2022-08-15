@@ -9,7 +9,7 @@ import { useSwitchNetwork } from 'wagmi'
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v2']['get']['responses']['200']['schema']
+type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   data: {
@@ -83,7 +83,7 @@ const BuyNow: FC<Props> = ({
       trigger={trigger}
       tokenId={tokenId}
       collectionId={collectionId}
-      onComplete={() => {
+      onClose={() => {
         if (data.details && data.details.mutate) {
           data.details.mutate()
         }

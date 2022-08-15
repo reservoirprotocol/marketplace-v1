@@ -25,7 +25,10 @@ import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
+
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
@@ -131,6 +134,7 @@ const CollectionOfferModal: FC<Props> = ({
   }, [offerPrice])
 
   const handleError = (err: any) => {
+    setWaitingTx(false)
     setOpen(false)
     setSteps(undefined)
     // Handle user rejection
@@ -150,6 +154,7 @@ const CollectionOfferModal: FC<Props> = ({
   }
 
   const handleSuccess = () => {
+    setWaitingTx(false)
     stats.mutate()
     tokens.mutate()
   }
@@ -167,36 +172,35 @@ const CollectionOfferModal: FC<Props> = ({
       .find(({ preset }) => preset === expiration)
       ?.value()
 
-    const options: Parameters<
-      ReservoirClientActions['placeBid']
-    >['0']['options'] = {
-      expirationTime: expirationValue,
-    }
+    const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
+      {
+        collection: data.collection.id,
+        weiPrice: calculations.total.toString(),
+        expirationTime: expirationValue,
+        orderbook: 'reservoir',
+      }
 
     if (
       !data.collection.id?.toLowerCase().includes(ARTBLOCKS.toLowerCase()) &&
       !data.collection.id?.toLowerCase().includes(ARTBLOCKS2.toLowerCase())
     ) {
-      options.orderKind = 'seaport'
+      bid.orderKind = 'seaport'
     } else {
-      options.orderKind = 'zeroex-v4'
+      bid.orderKind = 'zeroex-v4'
     }
 
-    if (SOURCE_ID) options.source = SOURCE_ID
-    if (FEE_BPS) options.fee = FEE_BPS
-    if (FEE_RECIPIENT) options.feeRecipient = FEE_RECIPIENT
+    if (FEE_BPS) bid.fee = FEE_BPS
+    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     await reservoirClient.actions
       .placeBid({
-        weiPrice: calculations.total.toString(),
-        collection: data.collection.id,
+        source: SOURCE_DOMAIN,
+        bids: [bid],
         signer,
-        options,
         onProgress: setSteps,
       })
       .then(handleSuccess)
       .catch(handleError)
-    setWaitingTx(false)
   }
 
   return (
@@ -272,7 +276,10 @@ const CollectionOfferModal: FC<Props> = ({
                   <div>Royalty {royaltyPercentage}</div>
                   {FEE_BPS && (
                     <div>
-                      {SOURCE_ID ? SOURCE_ID : 'Marketplace'}{' '}
+                      {SOURCE_NAME ||
+                        SOURCE_ID ||
+                        SOURCE_DOMAIN ||
+                        'Marketplace'}{' '}
                       {(+FEE_BPS / 10000) * 100}%
                     </div>
                   )}

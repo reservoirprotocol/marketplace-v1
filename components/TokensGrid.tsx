@@ -13,11 +13,12 @@ import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import { recoilTokensMap } from './CartMenu'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import BuyNow from 'components/BuyNow'
+import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const NAVBAR_LOGO = process.env.NEXT_PUBLIC_NAVBAR_LOGO
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
   tokens: SWRInfiniteResponse<
@@ -45,6 +46,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const { chain: activeChain } = useNetwork()
   const { data, error } = tokens
   const account = useAccount()
+  const reservoirClient = useReservoirClient()
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedTokens = data ? data.flatMap(({ tokens }) => tokens) : []
@@ -160,11 +162,12 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                         <img
                           className="h-6 w-6"
                           src={
-                            SOURCE_ID &&
-                            token?.source &&
-                            SOURCE_ID === token?.source
-                              ? SOURCE_ICON || NAVBAR_LOGO
-                              : `https://api.reservoir.tools/redirect/logo/v1?source=${token?.source}`
+                            reservoirClient?.source &&
+                            token?.sourceDomain &&
+                            reservoirClient?.source === token.sourceDomain &&
+                            SOURCE_ICON
+                              ? SOURCE_ICON
+                              : `${API_BASE}/redirect/logo/v1?source=${token?.sourceDomain}`
                           }
                           alt=""
                         />

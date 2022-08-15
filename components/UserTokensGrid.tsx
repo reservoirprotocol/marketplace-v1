@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
-import ListModal from 'components/ListModal'
+import { ListModal } from '@reservoir0x/reservoir-kit-ui'
 import AcceptOffer from 'components/AcceptOffer'
 
 import FormatEth from './FormatEth'
@@ -133,21 +133,32 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
             className="flex items-center bg-[rgba(0,0,0,0.02)]  p-4  py-2 dark:bg-[rgba(255,255,255,0.05)]"
           >
             <ListModal
-              signer={modal.signer}
-              isInTheWrongNetwork={modal.isInTheWrongNetwork}
-              maker={modal.accountData?.address}
-              data={{
-                collectionId: token?.token?.collection.id,
-                contract: token?.token?.contract,
-                tokenId: token?.token?.tokenId,
+              trigger={
+                <p className="hover:color-primary mr-6 text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
+                  {token?.ownership?.floorAskPrice ? 'Edit Listing' : 'List'}
+                </p>
+              }
+              collectionId={token?.token?.collection.id}
+              tokenId={token?.token?.tokenId}
+              onListingError={(err: any) => {
+                if (err?.code === 4001) {
+                  modal.setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                modal.setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not list token',
+                })
               }}
-              mutate={mutate}
-              setToast={modal.setToast}
-            >
-              <p className="hover:color-primary mr-6 text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                {token?.ownership?.floorAskPrice ? 'Edit Listing' : 'List'}
-              </p>
-            </ListModal>
+              onClose={() => {
+                mutate && mutate()
+              }}
+            />
             {token?.token?.topBid?.value && (
               <AcceptOffer
                 data={{
@@ -178,7 +189,7 @@ const UserTokensGrid: FC<Props> = ({
   mutate,
   isOwner,
 }) => {
-  const { data, isValidating, size } = tokens
+  const { data, isValidating } = tokens
   const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
   const isEmpty = mappedTokens.length === 0
   const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
@@ -191,7 +202,7 @@ const UserTokensGrid: FC<Props> = ({
 
   return (
     <div className="mx-auto mb-8 grid max-w-[2400px] gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
-      {size === 1 && isValidating
+      {isEmpty && isValidating
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
           ))

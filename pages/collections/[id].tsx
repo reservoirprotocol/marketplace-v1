@@ -20,7 +20,6 @@ import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
 import SortMenuExplore from 'components/SortMenuExplore'
 import ViewMenu from 'components/ViewMenu'
-import SortMenu from 'components/SortMenu'
 import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
@@ -55,6 +54,7 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
+const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -228,9 +228,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                         />
                         <ViewMenu />
                       </>
-                    ) : (
-                      <SortMenu setSize={tokens.setSize} />
-                    )}
+                    ) : null}
                     <button
                       className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                       title="Refresh collection"
@@ -255,7 +253,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
                   </div>
-                  {SOURCE_ID && (
+                  {(SOURCE_ID || SOURCE_DOMAIN) && (
                     <div className="flex items-center gap-4">
                       <input
                         type="checkbox"
@@ -367,7 +365,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
-    collection: paths['/collection/v2']['get']['responses']['200']['schema']
+    collection: paths['/collection/v3']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
   }
   id: string | undefined
@@ -383,10 +381,11 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-  const collectionUrl = new URL('/collection/v2', RESERVOIR_API_BASE)
+  const collectionUrl = new URL('/collection/v3', RESERVOIR_API_BASE)
 
-  let collectionQuery: paths['/collection/v2']['get']['parameters']['query'] = {
+  let collectionQuery: paths['/collection/v3']['get']['parameters']['query'] = {
     id,
+    includeTopBid: true,
   }
 
   setParams(collectionUrl, collectionQuery)
@@ -402,6 +401,7 @@ export const getStaticProps: GetStaticProps<{
   let tokensQuery: paths['/tokens/v4']['get']['parameters']['query'] = {
     collection: id,
     sortBy: 'floorAskPrice',
+    includeTopBid: true,
     limit: 20,
   }
 

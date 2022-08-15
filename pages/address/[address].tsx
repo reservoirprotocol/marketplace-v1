@@ -148,13 +148,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   }}
                 />
               </div>
-              {/* <UserTokensGrid data={userTokens} /> */}
             </Tabs.Content>
-            <Tabs.Content value="history">
-              {/* <UserActivityTable
-            data={userActivity}
-          /> */}
-            </Tabs.Content>
+            <Tabs.Content value="history"></Tabs.Content>
             {isOwner && (
               <>
                 <Tabs.Content value="buying">
