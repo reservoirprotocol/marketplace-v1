@@ -149,8 +149,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 />
               </div>
             </Tabs.Content>
-            <Tabs.Content value="history">
-            </Tabs.Content>
+            <Tabs.Content value="history"></Tabs.Content>
             {isOwner && (
               <>
                 <Tabs.Content value="buying">

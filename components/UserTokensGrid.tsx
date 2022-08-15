@@ -189,7 +189,7 @@ const UserTokensGrid: FC<Props> = ({
   mutate,
   isOwner,
 }) => {
-  const { data, isValidating, size } = tokens
+  const { data, isValidating } = tokens
   const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
   const isEmpty = mappedTokens.length === 0
   const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
@@ -202,7 +202,7 @@ const UserTokensGrid: FC<Props> = ({
 
   return (
     <div className="mx-auto mb-8 grid max-w-[2400px] gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
-      {size === 1 && isValidating
+      {isEmpty && isValidating
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
           ))
