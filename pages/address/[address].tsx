@@ -60,9 +60,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const { data: signer } = useSigner()
   const router = useRouter()
   const userTokens = useUserTokens(address)
-  // const userActivity = useUserActivity([], address)
   const collections = useSearchCommunity()
-  const sellPositions = useUserAsks([], address, collections)
+  const listings = useUserAsks(address, collections)
   const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
@@ -136,7 +135,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     buyPositions.orders.mutate()
                     userTokens.tokens.mutate()
                     // userActivity.transfers.mutate()
-                    sellPositions.orders.mutate()
+                    listings.mutate()
                   }}
                   isOwner={isOwner}
                   modal={{
@@ -172,13 +171,12 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Content>
                 <Tabs.Content value="selling" className="col-span-full">
                   <UserListingsTable
-                    data={sellPositions}
+                    data={listings}
                     mutate={() => {
                       userTokens.tokens.mutate()
-                      sellPositions.orders.mutate()
+                      listings.mutate()
                     }}
                     isOwner={isOwner}
-                    maker={address || ''}
                     modal={{
                       accountData,
                       isInTheWrongNetwork,
