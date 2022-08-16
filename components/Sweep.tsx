@@ -177,6 +177,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         tokens: sweepTokens,
         signer,
         onProgress: setSteps,
+        options: {
+          partial: true,
+        },
       })
       .then(() => {
         setWaitingTx(false)
@@ -365,6 +368,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                         >
                           Powered by{' '}
                           <img
+                            alt="Reservoir Watermark"
                             src={
                               !!DARK_MODE
                                 ? `/reservoir_watermark_dark.svg`
