@@ -207,7 +207,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
   fallback: {
-    tokens: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v3']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
@@ -220,9 +220,9 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`/users/${address}/tokens/v2`, RESERVOIR_API_BASE)
+  const url = new URL(`/users/${address}/tokens/v3`, RESERVOIR_API_BASE)
 
-  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v3']['get']['parameters']['query'] = {
     limit: 20,
     offset: 0,
   }
