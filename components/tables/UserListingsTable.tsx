@@ -11,7 +11,6 @@ import useUserAsks from 'hooks/useUserAsks'
 type Props = {
   data: ReturnType<typeof useUserAsks>
   isOwner: boolean
-  maker: string
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>
@@ -22,17 +21,10 @@ type Props = {
   }
 }
 
-const UserListingsTable: FC<Props> = ({
-  maker,
-  modal,
-  mutate,
-  isOwner,
-  data: { orders, ref },
-}) => {
-  const { data } = orders
-  const ordersFlat = data ? data.flatMap(({ orders }) => orders) : []
+const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
+  const { data: listings, ref } = data
 
-  if (ordersFlat.length === 0) {
+  if (listings.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         You don&apos;t have any items listed for sale.
@@ -62,7 +54,7 @@ const UserListingsTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {ordersFlat?.map((position, index, arr) => {
+          {listings.map((position, index, arr) => {
             const {
               collectionName,
               contract,
@@ -73,7 +65,7 @@ const UserListingsTable: FC<Props> = ({
               tokenHref,
               tokenId,
               price,
-            } = processPosition(position)
+            } = processListing(position)
 
             return (
               <tr
@@ -89,6 +81,7 @@ const UserListingsTable: FC<Props> = ({
                         {image && (
                           <div className="aspect-w-1 aspect-h-1 relative">
                             <img
+                              alt={`${position?.id} Listing`}
                               src={optimizeImage(image, 35)}
                               className="w-[35px] object-contain"
                               width="35"
@@ -146,31 +139,27 @@ const UserListingsTable: FC<Props> = ({
 
 export default UserListingsTable
 
-function processPosition(
-  position:
-    | NonNullable<NonNullable<Props['data']['orders']['data']>[0]['orders']>[0]
-    | undefined
+function processListing(
+  listing: NonNullable<NonNullable<Props['data']['data']>>[0] | undefined
 ) {
-  const tokenId = position?.tokenSetId?.split(':')[2]
-  const contract = position?.tokenSetId?.split(':')[1]
+  const tokenId = listing?.tokenSetId?.split(':')[2]
+  const contract = listing?.tokenSetId?.split(':')[1]
 
   const data = {
     contract,
     tokenId,
-    image: position?.metadata?.data?.image,
-    name: position?.metadata?.data?.tokenName,
+    image: listing?.metadata?.data?.image,
+    name: listing?.metadata?.data?.tokenName,
     expiration:
-      position?.expiration === 0
+      listing?.expiration === 0
         ? 'Never'
-        : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
-    id: position?.id,
-    collectionName: position?.metadata?.data?.collectionName,
-    price: position?.price,
+        : DateTime.fromMillis(+`${listing?.expiration}000`).toRelative(),
+    id: listing?.id,
+    collectionName: listing?.metadata?.data?.collectionName,
+    price: listing?.price,
   }
 
-  const tokenHref =
-    // data.contract && data.tokenId && `/${data.contract}/${data.tokenId}`
-    `/${data.contract}/${data.tokenId}`
+  const tokenHref = `/${data.contract}/${data.tokenId}`
 
   return { ...data, tokenHref }
 }

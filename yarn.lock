@@ -1977,10 +1977,10 @@
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.1.8.tgz#14b4f21b9cba625055b5e996eba0ffd84d10e390"
-  integrity sha512-x0MY2fpD5T01UOYWBFAejop3s/BUi+H2xtEOsicfoSP90MHpbYIMfmPHM13rPc4eq4yu6NDctE7dCbJY7dKbEg==
+"@reservoir0x/reservoir-kit-ui@0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.1.11.tgz#6793aa05ae425ca7016256e5168fc3447c47be20"
+  integrity sha512-/dWT5CdJVUCaNXjPATHV3T2Yijby3+yuGOSKyDmiNNT7zH4Zm6CvGfmM5oqrAomBECggY6MiFsMAWAlLtYDIGQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"

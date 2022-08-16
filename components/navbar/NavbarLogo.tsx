@@ -17,15 +17,12 @@ type Props = {
 const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const logo = NAVBAR_LOGO || '/reservoir.svg'
   const desktopLogo = DESKTOP_NAVBAR_LOGO || '/reservoir-desktop.svg'
-  const reservoirClient = useReservoirClient()
-  let logoAlt = 'Reservoir Logo'
+  let logoAlt = 'Logo'
 
   if (SOURCE_NAME) {
     logoAlt = SOURCE_NAME
   } else if (SOURCE_ID) {
     logoAlt = SOURCE_ID
-  } else if (reservoirClient?.source) {
-    logoAlt = reservoirClient?.source
   }
 
   const mobileVariant = variant == 'mobile'

@@ -101,6 +101,9 @@ const CartMenu: FC = () => {
         tokens: cartTokens,
         signer,
         onProgress: setSteps,
+        options: {
+          partial: true,
+        },
       })
       .then(() => setCartTokens([]))
       .catch((err: any) => {

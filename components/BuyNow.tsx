@@ -22,6 +22,7 @@ type Props = {
   isInTheWrongNetwork: boolean | undefined
   signer: ReturnType<typeof useSigner>['data']
   buttonClassName?: string
+  mutate?: SWRResponse['mutate']
 }
 
 const BuyNow: FC<Props> = ({
@@ -29,6 +30,7 @@ const BuyNow: FC<Props> = ({
   isInTheWrongNetwork,
   signer,
   buttonClassName = 'btn-primary-fill w-full',
+  mutate,
 }) => {
   const { dispatch } = useContext(GlobalContext)
   const { switchNetworkAsync } = useSwitchNetwork({
@@ -84,8 +86,8 @@ const BuyNow: FC<Props> = ({
       tokenId={tokenId}
       collectionId={collectionId}
       onClose={() => {
-        if (data.details && data.details.mutate) {
-          data.details.mutate()
+        if (mutate) {
+          mutate()
         }
       }}
     />
