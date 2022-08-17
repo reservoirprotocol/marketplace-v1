@@ -11,6 +11,9 @@ import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatWEth from 'components/FormatWEth'
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
+
 type Props = {
   data: ReturnType<typeof useUserTokens>
 
@@ -47,7 +50,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
                 <div className="relative h-16 w-16 overflow-hidden">
                   <img
                     src={optimizeImage(
-                      `https://api.reservoir.tools/redirect/collections/${token?.token?.collection?.id}/image/v1`,
+                      `${API_BASE}/redirect/collections/${token?.token?.collection?.id}/image/v1`,
                       250
                     )}
                     alt={`${token?.token?.collection?.name}`}
@@ -171,7 +174,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
               setToast={modal.setToast}
               mutate={mutate}
             >
-              <p className="hover:color-primary text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
+              <p className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
                 Accept Offer
               </p>
             </AcceptOffer>

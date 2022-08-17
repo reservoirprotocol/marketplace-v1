@@ -42,9 +42,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(recoilTokensMap)
   const { data: signer } = useSigner()
-  const [_open, setOpen] = useState(false)
   const { chain: activeChain } = useNetwork()
-  const { data, error } = tokens
+  const { data, error, mutate } = tokens
   const account = useAccount()
   const reservoirClient = useReservoirClient()
 
@@ -167,7 +166,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                             reservoirClient?.source === token.sourceDomain &&
                             SOURCE_ICON
                               ? SOURCE_ICON
-                              : `${API_BASE}/redirect/logo/v1?source=${token?.sourceDomain}`
+                              : `${API_BASE}/redirect/sources/${token?.sourceDomain}/logo/v2`
                           }
                           alt=""
                         />
@@ -184,6 +183,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                               data={{
                                 token: token,
                               }}
+                              mutate={mutate}
                               signer={signer}
                               isInTheWrongNetwork={isInTheWrongNetwork}
                               buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"

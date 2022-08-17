@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Ingram Mono Regular';
+    src: url('/fonts/ingram-mono-regular/ingram-mono-regular.woff2') format('woff2'),
+         url('/fonts/ingram-mono-regular/ingram-mono-regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+

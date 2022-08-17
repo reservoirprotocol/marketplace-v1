@@ -60,9 +60,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const { data: signer } = useSigner()
   const router = useRouter()
   const userTokens = useUserTokens(address)
-  // const userActivity = useUserActivity([], address)
   const collections = useSearchCommunity()
-  const sellPositions = useUserAsks([], address, collections)
+  const listings = useUserAsks(address, collections)
   const buyPositions = useUserBids([], address, collections)
 
   if (!CHAIN_ID) {
@@ -136,7 +135,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     buyPositions.orders.mutate()
                     userTokens.tokens.mutate()
                     // userActivity.transfers.mutate()
-                    sellPositions.orders.mutate()
+                    listings.mutate()
                   }}
                   isOwner={isOwner}
                   modal={{
@@ -172,13 +171,12 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Content>
                 <Tabs.Content value="selling" className="col-span-full">
                   <UserListingsTable
-                    data={sellPositions}
+                    data={listings}
                     mutate={() => {
                       userTokens.tokens.mutate()
-                      sellPositions.orders.mutate()
+                      listings.mutate()
                     }}
                     isOwner={isOwner}
-                    maker={address || ''}
                     modal={{
                       accountData,
                       isInTheWrongNetwork,
@@ -209,7 +207,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
   fallback: {
-    tokens: paths['/users/{user}/tokens/v2']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v3']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
@@ -222,9 +220,9 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`/users/${address}/tokens/v2`, RESERVOIR_API_BASE)
+  const url = new URL(`/users/${address}/tokens/v3`, RESERVOIR_API_BASE)
 
-  let query: paths['/users/{user}/tokens/v2']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v3']['get']['parameters']['query'] = {
     limit: 20,
     offset: 0,
   }
