@@ -59,7 +59,7 @@ const AcceptOffer: FC<Props> = ({
   const reservoirClient = useReservoirClient()
 
   useEffect(() => {
-    if (data) {
+    if (data && open && !details) {
       // Load data if missing
       if ('tokenId' in data) {
         getDetails(data.contract, data.tokenId, setDetails)
@@ -69,7 +69,7 @@ const AcceptOffer: FC<Props> = ({
         setDetails(data.details)
       }
     }
-  }, [data])
+  }, [data, open, details])
 
   let tokenId: string | undefined = undefined
   let contract: string | undefined = undefined
