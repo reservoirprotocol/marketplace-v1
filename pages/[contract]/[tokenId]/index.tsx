@@ -128,7 +128,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
           token={token?.token}
           collection={collection.data?.collection}
         />
-        {details.data?.tokens?.[0]?.token?.kind !== 'erc1155' && (
+        {details.data?.tokens?.[0]?.token?.kind === 'erc1155' && (
           <Listings
             token={`${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`}
           />
