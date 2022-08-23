@@ -83,6 +83,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
               alt="atomic0 Icon"
               className="h-6 w-6"
             />
+          </a>
           <a
             className="reservoir-h6 font-headings"
             target="_blank"
