@@ -76,6 +76,17 @@ const TokenInfo: FC<Props> = ({ details }) => {
             className="reservoir-h6 font-headings"
             target="_blank"
             rel="noopener noreferrer"
+            href={`https://atomic0.com/nft/${token?.token?.contract}/${token?.token?.tokenId}`}
+          >
+            <img
+              src="/icons/atomic0.svg"
+              alt="atomic0 Icon"
+              className="h-6 w-6"
+            />
+          <a
+            className="reservoir-h6 font-headings"
+            target="_blank"
+            rel="noopener noreferrer"
             href={`https://looksrare.org/collections/${token?.token?.contract}/${token?.token?.tokenId}`}
           >
             <img
