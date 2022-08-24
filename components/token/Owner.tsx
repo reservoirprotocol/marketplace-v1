@@ -31,7 +31,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
                 </Tooltip.Trigger>
                 <Tooltip.Content
                   sideOffset={5}
-                  className="reservoir-body-2 w-[191px] rounded-2xl bg-neutral-800 py-3 px-4 text-center text-white dark:bg-neutral-100 dark:text-black"
+                  className="reservoir-body-2 z-[10000] w-[191px] rounded-2xl bg-neutral-800 py-3 px-4 text-center text-white dark:bg-neutral-100 dark:text-black"
                 >
                   <Tooltip.Arrow className="fill-neutral-800 dark:fill-neutral-100" />
                   Token is not tradeable on OpenSea
