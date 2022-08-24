@@ -160,7 +160,10 @@ const CollectionOfferModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
+    if (!signer) {
+      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      return
+    }
 
     if (!reservoirClient) {
       throw 'reservoirClient not initialized'
@@ -194,7 +197,6 @@ const CollectionOfferModal: FC<Props> = ({
 
     await reservoirClient.actions
       .placeBid({
-        source: SOURCE_DOMAIN,
         bids: [bid],
         signer,
         onProgress: setSteps,
