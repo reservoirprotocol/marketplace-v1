@@ -82,6 +82,7 @@ const getKey: InfiniteKeyLoader = (
     status: 'active',
     maker: user,
     limit: 20,
+    includeMetadata: true,
   }
 
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
