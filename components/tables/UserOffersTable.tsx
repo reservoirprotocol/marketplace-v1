@@ -11,7 +11,6 @@ import useUserBids from 'hooks/useUserBids'
 type Props = {
   data: ReturnType<typeof useUserBids>
   isOwner: boolean
-  maker: string
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>
@@ -24,7 +23,6 @@ type Props = {
 
 const UserOffersTable: FC<Props> = ({
   data: { orders, ref },
-  maker,
   mutate,
   modal,
   isOwner,
@@ -169,7 +167,6 @@ function processPosition(
   const key = position?.metadata?.data?.attributes?.[0]?.key
   // @ts-ignore
   const value = position?.metadata?.data?.attributes?.[0]?.value
-
   let tokenId
   let contract = position?.tokenSetId?.split(':')[1]
   let href
@@ -208,7 +205,7 @@ function processPosition(
         : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
     id: position?.id,
     collectionName: position?.metadata?.data?.collectionName,
-    price: position?.value,
+    price: position?.price?.amount?.native,
   }
 
   return { ...data, href }

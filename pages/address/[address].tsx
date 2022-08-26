@@ -159,7 +159,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                       userTokens.tokens.mutate()
                     }}
                     isOwner={isOwner}
-                    maker={address || ''}
                     modal={{
                       accountData,
                       isInTheWrongNetwork,

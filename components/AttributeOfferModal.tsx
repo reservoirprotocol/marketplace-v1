@@ -160,7 +160,10 @@ const AttributeOfferModal: FC<Props> = ({
   }
 
   const execute = async () => {
-    if (!signer) dispatch({ type: 'CONNECT_WALLET', payload: true })
+    if (!signer) {
+      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      return
+    }
 
     const expirationValue = expirationPresets
       .find(({ preset }) => preset === expiration)
@@ -188,7 +191,6 @@ const AttributeOfferModal: FC<Props> = ({
 
     reservoirClient.actions
       .placeBid({
-        source: SOURCE_DOMAIN,
         bids: [bid],
         signer,
         onProgress: setSteps,
