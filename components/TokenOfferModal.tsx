@@ -213,7 +213,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
     await reservoirClient.actions
       .placeBid({
-        source: SOURCE_DOMAIN,
         bids: [bid],
         signer,
         onProgress: setSteps,
