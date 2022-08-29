@@ -135,18 +135,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
-  const royalties: CollectionModalProps['royalties'] = {
+  const royalties: AttibuteModalProps['royalties'] = {
     bps: collection.data?.collection?.royalties?.bps,
     recipient: collection.data?.collection?.royalties?.recipient,
-  }
-
-  const collectionData: CollectionModalProps['data'] = {
-    collection: {
-      id: collection?.data?.collection?.id,
-      image: '',
-      name: collection?.data?.collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
   }
 
   const attributeData: AttibuteModalProps['data'] = {
@@ -230,7 +221,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 />
               ) : (
                 <BidModal
-                  collectionId={collectionData.collection.id}
+                  collectionId={collection?.data?.collection?.id}
                   trigger={
                     <button
                       disabled={isInTheWrongNetwork}
@@ -246,8 +237,8 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   onBidError={(error) => {
                     if (error) {
                       if (
-                        (error.cause as any).code &&
-                        (error.cause as any).code === 4001
+                        (error as any).cause.code &&
+                        (error as any).cause.code === 4001
                       ) {
                         setToast({
                           kind: 'error',
