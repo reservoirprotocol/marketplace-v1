@@ -35,7 +35,6 @@ type Props = {
     tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
     collection: paths['/collection/v3']['get']['responses']['200']['schema']
   }
-  openSeaApiKey: string | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
 

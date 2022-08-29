@@ -34,7 +34,6 @@ const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 type Props = {
   env: {
     chainId: ChainId
-    openSeaApiKey: string | undefined
   }
   data: {
     collection: {

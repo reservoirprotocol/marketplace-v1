@@ -5,8 +5,11 @@ import CancelOffer from 'components/CancelOffer'
 import { recoilTokensMap } from 'components/CartMenu'
 import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
-import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
-import TokenOfferModal from 'components/TokenOfferModal'
+import {
+  ListModal,
+  BidModal,
+  useReservoirClient,
+} from '@reservoir0x/reservoir-kit-ui'
 import { recoilCartTokens } from 'components/TokensGrid'
 import useCollection from 'hooks/useCollection'
 import useDetails from 'hooks/useDetails'
@@ -226,20 +229,20 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             signer={signer}
           />
           {!isOwner && (
-            <TokenOfferModal
-              signer={signer}
-              data={{
-                collection: collection.data,
-                details,
+            <BidModal
+              collectionId={collection.data?.collection?.id}
+              tokenId={token?.token?.tokenId}
+              trigger={
+                <button
+                  disabled={isInTheWrongNetwork}
+                  className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                >
+                  Make Offer
+                </button>
+              }
+              onBidComplete={() => {
+                details && details.mutate()
               }}
-              royalties={{
-                bps: collection.data?.collection?.royalties?.bps,
-                recipient: collection.data?.collection?.royalties?.recipient,
-              }}
-              env={{
-                chainId: +CHAIN_ID as ChainId,
-              }}
-              setToast={setToast}
             />
           )}
 
