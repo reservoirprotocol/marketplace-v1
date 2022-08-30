@@ -39,10 +39,10 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
         <FiMenu className="h-6 w-6" />
       </Dialog.Trigger>
 
-      <Dialog.Content className="fixed inset-0 z-10 transform bg-white shadow-md dark:bg-black">
+      <Dialog.Content className="fixed inset-0 z-20 transform bg-white shadow-md dark:bg-black">
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <NavbarLogo variant="desktop" />
-          <Dialog.Close className="btn-primary-outline mr-[40px] py-1.5 px-[5px] dark:text-white">
+          <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
