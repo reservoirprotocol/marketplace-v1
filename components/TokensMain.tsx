@@ -32,7 +32,7 @@ type Props = {
   chainId: ChainId
   collectionId: string | undefined
   fallback: {
-    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
     collection: paths['/collection/v3']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
@@ -151,26 +151,28 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
       <Hero fallback={fallback} collectionId={collectionId} />
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
-        <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+        <Sidebar
+          attributes={attributes}
+          refreshData={() => {
+            tokens.setSize(1)
+          }}
+        />
         <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
           <div className="mb-10 hidden items-center justify-between md:flex">
             <div className="flex items-center gap-6">
-              {!!stats?.data?.stats?.tokenCount &&
-                stats?.data?.stats?.tokenCount > 0 && (
-                  <>
-                    <div>
-                      {formatNumber(stats?.data?.stats?.tokenCount)} items
-                    </div>
+              {!!tokenCount && tokenCount > 0 && (
+                <>
+                  <div>{formatNumber(tokenCount)} items</div>
 
-                    <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                    <div>
-                      <FormatEth
-                        amount={stats?.data?.stats?.market?.floorAsk?.price}
-                      />{' '}
-                      floor price
-                    </div>
-                  </>
-                )}
+                  <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
+                  <div>
+                    <FormatEth
+                      amount={stats?.data?.stats?.market?.floorAsk?.price}
+                    />{' '}
+                    floor price
+                  </div>
+                </>
+              )}
             </div>
             <div className="flex gap-4">
               {router.query?.attribute_key ||

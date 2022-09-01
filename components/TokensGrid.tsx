@@ -14,6 +14,8 @@ import { recoilTokensMap } from './CartMenu'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import BuyNow from 'components/BuyNow'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import FormatCrypto from 'components/FormatCrypto'
+import useTokens from '../hooks/useTokens'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
@@ -21,17 +23,12 @@ const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  tokens: SWRInfiniteResponse<
-    paths['/tokens/v4']['get']['responses']['200']['schema'],
-    any
-  >
+  tokens: ReturnType<typeof useTokens>['tokens']
   collectionImage: string | undefined
   viewRef: ReturnType<typeof useInView>['ref']
 }
 
-type Tokens = NonNullable<
-  paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
->
+type Tokens = NonNullable<ReturnType<typeof useTokens>['tokens']['data']>
 
 export const recoilCartTokens = atom<Tokens>({
   key: 'cartTokens',
@@ -47,13 +44,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const account = useAccount()
   const reservoirClient = useReservoirClient()
 
-  // Reference: https://swr.vercel.app/examples/infinite-loading
-  const mappedTokens = data ? data.flatMap(({ tokens }) => tokens) : []
-  const isLoadingInitialData = !data && !error
-  const didReachEnd =
-    data &&
-    (data[data.length - 1]?.tokens?.length === 0 ||
-      data[data.length - 1]?.continuation === null)
+  const didReachEnd = tokens.isFetchingInitialData || !tokens.hasNextPage
 
   if (!CHAIN_ID) return null
 
@@ -75,11 +66,15 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
       className="masonry-grid"
       columnClassName="masonry-grid_column"
     >
-      {isLoadingInitialData
+      {tokens.isFetchingInitialData
         ? Array(10)
             .fill(null)
             .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
-        : mappedTokens?.map((token, idx) => {
+        : data?.map((tokenData, idx) => {
+            const token = {
+              ...tokenData?.token,
+              ...tokenData?.market,
+            }
             const isInCart = Boolean(
               tokensMap[`${token?.contract}:${token?.tokenId}`]
             )
@@ -140,8 +135,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                 </Link>
                 <div
                   className={`absolute bottom-[0px] w-full bg-white transition-all group-hover:bottom-[0px] dark:bg-neutral-800 ${
-                    token.floorAskPrice != null &&
-                    token.floorAskPrice != undefined
+                    token.floorAsk?.price?.amount != null &&
+                    token.floorAsk.price.amount != undefined
                       ? 'md:-bottom-[41px]'
                       : ''
                   }`}
@@ -154,34 +149,39 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                   </div>
                   <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
                     <div className="reservoir-h6">
-                      <FormatEth amount={token?.floorAskPrice} logoWidth={7} />
+                      <FormatCrypto
+                        amount={token?.floorAsk?.price?.amount?.native}
+                        address={''}
+                        maximumFractionDigits={2}
+                      />
+                      {/* <FormatEth amount={token?.floorAskPrice} logoWidth={7} /> */}
                     </div>
                     <div className="text-right">
-                      {token?.source && (
+                      {token?.floorAsk?.source && (
                         <img
                           className="h-6 w-6"
                           src={
                             reservoirClient?.source &&
-                            token?.sourceDomain &&
-                            reservoirClient?.source === token.sourceDomain &&
+                            reservoirClient.source ===
+                              token.floorAsk.source.domain &&
                             SOURCE_ICON
                               ? SOURCE_ICON
-                              : `${API_BASE}/redirect/sources/${token?.sourceDomain}/logo/v2`
+                              : `${API_BASE}/redirect/sources/${token?.floorAsk.source.domain}/logo/v2`
                           }
                           alt=""
                         />
                       )}
                     </div>
                   </div>
-                  {token.floorAskPrice != null &&
-                    token.floorAskPrice != undefined && (
+                  {token.floorAsk?.price?.amount?.native != null &&
+                    token.floorAsk?.price?.amount?.native != undefined && (
                       <div className="grid grid-cols-2">
                         {token &&
                           token.owner?.toLowerCase() !==
                             account?.address?.toLowerCase() && (
                             <BuyNow
                               data={{
-                                token: token,
+                                token: tokenData,
                               }}
                               mutate={mutate}
                               signer={signer}
@@ -194,9 +194,10 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                             onClick={() => {
                               const newCartTokens = [...cartTokens]
                               const index = newCartTokens.findIndex(
-                                ({ contract, tokenId }) =>
-                                  contract === token?.contract &&
-                                  tokenId === token.tokenId
+                                (newCartToken) =>
+                                  newCartToken?.token?.contract ===
+                                    token?.contract &&
+                                  newCartToken?.token?.tokenId === token.tokenId
                               )
                               newCartTokens.splice(index, 1)
                               setCartTokens(newCartTokens)
@@ -209,7 +210,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           <button
                             disabled={isInTheWrongNetwork}
                             onClick={() => {
-                              setCartTokens([...cartTokens, token])
+                              setCartTokens([...cartTokens, tokenData])
                             }}
                             className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
                           >

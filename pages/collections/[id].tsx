@@ -201,7 +201,12 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.List>
           <Tabs.Content value="items" asChild>
             <>
-              <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+              <Sidebar
+                attributes={attributes}
+                refreshData={() => {
+                  tokens.setSize(1)
+                }}
+              />
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
@@ -366,7 +371,7 @@ export const getStaticProps: GetStaticProps<{
   collectionId?: string
   fallback: {
     collection: paths['/collection/v3']['get']['responses']['200']['schema']
-    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
   }
   id: string | undefined
 }> = async ({ params }) => {
@@ -396,9 +401,9 @@ export const getStaticProps: GetStaticProps<{
     (await collectionRes.json()) as Props['fallback']['collection']
 
   // TOKENS
-  const tokensUrl = new URL('/tokens/v4', RESERVOIR_API_BASE)
+  const tokensUrl = new URL('/tokens/v5', RESERVOIR_API_BASE)
 
-  let tokensQuery: paths['/tokens/v4']['get']['parameters']['query'] = {
+  let tokensQuery: paths['/tokens/v5']['get']['parameters']['query'] = {
     collection: id,
     sortBy: 'floorAskPrice',
     includeTopBid: true,

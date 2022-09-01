@@ -5,6 +5,7 @@ import { useSigner } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
 import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 import { useSwitchNetwork } from 'wagmi'
+import useTokens from '../hooks/useTokens'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -15,9 +16,7 @@ type Props = {
   data: {
     details?: SWRResponse<Details, any>
     collection?: Collection
-    token?: NonNullable<
-      paths['/tokens/v4']['get']['responses']['200']['schema']['tokens']
-    >[0]
+    token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   }
   isInTheWrongNetwork: boolean | undefined
   signer: ReturnType<typeof useSigner>['data']
@@ -47,10 +46,13 @@ const BuyNow: FC<Props> = ({
     collectionId = token.collection?.id
     forSale = data.details.data.tokens[0].market?.floorAsk?.price != null
   } else if (data.token) {
-    tokenId = data.token.tokenId
-    collectionId = data.token.collection?.id
+    const token = data.token.token
+    const marketData = data.token.market
+    tokenId = token?.tokenId
+    collectionId = token?.collection?.id
     forSale =
-      data.token.floorAskPrice != null && data.token.floorAskPrice != undefined
+      marketData?.floorAsk?.price?.amount != null &&
+      marketData?.floorAsk?.price?.amount != undefined
   }
 
   const trigger = <button className={buttonClassName}>Buy Now</button>

@@ -30,7 +30,7 @@ const setToast = (data: ComponentProps<typeof Toast>['data']) => {
 type Props = {
   collectionId: string | undefined
   fallback: {
-    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
     collection: paths['/collection/v3']['get']['responses']['200']['schema']
   }
 }

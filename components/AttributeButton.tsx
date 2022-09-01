@@ -8,14 +8,14 @@ type Props = {
   children: React.ReactNode
   attribute: string
   value: string
-  setTokensSize: SWRInfiniteResponse['setSize']
+  refreshData: () => void
 }
 
 const AttributeButton: FC<Props> = ({
   children,
   attribute,
   value,
-  setTokensSize,
+  refreshData,
 }) => {
   const router = useRouter()
 
@@ -34,7 +34,7 @@ const AttributeButton: FC<Props> = ({
             updateAttribute(router, attribute, value)
           }
         }
-        setTokensSize(0)
+        refreshData()
       }}
       className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
         router.query[`attributes[${attribute}]`] &&
