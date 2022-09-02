@@ -242,8 +242,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             {isSmallDevice && (
               <Sweep
                 collection={collection}
-                tokens={tokens}
+                tokens={tokens.data}
                 setToast={setToast}
+                mutate={tokens.mutate}
               />
             )}
           </div>

@@ -2,18 +2,20 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
-import { recoilTokensMap } from 'components/CartMenu'
 import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
-import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import {
+  ListModal,
+  useReservoirClient,
+  useTokens,
+} from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
-import { recoilCartTokens } from 'components/TokensGrid'
 import useCollection from 'hooks/useCollection'
-import useDetails from 'hooks/useDetails'
 import React, { FC, ReactNode } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
+import recoilCartTokens, { getTokensMap } from 'recoil/cart'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -22,19 +24,19 @@ const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  details: ReturnType<typeof useDetails>
+  details: ReturnType<typeof useTokens>
   collection: ReturnType<typeof useCollection>
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
-  const tokensMap = useRecoilValue(recoilTokensMap)
+  const tokensMap = useRecoilValue(getTokensMap)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
   const reservoirClient = useReservoirClient()
 
-  const token = details.data?.tokens?.[0]
+  const token = details.data ? details.data[0] : undefined
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
   const sourceDomain = token?.market?.floorAsk?.source?.domain as
@@ -106,7 +108,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             }
             price={
               <FormatEth
-                amount={token?.market?.floorAsk?.price}
+                amount={token?.market?.floorAsk?.price?.amount?.native}
                 logoWidth={16}
               />
             }
@@ -115,7 +117,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             title="Top Offer"
             price={
               <FormatWEth
-                amount={token?.market?.topBid?.value}
+                amount={token?.market?.topBid?.price?.amount?.native}
                 logoWidth={16}
               />
             }
@@ -125,13 +127,13 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           {isOwner && (
             <ListModal
               trigger={
-                token?.market?.floorAsk?.price ? (
+                token?.market?.floorAsk?.price?.amount?.native ? (
                   <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
                     Edit Listing
                   </p>
                 ) : (
                   <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                    {token?.market?.floorAsk?.price
+                    {token?.market?.floorAsk?.price?.amount?.native
                       ? 'Edit Listing'
                       : 'List for Sale'}
                   </div>
@@ -164,7 +166,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               buttonClassName="btn-primary-fill col-span-1"
               data={{
                 collection: collection.data,
-                details,
+                details: details,
               }}
               signer={signer}
               isInTheWrongNetwork={isInTheWrongNetwork}
@@ -177,8 +179,8 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 const newCartTokens = [...cartTokens]
                 const index = newCartTokens.findIndex(
                   (cartToken) =>
-                    cartToken.contract === contract &&
-                    cartToken.tokenId === tokenId
+                    cartToken?.token?.contract === contract &&
+                    cartToken?.token?.tokenId === tokenId
                 )
                 newCartTokens.splice(index, 1)
                 setCartTokens(newCartTokens)
@@ -198,12 +200,18 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   setCartTokens([
                     ...cartTokens,
                     {
-                      tokenId,
-                      contract,
-                      collection: { name: token.token?.collection?.name },
-                      image: token.token?.image,
-                      floorAskPrice: token.market?.floorAsk?.price,
-                      name: token.token?.name,
+                      token: {
+                        tokenId,
+                        contract,
+                        collection: { name: token.token?.collection?.name },
+                        image: token.token?.image,
+                        name: token.token?.name,
+                      },
+                      market: {
+                        floorAsk: {
+                          ...token.market?.floorAsk,
+                        },
+                      },
                     },
                   ])
                 }
@@ -218,7 +226,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           <AcceptOffer
             data={{
               collection: collection.data,
-              details,
+              details: details.data,
             }}
             isInTheWrongNetwork={isInTheWrongNetwork}
             setToast={setToast}

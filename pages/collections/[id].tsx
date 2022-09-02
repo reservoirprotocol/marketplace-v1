@@ -248,8 +248,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     </button>
                     <Sweep
                       collection={collection}
-                      tokens={tokens}
+                      tokens={tokens.data}
                       setToast={setToast}
+                      mutate={tokens.mutate}
                     />
                   </div>
                 </div>

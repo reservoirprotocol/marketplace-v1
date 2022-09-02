@@ -9,7 +9,7 @@ type Collection =
 
 type TokenDetails = NonNullable<
   NonNullable<
-    paths['/tokens/details/v4']['get']['responses']['200']['schema']['tokens']
+    paths['/tokens/v5']['get']['responses']['200']['schema']['tokens']
   >[0]['token']
 >
 

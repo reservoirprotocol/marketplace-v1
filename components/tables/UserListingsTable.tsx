@@ -104,7 +104,7 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
 
                 {/* PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} />
+                  <FormatEth amount={price?.amount?.native} />
                 </td>
 
                 {/* EXPIRATION */}

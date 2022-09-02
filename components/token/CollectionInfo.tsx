@@ -1,20 +1,17 @@
 import useCollection from 'hooks/useCollection'
-import useDetails from 'hooks/useDetails'
 import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import React, { FC } from 'react'
+import { TokenDetails } from 'types/reservoir'
 
 type Props = {
   collection: ReturnType<typeof useCollection>
-  details: ReturnType<typeof useDetails>
+  token?: TokenDetails
 }
 
-const CollectionInfo: FC<Props> = ({ collection, details }) => {
-  const token = details.data?.tokens?.[0]
-
+const CollectionInfo: FC<Props> = ({ collection, token }) => {
   const tokenDescription =
-    token?.token?.description ||
-    collection.data?.collection?.metadata?.description
+    token?.description || collection.data?.collection?.metadata?.description
 
   return (
     <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
@@ -30,7 +27,7 @@ const CollectionInfo: FC<Props> = ({ collection, details }) => {
             className="h-9 w-9 rounded-full"
           />
           <span className="reservoir-h6 font-headings dark:text-white">
-            {token?.token?.collection?.name}
+            {token?.collection?.name}
           </span>
         </a>
       </Link>

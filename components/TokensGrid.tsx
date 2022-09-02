@@ -1,21 +1,20 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import LoadingCard from './LoadingCard'
-import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useInView } from 'react-intersection-observer'
 import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
-import { paths } from '@reservoir0x/reservoir-kit-client'
 import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
-import { atom, useRecoilState, useRecoilValue } from 'recoil'
-import { recoilTokensMap } from './CartMenu'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import BuyNow from 'components/BuyNow'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import FormatCrypto from 'components/FormatCrypto'
 import useTokens from '../hooks/useTokens'
+import recoilCartTokens from 'recoil/cart/atom'
+import { getTokensMap } from 'recoil/cart'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
@@ -28,19 +27,12 @@ type Props = {
   viewRef: ReturnType<typeof useInView>['ref']
 }
 
-type Tokens = NonNullable<ReturnType<typeof useTokens>['tokens']['data']>
-
-export const recoilCartTokens = atom<Tokens>({
-  key: 'cartTokens',
-  default: [],
-})
-
 const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
-  const tokensMap = useRecoilValue(recoilTokensMap)
+  const tokensMap = useRecoilValue(getTokensMap)
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
-  const { data, error, mutate } = tokens
+  const { data, mutate } = tokens
   const account = useAccount()
   const reservoirClient = useReservoirClient()
 
@@ -195,9 +187,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                               const newCartTokens = [...cartTokens]
                               const index = newCartTokens.findIndex(
                                 (newCartToken) =>
-                                  newCartToken?.token?.contract ===
+                                  newCartToken.token.contract ===
                                     token?.contract &&
-                                  newCartToken?.token?.tokenId === token.tokenId
+                                  newCartToken.token.tokenId === token.tokenId
                               )
                               newCartTokens.splice(index, 1)
                               setCartTokens(newCartTokens)
@@ -210,7 +202,19 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                           <button
                             disabled={isInTheWrongNetwork}
                             onClick={() => {
-                              setCartTokens([...cartTokens, tokenData])
+                              if (
+                                tokenData &&
+                                tokenData.token &&
+                                tokenData.market
+                              ) {
+                                setCartTokens([
+                                  ...cartTokens,
+                                  {
+                                    token: tokenData.token,
+                                    market: tokenData.market,
+                                  },
+                                ])
+                              }
                             }}
                             className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
                           >

@@ -15,15 +15,15 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getCollection, getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   data:
     | {
-        details: SWRResponse<Details, any>
+        details: UseTokensReturnType
         collection: Collection | undefined
       }
     | {
@@ -54,7 +54,9 @@ const CancelListing: FC<Props> = ({
 
   // Data from props
   const [_collection, setCollection] = useState<Collection>()
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, setDetails] = useState<
+    UseTokensReturnType | UseTokensReturnType['data']
+  >()
   const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
 
@@ -64,7 +66,9 @@ const CancelListing: FC<Props> = ({
       if ('tokenId' in data) {
         const { contract, tokenId, collectionId } = data
 
-        getDetails(contract, tokenId, setDetails)
+        getDetails(contract, tokenId, (data) => {
+          setDetails(data.tokens)
+        })
         getCollection(collectionId, setCollection)
       }
       // Load data if provided
@@ -76,19 +80,6 @@ const CancelListing: FC<Props> = ({
       }
     }
   }, [data, open])
-
-  // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
-
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
-  }
 
   const handleError = (err: any) => {
     setWaitingTx(false)
@@ -119,7 +110,7 @@ const CancelListing: FC<Props> = ({
   let id: string | undefined = undefined
 
   if ('details' in data) {
-    id = data?.details.data?.tokens?.[0].market?.floorAsk?.id
+    id = data.details.data[0]?.market?.floorAsk?.id
   }
 
   if ('id' in data) {

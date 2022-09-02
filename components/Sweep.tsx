@@ -12,7 +12,6 @@ import Toast from './Toast'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { GlobalContext } from 'context/GlobalState'
-import useTokens from 'hooks/useTokens'
 import { HiX } from 'react-icons/hi'
 import useCollection from 'hooks/useCollection'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -25,7 +24,7 @@ import * as SliderPrimitive from '@radix-ui/react-slider'
 import Link from 'next/link'
 import { Signer } from 'ethers'
 import { FaBroom } from 'react-icons/fa'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -34,12 +33,10 @@ const DISABLE_POWERED_BY_RESERVOIR =
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-
-type Tokens = ReturnType<typeof useTokens>['tokens']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
-  tokens: Tokens
+  tokens: UseTokensReturnType['data']
   collection: ReturnType<typeof useCollection>
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -98,11 +95,13 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [sweepAmount, setSweepAmount] = useState<number>(1)
   const [maxInput, setMaxInput] = useState<number>(0)
   const [sweepTokens, setSweepTokens] = useState<
-    NonNullable<Tokens['data']>[0]['tokens']
+    NonNullable<UseTokensReturnType['data']>
   >([])
   const [sweepTotal, setSweepTotal] = useState<number>(0)
   const [open, setOpen] = useState(false)
-  const [details, _setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, _setDetails] = useState<
+    SWRResponse<UseTokensReturnType, any> | UseTokensReturnType['data']
+  >()
   const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
 
@@ -110,50 +109,42 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
   )
 
-  const { data } = tokens
-
-  // Reference: https://swr.vercel.app/examples/infinite-loading
-  const mappedTokens = data
-    ? data
-        .flatMap(({ tokens }) => tokens)
-        .filter((token) => token?.floorAskPrice)
-    : []
-
   useEffect(() => {
-    const sweepTokens = mappedTokens
-      .filter((value) => value !== undefined)
+    const sweepTokens = tokens
       .filter(
         (token) =>
-          token?.owner?.toLowerCase() !== accountData?.address?.toLowerCase()
+          token !== undefined &&
+          token?.token !== undefined &&
+          token?.market !== undefined &&
+          token?.token?.owner?.toLowerCase() !==
+            accountData?.address?.toLowerCase()
       )
       .slice(0, sweepAmount)
-    // @ts-ignore
+
     setSweepTokens(sweepTokens)
 
-    let total = 0
-
-    sweepTokens.forEach((token) => {
-      if (token?.floorAskPrice) {
-        total += token?.floorAskPrice
+    const total = sweepTokens.reduce((total, token) => {
+      if (token?.market?.floorAsk?.price?.amount?.native) {
+        total += token.market.floorAsk.price.amount.native
       }
-    })
+      return total
+    }, 0)
 
     setSweepTotal(total)
-  }, [sweepAmount, data])
+  }, [sweepAmount, tokens])
 
-  useEffect(() => setMaxInput(mappedTokens.length), [mappedTokens])
+  useEffect(() => setMaxInput(tokens.length), [tokens])
 
   // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+  let token: UseTokensReturnType['data'][0] = { token: undefined }
 
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
+  const fetchedDetails = details as UseTokensReturnType['data']
+  if (fetchedDetails && fetchedDetails?.[0]) {
+    // From fetch
+    token = fetchedDetails[0]
+  } else if (details && 'data' in details && details.data?.data) {
+    // From swr
+    token = details.data?.data[0]
   }
 
   const execute = async (signer: Signer) => {
@@ -170,11 +161,19 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
     }
 
     setWaitingTx(true)
-
+    const tokens = sweepTokens.reduce((tokens, token) => {
+      if (token?.token?.tokenId && token.token.contract) {
+        tokens.push({
+          tokenId: token.token.tokenId,
+          contract: token.token.contract,
+        })
+      }
+      return tokens
+    }, [] as Parameters<typeof reservoirClient.actions.buyToken>['0']['tokens'])
     await reservoirClient.actions
       .buyToken({
         expectedPrice: sweepTotal,
-        tokens: sweepTokens,
+        tokens: tokens,
         signer,
         onProgress: setSteps,
         options: {
@@ -306,20 +305,22 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                     </div>
                     <div className="mb-8 grid h-[215px] grid-cols-5 justify-center gap-2 overflow-y-auto pr-2 md:grid-cols-7">
                       {sweepTokens?.map((token) => (
-                        <div className="relative" key={token.tokenId}>
+                        <div className="relative" key={token?.token?.tokenId}>
                           <img
                             className="absolute top-1 right-1 h-4 w-4"
-                            src={`${API_BASE}/redirect/sources/${token?.sourceDomain}/logo/v2`}
-                            alt={`${token?.source} icon`}
+                            src={`${API_BASE}/redirect/sources/${token?.market?.floorAsk?.source?.domain}/logo/v2`}
+                            alt={`${token?.token?.contract} icon`}
                           />
                           <img
-                            src={optimizeImage(token?.image, 72)}
+                            src={optimizeImage(token?.token?.image, 72)}
                             className="mb-2 h-[72px] w-full rounded-lg object-cover"
-                            alt={`${token?.name} image`}
+                            alt={`${token?.token?.name} image`}
                           />
                           <div className="reservoir-subtitle text-center text-xs dark:text-white md:text-sm">
                             <FormatEth
-                              amount={token?.floorAskPrice}
+                              amount={
+                                token?.market?.floorAsk?.price?.amount?.native
+                              }
                               maximumFractionDigits={4}
                               logoWidth={7}
                             />
