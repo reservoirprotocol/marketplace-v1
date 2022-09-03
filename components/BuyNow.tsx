@@ -5,6 +5,7 @@ import { useSigner } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
 import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
 import { useSwitchNetwork } from 'wagmi'
+import WinterCheckout from './WinterCheckout'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -23,6 +24,7 @@ type Props = {
   signer: ReturnType<typeof useSigner>['data']
   buttonClassName?: string
   mutate?: SWRResponse['mutate']
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const BuyNow: FC<Props> = ({
@@ -31,6 +33,7 @@ const BuyNow: FC<Props> = ({
   signer,
   buttonClassName = 'btn-primary-fill w-full',
   mutate,
+  onClick,
 }) => {
   const { dispatch } = useContext(GlobalContext)
   const { switchNetworkAsync } = useSwitchNetwork({
@@ -52,8 +55,8 @@ const BuyNow: FC<Props> = ({
     forSale =
       data.token.floorAskPrice != null && data.token.floorAskPrice != undefined
   }
-
-  const trigger = <button className={buttonClassName}>Buy Now</button>
+  console.log('HELLO BUY NOW CLICKED4')
+  const trigger = <button className={buttonClassName}>Buy Now POOOP</button>
 
   if (!forSale) {
     return null
@@ -65,32 +68,18 @@ const BuyNow: FC<Props> = ({
     <button
       className={buttonClassName}
       disabled={isInTheWrongNetwork && !switchNetworkAsync}
-      onClick={async () => {
-        if (isInTheWrongNetwork && switchNetworkAsync && CHAIN_ID) {
-          const chain = await switchNetworkAsync(+CHAIN_ID)
-          if (chain.id !== +CHAIN_ID) {
-            return false
-          }
-        }
-
-        if (!signer) {
-          dispatch({ type: 'CONNECT_WALLET', payload: true })
-        }
-      }}
+      onClick={onClick}
     >
       Buy Now
     </button>
   ) : (
-    <BuyModal
-      trigger={trigger}
-      tokenId={tokenId}
-      collectionId={collectionId}
-      onClose={() => {
-        if (mutate) {
-          mutate()
-        }
-      }}
-    />
+    <button
+      className={buttonClassName}
+      disabled={isInTheWrongNetwork && !switchNetworkAsync}
+      onClick={onClick}
+    >
+      Buy Now
+    </button>
   )
 }
 

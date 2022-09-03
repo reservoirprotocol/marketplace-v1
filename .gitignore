@@ -36,3 +36,10 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/modules.xml
+.idea/reservoir-marketplace.iml
+.idea/vcs.xml
+package-lock.json
