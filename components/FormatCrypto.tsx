@@ -1,11 +1,13 @@
 import FormatCurrency from 'components/FormatCurrency'
-import useCoinInfo from 'hooks/useCoinInfo'
 import { FC, ComponentProps } from 'react'
 
 type FormatCryptoProps = {
-  address: string
+  address?: string
   logoWidth?: number
 }
+
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = ComponentProps<typeof FormatCurrency> & FormatCryptoProps
 
@@ -15,14 +17,20 @@ const FormatCrypto: FC<Props> = ({
   address,
   logoWidth = 8,
 }) => {
-  const info = useCoinInfo(address)
+  const logoUrl = `${API_BASE}/redirect/currency/${address}/icon/v1`
 
   return (
     <FormatCurrency
       amount={amount}
       maximumFractionDigits={maximumFractionDigits}
     >
-      {/* <img src={icon} alt="ETH logo" style={{ width: `${logoWidth}px` }} /> */}
+      {address && (
+        <img
+          src={logoUrl}
+          alt="Currency Logo"
+          style={{ width: `${logoWidth}px` }}
+        />
+      )}
     </FormatCurrency>
   )
 }

@@ -3,7 +3,6 @@ import LoadingCard from './LoadingCard'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useInView } from 'react-intersection-observer'
-import FormatEth from './FormatEth'
 import Masonry from 'react-masonry-css'
 import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
@@ -143,7 +142,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     <div className="reservoir-h6">
                       <FormatCrypto
                         amount={token?.floorAsk?.price?.amount?.native}
-                        address={''}
+                        address={token?.floorAsk?.price?.currency?.contract}
                         maximumFractionDigits={2}
                       />
                       {/* <FormatEth amount={token?.floorAskPrice} logoWidth={7} /> */}

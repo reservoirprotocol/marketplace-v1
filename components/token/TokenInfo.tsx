@@ -1,4 +1,3 @@
-import useDetails from 'hooks/useDetails'
 import { truncateAddress } from 'lib/truncateText'
 import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'

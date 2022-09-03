@@ -2,7 +2,6 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
-import FormatEth from 'components/FormatEth'
 import FormatWEth from 'components/FormatWEth'
 import {
   ListModal,
@@ -16,6 +15,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
 import recoilCartTokens, { getTokensMap } from 'recoil/cart'
+import FormatCrypto from 'components/FormatCrypto'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -107,8 +107,9 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               )
             }
             price={
-              <FormatEth
+              <FormatCrypto
                 amount={token?.market?.floorAsk?.price?.amount?.native}
+                address={token?.market?.floorAsk?.price?.currency?.contract}
                 logoWidth={16}
               />
             }
