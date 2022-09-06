@@ -110,16 +110,17 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               <FormatCrypto
                 amount={token?.market?.floorAsk?.price?.amount?.native}
                 address={token?.market?.floorAsk?.price?.currency?.contract}
-                logoWidth={16}
+                logoWidth={30}
               />
             }
           />
           <Price
             title="Top Offer"
             price={
-              <FormatWEth
+              <FormatCrypto
                 amount={token?.market?.topBid?.price?.amount?.native}
-                logoWidth={16}
+                address={token?.market?.topBid?.price?.currency?.contract}
+                logoWidth={30}
               />
             }
           />

@@ -15,7 +15,7 @@ const FormatCrypto: FC<Props> = ({
   amount,
   maximumFractionDigits,
   address,
-  logoWidth = 8,
+  logoWidth = 16,
 }) => {
   const logoUrl = `${API_BASE}/redirect/currency/${address}/icon/v1`
 
