@@ -133,7 +133,6 @@ const UserOffersTable: FC<Props> = ({
                   <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
                     <CancelOffer
                       data={{
-                        collectionId: modal?.collectionId,
                         id,
                         contract,
                         tokenId,

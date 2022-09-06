@@ -1,5 +1,4 @@
 import useAttributes from 'hooks/useAttributes'
-import useCollection from 'hooks/useCollection'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
@@ -19,6 +18,7 @@ import ViewMenu from './ViewMenu'
 import Toast from './Toast'
 import { FiRefreshCcw } from 'react-icons/fi'
 import FormatEth from './FormatEth'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -33,7 +33,7 @@ type Props = {
   collectionId: string | undefined
   fallback: {
     tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
-    collection: paths['/collection/v3']['get']['responses']['200']['schema']
+    collection: paths['/collections/v5']['get']['responses']['200']['schema']
   }
   openSeaApiKey: string | undefined
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -43,7 +43,13 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   const router = useRouter()
   const [refreshLoading, setRefreshLoading] = useState(false)
 
-  const collection = useCollection(fallback.collection, collectionId)
+  const collections = useCollections(
+    { id: collectionId },
+    { fallbackData: fallback.collection }
+  )
+
+  const collection =
+    collections.data && collections.data[0] ? collections.data[0] : undefined
 
   const stats = useCollectionStats(router, collectionId)
 
@@ -63,8 +69,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   }
 
   const tokenCount = stats?.data?.stats?.tokenCount ?? 0
-  const bannerImage = (envBannerImage ||
-    collection?.data?.collection?.metadata?.bannerImageUrl) as string
+  const bannerImage = (envBannerImage || collection?.banner) as string
 
   async function refreshCollection(collectionId: string | undefined) {
     function handleError(message?: string) {
@@ -119,15 +124,12 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   const title = metaTitle ? (
     <title>{metaTitle}</title>
   ) : (
-    <title>{collection.data?.collection?.name} | Reservoir Market</title>
+    <title>{collection?.name} | Reservoir Market</title>
   )
   const description = metaDescription ? (
     <meta name="description" content={metaDescription} />
   ) : (
-    <meta
-      name="description"
-      content={collection.data?.collection?.metadata?.description as string}
-    />
+    <meta name="description" content={collection?.description as string} />
   )
   const image = metaImage ? (
     <>
@@ -207,9 +209,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
             <TokensGrid
               tokens={tokens}
               viewRef={refTokens}
-              collectionImage={
-                collection.data?.collection?.metadata?.imageUrl as string
-              }
+              collectionImage={collection?.image as string}
             />
           )}
         </div>

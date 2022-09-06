@@ -13,7 +13,6 @@ import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { GlobalContext } from 'context/GlobalState'
 import { HiX } from 'react-icons/hi'
-import useCollection from 'hooks/useCollection'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from './FormatEth'
 import AttributesFlex from './AttributesFlex'
@@ -25,6 +24,7 @@ import Link from 'next/link'
 import { Signer } from 'ethers'
 import { FaBroom } from 'react-icons/fa'
 import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
+import { Collection } from 'types/reservoir'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -37,7 +37,7 @@ type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
   tokens: UseTokensReturnType['data']
-  collection: ReturnType<typeof useCollection>
+  collection?: Collection
   mutate?: SWRResponse['mutate'] | SWRInfiniteResponse['mutate']
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
 }
@@ -257,15 +257,12 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
                         <div className="flex items-center gap-4">
                           <img
-                            src={
-                              collection?.data?.collection?.metadata
-                                ?.imageUrl as string
-                            }
+                            src={collection?.image}
                             alt=""
                             className="block h-12 w-12 rounded-full"
                           />
                           <div className="reservoir-h5 dark:text-white">
-                            {collection?.data?.collection?.name}
+                            {collection?.name}
                           </div>
                         </div>
                       </Dialog.Title>

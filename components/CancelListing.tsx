@@ -12,22 +12,19 @@ import ModalCard from './modal/ModalCard'
 import { useSigner } from 'wagmi'
 import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import { getCollection, getDetails } from 'lib/fetch/fetch'
+import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
 type UseTokensReturnType = ReturnType<typeof useTokens>
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   data:
     | {
         details: UseTokensReturnType
-        collection: Collection | undefined
       }
     | {
-        collectionId: string | undefined
         contract?: string | undefined
         tokenId?: string | undefined
         id?: string | undefined
@@ -53,7 +50,6 @@ const CancelListing: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   // Data from props
-  const [_collection, setCollection] = useState<Collection>()
   const [details, setDetails] = useState<
     UseTokensReturnType | UseTokensReturnType['data']
   >()
@@ -64,19 +60,16 @@ const CancelListing: FC<Props> = ({
     if (data && open) {
       // Load data if missing
       if ('tokenId' in data) {
-        const { contract, tokenId, collectionId } = data
+        const { contract, tokenId } = data
 
         getDetails(contract, tokenId, (data) => {
           setDetails(data.tokens)
         })
-        getCollection(collectionId, setCollection)
       }
       // Load data if provided
       if ('details' in data) {
-        const { details, collection } = data
-
+        const { details } = data
         setDetails(details)
-        setCollection(collection)
       }
     }
   }, [data, open])

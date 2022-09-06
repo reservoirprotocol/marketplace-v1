@@ -115,7 +115,6 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
                   <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
                     <CancelListing
                       data={{
-                        collectionId: modal?.collectionId,
                         id,
                         contract,
                         tokenId,

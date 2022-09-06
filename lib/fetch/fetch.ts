@@ -19,23 +19,3 @@ export async function getDetails(
 
   setDetails(json)
 }
-
-export async function getCollection(
-  collectionId: string | undefined,
-  setCollection: Dispatch<any>
-) {
-  const pathname = `${PROXY_API_BASE}/collection/v3`
-
-  let query: paths['/collection/v3']['get']['parameters']['query'] = {
-    id: collectionId,
-  }
-
-  const href = setParams(pathname, query)
-
-  const res = await fetch(href)
-
-  const json =
-    (await res.json()) as paths['/collection/v3']['get']['responses']['200']['schema']
-
-  setCollection(json)
-}

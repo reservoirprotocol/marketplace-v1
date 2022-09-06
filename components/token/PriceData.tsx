@@ -9,13 +9,13 @@ import {
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
-import useCollection from 'hooks/useCollection'
 import React, { FC, ReactNode } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
 import recoilCartTokens, { getTokensMap } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
+import { Collection } from 'types/reservoir'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -25,7 +25,7 @@ const API_BASE =
 
 type Props = {
   details: ReturnType<typeof useTokens>
-  collection: ReturnType<typeof useCollection>
+  collection?: Collection
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
@@ -166,7 +166,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <BuyNow
               buttonClassName="btn-primary-fill col-span-1"
               data={{
-                collection: collection.data,
                 details: details,
               }}
               signer={signer}
@@ -226,7 +225,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           )}
           <AcceptOffer
             data={{
-              collection: collection.data,
               details: details.data,
             }}
             isInTheWrongNetwork={isInTheWrongNetwork}
@@ -238,12 +236,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <TokenOfferModal
               signer={signer}
               data={{
-                collection: collection.data,
                 details,
               }}
               royalties={{
-                bps: collection.data?.collection?.royalties?.bps,
-                recipient: collection.data?.collection?.royalties?.recipient,
+                bps: collection?.royalties?.bps,
+                recipient: collection?.royalties?.recipient,
               }}
               env={{
                 chainId: +CHAIN_ID as ChainId,
@@ -254,7 +251,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
           <CancelOffer
             data={{
-              collection: collection.data,
               details,
             }}
             signer={signer}
@@ -264,7 +260,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           />
           <CancelListing
             data={{
-              collection: collection.data,
               details,
             }}
             signer={signer}

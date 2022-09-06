@@ -19,16 +19,13 @@ import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
 type UseTokensReturnType = ReturnType<typeof useTokens>
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
 
 type Props = {
   data:
     | {
         details: UseTokensReturnType
-        collection: Collection | undefined
       }
     | {
-        collectionId: string | undefined
         contract?: string | undefined
         tokenId?: string | undefined
         id?: string | undefined

@@ -18,7 +18,7 @@ const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  collection: Collection
+  collection?: Collection
 }
 
 const CollectionActivityTable: FC<Props> = ({ collection }) => {
@@ -36,7 +36,7 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
   const { data: salesData } = sales
   const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
   const noSales = !sales.isValidating && flatSalesData.length == 0
-  const collectionImage = collection?.metadata?.imageUrl as string
+  const collectionImage = collection?.image as string
 
   return (
     <>

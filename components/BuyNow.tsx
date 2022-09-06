@@ -8,12 +8,9 @@ import { useSwitchNetwork } from 'wagmi'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
-
 type Props = {
   data: {
     details?: ReturnType<typeof useTokens>
-    collection?: Collection
     token?: ReturnType<typeof useTokens>['data'][0]
   }
   isInTheWrongNetwork: boolean | undefined
