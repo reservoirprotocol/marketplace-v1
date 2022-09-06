@@ -10,25 +10,22 @@ import AcceptOffer from 'components/AcceptOffer'
 import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatWEth from 'components/FormatWEth'
+import FormatCrypto from 'components/FormatCrypto'
+import { SWRInfiniteResponse } from 'swr/infinite'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
-type Props = {
-  data: ReturnType<typeof useUserTokens>
-
-  mutate: () => any
-  isOwner: boolean
-  modal: {
-    accountData: ReturnType<typeof useAccount>
-    collectionId: string | undefined
-    isInTheWrongNetwork: boolean | undefined
-    setToast: (data: ComponentProps<typeof Toast>['data']) => any
-    signer: ReturnType<typeof useSigner>['data']
-  }
+type TokenProps = {
+  token?: NonNullable<
+    NonNullable<ReturnType<typeof useUserTokens>['tokens']['data']>[0]['tokens']
+  >[0]
+  modal: Props['modal']
+  mutate: Props['mutate']
+  isOwner: Props['isOwner']
 }
 
-const Token = ({ token, modal, mutate, isOwner }: any) => {
+const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
   const [isBroken, setIsBroken] = useState(false)
 
   return (
@@ -77,6 +74,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
               <img
                 className="border-border-light dark: relative h-full w-full overflow-hidden rounded-full border object-cover after:absolute after:top-0 after:bottom-0 after:left-0  after:right-0 after:rounded-full after:bg-black after:content-[''] dark:border-[rgba(30,30,30,1)]"
                 src={`https://api.reservoir.tools/redirect/collections/${token?.token?.collection?.id}/image/v1`}
+                alt="Collection Image"
               />
             </div>
             <div className="flex-1 overflow-hidden">
@@ -141,7 +139,7 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
                 {token?.ownership?.floorAskPrice ? 'Edit Listing' : 'List'}
               </p>
             }
-            collectionId={token?.token?.collection.id}
+            collectionId={token?.token?.collection?.id}
             tokenId={token?.token?.tokenId}
             onListingError={(err: any) => {
               if (err?.code === 4001) {
@@ -183,6 +181,20 @@ const Token = ({ token, modal, mutate, isOwner }: any) => {
       )}
     </div>
   )
+}
+
+type Props = {
+  data: ReturnType<typeof useUserTokens>
+
+  mutate: () => any
+  isOwner: boolean
+  modal: {
+    accountData: ReturnType<typeof useAccount>
+    collectionId: string | undefined
+    isInTheWrongNetwork: boolean | undefined
+    setToast: (data: ComponentProps<typeof Toast>['data']) => any
+    signer: ReturnType<typeof useSigner>['data']
+  }
 }
 
 const UserTokensGrid: FC<Props> = ({

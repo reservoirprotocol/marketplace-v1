@@ -134,7 +134,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   mutate={() => {
                     buyPositions.orders.mutate()
                     userTokens.tokens.mutate()
-                    // userActivity.transfers.mutate()
                     listings.mutate()
                   }}
                   isOwner={isOwner}
