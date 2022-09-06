@@ -82,6 +82,7 @@ const StyledThumb = styled(SliderPrimitive.Thumb, {
   backgroundColor: 'white',
   boxShadow: `0 2px 10px ${blackA.blackA7}`,
   borderRadius: 10,
+  cursor: 'pointer',
   '&:hover': { backgroundColor: violet.violet3 },
   '&:focus': { boxShadow: `0 0 0 5px ${blackA.blackA8}` },
 })
@@ -110,16 +111,18 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   )
 
   useEffect(() => {
-    const sweepTokens = tokens
-      .filter(
-        (token) =>
-          token !== undefined &&
-          token?.token !== undefined &&
-          token?.market !== undefined &&
-          token?.token?.owner?.toLowerCase() !==
-            accountData?.address?.toLowerCase()
-      )
-      .slice(0, sweepAmount)
+    const availableTokens = tokens.filter(
+      (token) =>
+        token !== undefined &&
+        token?.token !== undefined &&
+        token?.market?.floorAsk?.price?.amount?.native !== undefined &&
+        token?.market?.floorAsk?.price?.amount?.native !== null &&
+        token?.market?.floorAsk?.price?.currency?.symbol === 'ETH' &&
+        token?.token?.owner?.toLowerCase() !==
+          accountData?.address?.toLowerCase()
+    )
+    setMaxInput(availableTokens.length)
+    const sweepTokens = availableTokens.slice(0, sweepAmount)
 
     setSweepTokens(sweepTokens)
 
@@ -132,8 +135,6 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
 
     setSweepTotal(total)
   }, [sweepAmount, tokens])
-
-  useEffect(() => setMaxInput(tokens.length), [tokens])
 
   // Set the token either from SWR or fetch
   let token: UseTokensReturnType['data'][0] = { token: undefined }
@@ -300,6 +301,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                         className="input-primary-outline w-full px-2 dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900  dark:focus:ring-4 md:w-20"
                       />
                     </div>
+                    <div className="mb-2 text-base font-light text-black dark:text-white">
+                      Sweeping the floor is only available for ETH listings.
+                    </div>
                     <div className="mb-8 grid h-[215px] grid-cols-5 justify-center gap-2 overflow-y-auto pr-2 md:grid-cols-7">
                       {sweepTokens?.map((token) => (
                         <div className="relative" key={token?.token?.tokenId}>
@@ -309,7 +313,10 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                             alt={`${token?.token?.contract} icon`}
                           />
                           <img
-                            src={optimizeImage(token?.token?.image, 72)}
+                            src={optimizeImage(
+                              token?.token?.image || collection?.image,
+                              72
+                            )}
                             className="mb-2 h-[72px] w-full rounded-lg object-cover"
                             alt={`${token?.token?.name} image`}
                           />
