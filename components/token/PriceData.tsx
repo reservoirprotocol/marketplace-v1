@@ -16,6 +16,7 @@ import { setToast } from './setToast'
 import recoilCartTokens, { getTokensMap } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { Collection } from 'types/reservoir'
+import { formatNumber } from 'lib/numbers'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -113,6 +114,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 logoWidth={30}
               />
             }
+            usdPrice={token?.market?.floorAsk?.price?.amount?.usd}
           />
           <Price
             title="Top Offer"
@@ -123,6 +125,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 logoWidth={30}
               />
             }
+            usdPrice={token?.market?.topBid?.price?.amount?.usd}
           />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -276,16 +279,18 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
 export default PriceData
 
-const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
-  title,
-  price,
-  source,
-}) => (
+const Price: FC<{
+  title: string
+  price: ReactNode
+  source?: ReactNode
+  usdPrice?: number
+}> = ({ title, price, usdPrice, source }) => (
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
       <div className="reservoir-h5 font-headings dark:text-white">{title}</div>
       {source}
     </div>
     <div className="reservoir-h3 font-headings dark:text-white">{price}</div>
+    <div className="text-xs text-neutral-600">{formatNumber(usdPrice)}</div>
   </div>
 )
