@@ -13,7 +13,7 @@ const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Collections = paths['/collections/v5']['get']['responses']['200']['schema']
 
-export default function useCollections(
+export default function usePaginatedCollections(
   router: NextRouter,
   fallback?: Collections
 ) {
