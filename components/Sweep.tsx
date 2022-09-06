@@ -25,6 +25,8 @@ import { Signer } from 'ethers'
 import { FaBroom } from 'react-icons/fa'
 import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
+import useCoinConversion from 'hooks/useCoinConversion'
+import { formatDollar } from 'lib/numbers'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -109,6 +111,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const isInTheWrongNetwork = Boolean(
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
   )
+
+  const usdConversion = useCoinConversion('usd', 'ETH')
 
   useEffect(() => {
     const availableTokens = tokens.filter(
@@ -336,12 +340,17 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       <div className="reservoir-h6 text-center dark:text-white">
                         Total Price
                       </div>
-                      <div className="reservoir-h5 text-center dark:text-white">
-                        <FormatEth
-                          amount={sweepTotal}
-                          maximumFractionDigits={4}
-                          logoWidth={7}
-                        />
+                      <div>
+                        <div className="reservoir-h5 text-right dark:text-white">
+                          <FormatEth
+                            amount={sweepTotal}
+                            maximumFractionDigits={4}
+                            logoWidth={7}
+                          />
+                        </div>
+                        <div className="text-sm font-normal text-neutral-600 dark:text-neutral-300">
+                          {formatDollar(usdConversion * sweepTotal)}
+                        </div>
                       </div>
                     </div>
                     <button

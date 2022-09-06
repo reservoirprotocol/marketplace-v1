@@ -151,7 +151,7 @@ const UseListingsTableRow = ({
           address={price?.currency?.contract}
         />
         {usdPrice && (
-          <div className="text-xs text-neutral-600">
+          <div className="text-sm text-neutral-600 dark:text-neutral-300">
             {formatDollar(usdPrice)}
           </div>
         )}
