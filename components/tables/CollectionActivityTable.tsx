@@ -12,7 +12,7 @@ import { FiExternalLink } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import FormatCrypto from 'components/FormatCrypto'
-import { formatNumber } from 'lib/numbers'
+import { formatDollar } from 'lib/numbers'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const API_BASE =
@@ -233,7 +233,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           />
           {sale.price?.amount?.usd && (
             <div className="text-xs text-neutral-600">
-              {formatNumber(sale.price?.amount?.usd)}
+              {formatDollar(sale.price?.amount?.usd)}
             </div>
           )}
         </td>
@@ -282,7 +282,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         />
         {sale.price?.amount?.usd && (
           <div className="text-xs text-neutral-600">
-            {formatNumber(sale.price?.amount?.usd)}
+            {formatDollar(sale.price?.amount?.usd)}
           </div>
         )}
       </td>

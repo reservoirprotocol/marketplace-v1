@@ -9,7 +9,7 @@ import CancelListing from 'components/CancelListing'
 import useUserAsks from 'hooks/useUserAsks'
 import FormatCrypto from 'components/FormatCrypto'
 import useCoinConversion from 'hooks/useCoinConversion'
-import { formatNumber } from 'lib/numbers'
+import { formatDollar } from 'lib/numbers'
 
 type Props = {
   data: ReturnType<typeof useUserAsks>
@@ -89,7 +89,7 @@ const UseListingsTableRow = ({
   ref,
 }: UserListingsTableRowProps) => {
   const usdConversion = useCoinConversion(
-    'usd',
+    listing?.price?.currency?.symbol ? 'usd' : undefined,
     listing?.price?.currency?.symbol
   )
 
@@ -152,7 +152,7 @@ const UseListingsTableRow = ({
         />
         {usdPrice && (
           <div className="text-xs text-neutral-600">
-            {formatNumber(usdPrice)}
+            {formatDollar(usdPrice)}
           </div>
         )}
       </td>

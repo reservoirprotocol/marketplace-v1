@@ -12,6 +12,7 @@ export default function useCoinConversion(
     fetcher,
     {
       refreshInterval: 60 * 1000 * 5, //5m Interval
+      revalidateOnFocus: false,
     }
   )
 

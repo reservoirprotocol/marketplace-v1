@@ -16,7 +16,8 @@ import { setToast } from './setToast'
 import recoilCartTokens, { getTokensMap } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { Collection } from 'types/reservoir'
-import { formatNumber } from 'lib/numbers'
+import { formatDollar, formatNumber } from 'lib/numbers'
+import useCoinConversion from 'hooks/useCoinConversion'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -38,6 +39,24 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const reservoirClient = useReservoirClient()
 
   const token = details.data ? details.data[0] : undefined
+
+  const topBidUsdConversion = useCoinConversion(
+    token?.market?.topBid?.price?.currency?.symbol ? 'usd' : undefined,
+    token?.market?.topBid?.price?.currency?.symbol
+  )
+
+  const floorAskUsdConversion = useCoinConversion(
+    token?.market?.floorAsk?.price?.currency?.symbol ? 'usd' : undefined,
+    token?.market?.floorAsk?.price?.currency?.symbol
+  )
+
+  const topBidUsdPrice = token?.market?.topBid?.price?.amount?.native
+    ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.native
+    : null
+
+  const floorAskUsdPrice = token?.market?.floorAsk?.price?.amount?.native
+    ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.native
+    : null
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
   const sourceDomain = token?.market?.floorAsk?.source?.domain as
@@ -114,7 +133,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 logoWidth={30}
               />
             }
-            usdPrice={token?.market?.floorAsk?.price?.amount?.usd}
+            usdPrice={floorAskUsdPrice}
           />
           <Price
             title="Top Offer"
@@ -125,7 +144,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 logoWidth={30}
               />
             }
-            usdPrice={token?.market?.topBid?.price?.amount?.usd}
+            usdPrice={topBidUsdPrice}
           />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -283,14 +302,16 @@ const Price: FC<{
   title: string
   price: ReactNode
   source?: ReactNode
-  usdPrice?: number
+  usdPrice: number | null
 }> = ({ title, price, usdPrice, source }) => (
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
       <div className="reservoir-h5 font-headings dark:text-white">{title}</div>
       {source}
     </div>
-    <div className="reservoir-h3 font-headings dark:text-white">{price}</div>
-    <div className="text-xs text-neutral-600">{formatNumber(usdPrice)}</div>
+    <div className="reservoir-h3 font-headings dark:text-white">
+      {price}
+      <div className="text-xs text-neutral-600">{formatDollar(usdPrice)}</div>
+    </div>
   </div>
 )

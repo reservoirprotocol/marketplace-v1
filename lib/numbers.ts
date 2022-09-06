@@ -1,10 +1,14 @@
 import { utils } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 
-const { format: formatDollar } = new Intl.NumberFormat('en-US', {
+const { format: formatUsdCurrency } = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
 })
+
+function formatDollar(price?: number | null) {
+  return price !== undefined && price !== null ? formatUsdCurrency(price) : '-'
+}
 
 function formatNumber(
   amount: number | null | undefined,
