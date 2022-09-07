@@ -48,6 +48,9 @@ const PriceData: FC<Props> = ({ details, collection }) => {
     token?.market?.topBid?.price?.currency?.symbol
   )
 
+  // Disabling the rules of hooks here due to erroneous error message,
+  //  the linter is likely confused due to two custom hook calls of the same name
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const floorAskUsdConversion = useCoinConversion(
     token?.market?.floorAsk?.price?.currency?.symbol ? 'usd' : undefined,
     token?.market?.floorAsk?.price?.currency?.symbol
