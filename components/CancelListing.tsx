@@ -1,4 +1,4 @@
-import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
 import React, {
   ComponentProps,
   FC,

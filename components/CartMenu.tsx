@@ -9,7 +9,12 @@ import { Signer } from 'ethers'
 import { setToast } from './token/setToast'
 import { useAccount, useBalance, useSigner } from 'wagmi'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
-import cartTokensAtom, { getCartCount, getCartTotalPrice } from 'recoil/cart'
+import cartTokensAtom, {
+  getCartCount,
+  getCartCurrency,
+  getCartTotalPrice,
+} from 'recoil/cart'
+import FormatCrypto from 'components/FormatCrypto'
 
 const slideDown = keyframes({
   '0%': { opacity: 0, transform: 'translateY(-10px)' },
@@ -32,6 +37,7 @@ const StyledContent = styled(Popover.Content, {
 const CartMenu: FC = () => {
   const cartCount = useRecoilValue(getCartCount)
   const cartTotal = useRecoilValue(getCartTotalPrice)
+  const cartCurrency = useRecoilValue(getCartCurrency)
   const [cartTokens, setCartTokens] = useRecoilState(cartTokensAtom)
   const [_open, setOpen] = useState(false)
   const [_steps, setSteps] = useState<Execute['steps']>()
@@ -41,6 +47,7 @@ const CartMenu: FC = () => {
   const reservoirClient = useReservoirClient()
   const { data: balance } = useBalance({
     addressOrName: address,
+    token: cartCurrency?.symbol !== 'ETH' ? cartCurrency?.contract : undefined,
   })
 
   const execute = async (signer: Signer) => {
@@ -151,7 +158,7 @@ const CartMenu: FC = () => {
                 >
                   <div className="flex items-center gap-2">
                     <div className="h-14 w-14 overflow-hidden rounded-[4px]">
-                      <img src={image} alt="" />
+                      <img src={image || collection?.image} alt="" />
                     </div>
                     <div>
                       <div className="reservoir-subtitle">
@@ -161,9 +168,9 @@ const CartMenu: FC = () => {
                         {collection?.name}
                       </div>
                       <div className="reservoir-h6">
-                        <FormatEth
+                        <FormatCrypto
                           amount={market.floorAsk?.price?.amount?.native}
-                          logoWidth={7}
+                          address={market.floorAsk?.price?.currency?.contract}
                         />
                       </div>
                     </div>
@@ -186,7 +193,7 @@ const CartMenu: FC = () => {
         <div className="mb-4 flex justify-between">
           <div className="reservoir-h6">You Pay</div>
           <div className="reservoir-h6">
-            <FormatEth amount={cartTotal} logoWidth={7} />
+            <FormatCrypto amount={cartTotal} address={cartCurrency?.contract} />
           </div>
         </div>
         {balance?.formatted && +balance.formatted < cartTotal && (
@@ -194,7 +201,10 @@ const CartMenu: FC = () => {
             <span className="reservoir-headings text-[#FF6369]">
               Insufficient balance{' '}
             </span>
-            {<FormatEth amount={+balance.formatted}></FormatEth>}
+            <FormatCrypto
+              amount={+balance.formatted}
+              address={cartCurrency?.contract}
+            />
           </div>
         )}
         <button

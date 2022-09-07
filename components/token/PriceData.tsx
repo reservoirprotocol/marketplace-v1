@@ -2,22 +2,22 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
-import FormatWEth from 'components/FormatWEth'
 import {
   ListModal,
   useReservoirClient,
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
-import recoilCartTokens, { getTokensMap } from 'recoil/cart'
+import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { Collection } from 'types/reservoir'
-import { formatDollar, formatNumber } from 'lib/numbers'
+import { formatDollar } from 'lib/numbers'
 import useCoinConversion from 'hooks/useCoinConversion'
+import SwapCartModal from 'components/SwapCartModal'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -33,10 +33,13 @@ type Props = {
 const PriceData: FC<Props> = ({ details, collection }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
+  const cartCurrency = useRecoilValue(getCartCurrency)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
   const reservoirClient = useReservoirClient()
+  const [clearCartOpen, setClearCartOpen] = useState(false)
+  const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
 
   const token = details.data ? details.data[0] : undefined
 
@@ -219,24 +222,28 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <button
               disabled={!token?.market?.floorAsk?.price}
               onClick={() => {
-                if (tokenId && contract) {
-                  setCartTokens([
-                    ...cartTokens,
-                    {
-                      token: {
-                        tokenId,
-                        contract,
-                        collection: { name: token.token?.collection?.name },
-                        image: token.token?.image,
-                        name: token.token?.name,
+                if (token?.token && token.market) {
+                  if (
+                    !cartCurrency ||
+                    token.market.floorAsk?.price?.currency?.contract ===
+                      cartCurrency?.contract
+                  ) {
+                    setCartTokens([
+                      ...cartTokens,
+                      {
+                        token: token.token,
+                        market: token.market,
                       },
-                      market: {
-                        floorAsk: {
-                          ...token.market?.floorAsk,
-                        },
+                    ])
+                  } else {
+                    setCartToSwap([
+                      {
+                        token: token.token,
+                        market: token.market,
                       },
-                    },
-                  ])
+                    ])
+                    setClearCartOpen(true)
+                  }
                 }
               }}
               className="outline-none"
@@ -292,6 +299,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           />
         </div>
       </article>
+      <SwapCartModal
+        open={clearCartOpen}
+        setOpen={setClearCartOpen}
+        cart={cartToSwap}
+      />
     </div>
   )
 }

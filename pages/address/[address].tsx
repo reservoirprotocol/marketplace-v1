@@ -78,7 +78,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
 
   let tabs = [
     { name: 'Portfolio', id: 'portfolio' },
-    // { name: 'History', id: 'history' },
   ]
 
   if (isOwner) {
@@ -86,7 +85,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers', id: 'buying' },
       { name: 'Listings', id: 'selling' },
-      // { name: 'History', id: 'history' },
     ]
   }
 
@@ -147,7 +145,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 />
               </div>
             </Tabs.Content>
-            <Tabs.Content value="history"></Tabs.Content>
             {isOwner && (
               <>
                 <Tabs.Content value="buying">
