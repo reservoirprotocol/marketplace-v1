@@ -7,6 +7,7 @@ import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import useUserBids from 'hooks/useUserBids'
+import FormatCrypto from 'components/FormatCrypto'
 
 type Props = {
   data: ReturnType<typeof useUserBids>
@@ -122,7 +123,10 @@ const UserOffersTable: FC<Props> = ({
 
                 {/* OFFER */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} />
+                  <FormatCrypto
+                    amount={price?.amount?.decimal}
+                    address={price?.currency?.contract}
+                  />
                 </td>
 
                 {/* EXPIRATION */}
@@ -204,7 +208,7 @@ function processPosition(
         : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
     id: position?.id,
     collectionName: position?.metadata?.data?.collectionName,
-    price: position?.price?.amount?.native,
+    price: position?.price,
   }
 
   return { ...data, href }

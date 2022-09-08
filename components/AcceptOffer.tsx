@@ -98,7 +98,7 @@ const AcceptOffer: FC<Props> = ({
   } else if (details && 'data' in details && details.data?.data?.[0]) {
     // From SWR
     token = details.data.data[0]
-    topBuyValueExists = !token?.market?.topBid?.price?.amount?.native
+    topBuyValueExists = !token?.market?.topBid?.price?.amount?.decimal
   }
 
   const handleError = (err: any) => {
@@ -153,7 +153,7 @@ const AcceptOffer: FC<Props> = ({
     }
   }
 
-  const expectedPrice = token?.market?.topBid?.price?.amount?.native
+  const expectedPrice = token?.market?.topBid?.price?.amount?.decimal
 
   const execute = async (
     token: Parameters<ReservoirClientActions['acceptOffer']>['0']['token']

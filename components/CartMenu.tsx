@@ -169,7 +169,7 @@ const CartMenu: FC = () => {
                       </div>
                       <div className="reservoir-h6">
                         <FormatCrypto
-                          amount={market.floorAsk?.price?.amount?.native}
+                          amount={market.floorAsk?.price?.amount?.decimal}
                           address={market.floorAsk?.price?.currency?.contract}
                         />
                       </div>

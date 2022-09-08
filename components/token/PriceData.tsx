@@ -56,12 +56,12 @@ const PriceData: FC<Props> = ({ details, collection }) => {
     token?.market?.floorAsk?.price?.currency?.symbol
   )
 
-  const topBidUsdPrice = token?.market?.topBid?.price?.amount?.native
-    ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.native
+  const topBidUsdPrice = token?.market?.topBid?.price?.amount?.decimal
+    ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.decimal
     : null
 
-  const floorAskUsdPrice = token?.market?.floorAsk?.price?.amount?.native
-    ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.native
+  const floorAskUsdPrice = token?.market?.floorAsk?.price?.amount?.decimal
+    ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
     : null
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
@@ -134,7 +134,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             }
             price={
               <FormatCrypto
-                amount={token?.market?.floorAsk?.price?.amount?.native}
+                amount={token?.market?.floorAsk?.price?.amount?.decimal}
                 address={token?.market?.floorAsk?.price?.currency?.contract}
                 logoWidth={30}
               />
@@ -145,7 +145,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             title="Top Offer"
             price={
               <FormatCrypto
-                amount={token?.market?.topBid?.price?.amount?.native}
+                amount={token?.market?.topBid?.price?.amount?.decimal}
                 address={token?.market?.topBid?.price?.currency?.contract}
                 logoWidth={30}
               />
@@ -157,13 +157,13 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           {isOwner && (
             <ListModal
               trigger={
-                token?.market?.floorAsk?.price?.amount?.native ? (
+                token?.market?.floorAsk?.price?.amount?.decimal ? (
                   <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
                     Edit Listing
                   </p>
                 ) : (
                   <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                    {token?.market?.floorAsk?.price?.amount?.native
+                    {token?.market?.floorAsk?.price?.amount?.decimal
                       ? 'Edit Listing'
                       : 'List for Sale'}
                   </div>

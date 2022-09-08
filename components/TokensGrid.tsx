@@ -154,7 +154,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
                       <div className="reservoir-h6">
                         <FormatCrypto
-                          amount={token?.floorAsk?.price?.amount?.native}
+                          amount={token?.floorAsk?.price?.amount?.decimal}
                           address={token?.floorAsk?.price?.currency?.contract}
                           maximumFractionDigits={2}
                         />
@@ -176,8 +176,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                         )}
                       </div>
                     </div>
-                    {token.floorAsk?.price?.amount?.native != null &&
-                      token.floorAsk?.price?.amount?.native != undefined &&
+                    {token.floorAsk?.price?.amount?.decimal != null &&
+                      token.floorAsk?.price?.amount?.decimal != undefined &&
                       !isOwner && (
                         <div className="grid grid-cols-2">
                           <BuyNow

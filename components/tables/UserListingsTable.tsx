@@ -94,8 +94,8 @@ const UseListingsTableRow = ({
   )
 
   const usdPrice =
-    usdConversion && listing?.price?.amount?.native
-      ? usdConversion * listing?.price?.amount?.native
+    usdConversion && listing?.price?.amount?.decimal
+      ? usdConversion * listing?.price?.amount?.decimal
       : null
 
   const {
@@ -147,7 +147,7 @@ const UseListingsTableRow = ({
       {/* PRICE */}
       <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
         <FormatCrypto
-          amount={price?.amount?.native}
+          amount={price?.amount?.decimal}
           address={price?.currency?.contract}
         />
         {usdPrice && (

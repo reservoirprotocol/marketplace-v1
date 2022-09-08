@@ -228,7 +228,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         </td>
         <td>
           <FormatCrypto
-            amount={sale.price?.amount?.native}
+            amount={sale.price?.amount?.decimal}
             address={sale.price?.currency?.contract}
           />
           {sale.price?.amount?.usd && (
@@ -277,7 +277,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       </td>
       <td>
         <FormatCrypto
-          amount={sale.price?.amount?.native}
+          amount={sale.price?.amount?.decimal}
           address={sale.price?.currency?.contract}
         />
         {sale.price?.amount?.usd && (
