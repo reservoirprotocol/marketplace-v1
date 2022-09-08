@@ -40,7 +40,10 @@ type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
 
 const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { data: signer } = useSigner()
-  const collectionResponse = useCollections({ id: collectionId })
+  const collectionResponse = useCollections({
+    id: collectionId,
+    includeTopBid: true,
+  })
   const collection =
     collectionResponse.data && collectionResponse.data[0]
       ? collectionResponse.data[0]
@@ -96,7 +99,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const statsObj = {
     count: Number(collection?.tokenCount ?? 0),
     topOffer: collection?.topBid?.price?.amount?.native,
-    floor: collection?.floorAsk?.price?.amount?.decimal,
+    floor: collection?.floorAsk?.price?.amount?.native,
     allTime: collection?.volume?.allTime,
     volumeChange: collection?.volumeChange?.['1day'],
     floorChange: collection?.floorSaleChange?.['1day'],
