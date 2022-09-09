@@ -7,7 +7,7 @@ import { paths } from '@reservoir0x/reservoir-kit-client'
  */
 export function sortAttributes(
   values: NonNullable<
-    paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']['attributes']
   >[0]['values']
 ) {
   if (!values) return

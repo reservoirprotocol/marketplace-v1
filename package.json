@@ -1,13 +1,14 @@
 {
   "name": "sample-marketplace",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3002",
     "prettier": "prettier --write .",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@0xlol/sdk": "^0.0.160",
     "@react-hookz/web": "^14.2.2",
     "@reservoir0x/reservoir-kit-ui": "0.1.14",
     "next": "12.1.7-canary.10",

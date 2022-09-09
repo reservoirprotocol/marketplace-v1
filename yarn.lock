@@ -2,6 +2,15 @@
 # yarn lockfile v1
 
 
+"@0xlol/sdk@^0.0.160":
+  version "0.0.160"
+  resolved "https://registry.yarnpkg.com/@0xlol/sdk/-/sdk-0.0.160.tgz#01b17fa803cb435d3c0ab1972128ad695fd24bbc"
+  integrity sha512-BU7XLGF+LCrfZFybNO16ozlubN4fwYAPwXtySx/4t1Yn2YJYdm28+0wz+sdmgUlS97hfekTLORCyqcKdyZgqog==
+  dependencies:
+    axios "^0.27.2"
+    ethers "^5.6.8"
+    merkletreejs "0.2.31"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.16.7":
   version "7.16.7"
   resolved "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.16.7.tgz"

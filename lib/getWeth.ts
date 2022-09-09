@@ -1,6 +1,26 @@
 import { Provider } from '@ethersproject/abstract-provider'
 import { BigNumber, Signer } from 'ethers'
-import { Common } from '@reservoir0x/sdk'
+import { addToConfig, Common } from '@0xlol/sdk'
+
+
+const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
+const usdc = process.env.NEXT_PUBLIC_USDC;
+const wrappedNative = process.env.NEXT_PUBLIC_WRAPPED_NATIVE;
+const router = process.env.NEXT_PUBLIC_ROUTER;
+const seaportConduitController = process.env.NEXT_PUBLIC_SEAPORT_CONDUIT_CONTROLLER;
+const seaportExchange = process.env.NEXT_PUBLIC_SEAPORT_EXCHANGE;
+
+if (chainId && usdc && wrappedNative && router && seaportConduitController && seaportExchange) {
+  addToConfig({
+    chainId,
+    usdc,
+    wrappedNative,
+    router,
+    seaportConduitController,
+    seaportExchange,
+  });
+}
+
 
 /**
  * Get a wETH contract instance and the signers wETH balance
