@@ -11,7 +11,6 @@ import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatWEth from 'components/FormatWEth'
 import FormatCrypto from 'components/FormatCrypto'
-import { SWRInfiniteResponse } from 'swr/infinite'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -93,28 +92,29 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   Listing
                 </div>
                 <div className="text-md reservoir-h6 dark:text-white">
-                  <FormatEth
-                    amount={token?.ownership?.floorAskPrice}
-                    logoWidth={7}
+                  <FormatCrypto
+                    amount={token.ownership.floorAskPrice.amount?.decimal}
+                    address={token.ownership.floorAskPrice.currency?.contract}
                   />
                 </div>
               </div>
             )}
-            {token?.token?.topBid?.value && (
+            {token?.token?.topBid?.price?.amount?.decimal && (
               <div>
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
                   Top Offer
                 </div>
                 <div className="text-md reservoir-h6 dark:text-white">
-                  <FormatWEth
-                    amount={token?.token?.topBid?.value}
-                    logoWidth={7}
+                  <FormatCrypto
+                    amount={token?.token?.topBid?.price?.amount.decimal}
+                    address={token?.token?.topBid?.price?.currency?.contract}
                   />
                 </div>
               </div>
             )}
             {!(
-              token?.ownership?.floorAskPrice && token?.token?.topBid?.value
+              token?.ownership?.floorAskPrice &&
+              token?.token?.topBid?.price?.amount?.decimal
             ) && (
               <div>
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -123,7 +123,6 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                 <div className="reservoir-h6 dark:text-white">
                   <FormatEth
                     amount={token?.token?.collection?.floorAskPrice || 0}
-                    logoWidth={7}
                   />
                 </div>
               </div>
