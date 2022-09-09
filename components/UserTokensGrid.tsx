@@ -159,7 +159,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
               mutate && mutate()
             }}
           />
-          {token?.token?.topBid?.value && (
+          {token?.token?.topBid?.price?.amount?.decimal && (
             <AcceptOffer
               data={{
                 contract: token?.token?.contract,
