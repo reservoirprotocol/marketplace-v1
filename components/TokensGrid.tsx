@@ -157,20 +157,6 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                       <FormatEth amount={token?.floorAskPrice} logoWidth={7} />
                     </div>
                     <div className="text-right">
-                      {token?.source && (
-                        <img
-                          className="h-6 w-6"
-                          src={
-                            reservoirClient?.source &&
-                            token?.sourceDomain &&
-                            reservoirClient?.source === token.sourceDomain &&
-                            SOURCE_ICON
-                              ? SOURCE_ICON
-                              : `${API_BASE}/redirect/sources/${token?.sourceDomain}/logo/v2`
-                          }
-                          alt=""
-                        />
-                      )}
                     </div>
                   </div>
                   {token.floorAskPrice != null &&
