@@ -16,6 +16,7 @@ type Props = {
 const Listings: FC<Props> = ({ token }) => {
   const { data: listings } = useListings({
     token,
+    sortBy: 'price',
   })
 
   if (!listings || listings.length === 0) return null
