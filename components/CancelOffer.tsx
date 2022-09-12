@@ -16,19 +16,16 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
   data:
     | {
-        details: SWRResponse<Details, any>
-        collection: Collection | undefined
+        details: UseTokensReturnType
       }
     | {
-        collectionId: string | undefined
         contract?: string | undefined
         tokenId?: string | undefined
         id?: string | undefined
@@ -53,7 +50,9 @@ const CancelOffer: FC<Props> = ({
   const [open, setOpen] = useState(false)
 
   // Data from props
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, setDetails] = useState<
+    UseTokensReturnType | UseTokensReturnType['data']
+  >()
   const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
 
@@ -63,7 +62,9 @@ const CancelOffer: FC<Props> = ({
       if ('tokenId' in data) {
         const { contract, tokenId } = data
 
-        getDetails(contract, tokenId, setDetails)
+        getDetails(contract, tokenId, (data) => {
+          setDetails(data.tokens)
+        })
       }
       // Load data if provided
       if ('details' in data) {
@@ -75,16 +76,15 @@ const CancelOffer: FC<Props> = ({
   }, [data, open])
 
   // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+  let token: UseTokensReturnType['data'][0] = { token: undefined }
 
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
+  const fetchedDetails = details as UseTokensReturnType['data']
+  if (fetchedDetails && fetchedDetails?.[0]) {
+    // From fetch
+    token = fetchedDetails[0]
+  } else if (details && 'data' in details && details.data[0]) {
+    // From swr
+    token = details.data[0]
   }
 
   const handleError = (err: any) => {
@@ -116,7 +116,7 @@ const CancelOffer: FC<Props> = ({
   let id: string | undefined = undefined
 
   if ('details' in data) {
-    id = data.details.data?.tokens?.[0]?.market?.topBid?.id
+    id = data.details.data[0]?.market?.topBid?.id
   }
 
   if ('id' in data) {

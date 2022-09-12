@@ -1355,17 +1355,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.2"
 
-"@reservoir0x/reservoir-kit-client@0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.13.tgz#60e8f196bd1afc0cbf19c454f777383050385399"
-  integrity sha512-rNns7Ihje3OpqrAcGtlASGYTWFRDULvCeay7oo5lMXDF/h5dxjlhAi4p2Bgk0qfoQE0728GpqaGoMERubEUHwQ==
+"@reservoir0x/reservoir-kit-client@0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.0.18.tgz#438ce88425656a24e6239be954c21fb8b0456a88"
+  integrity sha512-zeRl8svYGE5DsUIxwsj6C+dm+fq3Rz9HbA5WdE+B8oWqLeSVvzPq6G7bR4VAHUlQN+QmiBNTMNsJ8e/EhaiPWg==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.1.14.tgz#8f1e688c8a2f41a0961d22f7ede4b10b20920c9c"
-  integrity sha512-kAD5ljU2mLjWEbbsRaPgACh4ObK/ZFPy6p76iNqiPkAQ7LUvnIWIdW8RPPHOKMeoXSwOWhsuAQToIANVdJi10w==
+"@reservoir0x/reservoir-kit-ui@0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.3.5.tgz#ecdef139196abafd01ff59b155f37b6496a19030"
+  integrity sha512-5BmL+ZZ2IGu+vg4erOth+kaW8PbV178MKtIZopDW/AvNJbOsEYb1FBRoWwT5amSkbTwWoAJEf+B4qXQvcMLBmA==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1376,10 +1376,12 @@
     "@radix-ui/react-select" "1.0.1-rc.2"
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
-    "@reservoir0x/reservoir-kit-client" "0.0.13"
+    "@reservoir0x/reservoir-kit-client" "0.0.18"
     "@stitches/react" "^1.2.8"
     dayjs "^1.11.4"
+    flatpickr "^4.6.13"
     framer-motion "^6.4.2"
+    react-flatpickr "^3.10.13"
     swr "^1.3.0"
 
 "@reservoir0x/sdk@^0.0.123":
@@ -3228,6 +3230,11 @@ flat-cache@^3.0.4:
     flatted "^3.1.0"
     rimraf "^3.0.2"
 
+flatpickr@^4.6.13, flatpickr@^4.6.2:
+  version "4.6.13"
+  resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.6.13.tgz#8a029548187fd6e0d670908471e43abe9ad18d94"
+  integrity sha512-97PMG/aywoYpB4IvbvUJi0RQi8vearvU0oov1WW3k0WZPBMrTQVqekSX5CjSG/M4Q3i6A/0FKXC7RyAoAUUSPw==
+
 flatted@^3.1.0:
   version "3.2.4"
   resolved "https://registry.npmjs.org/flatted/-/flatted-3.2.4.tgz"
@@ -4670,7 +4677,7 @@ prettier@2.5.1:
   resolved "https://registry.npmjs.org/prettier/-/prettier-2.5.1.tgz"
   integrity sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==
 
-prop-types@^15.0.0, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -4751,6 +4758,14 @@ react-dom@17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
+
+react-flatpickr@^3.10.13:
+  version "3.10.13"
+  resolved "https://registry.yarnpkg.com/react-flatpickr/-/react-flatpickr-3.10.13.tgz#5b9d8f35f84e43f342fb0f0334b78a8dcd7d67c4"
+  integrity sha512-4m+K1K8jhvRFI8J/AHmQfA5hLALzhebEtEK8mLevXjX24MV3u502crzBn+EGFIBOfNUtrL5PId9FsGwgtuz/og==
+  dependencies:
+    flatpickr "^4.6.2"
+    prop-types "^15.5.10"
 
 react-hook-form@^7.28.1:
   version "7.28.1"

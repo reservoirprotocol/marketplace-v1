@@ -19,16 +19,14 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
   data:
     | {
-        details: SWRResponse<Details, any>
-        collection: Collection | undefined
+        details: UseTokensReturnType['data']
       }
     | {
         contract: string | undefined
@@ -55,14 +53,18 @@ const AcceptOffer: FC<Props> = ({
   const [open, setOpen] = useState(false)
   const { dispatch } = useContext(GlobalContext)
 
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, setDetails] = useState<
+    SWRResponse<UseTokensReturnType, any> | UseTokensReturnType['data']
+  >()
   const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     if (data && open && !details) {
       // Load data if missing
       if ('tokenId' in data) {
-        getDetails(data.contract, data.tokenId, setDetails)
+        getDetails(data.contract, data.tokenId, (data) => {
+          setDetails(data['tokens'])
+        })
       }
       // Load data if provided
       if ('details' in data) {
@@ -80,24 +82,23 @@ const AcceptOffer: FC<Props> = ({
   }
 
   if ('details' in data) {
-    tokenId = data.details.data?.tokens?.[0].token?.tokenId
-    contract = data.details.data?.tokens?.[0].token?.contract
+    tokenId = data.details?.[0]?.token?.tokenId
+    contract = data.details?.[0]?.token?.contract
   }
 
   // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+  let token: NonNullable<UseTokensReturnType['data']>[0] = { token: undefined }
 
   let topBuyValueExists = false
 
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
-    topBuyValueExists = !token?.market?.topBid?.value
+  const fetchedDetails = details as UseTokensReturnType['data']
+  if (fetchedDetails && fetchedDetails[0]) {
+    // From fetch
+    token = fetchedDetails[0]
+  } else if (details && 'data' in details && details.data?.data?.[0]) {
+    // From SWR
+    token = details.data.data[0]
+    topBuyValueExists = !token?.market?.topBid?.price?.amount?.decimal
   }
 
   const handleError = (err: any) => {
@@ -152,7 +153,7 @@ const AcceptOffer: FC<Props> = ({
     }
   }
 
-  const expectedPrice = token?.market?.topBid?.value
+  const expectedPrice = token?.market?.topBid?.price?.amount?.decimal
 
   const execute = async (
     token: Parameters<ReservoirClientActions['acceptOffer']>['0']['token']

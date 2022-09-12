@@ -14,7 +14,6 @@ type Props = {
   loading: boolean
   onCloseCallback?: () => any
   actionButton?: ReactNode
-  onContinue?: () => any
   steps?: Execute['steps']
   title: string
 }
@@ -24,7 +23,6 @@ const ModalCard: FC<Props> = ({
   children,
   loading,
   onCloseCallback,
-  onContinue,
   steps,
   title,
 }) => {

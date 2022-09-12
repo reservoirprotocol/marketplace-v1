@@ -7,7 +7,6 @@ import CollectionOfferModal from 'components/CollectionOfferModal'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import useCollectionStats from 'hooks/useCollectionStats'
-import useCollection from 'hooks/useCollection'
 import { useRouter } from 'next/router'
 import useTokens from 'hooks/useTokens'
 import HeroSocialLinks from 'components/hero/HeroSocialLinks'
@@ -16,6 +15,7 @@ import HeroStats from 'components/hero/HeroStats'
 import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
 import { useMediaQuery } from '@react-hookz/web'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -30,8 +30,8 @@ const setToast = (data: ComponentProps<typeof Toast>['data']) => {
 type Props = {
   collectionId: string | undefined
   fallback: {
-    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
-    collection: paths['/collection/v3']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
+    collection: paths['/collections/v5']['get']['responses']['200']['schema']
   }
 }
 
@@ -40,7 +40,14 @@ type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
 
 const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { data: signer } = useSigner()
-  const collection = useCollection(fallback.collection, collectionId)
+  const collectionResponse = useCollections({
+    id: collectionId,
+    includeTopBid: true,
+  })
+  const collection =
+    collectionResponse.data && collectionResponse.data[0]
+      ? collectionResponse.data[0]
+      : undefined
   const router = useRouter()
   const stats = useCollectionStats(router, collectionId)
   const [attribute, setAttribute] = useState<
@@ -89,19 +96,16 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     openSeaApiKey: OPENSEA_API_KEY,
   }
 
-  const floor = collection.data?.collection?.floorAsk
-
   const statsObj = {
-    count: Number(collection.data?.collection?.tokenCount ?? 0),
-    topOffer: collection.data?.collection?.topBid?.value,
-    floor: floor?.price,
-    allTime: collection.data?.collection?.volume?.allTime,
-    volumeChange: collection.data?.collection?.volumeChange?.['1day'],
-    floorChange: collection.data?.collection?.floorSaleChange?.['1day'],
+    count: Number(collection?.tokenCount ?? 0),
+    topOffer: collection?.topBid?.price?.amount?.native,
+    floor: collection?.floorAsk?.price?.amount?.native,
+    allTime: collection?.volume?.allTime,
+    volumeChange: collection?.volumeChange?.['1day'],
+    floorChange: collection?.floorSaleChange?.['1day'],
   }
 
-  const bannerImage =
-    envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
+  const bannerImage = envBannerImage || collection?.banner
 
   //Split on commas outside of backticks (`)
   let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
@@ -119,41 +123,39 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   }
 
   const description =
-    envDescription ||
-    (collection?.data?.collection?.metadata?.description as string | undefined)
+    envDescription || (collection?.description as string | undefined)
   const header = {
     banner: bannerImage as string,
-    image: collection?.data?.collection?.metadata?.imageUrl as string,
-    name: collection?.data?.collection?.name,
+    image: collection?.image as string,
+    name: collection?.name,
     description: description,
     shortDescription: description ? description.slice(0, 150) : description,
   }
 
   const isSupported =
-    !!collection.data?.collection?.tokenSetId &&
-    !!collection.data?.collection?.collectionBidSupported
+    !!collection?.tokenSetId && !!collection?.collectionBidSupported
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
   const royalties: CollectionModalProps['royalties'] = {
-    bps: collection.data?.collection?.royalties?.bps,
-    recipient: collection.data?.collection?.royalties?.recipient,
+    bps: collection?.royalties?.bps,
+    recipient: collection?.royalties?.recipient,
   }
 
   const collectionData: CollectionModalProps['data'] = {
     collection: {
-      id: collection?.data?.collection?.id,
+      id: collection?.id,
       image: '',
-      name: collection?.data?.collection?.name,
+      name: collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
   }
 
   const attributeData: AttibuteModalProps['data'] = {
     collection: {
-      id: collection.data?.collection?.id,
-      image: collection?.data?.collection?.metadata?.imageUrl as string,
-      name: collection?.data?.collection?.name,
+      id: collection?.id,
+      image: collection?.image as string,
+      name: collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
     attribute,
@@ -181,7 +183,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
           </h1>
-          <HeroSocialLinks collection={collection?.data?.collection} />
+          <HeroSocialLinks collection={collection} />
           <HeroStats stats={statsObj} />
           {header.description && (
             <>
@@ -242,8 +244,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             {isSmallDevice && (
               <Sweep
                 collection={collection}
-                tokens={tokens}
+                tokens={tokens.data}
                 setToast={setToast}
+                mutate={tokens.mutate}
               />
             )}
           </div>

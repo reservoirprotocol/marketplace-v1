@@ -24,7 +24,7 @@ import Toast from './Toast'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
 const ORDER_KIND = process.env.NEXT_PUBLIC_ORDER_KIND
 
@@ -35,8 +35,7 @@ const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
   env: {
@@ -44,11 +43,9 @@ type Props = {
   }
   data:
     | {
-        details: SWRResponse<Details, any>
-        collection: Collection | undefined
+        details: UseTokensReturnType
       }
     | {
-        collectionId: string | undefined
         contract: string | undefined
         tokenId: string | undefined
       }
@@ -131,7 +128,9 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
   }, [offerPrice])
 
   // Data from props
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, setDetails] = useState<
+    UseTokensReturnType | UseTokensReturnType['data']
+  >()
 
   useEffect(() => {
     if (data && open) {
@@ -139,28 +138,30 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
       if ('tokenId' in data) {
         const { contract, tokenId } = data
 
-        getDetails(contract, tokenId, setDetails)
+        getDetails(contract, tokenId, (data) => {
+          setDetails(data.tokens)
+        })
       }
       // Load data if provided
       if ('details' in data) {
-        const { details } = data
-
-        setDetails(details)
+        const {
+          details: { data: tokens },
+        } = data
+        setDetails(tokens)
       }
     }
   }, [data, open])
 
   // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
+  let token: UseTokensReturnType['data'][0] = { token: undefined }
 
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
+  const fetchedDetails = details as UseTokensReturnType['data']
+  if (fetchedDetails && fetchedDetails?.[0]) {
+    // From fetch
+    token = fetchedDetails[0]
+  } else if (details && 'data' in details && details.data[0]) {
+    // From swr
+    token = details.data[0]
   }
 
   const handleError = (err: any) => {
@@ -200,7 +201,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
     const bid: Parameters<ReservoirClientActions['placeBid']>['0']['bids'][0] =
       {
-        token: `${token.token?.contract}:${token.token?.tokenId}`,
+        token: `${token?.token?.contract}:${token?.token?.tokenId}`,
         weiPrice: calculations.total.toString(),
         orderbook: 'reservoir',
         expirationTime: expirationValue,

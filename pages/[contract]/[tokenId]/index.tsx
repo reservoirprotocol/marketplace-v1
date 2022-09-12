@@ -4,8 +4,6 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
 import Head from 'next/head'
-import useDetails from 'hooks/useDetails'
-import useCollection from 'hooks/useCollection'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import Listings from 'components/token/Listings'
 import TokenInfo from 'components/token/TokenInfo'
@@ -15,7 +13,11 @@ import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
 import { useState } from 'react'
 import { TokenDetails } from 'types/reservoir'
-import { useTokenOpenseaBanned } from '@reservoir0x/reservoir-kit-ui'
+import {
+  useTokenOpenseaBanned,
+  useTokens,
+  useCollections,
+} from '@reservoir0x/reservoir-kit-ui'
 
 // Environment variables
 // For more information about these variables
@@ -72,19 +74,26 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     router.query?.tokenId?.toString() || ''
   )
 
-  const collection = useCollection(undefined, collectionId)
+  const collectionResponse = useCollections({ id: collectionId })
+  const collection =
+    collectionResponse.data && collectionResponse.data[0]
+      ? collectionResponse.data[0]
+      : undefined
 
-  const details = useDetails({
+  const tokenData = useTokens({
     tokens: [
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
     includeTopBid: true,
   })
 
-  if (details.error) {
+  const tokens = tokenData.data
+
+  if (tokenData.error) {
     return <div>There was an error</div>
   }
-  const token = details.data?.tokens?.[0] || { token: tokenDetails }
+
+  const token = tokens?.[0] || { token: tokenDetails }
   const tokenName = `${token?.token?.name || `#${token?.token?.tokenId}`}`
 
   // META
@@ -95,9 +104,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
 
   const description = META_DESCRIPTION
     ? metadata.description(META_DESCRIPTION)
-    : metadata.description(
-        `${collection.data?.collection?.metadata?.description as string}`
-      )
+    : metadata.description(`${collection?.description as string}`)
 
   const image = META_OG_IMAGE
     ? metadata.image(META_OG_IMAGE)
@@ -114,29 +121,26 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       </Head>
       <div className="col-span-full content-start space-y-4 px-2 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
         <div className="mb-4">
-          <TokenMedia details={details} tokenOpenSea={tokenOpenSea} />
+          <TokenMedia token={token.token} tokenOpenSea={tokenOpenSea} />
         </div>
         <div className="hidden space-y-4 md:block">
-          <CollectionInfo collection={collection} details={details} />
-          <TokenInfo details={details} />
+          <CollectionInfo collection={collection} token={token.token} />
+          <TokenInfo token={token.token} />
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
-        <Owner details={details} bannedOnOpenSea={bannedOnOpenSea} />
-        <PriceData details={details} collection={collection} />
-        <TokenAttributes
-          token={token?.token}
-          collection={collection.data?.collection}
-        />
-        {details.data?.tokens?.[0]?.token?.kind === 'erc1155' && (
+        <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
+        <PriceData details={tokenData} collection={collection} />
+        <TokenAttributes token={token?.token} collection={collection} />
+        {token.token?.kind === 'erc1155' && (
           <Listings
             token={`${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`}
           />
         )}
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
-        <CollectionInfo collection={collection} details={details} />
-        <TokenInfo details={details} />
+        <CollectionInfo collection={collection} token={token.token} />
+        <TokenInfo token={token.token} />
       </div>
     </Layout>
   )
@@ -178,9 +182,9 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL('/tokens/details/v4', RESERVOIR_API_BASE)
+  const url = new URL('/tokens/v5', RESERVOIR_API_BASE)
 
-  const query: paths['/tokens/details/v4']['get']['parameters']['query'] = {
+  const query: paths['/tokens/v5']['get']['parameters']['query'] = {
     tokens: [`${contract}:${tokenId}`],
   }
 
@@ -188,10 +192,10 @@ export const getStaticProps: GetStaticProps<{
 
   const res = await fetch(href, options)
 
-  const tokenDetails =
-    (await res.json()) as paths['/tokens/details/v4']['get']['responses']['200']['schema']
+  const data =
+    (await res.json()) as paths['/tokens/v5']['get']['responses']['200']['schema']
 
-  const collectionId = tokenDetails.tokens?.[0]?.token?.collection?.id
+  const collectionId = data.tokens?.[0]?.token?.collection?.id
 
   if (!collectionId) {
     return {
@@ -200,6 +204,6 @@ export const getStaticProps: GetStaticProps<{
   }
 
   return {
-    props: { collectionId, tokenDetails: tokenDetails?.tokens?.[0]?.token },
+    props: { collectionId, tokenDetails: data?.tokens?.[0]?.token },
   }
 }

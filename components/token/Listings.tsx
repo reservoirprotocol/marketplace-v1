@@ -1,5 +1,5 @@
 import { useListings } from '@reservoir0x/reservoir-kit-ui'
-import FormatEth from 'components/FormatEth'
+import FormatCrypto from '../FormatCrypto'
 import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
@@ -52,7 +52,10 @@ const Listings: FC<Props> = ({ token }) => {
                   >
                     {/* UNIT PRICE */}
                     <td className="reservoir-h6 whitespace-nowrap px-6 py-4 font-headings dark:text-white">
-                      <FormatEth amount={unitPrice} />
+                      <FormatCrypto
+                        amount={unitPrice?.amount?.decimal}
+                        address={unitPrice?.currency?.contract}
+                      />
                     </td>
 
                     {/* TIME */}

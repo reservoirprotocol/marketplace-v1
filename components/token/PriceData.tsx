@@ -2,18 +2,22 @@ import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
-import { recoilTokensMap } from 'components/CartMenu'
-import FormatEth from 'components/FormatEth'
-import FormatWEth from 'components/FormatWEth'
-import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import {
+  ListModal,
+  useReservoirClient,
+  useTokens,
+} from '@reservoir0x/reservoir-kit-ui'
 import TokenOfferModal from 'components/TokenOfferModal'
-import { recoilCartTokens } from 'components/TokensGrid'
-import useCollection from 'hooks/useCollection'
-import useDetails from 'hooks/useDetails'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
+import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
+import FormatCrypto from 'components/FormatCrypto'
+import { Collection } from 'types/reservoir'
+import { formatDollar } from 'lib/numbers'
+import useCoinConversion from 'hooks/useCoinConversion'
+import SwapCartModal from 'components/SwapCartModal'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -22,19 +26,43 @@ const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  details: ReturnType<typeof useDetails>
-  collection: ReturnType<typeof useCollection>
+  details: ReturnType<typeof useTokens>
+  collection?: Collection
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
-  const tokensMap = useRecoilValue(recoilTokensMap)
+  const tokensMap = useRecoilValue(getTokensMap)
+  const cartCurrency = useRecoilValue(getCartCurrency)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
   const reservoirClient = useReservoirClient()
+  const [clearCartOpen, setClearCartOpen] = useState(false)
+  const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
 
-  const token = details.data?.tokens?.[0]
+  const token = details.data ? details.data[0] : undefined
+
+  const topBidUsdConversion = useCoinConversion(
+    token?.market?.topBid?.price?.currency?.symbol ? 'usd' : undefined,
+    token?.market?.topBid?.price?.currency?.symbol
+  )
+
+  // Disabling the rules of hooks here due to erroneous error message,
+  //  the linter is likely confused due to two custom hook calls of the same name
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const floorAskUsdConversion = useCoinConversion(
+    token?.market?.floorAsk?.price?.currency?.symbol ? 'usd' : undefined,
+    token?.market?.floorAsk?.price?.currency?.symbol
+  )
+
+  const topBidUsdPrice = token?.market?.topBid?.price?.amount?.decimal
+    ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.decimal
+    : null
+
+  const floorAskUsdPrice = token?.market?.floorAsk?.price?.amount?.decimal
+    ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
+    : null
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
   const sourceDomain = token?.market?.floorAsk?.source?.domain as
@@ -105,33 +133,37 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               )
             }
             price={
-              <FormatEth
-                amount={token?.market?.floorAsk?.price}
-                logoWidth={16}
+              <FormatCrypto
+                amount={token?.market?.floorAsk?.price?.amount?.decimal}
+                address={token?.market?.floorAsk?.price?.currency?.contract}
+                logoWidth={30}
               />
             }
+            usdPrice={floorAskUsdPrice}
           />
           <Price
             title="Top Offer"
             price={
-              <FormatWEth
-                amount={token?.market?.topBid?.value}
-                logoWidth={16}
+              <FormatCrypto
+                amount={token?.market?.topBid?.price?.amount?.decimal}
+                address={token?.market?.topBid?.price?.currency?.contract}
+                logoWidth={30}
               />
             }
+            usdPrice={topBidUsdPrice}
           />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {isOwner && (
             <ListModal
               trigger={
-                token?.market?.floorAsk?.price ? (
+                token?.market?.floorAsk?.price?.amount?.decimal ? (
                   <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
                     Edit Listing
                   </p>
                 ) : (
                   <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                    {token?.market?.floorAsk?.price
+                    {token?.market?.floorAsk?.price?.amount?.decimal
                       ? 'Edit Listing'
                       : 'List for Sale'}
                   </div>
@@ -163,8 +195,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <BuyNow
               buttonClassName="btn-primary-fill col-span-1"
               data={{
-                collection: collection.data,
-                details,
+                details: details,
               }}
               signer={signer}
               isInTheWrongNetwork={isInTheWrongNetwork}
@@ -177,8 +208,8 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 const newCartTokens = [...cartTokens]
                 const index = newCartTokens.findIndex(
                   (cartToken) =>
-                    cartToken.contract === contract &&
-                    cartToken.tokenId === tokenId
+                    cartToken?.token?.contract === contract &&
+                    cartToken?.token?.tokenId === tokenId
                 )
                 newCartTokens.splice(index, 1)
                 setCartTokens(newCartTokens)
@@ -194,18 +225,28 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <button
               disabled={!token?.market?.floorAsk?.price}
               onClick={() => {
-                if (tokenId && contract) {
-                  setCartTokens([
-                    ...cartTokens,
-                    {
-                      tokenId,
-                      contract,
-                      collection: { name: token.token?.collection?.name },
-                      image: token.token?.image,
-                      floorAskPrice: token.market?.floorAsk?.price,
-                      name: token.token?.name,
-                    },
-                  ])
+                if (token?.token && token.market) {
+                  if (
+                    !cartCurrency ||
+                    token.market.floorAsk?.price?.currency?.contract ===
+                      cartCurrency?.contract
+                  ) {
+                    setCartTokens([
+                      ...cartTokens,
+                      {
+                        token: token.token,
+                        market: token.market,
+                      },
+                    ])
+                  } else {
+                    setCartToSwap([
+                      {
+                        token: token.token,
+                        market: token.market,
+                      },
+                    ])
+                    setClearCartOpen(true)
+                  }
                 }
               }}
               className="outline-none"
@@ -217,8 +258,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           )}
           <AcceptOffer
             data={{
-              collection: collection.data,
-              details,
+              details: details.data,
             }}
             isInTheWrongNetwork={isInTheWrongNetwork}
             setToast={setToast}
@@ -229,12 +269,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             <TokenOfferModal
               signer={signer}
               data={{
-                collection: collection.data,
                 details,
               }}
               royalties={{
-                bps: collection.data?.collection?.royalties?.bps,
-                recipient: collection.data?.collection?.royalties?.recipient,
+                bps: collection?.royalties?.bps,
+                recipient: collection?.royalties?.recipient,
               }}
               env={{
                 chainId: +CHAIN_ID as ChainId,
@@ -245,7 +284,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
           <CancelOffer
             data={{
-              collection: collection.data,
               details,
             }}
             signer={signer}
@@ -255,7 +293,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           />
           <CancelListing
             data={{
-              collection: collection.data,
               details,
             }}
             signer={signer}
@@ -265,22 +302,33 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           />
         </div>
       </article>
+      <SwapCartModal
+        open={clearCartOpen}
+        setOpen={setClearCartOpen}
+        cart={cartToSwap}
+      />
     </div>
   )
 }
 
 export default PriceData
 
-const Price: FC<{ title: string; price: ReactNode; source?: ReactNode }> = ({
-  title,
-  price,
-  source,
-}) => (
+const Price: FC<{
+  title: string
+  price: ReactNode
+  source?: ReactNode
+  usdPrice: number | null
+}> = ({ title, price, usdPrice, source }) => (
   <div className="flex flex-col space-y-5">
     <div className="flex-grow">
       <div className="reservoir-h5 font-headings dark:text-white">{title}</div>
       {source}
     </div>
-    <div className="reservoir-h3 font-headings dark:text-white">{price}</div>
+    <div className="reservoir-h3 font-headings dark:text-white">
+      {price}
+      <div className="text-sm text-neutral-600 dark:text-neutral-300">
+        {formatDollar(usdPrice)}
+      </div>
+    </div>
   </div>
 )

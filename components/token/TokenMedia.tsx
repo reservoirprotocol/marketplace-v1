@@ -1,19 +1,18 @@
-import useDetails from 'hooks/useDetails'
+import { useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { optimizeImage } from 'lib/optmizeImage'
 import Script from 'next/script'
 import { FC } from 'react'
+import { TokenDetails } from 'types/reservoir'
 
 type Props = {
-  details: ReturnType<typeof useDetails>
+  token?: TokenDetails
   tokenOpenSea: {
     animation_url: string | null
     extension: string | null
   }
 }
 
-const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
-  const token = details.data?.tokens?.[0]
-
+const TokenMedia: FC<Props> = ({ token, tokenOpenSea }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <Script
@@ -27,12 +26,12 @@ const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
       {tokenOpenSea?.extension === null ? (
         <img
           className="w-full rounded-2xl"
-          src={optimizeImage(token?.token?.image, 533)}
+          src={optimizeImage(token?.image, 533)}
         />
       ) : (
         <Media
           tokenOpenSea={tokenOpenSea}
-          tokenImage={optimizeImage(token?.token?.image, 533)}
+          tokenImage={optimizeImage(token?.image, 533)}
         />
       )}
     </div>
