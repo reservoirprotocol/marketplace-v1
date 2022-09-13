@@ -321,7 +321,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 
   if (COLLECTION && (COMMUNITY || COLLECTION_SET_ID)) {
-    const url = new URL(`/search/collections/v1`, RESERVOIR_API_BASE)
+    const url = new URL(`${RESERVOIR_API_BASE}/search/collections/v1`)
 
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
       { limit: 20 }
@@ -390,7 +390,7 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-  const collectionUrl = new URL('/collections/v5', RESERVOIR_API_BASE)
+  const collectionUrl = new URL(`${RESERVOIR_API_BASE}/collections/v5`)
 
   let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] =
     {
@@ -406,7 +406,7 @@ export const getStaticProps: GetStaticProps<{
     (await collectionRes.json()) as Props['fallback']['collection']
 
   // TOKENS
-  const tokensUrl = new URL('/tokens/v5', RESERVOIR_API_BASE)
+  const tokensUrl = new URL(`${RESERVOIR_API_BASE}/tokens/v5`)
 
   let tokensQuery: paths['/tokens/v5']['get']['parameters']['query'] = {
     collection: id,
