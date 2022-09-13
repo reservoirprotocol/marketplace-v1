@@ -60,8 +60,23 @@ const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
+//extending allChains by Gnosis Chain
+const allChainsExtended = [...allChains, {
+  id: 100,
+  name: 'Gnosis',
+  nativeCurrency: {
+    name: 'xDai',
+    symbol: 'xDAI',
+    decimals: 18,
+  },
+  rpcUrls: { default: 'https://rpc.ankr.com/gnosis' },
+  testnet: false,
+  network: 'gnosis',
+}];
+
+
 // Set up chains
-const { chains, provider } = configureChains(allChains, [
+const { chains, provider } = configureChains(allChainsExtended, [
   alchemyProvider({ apiKey: alchemyId }),
   publicProvider(),
 ])
