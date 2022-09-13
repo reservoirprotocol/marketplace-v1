@@ -59,8 +59,7 @@ const ExploreTable = ({
               </Link>
             </td>
             <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
-            <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
-            {/* <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td> */}
+            <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
             <td className="pr-3">
               <FormatEth
                 amount={attribute?.floorAskPrices?.[0]}

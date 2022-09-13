@@ -102,7 +102,7 @@ export default Home
 
 export const getStaticProps: GetStaticProps<{
   fallback: {
-    collections: paths['/collections/v4']['get']['responses']['200']['schema']
+    collections: paths['/collections/v5']['get']['responses']['200']['schema']
   }
 }> = async () => {
   const options: RequestInit | undefined = {}
@@ -113,9 +113,9 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL('/collections/v4', RESERVOIR_API_BASE)
+  const url = new URL('/collections/v5', RESERVOIR_API_BASE)
 
-  let query: paths['/collections/v4']['get']['parameters']['query'] = {
+  let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
     sortBy: '7DayVolume',
   }

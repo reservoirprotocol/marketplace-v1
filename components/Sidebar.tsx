@@ -12,10 +12,10 @@ type Props = {
   attributes: SWRResponse<
     paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']
   >
-  setTokensSize: SWRInfiniteResponse['setSize']
+  refreshData: () => void
 }
 
-const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
+const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
   const router = useRouter()
 
   return (
@@ -92,7 +92,7 @@ const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
           <Accordion.Content>
             <AttributeSelector
               attribute={attribute}
-              setTokensSize={setTokensSize}
+              refreshData={refreshData}
             />
           </Accordion.Content>
         </Accordion.Item>

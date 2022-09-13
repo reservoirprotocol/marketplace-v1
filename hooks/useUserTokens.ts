@@ -11,7 +11,7 @@ const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Tokens =
-  paths['/users/{user}/tokens/v3']['get']['responses']['200']['schema']
+  paths['/users/{user}/tokens/v4']['get']['responses']['200']['schema']
 
 export default function useUserTokens(
   user: string | undefined,
@@ -19,7 +19,7 @@ export default function useUserTokens(
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/users/${user}/tokens/v3`
+  const pathname = `${PROXY_API_BASE}/users/${user}/tokens/v4`
 
   const tokens = useSWRInfinite<Tokens>(
     (index, previousPageData) =>
@@ -55,7 +55,7 @@ const getKey: InfiniteKeyLoader = (
     proxyApi: string | undefined
   },
   index: number,
-  previousPageData: paths['/users/{user}/tokens/v3']['get']['responses']['200']['schema']
+  previousPageData: paths['/users/{user}/tokens/v4']['get']['responses']['200']['schema']
 ) => {
   const { pathname, proxyApi } = custom
   if (!proxyApi) {
@@ -68,7 +68,7 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && previousPageData?.tokens?.length === 0) return null
 
-  let query: paths['/users/{user}/tokens/v3']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v4']['get']['parameters']['query'] = {
     limit: 20,
     offset: index * 20,
     includeTopBid: true,

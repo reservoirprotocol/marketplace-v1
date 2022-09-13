@@ -11,12 +11,12 @@ type Props = {
   attribute: NonNullable<
     paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']['attributes']
   >[number]
-  setTokensSize: SWRInfiniteResponse['setSize']
+  refreshData: () => void
 }
 
 const AttributeSelector: FC<Props> = ({
   attribute: { key, values },
-  setTokensSize,
+  refreshData,
 }) => {
   const [searchedValues, setsearchedValues] = useState(values || [])
   const [query, setQuery] = useState('')
@@ -66,7 +66,7 @@ const AttributeSelector: FC<Props> = ({
               value={value}
               attribute={key}
               key={`${value}${index}`}
-              setTokensSize={setTokensSize}
+              refreshData={refreshData}
             >
               <span className="reservoir-body dark:text-white">{value}</span>
               <span className="reservoir-body dark:text-white">{count}</span>

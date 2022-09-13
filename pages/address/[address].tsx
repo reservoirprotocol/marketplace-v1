@@ -76,17 +76,13 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
 
-  let tabs = [
-    { name: 'Portfolio', id: 'portfolio' },
-    // { name: 'History', id: 'history' },
-  ]
+  let tabs = [{ name: 'Portfolio', id: 'portfolio' }]
 
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers', id: 'buying' },
       { name: 'Listings', id: 'selling' },
-      // { name: 'History', id: 'history' },
     ]
   }
 
@@ -134,7 +130,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   mutate={() => {
                     buyPositions.orders.mutate()
                     userTokens.tokens.mutate()
-                    // userActivity.transfers.mutate()
                     listings.mutate()
                   }}
                   isOwner={isOwner}
@@ -148,7 +143,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 />
               </div>
             </Tabs.Content>
-            <Tabs.Content value="history"></Tabs.Content>
             {isOwner && (
               <>
                 <Tabs.Content value="buying">
@@ -206,7 +200,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
   fallback: {
-    tokens: paths['/users/{user}/tokens/v3']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v4']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
@@ -219,7 +213,7 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`/users/${address}/tokens/v3`, RESERVOIR_API_BASE)
+  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v4`)
 
   let query: paths['/users/{user}/tokens/v3']['get']['parameters']['query'] = {
     limit: 20,
