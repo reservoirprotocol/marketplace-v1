@@ -36,6 +36,7 @@ const getKey: (
   let query: SalesGetRequest['parameters']['query'] = {
     limit: 20,
     collection: collectionId || '',
+    includeTokenMetadata: true,
   }
 
   if (
