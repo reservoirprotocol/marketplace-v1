@@ -1,9 +1,9 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
 import { paths } from '@reservoir0x/reservoir-kit-client'
-import { useSigner } from 'wagmi'
+import { BidModal } from '@reservoir0x/reservoir-kit-ui'
+import { useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
-import CollectionOfferModal from 'components/CollectionOfferModal'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import useCollectionStats from 'hooks/useCollectionStats'
@@ -19,7 +19,6 @@ import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const ENV_COLLECTION_DESCRIPTIONS =
   process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
@@ -35,7 +34,6 @@ type Props = {
   }
 }
 
-type CollectionModalProps = ComponentProps<typeof CollectionOfferModal>
 type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
 
 const Hero: FC<Props> = ({ fallback, collectionId }) => {
@@ -60,6 +58,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
   const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
+  const { chain: activeChain } = useNetwork()
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -91,10 +90,11 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     throw 'A Chain id is required'
   }
 
-  const env: CollectionModalProps['env'] = {
+  const env: AttibuteModalProps['env'] = {
     chainId: +CHAIN_ID as ChainId,
-    openSeaApiKey: OPENSEA_API_KEY,
   }
+
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   const statsObj = {
     count: Number(collection?.tokenCount ?? 0),
@@ -137,18 +137,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
-  const royalties: CollectionModalProps['royalties'] = {
+  const royalties: AttibuteModalProps['royalties'] = {
     bps: collection?.royalties?.bps,
     recipient: collection?.royalties?.recipient,
-  }
-
-  const collectionData: CollectionModalProps['data'] = {
-    collection: {
-      id: collection?.id,
-      image: '',
-      name: collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
   }
 
   const attributeData: AttibuteModalProps['data'] = {
@@ -231,14 +222,40 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ) : (
-                <CollectionOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={collectionData}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
+                <BidModal
+                  collectionId={collection?.id}
+                  trigger={
+                    <button
+                      disabled={isInTheWrongNetwork}
+                      className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    >
+                      Make a Collection Offer
+                    </button>
+                  }
+                  onBidComplete={() => {
+                    stats.mutate()
+                    tokens.mutate()
+                  }}
+                  onBidError={(error) => {
+                    if (error) {
+                      if (
+                        (error as any).cause.code &&
+                        (error as any).cause.code === 4001
+                      ) {
+                        setToast({
+                          kind: 'error',
+                          message: 'You have canceled the transaction.',
+                          title: 'User canceled transaction',
+                        })
+                        return
+                      }
+                    }
+                    setToast({
+                      kind: 'error',
+                      message: 'The transaction was not completed.',
+                      title: 'Could not place bid',
+                    })
+                  }}
                 />
               ))}
             {isSmallDevice && (

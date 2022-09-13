@@ -193,7 +193,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 height={48}
               />
               <span className="reservoir-h6 ml-2 truncate dark:text-white">
-                {sale.token?.name}
+                {sale.token?.name || `#${sale.token?.tokenId}`}
               </span>
             </a>
           </Link>

@@ -10,16 +10,47 @@ function formatDollar(price?: number | null) {
   return price !== undefined && price !== null ? formatUsdCurrency(price) : '-'
 }
 
+<<<<<<< HEAD
+=======
+const trauncateFractionAndFormat = (
+  parts: Intl.NumberFormatPart[],
+  digits: number
+) => {
+  return parts
+    .map(({ type, value }) => {
+      if (type !== 'fraction' || !value || value.length < digits) {
+        return value
+      }
+
+      let formattedValue = ''
+      for (
+        let idx = 0, counter = 0;
+        idx < value.length && counter < digits;
+        idx++
+      ) {
+        if (value[idx] !== '0') {
+          counter++
+        }
+        formattedValue += value[idx]
+      }
+      return formattedValue
+    })
+    .reduce((string, part) => string + part)
+}
+
+>>>>>>> feature/rk-bid-modal
 function formatNumber(
   amount: number | null | undefined,
   maximumFractionDigits: number = 2
 ) {
-  const { format } = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: maximumFractionDigits,
-  })
   if (!amount) {
     return '-'
   }
+
+  const { format } = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: maximumFractionDigits,
+  })
+
   return format(amount)
 }
 
@@ -35,23 +66,21 @@ function formatBN(
 ) {
   if (typeof amount === 'undefined' || amount === null) return '-'
 
-  let value = ''
+  const amountToFormat =
+    typeof amount === 'number' ? amount : +utils.formatEther(amount)
 
-  if (typeof amount === 'number') {
-    value = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits,
-      notation: 'compact',
-      compactDisplay: 'short',
-    }).format(amount)
+  const parts = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 20,
+    notation: 'compact',
+    compactDisplay: 'short',
+  }).formatToParts(amountToFormat)
+
+  if (parts && parts.length > 0) {
+    return trauncateFractionAndFormat(parts, maximumFractionDigits)
   } else {
-    value = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits,
-      notation: 'compact',
-      compactDisplay: 'short',
-    }).format(+utils.formatEther(amount))
+    return amount
   }
-
-  return value
 }
 
 export { formatDollar, formatBN, formatNumber }

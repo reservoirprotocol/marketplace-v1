@@ -11,7 +11,7 @@ import { useMediaQuery } from '@react-hookz/web'
 
 type Props = {
   fallback: {
-    collections: paths['/collections/v4']['get']['responses']['200']['schema']
+    collections: paths['/collections/v5']['get']['responses']['200']['schema']
   }
 }
 
@@ -157,15 +157,6 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
 export default TrendingCollectionTable
 
-function getFloorDelta(
-  currentFloor: number | undefined,
-  previousFloor: number | undefined
-) {
-  if (!currentFloor || !previousFloor) return 0
-
-  return (currentFloor - previousFloor) / previousFloor
-}
-
 function processCollection(
   collection:
     | NonNullable<
@@ -190,7 +181,7 @@ function processCollection(
     floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
     floorSaleChange7Days: collection?.floorSaleChange?.['7day'],
     floorSaleChange30Days: collection?.floorSaleChange?.['30day'],
-    floorPrice: collection?.floorAskPrice,
+    floorPrice: collection?.floorAsk?.price?.amount?.native,
     supply: collection?.tokenCount,
   }
 
