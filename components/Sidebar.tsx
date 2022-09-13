@@ -1,3 +1,4 @@
+import cn from 'classnames';
 import * as Accordion from '@radix-ui/react-accordion'
 import { toggleOffItem, toggleOnAttributeKey } from 'lib/router'
 import { useRouter } from 'next/router'
@@ -12,16 +13,21 @@ type Props = {
   attributes: SWRResponse<
     paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']
   >
+  openOnMobile: boolean
   setTokensSize: SWRInfiniteResponse['setSize']
 }
 
-const Sidebar: FC<Props> = ({ attributes, setTokensSize }) => {
+const Sidebar: FC<Props> = ({ attributes, openOnMobile = false, setTokensSize }) => {
   const router = useRouter()
 
   return (
     <Accordion.Root
       type="multiple"
-      className="col-span-3 hidden border-r-[1px] border-gray-300 dark:border-neutral-600 md:block"
+      className={cn("border-r-[1px] border-gray-300 dark:border-neutral-600 md:block", {
+        'col-span-3': !openOnMobile,
+        'col-span-full': openOnMobile,
+        hidden: !openOnMobile,
+      })}
     >
       <div className="overflow-hidden">
         <button

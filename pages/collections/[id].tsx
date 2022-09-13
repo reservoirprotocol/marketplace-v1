@@ -53,14 +53,12 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
-  const [localListings, setLocalListings] = useState(false)
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
   const [refreshLoading, setRefreshLoading] = useState(false)
 
   const collection = useCollection(fallback.collection, id)
@@ -71,7 +69,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     id,
     [fallback.tokens],
     router,
-    localListings
   )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
@@ -201,7 +198,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.List>
           <Tabs.Content value="items" asChild>
             <>
-              <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+              <Sidebar attributes={attributes} openOnMobile={mobileFilterOpen} setTokensSize={tokens.setSize} />
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
@@ -253,23 +250,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
                   </div>
-                  {(SOURCE_ID || SOURCE_DOMAIN) && (
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="checkbox"
-                        name="localListings"
-                        id="localListings"
-                        className="scale-125 transform"
-                        onChange={(e) => setLocalListings(e.target.checked)}
-                      />
-                      <label
-                        htmlFor="localListings"
-                        className="reservoir-body dark:text-white"
-                      >
-                        Show Only Local Listings
-                      </label>
-                    </div>
-                  )}
+                </div>
+                <div className="flex items-center visible md:invisible justify-center mb-10 md:mb-0 md:h-0">
+                  <div
+                    className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+                  >
+                    {mobileFilterOpen ? "Close Filter Menu" : "Open Filter Menu"}
+                  </div>
                 </div>
                 {router.query?.attribute_key ||
                 router.query?.attribute_key === '' ? (
