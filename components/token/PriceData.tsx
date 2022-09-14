@@ -4,10 +4,10 @@ import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
 import {
   ListModal,
+  BidModal,
   useReservoirClient,
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
-import TokenOfferModal from 'components/TokenOfferModal'
 import React, { FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -266,19 +266,20 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             signer={signer}
           />
           {!isOwner && (
-            <TokenOfferModal
-              signer={signer}
-              data={{
-                details,
+            <BidModal
+              collectionId={collection?.id}
+              tokenId={token?.token?.tokenId}
+              trigger={
+                <button
+                  disabled={isInTheWrongNetwork}
+                  className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                >
+                  Make Offer
+                </button>
+              }
+              onBidComplete={() => {
+                details && details.mutate()
               }}
-              royalties={{
-                bps: collection?.royalties?.bps,
-                recipient: collection?.royalties?.recipient,
-              }}
-              env={{
-                chainId: +CHAIN_ID as ChainId,
-              }}
-              setToast={setToast}
             />
           )}
 
