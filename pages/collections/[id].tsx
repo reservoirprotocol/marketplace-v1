@@ -390,11 +390,7 @@ export const getStaticProps: GetStaticProps<{
   const id = params?.id?.toString()
 
   // COLLECTION
-<<<<<<< HEAD
-  const collectionUrl = new URL('/collections/v5', RESERVOIR_API_BASE)
-=======
   const collectionUrl = new URL(`${RESERVOIR_API_BASE}/collections/v5`)
->>>>>>> feature/rk-bid-modal
 
   let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] =
     {
@@ -410,11 +406,7 @@ export const getStaticProps: GetStaticProps<{
     (await collectionRes.json()) as Props['fallback']['collection']
 
   // TOKENS
-<<<<<<< HEAD
-  const tokensUrl = new URL('/tokens/v5', RESERVOIR_API_BASE)
-=======
   const tokensUrl = new URL(`${RESERVOIR_API_BASE}/tokens/v5`)
->>>>>>> feature/rk-bid-modal
 
   let tokensQuery: paths['/tokens/v5']['get']['parameters']['query'] = {
     collection: id,

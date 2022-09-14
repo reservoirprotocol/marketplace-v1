@@ -10,8 +10,6 @@ function formatDollar(price?: number | null) {
   return price !== undefined && price !== null ? formatUsdCurrency(price) : '-'
 }
 
-<<<<<<< HEAD
-=======
 const trauncateFractionAndFormat = (
   parts: Intl.NumberFormatPart[],
   digits: number
@@ -38,7 +36,6 @@ const trauncateFractionAndFormat = (
     .reduce((string, part) => string + part)
 }
 
->>>>>>> feature/rk-bid-modal
 function formatNumber(
   amount: number | null | undefined,
   maximumFractionDigits: number = 2
