@@ -11,7 +11,7 @@ import CollectionInfo from 'components/token/CollectionInfo'
 import Owner from 'components/token/Owner'
 import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TokenDetails } from 'types/reservoir'
 import {
   useTokenOpenseaBanned,
@@ -26,6 +26,7 @@ import {
 // REQUIRED
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
@@ -35,6 +36,7 @@ const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 type Props = {
   collectionId: string
@@ -88,6 +90,27 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
   })
 
   const tokens = tokenData.data
+
+  useEffect(() => {
+    if (CHAIN_ID && (+CHAIN_ID === 1 || +CHAIN_ID === 5)) {
+      const baseUrl =
+        +CHAIN_ID === 1
+          ? 'https://api.opensea.io'
+          : 'https://testnets-api.opensea.io'
+      fetch(
+        `${baseUrl}/api/v1/asset/${collectionId}/${router.query?.tokenId?.toString()}/offers`
+      ).then(async (data) => {
+        const response = await data.json()
+        fetch(`${PROXY_API_BASE}/seaport/offers`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify(response),
+        })
+      })
+    }
+  }, [])
 
   if (tokenData.error) {
     return <div>There was an error</div>
