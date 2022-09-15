@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@react-hookz/web": "^14.2.2",
-    "@reservoir0x/reservoir-kit-ui": "0.3.6",
+    "@reservoir0x/reservoir-kit-ui": "0.3.6-rc.1",
     "next": "12.1.7-canary.10",
     "next-themes": "^0.2.0",
     "react": "17.0.2",
