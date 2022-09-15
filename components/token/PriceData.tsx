@@ -264,7 +264,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   disabled={isInTheWrongNetwork}
                   className="btn-primary-outline w-full dark:text-white"
                 >
-                  Accept Bid
+                  Accept Offer
                 </button>
               ) : null
             }

@@ -164,7 +164,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   disabled={modal.isInTheWrongNetwork}
                   className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80"
                 >
-                  Accept Bid
+                  Accept Offer
                 </button>
               }
               collectionId={token?.token?.contract}
