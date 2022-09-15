@@ -4,7 +4,7 @@ const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
 const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
 const MONO_FONT_FAMILY =
   process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'ui-monospace'
-const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
+const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR
 
 const primaryColors = require('./colors')
 
@@ -43,7 +43,13 @@ module.exports = {
       },
 
       colors: {
-        primary: primaryColors[PRIMARY_COLOR],
+        primary: primaryColors[PRIMARY_COLOR] ?? {
+          100: PRIMARY_COLOR,
+          300: PRIMARY_COLOR,
+          500: PRIMARY_COLOR,
+          700: PRIMARY_COLOR,
+          900: PRIMARY_COLOR,
+        },
         'dark-backdrop': 'rgba(0, 0, 0, 0.8)',
         backdrop: 'rgba(255, 255, 255, 0.8)',
       },

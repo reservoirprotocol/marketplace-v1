@@ -52,7 +52,7 @@ const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
 const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
 const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
-const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
+const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 import presetColors from '../colors'
@@ -102,10 +102,18 @@ function MyApp({
   >()
 
   useEffect(() => {
+    const isPresetColor = Object.keys(presetColors).includes(PRIMARY_COLOR)
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
-    const primaryColorPalette = (
+    const primaryColorPalette = isPresetColor ? (
       presetColors as Record<string, Record<string, string>>
-    )[primaryColor]
+    )[primaryColor] : {
+      100: PRIMARY_COLOR,
+      300: PRIMARY_COLOR,
+      500: PRIMARY_COLOR,
+      700: PRIMARY_COLOR,
+      900: PRIMARY_COLOR,
+    }
+
     if (defaultTheme == 'dark') {
       setReservoirKitTheme(
         darkTheme({
