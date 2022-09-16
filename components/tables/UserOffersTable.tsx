@@ -7,11 +7,11 @@ import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import useUserBids from 'hooks/useUserBids'
+import FormatCrypto from 'components/FormatCrypto'
 
 type Props = {
   data: ReturnType<typeof useUserBids>
   isOwner: boolean
-  maker: string
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>
@@ -24,7 +24,6 @@ type Props = {
 
 const UserOffersTable: FC<Props> = ({
   data: { orders, ref },
-  maker,
   mutate,
   modal,
   isOwner,
@@ -124,7 +123,10 @@ const UserOffersTable: FC<Props> = ({
 
                 {/* OFFER */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} />
+                  <FormatCrypto
+                    amount={price?.amount?.decimal}
+                    address={price?.currency?.contract}
+                  />
                 </td>
 
                 {/* EXPIRATION */}
@@ -135,7 +137,6 @@ const UserOffersTable: FC<Props> = ({
                   <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
                     <CancelOffer
                       data={{
-                        collectionId: modal?.collectionId,
                         id,
                         contract,
                         tokenId,
@@ -169,7 +170,6 @@ function processPosition(
   const key = position?.metadata?.data?.attributes?.[0]?.key
   // @ts-ignore
   const value = position?.metadata?.data?.attributes?.[0]?.value
-
   let tokenId
   let contract = position?.tokenSetId?.split(':')[1]
   let href
@@ -208,7 +208,7 @@ function processPosition(
         : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
     id: position?.id,
     collectionName: position?.metadata?.data?.collectionName,
-    price: position?.value,
+    price: position?.price,
   }
 
   return { ...data, href }

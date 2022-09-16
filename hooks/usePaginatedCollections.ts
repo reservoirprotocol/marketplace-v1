@@ -11,15 +11,15 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
-type Collections = paths['/collections/v4']['get']['responses']['200']['schema']
+type Collections = paths['/collections/v5']['get']['responses']['200']['schema']
 
-export default function useCollections(
+export default function usePaginatedCollections(
   router: NextRouter,
   fallback?: Collections
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/collections/v4`
+  const pathname = `${PROXY_API_BASE}/collections/v5`
 
   const sortBy = router.query['sort']?.toString()
 
@@ -55,12 +55,12 @@ const getKey: (
   pathname: string,
   sortBy: string | undefined,
   index: number,
-  previousPageData: paths['/collections/v4']['get']['responses']['200']['schema']
+  previousPageData: paths['/collections/v5']['get']['responses']['200']['schema']
 ) => {
   // Reached the end
   if (previousPageData && !previousPageData?.continuation) return null
 
-  let query: paths['/collections/v4']['get']['parameters']['query'] = {
+  let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
     sortBy: '1DayVolume',
   }

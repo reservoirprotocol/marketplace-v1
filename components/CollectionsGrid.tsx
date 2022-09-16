@@ -2,12 +2,12 @@ import { FC } from 'react'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import ImagesGrid from './ImagesGrid'
-import useCollections from 'hooks/useCollections'
+import usePaginatedCollections from 'hooks/usePaginatedCollections'
 import LoadingCardCollection from './LoadingCardCollection'
 import Masonry from 'react-masonry-css'
 
 type Props = {
-  collections: ReturnType<typeof useCollections>
+  collections: ReturnType<typeof usePaginatedCollections>
 }
 
 const CollectionsGrid: FC<Props> = ({ collections }) => {
@@ -70,6 +70,7 @@ const CollectionsGrid: FC<Props> = ({ collections }) => {
                       <img
                         src={optimizeImage(collection?.image, 80)}
                         className="h-12 w-12 rounded-full"
+                        alt="Collection Image"
                       />
                     ) : (
                       <div className="h-12 w-12 flex-none rounded-full bg-gradient-to-br from-primary-500 to-primary-900"></div>

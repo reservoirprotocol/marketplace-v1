@@ -104,7 +104,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                         <span className="reservoir-h6 font-headings dark:text-white">
                           <FormatEth
                             amount={attribute?.floorAskPrices?.[0]}
-                            logoWidth={5}
+                            logoWidth={7}
                           />
                         </span>
                       </div>

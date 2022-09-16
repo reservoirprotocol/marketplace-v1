@@ -1,4 +1,3 @@
-import FormatEth from 'components/FormatEth'
 import useSales from 'hooks/useSales'
 import { optimizeImage } from 'lib/optmizeImage'
 import { truncateAddress } from 'lib/truncateText'
@@ -12,13 +11,15 @@ import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import FormatCrypto from 'components/FormatCrypto'
+import { formatDollar } from 'lib/numbers'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  collection: Collection
+  collection?: Collection
 }
 
 const CollectionActivityTable: FC<Props> = ({ collection }) => {
@@ -36,7 +37,7 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
   const { data: salesData } = sales
   const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
   const noSales = !sales.isValidating && flatSalesData.length == 0
-  const collectionImage = collection?.metadata?.imageUrl as string
+  const collectionImage = collection?.image as string
 
   return (
     <>
@@ -143,11 +144,11 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   const saleSourceImgSrc =
     reservoirClient?.source &&
-    sale.orderSourceDomain &&
-    reservoirClient?.source === sale.orderSourceDomain &&
+    sale.orderSource &&
+    reservoirClient?.source === sale.orderSource &&
     SOURCE_ICON
       ? SOURCE_ICON
-      : `${API_BASE}/redirect/sources/${sale.orderSourceDomain}/logo/v2`
+      : `${API_BASE}/redirect/sources/${sale.orderSource}/logo/v2`
 
   let saleDescription = 'Sale'
 
@@ -192,7 +193,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 height={48}
               />
               <span className="reservoir-h6 ml-2 truncate dark:text-white">
-                {sale.token?.name}
+                {sale.token?.name || `#${sale.token?.tokenId}`}
               </span>
             </a>
           </Link>
@@ -226,7 +227,15 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           </div>
         </td>
         <td>
-          <FormatEth amount={sale.price} />
+          <FormatCrypto
+            amount={sale.price?.amount?.decimal}
+            address={sale.price?.currency?.contract}
+          />
+          {sale.price?.amount?.usd && (
+            <div className="text-xs text-neutral-600">
+              {formatDollar(sale.price?.amount?.usd)}
+            </div>
+          )}
         </td>
       </tr>
     )
@@ -267,7 +276,15 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         </Link>
       </td>
       <td>
-        <FormatEth amount={sale.price} />
+        <FormatCrypto
+          amount={sale.price?.amount?.decimal}
+          address={sale.price?.currency?.contract}
+        />
+        {sale.price?.amount?.usd && (
+          <div className="text-xs text-neutral-600">
+            {formatDollar(sale.price?.amount?.usd)}
+          </div>
+        )}
       </td>
       <td>
         <Link href={`/address/${sale.from}`}>

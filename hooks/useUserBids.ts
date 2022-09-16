@@ -11,7 +11,7 @@ const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
-type Orders = paths['/orders/bids/v2']['get']['responses']['200']['schema']
+type Orders = paths['/orders/bids/v3']['get']['responses']['200']['schema']
 
 export default function useUserBids(
   fallbackData: Orders[],
@@ -20,7 +20,7 @@ export default function useUserBids(
 ) {
   const { ref, inView } = useInView()
 
-  const pathname = `${PROXY_API_BASE}/orders/bids/v2`
+  const pathname = `${PROXY_API_BASE}/orders/bids/v3`
 
   const orders = useSWRInfinite<Orders>(
     (index, previousPageData) =>
@@ -78,10 +78,11 @@ const getKey: InfiniteKeyLoader = (
   // Reached the end
   if (previousPageData && !previousPageData?.continuation) return null
 
-  let query: paths['/orders/bids/v2']['get']['parameters']['query'] = {
+  let query: paths['/orders/bids/v3']['get']['parameters']['query'] = {
     status: 'active',
     maker: user,
     limit: 20,
+    includeMetadata: true,
   }
 
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {

@@ -7,6 +7,9 @@ import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import CancelListing from 'components/CancelListing'
 import useUserAsks from 'hooks/useUserAsks'
+import FormatCrypto from 'components/FormatCrypto'
+import useCoinConversion from 'hooks/useCoinConversion'
+import { formatDollar } from 'lib/numbers'
 
 type Props = {
   data: ReturnType<typeof useUserAsks>
@@ -54,86 +57,127 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
           </tr>
         </thead>
         <tbody>
-          {listings.map((position, index, arr) => {
-            const {
-              collectionName,
-              contract,
-              expiration,
-              id,
-              image,
-              name,
-              tokenHref,
-              tokenId,
-              price,
-            } = processListing(position)
-
-            return (
-              <tr
-                key={`${position?.id}-${index}`}
-                ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
-              >
-                {/* ITEM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <Link href={tokenHref}>
-                    <a className="flex items-center gap-2">
-                      <div className="relative h-10 w-10">
-                        {image && (
-                          <div className="aspect-w-1 aspect-h-1 relative">
-                            <img
-                              alt={`${position?.id} Listing`}
-                              src={optimizeImage(image, 35)}
-                              className="w-[35px] object-contain"
-                              width="35"
-                              height="35"
-                            />
-                          </div>
-                        )}
-                      </div>
-                      <span className="whitespace-nowrap">
-                        <div className="reservoir-body dark:text-white ">
-                          {collectionName}
-                        </div>
-                        <div className="reservoir-h6 font-headings dark:text-white ">
-                          {name}
-                        </div>
-                      </span>
-                    </a>
-                  </Link>
-                </td>
-
-                {/* PRICE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} />
-                </td>
-
-                {/* EXPIRATION */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  {expiration}
-                </td>
-                {isOwner && (
-                  <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
-                    <CancelListing
-                      data={{
-                        collectionId: modal?.collectionId,
-                        id,
-                        contract,
-                        tokenId,
-                      }}
-                      signer={modal.signer}
-                      show={true}
-                      isInTheWrongNetwork={modal.isInTheWrongNetwork}
-                      setToast={modal.setToast}
-                      mutate={mutate}
-                    />
-                  </td>
-                )}
-              </tr>
-            )
-          })}
+          {listings.map((listing, index, arr) => (
+            <UseListingsTableRow
+              key={`${listing?.id}-${index}`}
+              ref={index === arr.length - 5 ? ref : null}
+              listing={listing}
+              isOwner={isOwner}
+              modal={modal}
+              mutate={mutate}
+            />
+          ))}
         </tbody>
       </table>
     </div>
+  )
+}
+
+type UserListingsTableRowProps = {
+  listing: Props['data']['data'][0]
+  modal: Props['modal']
+  isOwner: Props['isOwner']
+  mutate: Props['mutate']
+  ref: null | ((node?: Element | null) => void)
+}
+
+const UseListingsTableRow = ({
+  listing,
+  modal,
+  isOwner,
+  mutate,
+  ref,
+}: UserListingsTableRowProps) => {
+  const usdConversion = useCoinConversion(
+    listing?.price?.currency?.symbol ? 'usd' : undefined,
+    listing?.price?.currency?.symbol
+  )
+
+  const usdPrice =
+    usdConversion && listing?.price?.amount?.decimal
+      ? usdConversion * listing?.price?.amount?.decimal
+      : null
+
+  const {
+    collectionName,
+    contract,
+    expiration,
+    id,
+    image,
+    name,
+    tokenHref,
+    tokenId,
+    price,
+  } = processListing(listing)
+
+  return (
+    <tr
+      ref={ref}
+      className="group h-[80px] even:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
+    >
+      {/* ITEM */}
+      <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+        <Link href={tokenHref}>
+          <a className="flex items-center gap-2">
+            <div className="relative h-10 w-10">
+              {image && (
+                <div className="aspect-w-1 aspect-h-1 relative">
+                  <img
+                    alt={`${listing?.id} Listing`}
+                    src={optimizeImage(image, 35)}
+                    className="w-[35px] object-contain"
+                    width="35"
+                    height="35"
+                  />
+                </div>
+              )}
+            </div>
+            <span className="whitespace-nowrap">
+              <div className="reservoir-body dark:text-white ">
+                {collectionName}
+              </div>
+              <div className="reservoir-h6 font-headings dark:text-white ">
+                {name}
+              </div>
+            </span>
+          </a>
+        </Link>
+      </td>
+
+      {/* PRICE */}
+      <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+        <FormatCrypto
+          amount={price?.amount?.decimal}
+          address={price?.currency?.contract}
+        />
+        {usdPrice && (
+          <div className="text-sm text-neutral-600 dark:text-neutral-300">
+            {formatDollar(usdPrice)}
+          </div>
+        )}
+      </td>
+
+      {/* EXPIRATION */}
+      <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+        {expiration}
+      </td>
+      {isOwner && (
+        <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
+          <CancelListing
+            data={{
+              id,
+              contract,
+              tokenId,
+            }}
+            signer={modal.signer}
+            show={true}
+            isInTheWrongNetwork={modal.isInTheWrongNetwork}
+            setToast={modal.setToast}
+            mutate={mutate}
+          />
+        </td>
+      )}
+    </tr>
   )
 }
 

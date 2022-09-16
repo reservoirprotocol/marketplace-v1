@@ -1,13 +1,12 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
 import { paths } from '@reservoir0x/reservoir-kit-client'
-import { useSigner } from 'wagmi'
+import { BidModal } from '@reservoir0x/reservoir-kit-ui'
+import { useNetwork, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
-import CollectionOfferModal from 'components/CollectionOfferModal'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import useCollectionStats from 'hooks/useCollectionStats'
-import useCollection from 'hooks/useCollection'
 import { useRouter } from 'next/router'
 import useTokens from 'hooks/useTokens'
 import HeroSocialLinks from 'components/hero/HeroSocialLinks'
@@ -16,10 +15,10 @@ import HeroStats from 'components/hero/HeroStats'
 import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
 import { useMediaQuery } from '@react-hookz/web'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const ENV_COLLECTION_DESCRIPTIONS =
   process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
@@ -30,17 +29,23 @@ const setToast = (data: ComponentProps<typeof Toast>['data']) => {
 type Props = {
   collectionId: string | undefined
   fallback: {
-    tokens: paths['/tokens/v4']['get']['responses']['200']['schema']
-    collection: paths['/collection/v3']['get']['responses']['200']['schema']
+    tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
+    collection: paths['/collections/v5']['get']['responses']['200']['schema']
   }
 }
 
-type CollectionModalProps = ComponentProps<typeof CollectionOfferModal>
 type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
 
 const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { data: signer } = useSigner()
-  const collection = useCollection(fallback.collection, collectionId)
+  const collectionResponse = useCollections({
+    id: collectionId,
+    includeTopBid: true,
+  })
+  const collection =
+    collectionResponse.data && collectionResponse.data[0]
+      ? collectionResponse.data[0]
+      : undefined
   const router = useRouter()
   const stats = useCollectionStats(router, collectionId)
   const [attribute, setAttribute] = useState<
@@ -53,6 +58,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
   const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
+  const { chain: activeChain } = useNetwork()
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -84,24 +90,22 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     throw 'A Chain id is required'
   }
 
-  const env: CollectionModalProps['env'] = {
+  const env: AttibuteModalProps['env'] = {
     chainId: +CHAIN_ID as ChainId,
-    openSeaApiKey: OPENSEA_API_KEY,
   }
 
-  const floor = collection.data?.collection?.floorAsk
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   const statsObj = {
-    count: Number(collection.data?.collection?.tokenCount ?? 0),
-    topOffer: collection.data?.collection?.topBid?.value,
-    floor: floor?.price,
-    allTime: collection.data?.collection?.volume?.allTime,
-    volumeChange: collection.data?.collection?.volumeChange?.['1day'],
-    floorChange: collection.data?.collection?.floorSaleChange?.['1day'],
+    count: Number(collection?.tokenCount ?? 0),
+    topOffer: collection?.topBid?.price?.amount?.native,
+    floor: collection?.floorAsk?.price?.amount?.native,
+    allTime: collection?.volume?.allTime,
+    volumeChange: collection?.volumeChange?.['1day'],
+    floorChange: collection?.floorSaleChange?.['1day'],
   }
 
-  const bannerImage =
-    envBannerImage || collection?.data?.collection?.metadata?.bannerImageUrl
+  const bannerImage = envBannerImage || collection?.banner
 
   //Split on commas outside of backticks (`)
   let envDescriptions = ENV_COLLECTION_DESCRIPTIONS
@@ -119,41 +123,30 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   }
 
   const description =
-    envDescription ||
-    (collection?.data?.collection?.metadata?.description as string | undefined)
+    envDescription || (collection?.description as string | undefined)
   const header = {
     banner: bannerImage as string,
-    image: collection?.data?.collection?.metadata?.imageUrl as string,
-    name: collection?.data?.collection?.name,
+    image: collection?.image as string,
+    name: collection?.name,
     description: description,
     shortDescription: description ? description.slice(0, 150) : description,
   }
 
   const isSupported =
-    !!collection.data?.collection?.tokenSetId &&
-    !!collection.data?.collection?.collectionBidSupported
+    !!collection?.tokenSetId && !!collection?.collectionBidSupported
 
   const isAttributeModal = !!attribute.key && !!attribute.value
 
-  const royalties: CollectionModalProps['royalties'] = {
-    bps: collection.data?.collection?.royalties?.bps,
-    recipient: collection.data?.collection?.royalties?.recipient,
-  }
-
-  const collectionData: CollectionModalProps['data'] = {
-    collection: {
-      id: collection?.data?.collection?.id,
-      image: '',
-      name: collection?.data?.collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
+  const royalties: AttibuteModalProps['royalties'] = {
+    bps: collection?.royalties?.bps,
+    recipient: collection?.royalties?.recipient,
   }
 
   const attributeData: AttibuteModalProps['data'] = {
     collection: {
-      id: collection.data?.collection?.id,
-      image: collection?.data?.collection?.metadata?.imageUrl as string,
-      name: collection?.data?.collection?.name,
+      id: collection?.id,
+      image: collection?.image as string,
+      name: collection?.name,
       tokenCount: stats?.data?.stats?.tokenCount ?? 0,
     },
     attribute,
@@ -181,7 +174,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
           </h1>
-          <HeroSocialLinks collection={collection?.data?.collection} />
+          <HeroSocialLinks collection={collection} />
           <HeroStats stats={statsObj} />
           {header.description && (
             <>
@@ -229,21 +222,48 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   setToast={setToast}
                 />
               ) : (
-                <CollectionOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={collectionData}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
+                <BidModal
+                  collectionId={collection?.id}
+                  trigger={
+                    <button
+                      disabled={isInTheWrongNetwork}
+                      className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    >
+                      Make a Collection Offer
+                    </button>
+                  }
+                  onBidComplete={() => {
+                    stats.mutate()
+                    tokens.mutate()
+                  }}
+                  onBidError={(error) => {
+                    if (error) {
+                      if (
+                        (error as any).cause.code &&
+                        (error as any).cause.code === 4001
+                      ) {
+                        setToast({
+                          kind: 'error',
+                          message: 'You have canceled the transaction.',
+                          title: 'User canceled transaction',
+                        })
+                        return
+                      }
+                    }
+                    setToast({
+                      kind: 'error',
+                      message: 'The transaction was not completed.',
+                      title: 'Could not place bid',
+                    })
+                  }}
                 />
               ))}
             {isSmallDevice && (
               <Sweep
                 collection={collection}
-                tokens={tokens}
+                tokens={tokens.data}
                 setToast={setToast}
+                mutate={tokens.mutate}
               />
             )}
           </div>

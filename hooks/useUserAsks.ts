@@ -21,6 +21,7 @@ export default function useUserAsks(
 
   const listingParams: Parameters<typeof useListings>['0'] = {
     maker,
+    includeMetadata: true,
   }
 
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
