@@ -169,7 +169,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
               }
               collectionId={token?.token?.contract}
               tokenId={token?.token?.tokenId}
-              onBidAccepted={mutate}
+              onClose={mutate}
               onBidAcceptError={(error: any) => {
                 if (error?.type === 'price mismatch') {
                   modal.setToast({
@@ -194,7 +194,6 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   title: 'Could not accept offer',
                 })
               }}
-              onClose={() => {}}
             />
           )}
         </div>

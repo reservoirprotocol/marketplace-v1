@@ -270,7 +270,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             }
             collectionId={collection?.id}
             tokenId={token?.token?.tokenId}
-            onBidAccepted={() => details && details.mutate()}
+            onClose={() => details && details.mutate()}
             onBidAcceptError={(error: any) => {
               if (error?.type === 'price mismatch') {
                 setToast({
@@ -295,7 +295,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 title: 'Could not accept offer',
               })
             }}
-            onClose={() => {}}
           />
 
           {!isOwner && (
