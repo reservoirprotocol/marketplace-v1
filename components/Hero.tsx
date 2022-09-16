@@ -16,6 +16,7 @@ import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
 import { useMediaQuery } from '@react-hookz/web'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
+import { Result } from 'ethers/lib/utils'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -24,6 +25,13 @@ const ENV_COLLECTION_DESCRIPTIONS =
 
 const setToast = (data: ComponentProps<typeof Toast>['data']) => {
   toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+}
+
+type IMintMode = 'Allowlist' | 'Open' | 'Closed'
+const mintStatus = (mintingOpen: Result | boolean, allowlistOnlyMode: Result | boolean): IMintMode => {
+  if (mintingOpen && allowlistOnlyMode) return 'Allowlist'
+  if (mintingOpen && !allowlistOnlyMode) return 'Open'
+  return 'Closed'
 }
 
 type Props = {
@@ -78,6 +86,42 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     functionName: 'collectionSize',
     chainId: activeChain?.id || 1,
   }) || null
+  const { data: mintingOpen } = useContractRead({
+    addressOrName: collection?.primaryContract || '',
+    contractInterface: [{
+      "inputs": [],
+      "name": "mintingOpen",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }],
+    functionName: 'mintingOpen',
+    chainId: activeChain?.id || 1,
+  })
+  const { data: onlyAllowlistMode } = useContractRead({
+    addressOrName: collection?.primaryContract || '',
+    contractInterface: [{
+      "inputs": [],
+      "name": "onlyAllowlistMode",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }],
+    functionName: 'onlyAllowlistMode',
+    chainId: activeChain?.id || 1,
+  })
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -123,6 +167,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     volumeChange: collection?.volumeChange?.['1day'],
     floorChange: collection?.floorSaleChange?.['1day'],
     maxSupply: totalSupply?.toString() || null,
+    mintMode: typeof (mintingOpen) === 'boolean' ? mintStatus(mintingOpen, onlyAllowlistMode ?? false) : null
   }
 
   const bannerImage = envBannerImage || collection?.banner
@@ -291,7 +336,5 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     </>
   )
 }
-
-async function fetchMaxSupply(contractAddress)
 
 export default Hero
