@@ -11,8 +11,8 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 // Reservoir API key is not exposed to the client.
 
 // https://nextjs.org/docs/api-routes/dynamic-api-routes#catch-all-api-routes
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { query, body, method } = req
+const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { query, body, method, headers: reqHeaders } = req
   const { slug } = query
 
   // Isolate the query object
@@ -50,6 +50,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       options.body = JSON.stringify(body)
     }
 
+    if (
+      reqHeaders['x-rkc-version'] &&
+      typeof reqHeaders['x-rkc-version'] === 'string'
+    ) {
+      headers.set('x-rkc-version', reqHeaders['x-rkc-version'])
+    }
+
+    if (
+      reqHeaders['x-rkui-version'] &&
+      typeof reqHeaders['x-rkui-version'] === 'string'
+    ) {
+      headers.set('x-rkui-version', reqHeaders['x-rkui-version'])
+    }
+
     options.headers = headers
 
     const response = await fetch(url.href, options)
@@ -80,3 +94,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json(error)
   }
 }
+
+export default proxy

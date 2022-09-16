@@ -1,6 +1,5 @@
 import { ComponentProps, FC } from 'react'
 import { DateTime } from 'luxon'
-import FormatEth from 'components/FormatEth'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import CancelOffer from 'components/CancelOffer'
