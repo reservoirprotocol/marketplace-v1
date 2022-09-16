@@ -10,14 +10,15 @@ type Props = {
   allTime: number | undefined
   volumeChange: number | undefined
   floorChange: number | undefined
+  maxSupply: number | null | undefined
 }
 
 const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
   return (
     <div className="grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
-      <Stat name="items">
+      <Stat name={!!stats.maxSupply ? 'items / supply' : 'items'}>
         <h3 className="reservoir-h6 dark:text-white">
-          {formatNumber(stats.count)}
+          {formatNumber(stats.count)}{!!stats.maxSupply ? ` / ${formatNumber(stats.maxSupply)}` : null}
         </h3>
       </Stat>
       <Stat name="top offer">
@@ -28,7 +29,7 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
       <Stat name="floor">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
           <FormatEth amount={stats.floor} maximumFractionDigits={2} />
-          <PercentageChange value={stats.floorChange} />
+          {/* <PercentageChange value={stats.floorChange} /> */}
         </h3>
       </Stat>
       <Stat name="total volume">

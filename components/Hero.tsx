@@ -2,7 +2,7 @@ import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { BidModal } from '@reservoir0x/reservoir-kit-ui'
-import { useNetwork, useSigner } from 'wagmi'
+import { useContractRead, useNetwork, useProvider, useSigner } from 'wagmi'
 import AttributeOfferModal from './AttributeOfferModal'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
@@ -54,11 +54,30 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     key: undefined,
     value: undefined,
   })
+
   const { tokens } = useTokens(collectionId, [fallback.tokens], router)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
   const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
   const { chain: activeChain } = useNetwork()
+  const { data: totalSupply } = useContractRead({
+    addressOrName: collection?.primaryContract || '',
+    contractInterface: [{
+      "inputs": [],
+      "name": "collectionSize",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },],
+    functionName: 'collectionSize',
+    chainId: activeChain?.id || 1,
+  }) || null
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -103,6 +122,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     allTime: collection?.volume?.allTime,
     volumeChange: collection?.volumeChange?.['1day'],
     floorChange: collection?.floorSaleChange?.['1day'],
+    maxSupply: totalSupply?.toString() || null,
   }
 
   const bannerImage = envBannerImage || collection?.banner
@@ -200,9 +220,8 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   }}
                 >
                   <FiChevronDown
-                    className={`h-5 w-5 text-black transition-transform dark:text-white ${
-                      descriptionExpanded ? 'rotate-180' : ''
-                    }`}
+                    className={`h-5 w-5 text-black transition-transform dark:text-white ${descriptionExpanded ? 'rotate-180' : ''
+                      }`}
                     aria-hidden
                   />
                 </a>
@@ -272,5 +291,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     </>
   )
 }
+
+async function fetchMaxSupply(contractAddress)
 
 export default Hero
