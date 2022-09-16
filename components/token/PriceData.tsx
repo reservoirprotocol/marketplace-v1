@@ -1,4 +1,3 @@
-import AcceptOffer from 'components/AcceptOffer'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
@@ -6,6 +5,7 @@ import {
   ListModal,
   BidModal,
   useReservoirClient,
+  AcceptBidModal,
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import React, { FC, ReactNode, useState } from 'react'
@@ -256,15 +256,47 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               </div>
             </button>
           )}
-          <AcceptOffer
-            data={{
-              details: details.data,
+
+          <AcceptBidModal
+            trigger={
+              showAcceptOffer ? (
+                <button
+                  disabled={isInTheWrongNetwork}
+                  className="btn-primary-outline w-full dark:text-white"
+                >
+                  Accept Offer
+                </button>
+              ) : null
+            }
+            collectionId={collection?.id}
+            tokenId={token?.token?.tokenId}
+            onClose={() => details && details.mutate()}
+            onBidAcceptError={(error: any) => {
+              if (error?.type === 'price mismatch') {
+                setToast({
+                  kind: 'error',
+                  message: 'Offer was lower than expected.',
+                  title: 'Could not accept offer',
+                })
+                return
+              }
+              // Handle user rejection
+              if (error?.code === 4001) {
+                setToast({
+                  kind: 'error',
+                  message: 'You have canceled the transaction.',
+                  title: 'User canceled transaction',
+                })
+                return
+              }
+              setToast({
+                kind: 'error',
+                message: 'The transaction was not completed.',
+                title: 'Could not accept offer',
+              })
             }}
-            isInTheWrongNetwork={isInTheWrongNetwork}
-            setToast={setToast}
-            show={showAcceptOffer}
-            signer={signer}
           />
+
           {!isOwner && (
             <BidModal
               collectionId={collection?.id}
