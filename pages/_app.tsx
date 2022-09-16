@@ -102,7 +102,7 @@ function MyApp({
   >()
 
   useEffect(() => {
-    const isPresetColor = Object.keys(presetColors).includes(PRIMARY_COLOR)
+    const isPresetColor = Object.keys(presetColors).includes(PRIMARY_COLOR as string)
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
     const primaryColorPalette = isPresetColor ? (
       presetColors as Record<string, Record<string, string>>
