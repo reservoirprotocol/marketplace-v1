@@ -43,9 +43,8 @@ const ModalCard: FC<Props> = ({
       <div className="fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 transform">
         <div className="px-5">
           <div
-            className={`mx-auto overflow-hidden border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[510px] ${
-              DISABLE_POWERED_BY_RESERVOIR ? ' rounded-2xl' : ' rounded-t-2xl'
-            }`}
+            className={`mx-auto overflow-hidden border border-neutral-300 bg-white p-11 shadow-xl dark:border-neutral-600 dark:bg-black md:w-[510px] ${DISABLE_POWERED_BY_RESERVOIR ? ' rounded-2xl' : ' rounded-t-2xl'
+              }`}
           >
             <div className="mb-4 flex items-center justify-between">
               <Dialog.Title className="reservoir-h4 font-headings dark:text-white">
