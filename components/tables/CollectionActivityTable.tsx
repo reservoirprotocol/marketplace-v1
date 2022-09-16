@@ -144,21 +144,26 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   const saleSourceImgSrc =
     reservoirClient?.source &&
-    sale.orderSource &&
-    reservoirClient?.source === sale.orderSource &&
-    SOURCE_ICON
+      sale.orderSource &&
+      reservoirClient?.source === sale.orderSource &&
+      SOURCE_ICON
       ? SOURCE_ICON
       : `${API_BASE}/redirect/sources/${sale.orderSource}/logo/v2`
 
   let saleDescription = 'Sale'
 
-  switch (sale?.orderSide) {
-    case 'ask': {
-      saleDescription = 'Sale'
-      break
-    }
-    case 'bid': {
-      saleDescription = 'Offer Accepted'
+  if (sale?.orderKind === 'mint') {
+    saleDescription = 'Mint'
+  } else {
+    switch (sale?.orderSide) {
+      case 'ask': {
+        saleDescription = 'Sale'
+        break
+      }
+
+      case 'bid': {
+        saleDescription = 'Offer Accepted'
+      }
     }
   }
 
