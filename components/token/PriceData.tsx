@@ -18,6 +18,7 @@ import { Collection } from 'types/reservoir'
 import { formatDollar } from 'lib/numbers'
 import useCoinConversion from 'hooks/useCoinConversion'
 import SwapCartModal from 'components/SwapCartModal'
+import WinterBuy from 'components/WinterBuy'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -86,9 +87,8 @@ const PriceData: FC<Props> = ({ details, collection }) => {
       ? SOURCE_ICON
       : `${API_BASE}/redirect/sources/${sourceDomain || sourceName}/logo/v2`
 
-  const sourceRedirect = `${API_BASE}/redirect/sources/${
-    sourceDomain || sourceName
-  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
+  const sourceRedirect = `${API_BASE}/redirect/sources/${sourceDomain || sourceName
+    }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
 
   if (!CHAIN_ID) return null
 
@@ -97,19 +97,19 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const isTopBidder =
     accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
-      accountData?.address?.toLowerCase()
+    accountData?.address?.toLowerCase()
   const isListed = token?.market?.floorAsk?.price !== null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
   const tokenId = token?.token?.tokenId
   const contract = token?.token?.contract
-
+  const currencySymbol = token?.market?.floorAsk?.price?.currency?.symbol || 'ETH'
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
   const showAcceptOffer =
     token?.market?.topBid?.id !== null &&
-    token?.market?.topBid?.id !== undefined &&
-    isOwner
+      token?.market?.topBid?.id !== undefined &&
+      isOwner
       ? true
       : false
 
@@ -192,15 +192,25 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             />
           )}
           {!isOwner && (
-            <BuyNow
-              buttonClassName="btn-primary-fill col-span-1"
-              data={{
-                details: details,
-              }}
-              signer={signer}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              mutate={details.mutate}
-            />
+            <>
+              <BuyNow
+                title={`Buy with ${currencySymbol}`}
+                buttonClassName="btn-primary-fill col-span-1"
+                data={{
+                  details: details,
+                }}
+                signer={signer}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                mutate={details.mutate}
+              />
+              <WinterBuy
+                title='Buy with Credit Card'
+                collection={token?.token?.collection?.id}
+                tokenId={token?.token?.tokenId}
+                buyer={accountData?.address}
+                buttonClassName="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4"
+              />
+            </>
           )}
           {isInCart && !isOwner && (
             <button
@@ -229,7 +239,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   if (
                     !cartCurrency ||
                     token.market.floorAsk?.price?.currency?.contract ===
-                      cartCurrency?.contract
+                    cartCurrency?.contract
                   ) {
                     setCartTokens([
                       ...cartTokens,

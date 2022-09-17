@@ -9,6 +9,7 @@ import { useSwitchNetwork } from 'wagmi'
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Props = {
+  title?: string
   data: {
     details?: ReturnType<typeof useTokens>
     token?: ReturnType<typeof useTokens>['data'][0]
@@ -20,6 +21,7 @@ type Props = {
 }
 
 const BuyNow: FC<Props> = ({
+  title,
   data,
   isInTheWrongNetwork,
   signer,
@@ -50,7 +52,7 @@ const BuyNow: FC<Props> = ({
       marketData?.floorAsk?.price?.amount != undefined
   }
 
-  const trigger = <button className={buttonClassName}>Buy Now</button>
+  const trigger = <button className={buttonClassName}>{title ?? 'Buy Now'}</button>
 
   if (!forSale) {
     return null

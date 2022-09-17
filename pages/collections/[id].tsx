@@ -231,7 +231,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   </div>
                   <div className="flex gap-4">
                     {router.query?.attribute_key ||
-                    router.query?.attribute_key === '' ? (
+                      router.query?.attribute_key === '' ? (
                       <>
                         <SortMenuExplore
                           setSize={collectionAttributes.setSize}
@@ -246,9 +246,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       onClick={() => refreshCollection(id)}
                     >
                       <FiRefreshCcw
-                        className={`h-5 w-5 ${
-                          refreshLoading ? 'animate-spin-reverse' : ''
-                        }`}
+                        className={`h-5 w-5 ${refreshLoading ? 'animate-spin-reverse' : ''
+                          }`}
                       />
                     </button>
                     <Sweep
@@ -283,7 +282,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   )}
                 </div>
                 {router.query?.attribute_key ||
-                router.query?.attribute_key === '' ? (
+                  router.query?.attribute_key === '' ? (
                   <ExploreTokens
                     attributes={collectionAttributes}
                     viewRef={refCollectionAttributes}
@@ -393,10 +392,10 @@ export const getStaticProps: GetStaticProps<{
   const collectionUrl = new URL(`${RESERVOIR_API_BASE}/collections/v5`)
 
   let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] =
-    {
-      id,
-      includeTopBid: true,
-    }
+  {
+    id,
+    includeTopBid: true,
+  }
 
   setParams(collectionUrl, collectionQuery)
 
