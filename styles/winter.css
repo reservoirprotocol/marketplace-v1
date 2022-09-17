@@ -1,0 +1,8 @@
+/* Needed for Winter modal to render transparency in dark mode */
+:root {
+  color-scheme: light dark;
+}
+
+iframe {
+  color-scheme: light;
+}

@@ -192,25 +192,25 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             />
           )}
           {!isOwner && (
-            <>
-              <BuyNow
-                title={`Buy with ${currencySymbol}`}
-                buttonClassName="btn-primary-fill col-span-1"
-                data={{
-                  details: details,
-                }}
-                signer={signer}
-                isInTheWrongNetwork={isInTheWrongNetwork}
-                mutate={details.mutate}
-              />
-              <WinterBuy
-                title='Buy with Credit Card'
-                collection={token?.token?.collection?.id}
-                tokenId={token?.token?.tokenId}
-                buyer={accountData?.address}
-                buttonClassName="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4"
-              />
-            </>
+            <BuyNow
+              title={`Buy with ${currencySymbol}`}
+              buttonClassName="btn-primary-fill col-span-1"
+              data={{
+                details: details,
+              }}
+              signer={signer}
+              isInTheWrongNetwork={isInTheWrongNetwork}
+              mutate={details.mutate}
+            />
+          )}
+          {!isOwner && isListed && (
+            <WinterBuy
+              title='Buy with Credit Card'
+              collection={token?.token?.collection?.id}
+              tokenId={token?.token?.tokenId}
+              buyer={accountData?.address}
+              buttonClassName="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4"
+            />
           )}
           {isInCart && !isOwner && (
             <button

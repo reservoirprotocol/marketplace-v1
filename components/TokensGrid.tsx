@@ -16,6 +16,7 @@ import recoilCartTokens from 'recoil/cart/atom'
 import { getCartCurrency, getTokensMap } from 'recoil/cart'
 import SwapCartModal from 'components/SwapCartModal'
 
+const WINTER_ENABLED = process.env.NEXT_PUBLIC_ENABLE_WINTER
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const API_BASE =
@@ -179,11 +180,23 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                     token.floorAsk?.price?.amount?.decimal != undefined &&
                     !isOwner && (
                       <div className="grid grid-cols-2">
-                        <a
-                          href={`/${token.contract}/${token.tokenId}`}
-                          className='btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0'>
-                          Buy Now
-                        </a>
+                        {!!WINTER_ENABLED ? (
+                          <a
+                            href={`/${token.contract}/${token.tokenId}`}
+                            className='btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0'>
+                            Buy Now
+                          </a>
+                        ) : (
+                          <BuyNow
+                            data={{
+                              token: tokenData,
+                            }}
+                            mutate={mutate}
+                            signer={signer}
+                            isInTheWrongNetwork={isInTheWrongNetwork}
+                            buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"
+                          />
+                        )}
                         {isInCart ? (
                           <button
                             onClick={() => {

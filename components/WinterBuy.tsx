@@ -1,14 +1,19 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 
-interface IProps {
-  [x: string]: any
-}
-
+const WINTER_ENABLED = process.env.NEXT_PUBLIC_ENABLE_WINTER
 function openWinterCheckout() {
   const iframe = document.getElementById('winter-checkout');
   if (!iframe) return null
   iframe.style.visibility = 'visible';
   iframe.style.display = 'inline';
+}
+
+interface IProps {
+  title?: string
+  buttonClassName?: string
+  collection?: string
+  tokenId?: string
+  buyer?: string
 }
 
 export default function WinterBuy({
@@ -19,7 +24,7 @@ export default function WinterBuy({
   buyer,
 }: IProps) {
   useEffect(() => {
-    if (!window.document || !collection || !tokenId) return
+    if (!window?.document || !collection || !tokenId) return
     if (!!document.getElementById('winter-checkout')) return
 
     const root = document.getElementById("__next")
@@ -55,9 +60,11 @@ export default function WinterBuy({
       }
     });
 
-  }, [window.document, collection, tokenId, buyer])
+  }, [collection, tokenId, buyer])
 
+  if (!WINTER_ENABLED) return null
   if (!collection || !tokenId) return null
+
   return (
     <button onClick={openWinterCheckout} className={buttonClassName}>{title ?? 'Buy with Credit Card'}</button>
   )
