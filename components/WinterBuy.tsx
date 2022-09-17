@@ -22,6 +22,7 @@ export default function WinterBuy({
     if (!window.document || !collection || !tokenId) return
     if (!!document.getElementById('winter-checkout')) return
 
+    const root = document.getElementById("__next")
     const winterIframe = document.createElement('iframe');
     winterIframe.id = 'winter-checkout';
     winterIframe.src = `https://production-marketplace-nft-checkout.onrender.com/?contractAddress=${collection}&tokenId=${tokenId}${!!buyer ? `&walletAddress=${buyer}` : ''}`
@@ -41,7 +42,10 @@ export default function WinterBuy({
       visibility:hidden;
       display: none;
       `;
-    window.document.body.appendChild(winterIframe);
+
+    if (!root) return
+
+    root.appendChild(winterIframe);
     window.addEventListener('message', (event) => {
       const el = document.getElementById('winter-checkout')
       if (!el) return null
