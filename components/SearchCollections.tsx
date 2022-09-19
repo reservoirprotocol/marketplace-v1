@@ -16,6 +16,7 @@ type Props = {
 }
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
   const router = useRouter()
@@ -34,6 +35,10 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost') {
       query.community = communityId
+    }
+
+    if (COLLECTION_SET_ID) {
+      query.collectionsSetId = COLLECTION_SET_ID
     }
 
     if (search) query.name = search
