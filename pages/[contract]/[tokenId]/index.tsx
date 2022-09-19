@@ -87,6 +87,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
     includeTopBid: true,
+    includeAttributes: true,
   })
 
   const tokens = tokenData.data
@@ -209,6 +210,8 @@ export const getStaticProps: GetStaticProps<{
 
   const query: paths['/tokens/v5']['get']['parameters']['query'] = {
     tokens: [`${contract}:${tokenId}`],
+    includeTopBid: true,
+    includeAttributes: true,
   }
 
   const href = setParams(url, query)
