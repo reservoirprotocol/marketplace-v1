@@ -4,12 +4,10 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
-import { ListModal } from '@reservoir0x/reservoir-kit-ui'
-import AcceptOffer from 'components/AcceptOffer'
+import { AcceptBidModal, ListModal } from '@reservoir0x/reservoir-kit-ui'
 
 import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
-import FormatWEth from 'components/FormatWEth'
 import FormatCrypto from 'components/FormatCrypto'
 
 const API_BASE =
@@ -160,21 +158,43 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
             }}
           />
           {token?.token?.topBid?.price?.amount?.decimal && (
-            <AcceptOffer
-              data={{
-                contract: token?.token?.contract,
-                tokenId: token?.token?.tokenId,
+            <AcceptBidModal
+              trigger={
+                <button
+                  disabled={modal.isInTheWrongNetwork}
+                  className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80"
+                >
+                  Accept Offer
+                </button>
+              }
+              collectionId={token?.token?.contract}
+              tokenId={token?.token?.tokenId}
+              onClose={mutate}
+              onBidAcceptError={(error: any) => {
+                if (error?.type === 'price mismatch') {
+                  modal.setToast({
+                    kind: 'error',
+                    message: 'Offer was lower than expected.',
+                    title: 'Could not accept offer',
+                  })
+                  return
+                }
+                // Handle user rejection
+                if (error?.code === 4001) {
+                  modal.setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                modal.setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not accept offer',
+                })
               }}
-              show={true}
-              signer={modal.signer}
-              isInTheWrongNetwork={modal.isInTheWrongNetwork}
-              setToast={modal.setToast}
-              mutate={mutate}
-            >
-              <p className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                Accept Offer
-              </p>
-            </AcceptOffer>
+            />
           )}
         </div>
       )}
