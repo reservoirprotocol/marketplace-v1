@@ -142,8 +142,8 @@ function MyApp({
   if (FEE_BPS && FEE_RECIPIENT) {
     options = {
       ...options,
-      fee: `${FEE_BPS}`,
-      feeRecipient: `${FEE_RECIPIENT}`,
+      marketplaceFee: +FEE_BPS,
+      marketplaceFeeRecipient: FEE_RECIPIENT,
     }
   }
 

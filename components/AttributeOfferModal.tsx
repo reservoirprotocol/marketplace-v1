@@ -29,7 +29,6 @@ const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
-const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 
 type Props = {
   env: {
@@ -184,9 +183,6 @@ const AttributeOfferModal: FC<Props> = ({
         attributeValue: data.attribute.value,
         weiPrice: calculations.total.toString(),
       }
-
-    if (FEE_BPS) bid.fee = FEE_BPS
-    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     reservoirClient.actions
       .placeBid({
