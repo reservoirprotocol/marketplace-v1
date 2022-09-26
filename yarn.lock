@@ -1138,6 +1138,22 @@
     "@radix-ui/react-use-callback-ref" "1.0.0"
     "@radix-ui/react-use-controllable-state" "1.0.0"
 
+"@radix-ui/react-scroll-area@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-scroll-area/-/react-scroll-area-1.0.0.tgz#10d0262a52266af528798f36947145f7e3a3a52c"
+  integrity sha512-3SNFukAjS5remgtpAVR9m3Zgo23ZojBZ8V3TCyR3A+56x2mtVqKlPV4+e8rScZUFMuvtbjIdQCmsJBFBazKZig==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/number" "1.0.0"
+    "@radix-ui/primitive" "1.0.0"
+    "@radix-ui/react-compose-refs" "1.0.0"
+    "@radix-ui/react-context" "1.0.0"
+    "@radix-ui/react-direction" "1.0.0"
+    "@radix-ui/react-presence" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.0"
+    "@radix-ui/react-use-callback-ref" "1.0.0"
+    "@radix-ui/react-use-layout-effect" "1.0.0"
+
 "@radix-ui/react-select@1.0.1-rc.2":
   version "1.0.1-rc.2"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-select/-/react-select-1.0.1-rc.2.tgz#e05621610363c594d6e243f8429389db270fb831"
@@ -1362,10 +1378,10 @@
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.4.0.tgz#47573eea016c93e06ca9499d7b691138b1e332d7"
-  integrity sha512-UNubS1HPITnyuT04j7Smv0czh9aCx7lUP6mksWvNfeF3G0vnwFCukxdt6qbIUpY5VFR6zZLQS5rsG0ipJNvtfQ==
+"@reservoir0x/reservoir-kit-ui@0.4.0-4":
+  version "0.4.0-4"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.4.0-4.tgz#869c3443f62c4d3a0cdf4ef55116e18da538f422"
+  integrity sha512-9PzXenEQVc2g8RYtGcq+HCnNoe0i/ctYgKeiAqlrkPq4f5OuQwuAqNvhYKpnBIFSUw3RwXRqRI70aAxxWFar6g==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1373,6 +1389,7 @@
     "@radix-ui/colors" "^0.1.8"
     "@radix-ui/react-dialog" "1.0.1-rc.2"
     "@radix-ui/react-popover" "1.0.1-rc.2"
+    "@radix-ui/react-scroll-area" "^1.0.0"
     "@radix-ui/react-select" "1.0.1-rc.2"
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
