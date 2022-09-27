@@ -140,7 +140,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                   <div
                     className={`absolute bottom-[0px] w-full bg-white transition-all group-hover:bottom-[0px] dark:bg-neutral-800 ${
                       token.floorAsk?.price?.amount != null &&
-                      token.floorAsk.price.amount != undefined
+                      token.floorAsk.price.amount != undefined &&
+                      !isOwner
                         ? 'md:-bottom-[41px]'
                         : ''
                     }`}
