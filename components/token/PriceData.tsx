@@ -18,6 +18,7 @@ import { Collection } from 'types/reservoir'
 import { formatDollar } from 'lib/numbers'
 import useCoinConversion from 'hooks/useCoinConversion'
 import SwapCartModal from 'components/SwapCartModal'
+import ConnectWalletModal from 'components/ConnectWalletModal'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -50,6 +51,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const reservoirClient = useReservoirClient()
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
+  const account = useAccount()
 
   const token = details.data ? details.data[0] : undefined
 
@@ -164,186 +166,192 @@ const PriceData: FC<Props> = ({ details, collection }) => {
           />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
-          {isOwner && (
-            <ListModal
-              trigger={
-                token?.market?.floorAsk?.price?.amount?.decimal ? (
-                  <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                    Edit Listing
-                  </p>
-                ) : (
-                  <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                    {token?.market?.floorAsk?.price?.amount?.decimal
-                      ? 'Edit Listing'
-                      : 'List for Sale'}
+          {!account.isConnected ? (
+            <ConnectWalletModal />
+          ) : (
+            <>
+              {isOwner && (
+                <ListModal
+                  trigger={
+                    token?.market?.floorAsk?.price?.amount?.decimal ? (
+                      <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                        Edit Listing
+                      </p>
+                    ) : (
+                      <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                        {token?.market?.floorAsk?.price?.amount?.decimal
+                          ? 'Edit Listing'
+                          : 'List for Sale'}
+                      </div>
+                    )
+                  }
+                  collectionId={contract}
+                  tokenId={tokenId}
+                  currencies={listingCurrencies}
+                  onListingComplete={() => {
+                    details && details.mutate()
+                  }}
+                  onListingError={(err: any) => {
+                    if (err?.code === 4001) {
+                      setToast({
+                        kind: 'error',
+                        message: 'You have canceled the transaction.',
+                        title: 'User canceled transaction',
+                      })
+                      return
+                    }
+                    setToast({
+                      kind: 'error',
+                      message: 'The transaction was not completed.',
+                      title: 'Could not list token',
+                    })
+                  }}
+                />
+              )}
+              {!isOwner && (
+                <BuyNow
+                  buttonClassName="btn-primary-fill col-span-1"
+                  data={{
+                    details: details,
+                  }}
+                  signer={signer}
+                  isInTheWrongNetwork={isInTheWrongNetwork}
+                  mutate={details.mutate}
+                />
+              )}
+              {isInCart && !isOwner && (
+                <button
+                  onClick={() => {
+                    const newCartTokens = [...cartTokens]
+                    const index = newCartTokens.findIndex(
+                      (cartToken) =>
+                        cartToken?.token?.contract === contract &&
+                        cartToken?.token?.tokenId === tokenId
+                    )
+                    newCartTokens.splice(index, 1)
+                    setCartTokens(newCartTokens)
+                  }}
+                  className="outline-none"
+                >
+                  <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
+                    Remove
                   </div>
-                )
-              }
-              collectionId={contract}
-              tokenId={tokenId}
-              currencies={listingCurrencies}
-              onListingComplete={() => {
-                details && details.mutate()
-              }}
-              onListingError={(err: any) => {
-                if (err?.code === 4001) {
+                </button>
+              )}
+              {!isInCart && !isOwner && isListed && (
+                <button
+                  disabled={!token?.market?.floorAsk?.price}
+                  onClick={() => {
+                    if (token?.token && token.market) {
+                      if (
+                        !cartCurrency ||
+                        token.market.floorAsk?.price?.currency?.contract ===
+                          cartCurrency?.contract
+                      ) {
+                        setCartTokens([
+                          ...cartTokens,
+                          {
+                            token: token.token,
+                            market: token.market,
+                          },
+                        ])
+                      } else {
+                        setCartToSwap([
+                          {
+                            token: token.token,
+                            market: token.market,
+                          },
+                        ])
+                        setClearCartOpen(true)
+                      }
+                    }
+                  }}
+                  className="outline-none"
+                >
+                  <div className="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4">
+                    Add to Cart
+                  </div>
+                </button>
+              )}
+
+              <AcceptBidModal
+                trigger={
+                  showAcceptOffer ? (
+                    <button
+                      disabled={isInTheWrongNetwork}
+                      className="btn-primary-outline w-full dark:text-white"
+                    >
+                      Accept Offer
+                    </button>
+                  ) : null
+                }
+                collectionId={collection?.id}
+                tokenId={token?.token?.tokenId}
+                onClose={() => details && details.mutate()}
+                onBidAcceptError={(error: any) => {
+                  if (error?.type === 'price mismatch') {
+                    setToast({
+                      kind: 'error',
+                      message: 'Offer was lower than expected.',
+                      title: 'Could not accept offer',
+                    })
+                    return
+                  }
+                  // Handle user rejection
+                  if (error?.code === 4001) {
+                    setToast({
+                      kind: 'error',
+                      message: 'You have canceled the transaction.',
+                      title: 'User canceled transaction',
+                    })
+                    return
+                  }
                   setToast({
                     kind: 'error',
-                    message: 'You have canceled the transaction.',
-                    title: 'User canceled transaction',
+                    message: 'The transaction was not completed.',
+                    title: 'Could not accept offer',
                   })
-                  return
-                }
-                setToast({
-                  kind: 'error',
-                  message: 'The transaction was not completed.',
-                  title: 'Could not list token',
-                })
-              }}
-            />
-          )}
-          {!isOwner && (
-            <BuyNow
-              buttonClassName="btn-primary-fill col-span-1"
-              data={{
-                details: details,
-              }}
-              signer={signer}
-              isInTheWrongNetwork={isInTheWrongNetwork}
-              mutate={details.mutate}
-            />
-          )}
-          {isInCart && !isOwner && (
-            <button
-              onClick={() => {
-                const newCartTokens = [...cartTokens]
-                const index = newCartTokens.findIndex(
-                  (cartToken) =>
-                    cartToken?.token?.contract === contract &&
-                    cartToken?.token?.tokenId === tokenId
-                )
-                newCartTokens.splice(index, 1)
-                setCartTokens(newCartTokens)
-              }}
-              className="outline-none"
-            >
-              <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
-                Remove
-              </div>
-            </button>
-          )}
-          {!isInCart && !isOwner && isListed && (
-            <button
-              disabled={!token?.market?.floorAsk?.price}
-              onClick={() => {
-                if (token?.token && token.market) {
-                  if (
-                    !cartCurrency ||
-                    token.market.floorAsk?.price?.currency?.contract ===
-                      cartCurrency?.contract
-                  ) {
-                    setCartTokens([
-                      ...cartTokens,
-                      {
-                        token: token.token,
-                        market: token.market,
-                      },
-                    ])
-                  } else {
-                    setCartToSwap([
-                      {
-                        token: token.token,
-                        market: token.market,
-                      },
-                    ])
-                    setClearCartOpen(true)
+                }}
+              />
+
+              {!isOwner && (
+                <BidModal
+                  collectionId={collection?.id}
+                  tokenId={token?.token?.tokenId}
+                  trigger={
+                    <button
+                      disabled={isInTheWrongNetwork}
+                      className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                    >
+                      Make Offer
+                    </button>
                   }
-                }
-              }}
-              className="outline-none"
-            >
-              <div className="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4">
-                Add to Cart
-              </div>
-            </button>
+                  onBidComplete={() => {
+                    details && details.mutate()
+                  }}
+                />
+              )}
+
+              <CancelOffer
+                data={{
+                  details,
+                }}
+                signer={signer}
+                show={isTopBidder}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+              <CancelListing
+                data={{
+                  details,
+                }}
+                signer={signer}
+                show={isOwner && isListed}
+                isInTheWrongNetwork={isInTheWrongNetwork}
+                setToast={setToast}
+              />
+            </>
           )}
-
-          <AcceptBidModal
-            trigger={
-              showAcceptOffer ? (
-                <button
-                  disabled={isInTheWrongNetwork}
-                  className="btn-primary-outline w-full dark:text-white"
-                >
-                  Accept Offer
-                </button>
-              ) : null
-            }
-            collectionId={collection?.id}
-            tokenId={token?.token?.tokenId}
-            onClose={() => details && details.mutate()}
-            onBidAcceptError={(error: any) => {
-              if (error?.type === 'price mismatch') {
-                setToast({
-                  kind: 'error',
-                  message: 'Offer was lower than expected.',
-                  title: 'Could not accept offer',
-                })
-                return
-              }
-              // Handle user rejection
-              if (error?.code === 4001) {
-                setToast({
-                  kind: 'error',
-                  message: 'You have canceled the transaction.',
-                  title: 'User canceled transaction',
-                })
-                return
-              }
-              setToast({
-                kind: 'error',
-                message: 'The transaction was not completed.',
-                title: 'Could not accept offer',
-              })
-            }}
-          />
-
-          {!isOwner && (
-            <BidModal
-              collectionId={collection?.id}
-              tokenId={token?.token?.tokenId}
-              trigger={
-                <button
-                  disabled={isInTheWrongNetwork}
-                  className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                >
-                  Make Offer
-                </button>
-              }
-              onBidComplete={() => {
-                details && details.mutate()
-              }}
-            />
-          )}
-
-          <CancelOffer
-            data={{
-              details,
-            }}
-            signer={signer}
-            show={isTopBidder}
-            isInTheWrongNetwork={isInTheWrongNetwork}
-            setToast={setToast}
-          />
-          <CancelListing
-            data={{
-              details,
-            }}
-            signer={signer}
-            show={isOwner && isListed}
-            isInTheWrongNetwork={isInTheWrongNetwork}
-            setToast={setToast}
-          />
         </div>
       </article>
       <SwapCartModal
