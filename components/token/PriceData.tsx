@@ -8,9 +8,9 @@ import {
   AcceptBidModal,
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
-import React, { FC, ReactNode, useState } from 'react'
+import React, { ComponentPropsWithoutRef, FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { useAccount, useConnect, useNetwork, useSigner } from 'wagmi'
+import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
 import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
@@ -25,10 +25,20 @@ const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
+const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
 
 type Props = {
   details: ReturnType<typeof useTokens>
   collection?: Collection
+}
+
+type ListingCurrencies = ComponentPropsWithoutRef<
+  typeof ListModal
+>['currencies']
+let listingCurrencies: ListingCurrencies = undefined
+
+if (CURRENCIES) {
+  listingCurrencies = JSON.parse(CURRENCIES)
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
@@ -177,6 +187,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   }
                   collectionId={contract}
                   tokenId={tokenId}
+                  currencies={listingCurrencies}
                   onListingComplete={() => {
                     details && details.mutate()
                   }}

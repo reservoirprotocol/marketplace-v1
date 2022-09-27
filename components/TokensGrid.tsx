@@ -140,7 +140,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                   <div
                     className={`absolute bottom-[0px] w-full bg-white transition-all group-hover:bottom-[0px] dark:bg-neutral-800 ${
                       token.floorAsk?.price?.amount != null &&
-                      token.floorAsk.price.amount != undefined
+                      token.floorAsk.price.amount != undefined &&
+                      !isOwner
                         ? 'md:-bottom-[41px]'
                         : ''
                     }`}
@@ -152,29 +153,37 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                       {token?.name || `#${token?.tokenId}`}
                     </div>
                     <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
-                      <div className="reservoir-h6">
-                        <FormatCrypto
-                          amount={token?.floorAsk?.price?.amount?.decimal}
-                          address={token?.floorAsk?.price?.currency?.contract}
-                          maximumFractionDigits={2}
-                        />
-                      </div>
-                      <div className="text-right">
-                        {token?.floorAsk?.source && (
-                          <img
-                            className="h-6 w-6"
-                            src={
-                              reservoirClient?.source &&
-                              reservoirClient.source ===
-                                token.floorAsk.source.domain &&
-                              SOURCE_ICON
-                                ? SOURCE_ICON
-                                : `${API_BASE}/redirect/sources/${token?.floorAsk.source.domain}/logo/v2`
-                            }
-                            alt=""
-                          />
-                        )}
-                      </div>
+                      {token?.floorAsk?.price !== null ? (
+                        <>
+                          <div className="reservoir-h6">
+                            <FormatCrypto
+                              amount={token?.floorAsk?.price?.amount?.decimal}
+                              address={
+                                token?.floorAsk?.price?.currency?.contract
+                              }
+                              maximumFractionDigits={2}
+                            />
+                          </div>
+                          <div className="text-right">
+                            {token?.floorAsk?.source && (
+                              <img
+                                className="h-6 w-6"
+                                src={
+                                  reservoirClient?.source &&
+                                  reservoirClient.source ===
+                                    token.floorAsk.source.domain &&
+                                  SOURCE_ICON
+                                    ? SOURCE_ICON
+                                    : `${API_BASE}/redirect/sources/${token?.floorAsk.source.domain}/logo/v2`
+                                }
+                                alt=""
+                              />
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="h-6"></div>
+                      )}
                     </div>
                     {token.floorAsk?.price?.amount?.decimal != null &&
                       token.floorAsk?.price?.amount?.decimal != undefined &&
