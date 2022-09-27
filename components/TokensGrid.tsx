@@ -161,6 +161,9 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                               address={
                                 token?.floorAsk?.price?.currency?.contract
                               }
+                              decimals={
+                                token.floorAsk?.price?.currency?.decimals
+                              }
                               maximumFractionDigits={2}
                             />
                           </div>
