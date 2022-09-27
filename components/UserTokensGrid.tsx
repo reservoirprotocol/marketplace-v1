@@ -1,4 +1,4 @@
-import { FC, ComponentProps, useState } from 'react'
+import { FC, ComponentProps, useState, ComponentPropsWithoutRef } from 'react'
 import LoadingCard from './LoadingCard'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -10,6 +10,7 @@ import FormatEth from './FormatEth'
 import useUserTokens from 'hooks/useUserTokens'
 import FormatCrypto from 'components/FormatCrypto'
 
+const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
@@ -20,6 +21,15 @@ type TokenProps = {
   modal: Props['modal']
   mutate: Props['mutate']
   isOwner: Props['isOwner']
+}
+
+type ListingCurrencies = ComponentPropsWithoutRef<
+  typeof ListModal
+>['currencies']
+let listingCurrencies: ListingCurrencies = undefined
+
+if (CURRENCIES) {
+  listingCurrencies = JSON.parse(CURRENCIES)
 }
 
 const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
@@ -138,6 +148,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
             }
             collectionId={token?.token?.collection?.id}
             tokenId={token?.token?.tokenId}
+            currencies={listingCurrencies}
             onListingError={(err: any) => {
               if (err?.code === 4001) {
                 modal.setToast({
