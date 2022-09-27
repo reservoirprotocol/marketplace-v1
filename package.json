@@ -30,7 +30,7 @@
     "@ramosdiego/ui": "^0.0.10",
     "@reservoir0x/sdk": "^0.0.123",
     "@stitches/react": "^1.2.8",
-    "ethers": "^5.6.8",
+    "ethers": "^5.7.1",
     "lodash.debounce": "^4.0.8",
     "luxon": "^2.3.0",
     "match-sorter": "^6.3.1",
@@ -45,7 +45,7 @@
     "swr": "^1.1.2",
     "tailwindcss": "^3.0.15",
     "tailwindcss-radix": "^1.6.0",
-    "wagmi": "^0.6.0",
+    "wagmi": "^0.6.7",
     "downshift": "^6.1.7"
   },
   "prettier": {
