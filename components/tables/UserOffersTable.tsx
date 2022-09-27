@@ -125,6 +125,7 @@ const UserOffersTable: FC<Props> = ({
                   <FormatCrypto
                     amount={price?.amount?.decimal}
                     address={price?.currency?.contract}
+                    decimals={price?.currency?.decimals}
                   />
                 </td>
 

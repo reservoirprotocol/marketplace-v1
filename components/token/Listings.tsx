@@ -56,6 +56,7 @@ const Listings: FC<Props> = ({ token }) => {
                       <FormatCrypto
                         amount={unitPrice?.amount?.decimal}
                         address={unitPrice?.currency?.contract}
+                        decimals={unitPrice?.currency?.decimals}
                       />
                     </td>
 

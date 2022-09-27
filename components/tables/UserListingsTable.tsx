@@ -149,6 +149,7 @@ const UseListingsTableRow = ({
         <FormatCrypto
           amount={price?.amount?.decimal}
           address={price?.currency?.contract}
+          decimals={price?.currency?.decimals}
         />
         {usdPrice && (
           <div className="text-sm text-neutral-600 dark:text-neutral-300">
