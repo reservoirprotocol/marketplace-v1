@@ -103,6 +103,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   <FormatCrypto
                     amount={token.ownership.floorAskPrice.amount?.decimal}
                     address={token.ownership.floorAskPrice.currency?.contract}
+                    decimals={token.ownership.floorAskPrice.currency?.decimals}
                   />
                 </div>
               </div>
@@ -116,6 +117,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   <FormatCrypto
                     amount={token?.token?.topBid?.price?.amount.decimal}
                     address={token?.token?.topBid?.price?.currency?.contract}
+                    decimals={token?.token?.topBid.price?.currency?.decimals}
                   />
                 </div>
               </div>

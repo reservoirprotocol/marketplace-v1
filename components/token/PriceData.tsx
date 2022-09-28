@@ -146,6 +146,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               <FormatCrypto
                 amount={token?.market?.floorAsk?.price?.amount?.decimal}
                 address={token?.market?.floorAsk?.price?.currency?.contract}
+                decimals={token?.market?.floorAsk?.price?.currency?.decimals}
                 logoWidth={30}
               />
             }
@@ -157,6 +158,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               <FormatCrypto
                 amount={token?.market?.topBid?.price?.amount?.decimal}
                 address={token?.market?.topBid?.price?.currency?.contract}
+                decimals={token?.market?.topBid?.price?.currency?.decimals}
                 logoWidth={30}
               />
             }
