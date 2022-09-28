@@ -109,8 +109,8 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
   const image = META_OG_IMAGE
     ? metadata.image(META_OG_IMAGE)
     : token?.token?.image
-    ? metadata.image(token?.token?.image)
-    : null
+      ? metadata.image(token?.token?.image)
+      : null
 
   return (
     <Layout navbar={{}}>
