@@ -1,4 +1,3 @@
-import useAttributes from 'hooks/useAttributes'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
@@ -18,7 +17,7 @@ import ViewMenu from './ViewMenu'
 import Toast from './Toast'
 import { FiRefreshCcw } from 'react-icons/fi'
 import FormatEth from './FormatEth'
-import { useCollections } from '@reservoir0x/reservoir-kit-ui'
+import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 
@@ -153,7 +152,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
         <Sidebar
-          attributes={attributes}
+          attributes={attributes.data}
           refreshData={() => {
             tokens.setSize(1)
           }}
