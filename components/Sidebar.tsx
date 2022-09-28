@@ -3,15 +3,11 @@ import { toggleOffItem, toggleOnAttributeKey } from 'lib/router'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import AttributeSelector from './filter/AttributeSelector'
-import { SWRResponse } from 'swr'
-import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiChevronDown } from 'react-icons/fi'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 
 type Props = {
-  attributes: SWRResponse<
-    paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']
-  >
+  attributes: ReturnType<typeof useAttributes>['data']
   refreshData: () => void
 }
 
@@ -40,7 +36,7 @@ const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
           Explore All
         </button>
       </div>
-      {attributes.data?.attributes?.map((attribute) => (
+      {attributes?.map((attribute) => (
         <Accordion.Item
           value={`item-${attribute.key}`}
           key={attribute.key}
