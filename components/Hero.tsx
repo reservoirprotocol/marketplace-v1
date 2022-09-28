@@ -91,7 +91,8 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   const statsObj = {
     count: Number(collection?.tokenCount ?? 0),
-    topOffer: collection?.topBid?.price?.amount?.native,
+    topOffer: collection?.topBid?.price?.amount?.decimal,
+    topOfferCurrency: collection?.topBid?.price?.currency,
     floor: collection?.floorAsk?.price?.amount?.native,
     allTime: collection?.volume?.allTime,
     volumeChange: collection?.volumeChange?.['1day'],

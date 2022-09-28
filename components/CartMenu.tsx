@@ -171,6 +171,7 @@ const CartMenu: FC = () => {
                         <FormatCrypto
                           amount={market.floorAsk?.price?.amount?.decimal}
                           address={market.floorAsk?.price?.currency?.contract}
+                          decimals={market.floorAsk?.price?.currency?.decimals}
                         />
                       </div>
                     </div>
@@ -193,7 +194,11 @@ const CartMenu: FC = () => {
         <div className="mb-4 flex justify-between">
           <div className="reservoir-h6">You Pay</div>
           <div className="reservoir-h6">
-            <FormatCrypto amount={cartTotal} address={cartCurrency?.contract} />
+            <FormatCrypto
+              amount={cartTotal}
+              address={cartCurrency?.contract}
+              decimals={cartCurrency?.decimals}
+            />
           </div>
         </div>
         {balance?.formatted && +balance.formatted < cartTotal && (
@@ -204,6 +209,7 @@ const CartMenu: FC = () => {
             <FormatCrypto
               amount={+balance.formatted}
               address={cartCurrency?.contract}
+              decimals={cartCurrency?.decimals}
             />
           </div>
         )}
