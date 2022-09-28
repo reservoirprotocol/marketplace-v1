@@ -1,10 +1,5 @@
 import Layout from 'components/Layout'
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
+import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import {
   useAccount,
@@ -26,7 +21,6 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
@@ -36,29 +30,35 @@ import { truncateAddress } from 'lib/truncateText'
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-
-// OPTIONAL
-const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
-const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
-
-type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
 }
 
-const Address: NextPage<Props> = ({ address, fallback }) => {
+const Address: NextPage = () => {
+  const router = useRouter()
   const accountData = useAccount()
+  const address = router.query.address as string
+
+  if (!address) {
+    throw 'No address set'
+  }
 
   const { data: ensAvatar } = useEnsAvatar({
     addressOrName: address,
   })
-  const { data: ensName } = useEnsName({ address })
+
+  const { data: ensName } = useEnsName({
+    address,
+    onSettled(data, error) {
+      console.log('Settled', { data, error })
+    },
+    onError(error) {
+      console.log('Error', error)
+    },
+  })
   const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
-  const router = useRouter()
   const userTokens = useUserTokens(address)
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
@@ -75,6 +75,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
 
   const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
+  const formattedAddress = truncateAddress(address as string)
 
   let tabs = [{ name: 'Portfolio', id: 'portfolio' }]
 
@@ -95,14 +96,15 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             {address && (
               <Avatar address={address} avatar={ensAvatar} size={80} />
             )}
-            <div className="ml-4">
+            <div className="ml-4 flex flex-col justify-center">
               <p className="reservoir-h6 text-xl font-semibold dark:text-white">
-                {ensName || truncateAddress(address as string)}
+                {ensName || formattedAddress}
               </p>
-
-              <p className="reservoir-label text-md font-semibold opacity-60">
-                {truncateAddress(address as string)}
-              </p>
+              {ensName && (
+                <p className="reservoir-label text-md font-semibold opacity-60">
+                  {formattedAddress}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -189,55 +191,3 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
 }
 
 export default Address
-
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps<{
-  address: string | undefined
-  fallback: {
-    tokens: paths['/users/{user}/tokens/v4']['get']['responses']['200']['schema']
-  }
-}> = async ({ params }) => {
-  const options: RequestInit | undefined = {}
-
-  const address = params?.address?.toString()
-
-  if (RESERVOIR_API_KEY) {
-    options.headers = {
-      'x-api-key': RESERVOIR_API_KEY,
-    }
-  }
-
-  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v4`)
-
-  let query: paths['/users/{user}/tokens/v3']['get']['parameters']['query'] = {
-    limit: 20,
-    offset: 0,
-  }
-
-  if (COLLECTION_SET_ID) {
-    query.collectionsSetId = COLLECTION_SET_ID
-  } else {
-    if (COMMUNITY) query.community = COMMUNITY
-  }
-
-  setParams(url, query)
-
-  const res = await fetch(url.href, options)
-
-  const tokens = (await res.json()) as Props['fallback']['tokens']
-
-  return {
-    props: {
-      address,
-      fallback: {
-        tokens,
-      },
-    },
-  }
-}
