@@ -1,15 +1,16 @@
-import { ComponentProps, FC } from 'react'
+import { ComponentProps, FC, useEffect } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
-import useUserBids from 'hooks/useUserBids'
 import FormatCrypto from 'components/FormatCrypto'
+import { useBids } from '@reservoir0x/reservoir-kit-ui'
+import { useInView } from 'react-intersection-observer'
 
 type Props = {
-  data: ReturnType<typeof useUserBids>
+  data: ReturnType<typeof useBids>
   isOwner: boolean
   mutate: () => any
   modal: {
@@ -21,16 +22,16 @@ type Props = {
   }
 }
 
-const UserOffersTable: FC<Props> = ({
-  data: { orders, ref },
-  mutate,
-  modal,
-  isOwner,
-}) => {
-  const { data } = orders
-  const ordersFlat = data ? data.flatMap(({ orders }) => orders) : []
+const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
+  const { ref, inView } = useInView()
+  useEffect(() => {
+    if (inView && data.hasNextPage) {
+      data.fetchNextPage()
+    }
+  }, [inView])
+  const bids = data.data
 
-  if (ordersFlat.length === 0) {
+  if (bids.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center dark:text-white">
         You have not made any offers.
@@ -60,7 +61,7 @@ const UserOffersTable: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {ordersFlat?.map((position, index, arr) => {
+          {bids?.map((position, index, arr) => {
             const {
               collectionName,
               contract,
@@ -96,6 +97,7 @@ const UserOffersTable: FC<Props> = ({
                           <div className="aspect-w-1 aspect-h-1 relative">
                             <img
                               src={optimizeImage(image, 35)}
+                              alt="Bid Image"
                               className="w-[35px] object-contain"
                               width="35"
                               height="35"
@@ -161,9 +163,7 @@ const UserOffersTable: FC<Props> = ({
 export default UserOffersTable
 
 function processPosition(
-  position:
-    | NonNullable<NonNullable<Props['data']['orders']['data']>[0]['orders']>[0]
-    | undefined
+  position: NonNullable<NonNullable<Props['data']['data']>>[0] | undefined
 ) {
   const kind = position?.metadata?.kind
   // @ts-ignore
