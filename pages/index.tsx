@@ -117,7 +117,7 @@ export const getStaticProps: GetStaticProps<{
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
-    sortBy: '7DayVolume',
+    sortBy: '1DayVolume',
   }
 
   if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
