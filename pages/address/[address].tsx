@@ -49,7 +49,7 @@ const metadata = {
   title: (title: string) => <title>{title}</title>,
 }
 
-const Address: NextPage<Props> = ({ address, fallback }) => {
+const Address: NextPage<Props> = ({ address }) => {
   const accountData = useAccount()
 
   const { data: ensAvatar } = useEnsAvatar({
@@ -132,14 +132,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     userTokens.tokens.mutate()
                     listings.mutate()
                   }}
-                  isOwner={isOwner}
-                  modal={{
-                    accountData,
-                    isInTheWrongNetwork,
-                    collectionId: undefined,
-                    setToast,
-                    signer,
-                  }}
+                  owner={address || ''}
                 />
               </div>
             </Tabs.Content>
