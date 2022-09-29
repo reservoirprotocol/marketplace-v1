@@ -1,14 +1,12 @@
 import { FC } from 'react'
 import FormatEth from 'components/FormatEth'
 import { formatNumber } from 'lib/numbers'
-import { paths } from '@reservoir0x/reservoir-kit-client'
 import FormatCrypto from 'components/FormatCrypto'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 type Currency = NonNullable<
   NonNullable<
-    NonNullable<
-      paths['/collections/v5']['get']['responses']['200']['schema']['collections']
-    >[0]['topBid']
+    NonNullable<ReturnType<typeof useCollections>['data']>[0]['topBid']
   >['price']
 >['currency']
 
