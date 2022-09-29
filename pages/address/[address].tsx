@@ -19,19 +19,12 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
-<<<<<<< HEAD
 import { paths } from '@reservoir0x/reservoir-kit-client'
-import { useBids } from '@reservoir0x/reservoir-kit-ui'
-=======
-import useUserBids from 'hooks/useUserBids'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
-import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
->>>>>>> pedro/res-539-use-new-useusertokens-hook-from-rk
+import { useBids, useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
@@ -64,10 +57,6 @@ const Address: NextPage = () => {
   })
   const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
-<<<<<<< HEAD
-  const userTokens = useUserTokens(address)
-=======
-  const router = useRouter()
   const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
     limit: 20,
     includeTopBid: true,
@@ -82,7 +71,6 @@ const Address: NextPage = () => {
     userTokensParams.collection = COLLECTION
   }
   const userTokens = useUserTokens(address, userTokensParams)
->>>>>>> pedro/res-539-use-new-useusertokens-hook-from-rk
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
   const query = useMemo(() => {
