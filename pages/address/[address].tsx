@@ -242,16 +242,16 @@ export const getStaticProps: GetStaticProps<{
 
   setParams(url, query)
 
-  // const res = await fetch(url.href, options)
+  const res = await fetch(url.href, options)
 
-  // const tokens = (await res.json()) as Props['fallback']['tokens']
+  const tokens = (await res.json()) as Props['fallback']['tokens']
 
   return {
     props: {
       address,
-      // fallback: {
-      //   tokens,
-      // },
+      fallback: {
+        tokens,
+      },
     },
   }
 }
