@@ -10,7 +10,6 @@ import {
 } from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
-import useUserTokens from 'hooks/useUserTokens'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
@@ -20,8 +19,14 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
+<<<<<<< HEAD
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { useBids } from '@reservoir0x/reservoir-kit-ui'
+=======
+import useUserBids from 'hooks/useUserBids'
+import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
+>>>>>>> pedro/res-539-use-new-useusertokens-hook-from-rk
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
@@ -29,6 +34,7 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
@@ -58,7 +64,25 @@ const Address: NextPage = () => {
   })
   const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
+<<<<<<< HEAD
   const userTokens = useUserTokens(address)
+=======
+  const router = useRouter()
+  const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
+    limit: 20,
+    includeTopBid: true,
+  }
+  if (COLLECTION_SET_ID) {
+    userTokensParams.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) userTokensParams.community = COMMUNITY
+  }
+
+  if (COLLECTION && (!COMMUNITY || !COLLECTION_SET_ID)) {
+    userTokensParams.collection = COLLECTION
+  }
+  const userTokens = useUserTokens(address, userTokensParams)
+>>>>>>> pedro/res-539-use-new-useusertokens-hook-from-rk
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
   const query = useMemo(() => {
@@ -149,10 +173,10 @@ const Address: NextPage = () => {
             <Tabs.Content value="portfolio">
               <div className="mt-6">
                 <UserTokensGrid
-                  data={userTokens}
+                  userTokens={userTokens}
                   mutate={() => {
                     bidsResponse.mutate()
-                    userTokens.tokens.mutate()
+                    userTokens.mutate()
                     listings.mutate()
                   }}
                   isOwner={isOwner}
@@ -173,7 +197,7 @@ const Address: NextPage = () => {
                     data={bidsResponse}
                     mutate={() => {
                       bidsResponse.mutate()
-                      userTokens.tokens.mutate()
+                      userTokens.mutate()
                     }}
                     isOwner={isOwner}
                     modal={{
@@ -189,7 +213,7 @@ const Address: NextPage = () => {
                   <UserListingsTable
                     data={listings}
                     mutate={() => {
-                      userTokens.tokens.mutate()
+                      userTokens.mutate()
                       listings.mutate()
                     }}
                     isOwner={isOwner}
