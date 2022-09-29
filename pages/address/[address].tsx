@@ -20,7 +20,7 @@ import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
 import Avatar from 'components/Avatar'
-import { ComponentProps, useMemo } from 'react'
+import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
@@ -56,29 +56,26 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const userTokens = useUserTokens(address)
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
-  const query = useMemo(() => {
-    const params: paths['/orders/bids/v3']['get']['parameters']['query'] = {
-      status: 'active',
-      maker: address,
-      limit: 20,
-      includeMetadata: true,
-    }
-    if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
-      params.contracts = [COLLECTION]
-    }
+  const params: Parameters<typeof useBids>[0] = {
+    status: 'active',
+    maker: address,
+    limit: 20,
+    includeMetadata: true,
+  }
+  if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
+    params.contracts = [COLLECTION]
+  }
 
-    if (COMMUNITY || COLLECTION_SET_ID) {
-      collections?.data?.collections
-        ?.map(({ contract }) => contract)
-        .filter((contract) => !!contract)
-        .forEach(
-          // @ts-ignore
-          (contract, index) => (params[`contracts[${index}]`] = contract)
-        )
-    }
-    return params
-  }, [address, collections])
-  const bidsResponse = useBids(query)
+  if (COMMUNITY || COLLECTION_SET_ID) {
+    collections?.data?.collections
+      ?.map(({ contract }) => contract)
+      .filter((contract) => !!contract)
+      .forEach(
+        // @ts-ignore
+        (contract, index) => (params[`contracts[${index}]`] = contract)
+      )
+  }
+  const bidsResponse = useBids(params)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
