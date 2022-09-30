@@ -60,6 +60,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                   mutate={mutate}
                   setClearCartOpen={setClearCartOpen}
                   setCartToSwap={setCartToSwap}
+                  key={`${token?.token?.contract}:${token?.token?.tokenId}`}
                 />
               )
             })}

@@ -1,7 +1,7 @@
-import { FC, ComponentPropsWithoutRef } from 'react'
+import { FC, ComponentPropsWithoutRef, useEffect } from 'react'
 import LoadingCard from './LoadingCard'
-import { ListModal } from '@reservoir0x/reservoir-kit-ui'
-import useUserTokens from 'hooks/useUserTokens'
+import { ListModal, useUserTokens } from '@reservoir0x/reservoir-kit-ui'
+import { useInView } from 'react-intersection-observer'
 import TokenCard from './TokenCard'
 
 const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
@@ -16,22 +16,29 @@ if (CURRENCIES) {
 }
 
 type Props = {
-  data: ReturnType<typeof useUserTokens>
+  userTokens: ReturnType<typeof useUserTokens>
   owner: string
   mutate: () => any
 }
 
-const UserTokensGrid: FC<Props> = ({
-  data: { tokens, ref },
-  owner,
-  mutate,
-}) => {
-  const { data, isValidating } = tokens
-  const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
-  const isEmpty = mappedTokens.length === 0
-  const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
+const UserTokensGrid: FC<Props> = ({ userTokens, mutate, owner }) => {
+  const {
+    data: tokens,
+    isFetchingInitialData,
+    isFetchingPage,
+    hasNextPage,
+    fetchNextPage,
+  } = userTokens
+  const isEmpty = tokens.length === 0
+  const { ref, inView } = useInView()
 
-  if (isEmpty) {
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView])
+
+  if (isEmpty && !isFetchingPage) {
     return (
       <div className="grid justify-center text-xl font-semibold">No tokens</div>
     )
@@ -39,11 +46,11 @@ const UserTokensGrid: FC<Props> = ({
 
   return (
     <div className="mx-auto mb-8 grid max-w-[2400px] gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
-      {isEmpty && isValidating
+      {isFetchingInitialData
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
           ))
-        : mappedTokens?.map((token) => (
+        : tokens?.map((token) => (
             <TokenCard
               token={{
                 token: {
@@ -62,15 +69,18 @@ const UserTokensGrid: FC<Props> = ({
               collectionImage={token?.token?.collection?.imageUrl}
             />
           ))}
-      {!didReactEnd &&
-        Array(20)
+      {isFetchingPage ? (
+        Array(10)
           .fill(null)
           .map((_, index) => {
             if (index === 0) {
-              return <LoadingCard viewRef={ref} key={`loading-card-${index}`} />
+              return <LoadingCard key={`loading-card-${index}`} />
             }
             return <LoadingCard key={`loading-card-${index}`} />
-          })}
+          })
+      ) : (
+        <span ref={ref}></span>
+      )}
     </div>
   )
 }

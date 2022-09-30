@@ -24,12 +24,11 @@ import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
 import FormatEth from 'components/FormatEth'
-import useAttributes from 'hooks/useAttributes'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import CollectionActivityTable from 'components/tables/CollectionActivityTable'
 import Sweep from 'components/Sweep'
-import { useCollections } from '@reservoir0x/reservoir-kit-ui'
+import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 
 // Environment variables
 // For more information about these variables
@@ -207,7 +206,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           <Tabs.Content value="items" asChild>
             <>
               <Sidebar
-                attributes={attributes}
+                attributes={attributes.data}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}

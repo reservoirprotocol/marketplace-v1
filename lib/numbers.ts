@@ -77,7 +77,8 @@ function formatBN(
   }).formatToParts(amountToFormat)
 
   if (parts && parts.length > 0) {
-    return trauncateFractionAndFormat(parts, maximumFractionDigits)
+    const maxDecimals = amountToFormat > 1000 ? 1 : maximumFractionDigits
+    return trauncateFractionAndFormat(parts, maxDecimals)
   } else {
     return amount
   }
