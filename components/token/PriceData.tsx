@@ -175,17 +175,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               {isOwner && (
                 <ListModal
                   trigger={
-                    token?.market?.floorAsk?.price?.amount?.decimal ? (
-                      <p className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                        Edit Listing
-                      </p>
-                    ) : (
-                      <div className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                        {token?.market?.floorAsk?.price?.amount?.decimal
-                          ? 'Edit Listing'
-                          : 'List for Sale'}
-                      </div>
-                    )
+                    <button className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                      {token?.market?.floorAsk?.price?.amount?.decimal
+                        ? 'Create New Listing'
+                        : 'List for Sale'}
+                    </button>
                   }
                   collectionId={contract}
                   tokenId={tokenId}
