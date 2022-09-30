@@ -2,11 +2,10 @@ import { FC, useState } from 'react'
 import LoadingCard from './LoadingCard'
 import { useInView } from 'react-intersection-observer'
 import Masonry from 'react-masonry-css'
-import { useRecoilState } from 'recoil'
 import useTokens from '../hooks/useTokens'
-import recoilCartTokens from 'recoil/cart/atom'
 import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
+import { Token } from 'recoil/cart/atom'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -18,9 +17,8 @@ type Props = {
 
 const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
   const { data, mutate } = tokens
-  const [cartTokens] = useRecoilState(recoilCartTokens)
   const [clearCartOpen, setClearCartOpen] = useState(false)
-  const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
+  const [cartToSwap, setCartToSwap] = useState<undefined | Token[]>()
 
   const didReachEnd = tokens.isFetchingInitialData || !tokens.hasNextPage
 
