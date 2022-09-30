@@ -124,7 +124,11 @@ const TokenCard: FC<Props> = ({
         </a>
       </Link>
       <div
-        className={`absolute bottom-[0px] w-full bg-white transition-all group-hover:bottom-[0px] dark:bg-neutral-800 md:-bottom-[41px]`}
+        className={`absolute bottom-[0px] w-full bg-white transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
+          !isOwner && !token?.market?.floorAsk?.price
+            ? ''
+            : 'group-hover:bottom-[0px]'
+        }`}
       >
         <div
           className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
@@ -160,50 +164,44 @@ const TokenCard: FC<Props> = ({
                 )}
               </div>
             </>
+          ) : !isOwner ? (
+            <div className="h-[64px]"></div>
           ) : (
             <div className="h-6"></div>
           )}
         </div>
-        {token?.market?.floorAsk?.price?.amount?.decimal != null &&
-          token?.market?.floorAsk?.price?.amount?.decimal != undefined &&
-          isOwner && (
-            <div className="grid">
-              <ListModal
-                trigger={
-                  token?.market?.floorAsk?.price?.amount?.decimal ? (
-                    <p className="btn-primary-fill w-full rounded-none dark:ring-primary-900 dark:focus:ring-4">
-                      Create New Listing
-                    </p>
-                  ) : (
-                    <div className="btn-primary-fill w-full rounded-none dark:ring-primary-900 dark:focus:ring-4">
-                      {token?.market?.floorAsk?.price?.amount?.decimal
-                        ? 'Create New Listing'
-                        : 'List for Sale'}
-                    </div>
-                  )
-                }
-                collectionId={token.token?.contract}
-                tokenId={token.token?.tokenId}
-                currencies={listingCurrencies}
-                onListingComplete={mutate}
-                onListingError={(err: any) => {
-                  if (err?.code === 4001) {
-                    setToast({
-                      kind: 'error',
-                      message: 'You have canceled the transaction.',
-                      title: 'User canceled transaction',
-                    })
-                    return
-                  }
+        {isOwner && (
+          <div className="grid">
+            <ListModal
+              trigger={
+                <button className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0">
+                  {token?.market?.floorAsk?.price?.amount?.decimal
+                    ? 'Create New Listing'
+                    : 'List for Sale'}
+                </button>
+              }
+              collectionId={token.token?.contract}
+              tokenId={token.token?.tokenId}
+              currencies={listingCurrencies}
+              onListingComplete={mutate}
+              onListingError={(err: any) => {
+                if (err?.code === 4001) {
                   setToast({
                     kind: 'error',
-                    message: 'The transaction was not completed.',
-                    title: 'Could not list token',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
                   })
-                }}
-              />
-            </div>
-          )}
+                  return
+                }
+                setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not list token',
+                })
+              }}
+            />
+          </div>
+        )}
         {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined &&
           !isOwner && (
