@@ -164,7 +164,7 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
                               decimals={
                                 token.floorAsk?.price?.currency?.decimals
                               }
-                              maximumFractionDigits={2}
+                              maximumFractionDigits={4}
                             />
                           </div>
                           <div className="text-right">

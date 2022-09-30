@@ -150,6 +150,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 address={token?.market?.floorAsk?.price?.currency?.contract}
                 decimals={token?.market?.floorAsk?.price?.currency?.decimals}
                 logoWidth={30}
+                maximumFractionDigits={8}
               />
             }
             usdPrice={floorAskUsdPrice}
@@ -162,6 +163,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 address={token?.market?.topBid?.price?.currency?.contract}
                 decimals={token?.market?.topBid?.price?.currency?.decimals}
                 logoWidth={30}
+                maximumFractionDigits={8}
               />
             }
             usdPrice={topBidUsdPrice}
