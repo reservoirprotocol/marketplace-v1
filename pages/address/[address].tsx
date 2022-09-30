@@ -1,5 +1,10 @@
 import Layout from 'components/Layout'
-import { NextPage } from 'next'
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+  NextPage,
+} from 'next'
 import { useRouter } from 'next/router'
 import {
   useAccount,
@@ -22,20 +27,24 @@ import useUserAsks from 'hooks/useUserAsks'
 import { useUserTokens, useBids } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
+import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+
+type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
 }
 
-const Address: NextPage = () => {
+const Address: NextPage<Props> = ({ address, fallback }) => {
   const router = useRouter()
   const accountData = useAccount()
-  const address = router.query.address as string
 
   if (!address) {
     throw 'No address set'
@@ -69,7 +78,9 @@ const Address: NextPage = () => {
   if (COLLECTION && (!COMMUNITY || !COLLECTION_SET_ID)) {
     userTokensParams.collection = COLLECTION
   }
-  const userTokens = useUserTokens(address, userTokensParams)
+  const userTokens = useUserTokens(address, userTokensParams, {
+    fallbackData: [fallback.tokens],
+  })
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
   const params: Parameters<typeof useBids>[0] = {
@@ -213,3 +224,55 @@ const Address: NextPage = () => {
 }
 
 export default Address
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
+}
+
+export const getStaticProps: GetStaticProps<{
+  address: string | undefined
+  fallback: {
+    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+  }
+}> = async ({ params }) => {
+  const options: RequestInit | undefined = {}
+
+  const address = params?.address?.toString()
+
+  if (RESERVOIR_API_KEY) {
+    options.headers = {
+      'x-api-key': RESERVOIR_API_KEY,
+    }
+  }
+
+  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v5`)
+
+  let query: paths['/users/{user}/tokens/v5']['get']['parameters']['query'] = {
+    limit: 20,
+    offset: 0,
+  }
+
+  if (COLLECTION_SET_ID) {
+    query.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) query.community = COMMUNITY
+  }
+
+  setParams(url, query)
+
+  const res = await fetch(url.href, options)
+
+  const tokens = (await res.json()) as Props['fallback']['tokens']
+
+  return {
+    props: {
+      address,
+      fallback: {
+        tokens,
+      },
+    },
+  }
+}
