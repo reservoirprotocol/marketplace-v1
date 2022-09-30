@@ -24,25 +24,17 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
-import useUserBids from 'hooks/useUserBids'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
-import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTokens, useBids } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
-// Environment variables
-// For more information about these variables
-// refer to the README.md file on this repository
-// Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
-// REQUIRED
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-
-// OPTIONAL
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -76,7 +68,26 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const userTokens = useUserTokens(address, userTokensParams)
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
-  const buyPositions = useUserBids([], address, collections)
+  const params: Parameters<typeof useBids>[0] = {
+    status: 'active',
+    maker: address,
+    limit: 20,
+    includeMetadata: true,
+  }
+  if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
+    params.contracts = [COLLECTION]
+  }
+
+  if (COMMUNITY || COLLECTION_SET_ID) {
+    collections?.data?.collections
+      ?.map(({ contract }) => contract)
+      .filter((contract) => !!contract)
+      .forEach(
+        // @ts-ignore
+        (contract, index) => (params[`contracts[${index}]`] = contract)
+      )
+  }
+  const bidsResponse = useBids(params)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
@@ -142,8 +153,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 <UserTokensGrid
                   userTokens={userTokens}
                   mutate={() => {
-                    buyPositions.orders.mutate()
                     userTokens.mutate()
+                    bidsResponse.mutate()
                     listings.mutate()
                   }}
                   isOwner={isOwner}
@@ -161,10 +172,10 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
               <>
                 <Tabs.Content value="buying">
                   <UserOffersTable
-                    data={buyPositions}
+                    data={bidsResponse}
                     mutate={() => {
-                      buyPositions.orders.mutate()
                       userTokens.mutate()
+                      bidsResponse.mutate()
                     }}
                     isOwner={isOwner}
                     modal={{
