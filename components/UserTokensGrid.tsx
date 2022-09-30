@@ -47,9 +47,9 @@ const UserTokensGrid: FC<Props> = ({ userTokens, mutate, owner }) => {
   return (
     <div className="mx-auto mb-8 grid max-w-[2400px] gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
       {isFetchingInitialData
-        ? Array(20).map((_, index) => (
-            <LoadingCard key={`loading-card-${index}`} />
-          ))
+        ? Array(10)
+            .fill(null)
+            .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
         : tokens?.map((token) => (
             <TokenCard
               token={{
