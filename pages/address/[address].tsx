@@ -15,7 +15,6 @@ import {
 } from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
-import useUserTokens from 'hooks/useUserTokens'
 import UserOffersTable from 'components/tables/UserOffersTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
@@ -27,6 +26,7 @@ import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
 import useUserBids from 'hooks/useUserBids'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
@@ -42,6 +42,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 // OPTIONAL
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -59,7 +60,20 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const { chain: activeChain } = useNetwork()
   const { data: signer } = useSigner()
   const router = useRouter()
-  const userTokens = useUserTokens(address)
+  const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
+    limit: 20,
+    includeTopBid: true,
+  }
+  if (COLLECTION_SET_ID) {
+    userTokensParams.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) userTokensParams.community = COMMUNITY
+  }
+
+  if (COLLECTION && (!COMMUNITY || !COLLECTION_SET_ID)) {
+    userTokensParams.collection = COLLECTION
+  }
+  const userTokens = useUserTokens(address, userTokensParams)
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
   const buyPositions = useUserBids([], address, collections)
@@ -126,10 +140,10 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             <Tabs.Content value="portfolio">
               <div className="mt-6">
                 <UserTokensGrid
-                  data={userTokens}
+                  userTokens={userTokens}
                   mutate={() => {
                     buyPositions.orders.mutate()
-                    userTokens.tokens.mutate()
+                    userTokens.mutate()
                     listings.mutate()
                   }}
                   isOwner={isOwner}
@@ -150,7 +164,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     data={buyPositions}
                     mutate={() => {
                       buyPositions.orders.mutate()
-                      userTokens.tokens.mutate()
+                      userTokens.mutate()
                     }}
                     isOwner={isOwner}
                     modal={{
@@ -166,7 +180,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   <UserListingsTable
                     data={listings}
                     mutate={() => {
-                      userTokens.tokens.mutate()
+                      userTokens.mutate()
                       listings.mutate()
                     }}
                     isOwner={isOwner}
