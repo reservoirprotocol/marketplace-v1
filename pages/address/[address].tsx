@@ -19,15 +19,14 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
-import { paths } from '@reservoir0x/reservoir-kit-client'
-import { useBids, useUserTokens } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTokens, useBids } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
-const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
@@ -160,18 +159,11 @@ const Address: NextPage = () => {
                 <UserTokensGrid
                   userTokens={userTokens}
                   mutate={() => {
-                    bidsResponse.mutate()
                     userTokens.mutate()
+                    bidsResponse.mutate()
                     listings.mutate()
                   }}
-                  isOwner={isOwner}
-                  modal={{
-                    accountData,
-                    isInTheWrongNetwork,
-                    collectionId: undefined,
-                    setToast,
-                    signer,
-                  }}
+                  owner={address || ''}
                 />
               </div>
             </Tabs.Content>
@@ -181,8 +173,8 @@ const Address: NextPage = () => {
                   <UserOffersTable
                     data={bidsResponse}
                     mutate={() => {
-                      bidsResponse.mutate()
                       userTokens.mutate()
+                      bidsResponse.mutate()
                     }}
                     isOwner={isOwner}
                     modal={{
