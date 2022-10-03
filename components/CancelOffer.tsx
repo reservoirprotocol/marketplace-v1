@@ -1,8 +1,10 @@
 import { Signer } from 'ethers'
-import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
 import React, {
+  cloneElement,
   ComponentProps,
   FC,
+  ReactElement,
   useContext,
   useEffect,
   useState,
@@ -35,6 +37,7 @@ type Props = {
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
   signer: ReturnType<typeof useSigner>['data']
+  trigger?: ReactElement<typeof Dialog.Trigger>
 }
 
 const CancelOffer: FC<Props> = ({
@@ -44,6 +47,7 @@ const CancelOffer: FC<Props> = ({
   setToast,
   show,
   signer,
+  trigger,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -74,18 +78,6 @@ const CancelOffer: FC<Props> = ({
       }
     }
   }, [data, open])
-
-  // Set the token either from SWR or fetch
-  let token: UseTokensReturnType['data'][0] = { token: undefined }
-
-  const fetchedDetails = details as UseTokensReturnType['data']
-  if (fetchedDetails && fetchedDetails?.[0]) {
-    // From fetch
-    token = fetchedDetails[0]
-  } else if (details && 'data' in details && details.data[0]) {
-    // From swr
-    token = details.data[0]
-  }
 
   const handleError = (err: any) => {
     setWaitingTx(false)
@@ -142,27 +134,37 @@ const CancelOffer: FC<Props> = ({
     setWaitingTx(false)
   }
 
+  const onTriggerClick = () => {
+    if (!id || !signer) {
+      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      return
+    }
+    execute(id, signer)
+  }
+
+  const triggerDisabled = waitingTx || isInTheWrongNetwork
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      {show && (
-        <Dialog.Trigger
-          disabled={waitingTx || isInTheWrongNetwork}
-          onClick={() => {
-            if (!id || !signer) {
-              dispatch({ type: 'CONNECT_WALLET', payload: true })
-              return
-            }
-            execute(id, signer)
-          }}
-          className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-        >
-          {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
-          ) : (
-            'Cancel Your Offer'
-          )}
-        </Dialog.Trigger>
-      )}
+      {show &&
+        (trigger ? (
+          cloneElement(trigger as React.ReactElement<any>, {
+            disabled: triggerDisabled,
+            onClick: onTriggerClick,
+          })
+        ) : (
+          <Dialog.Trigger
+            disabled={triggerDisabled}
+            onClick={onTriggerClick}
+            className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+          >
+            {waitingTx ? (
+              <CgSpinner className="h-4 w-4 animate-spin" />
+            ) : (
+              'Cancel Your Offer'
+            )}
+          </Dialog.Trigger>
+        ))}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
