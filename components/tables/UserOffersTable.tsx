@@ -306,7 +306,7 @@ function processBid(
     contract,
     tokenId,
     image: bid?.metadata?.data?.image || collectionRedirectUrl,
-    tokenName: bid?.metadata?.data?.tokenName,
+    tokenName: bid?.metadata?.data?.tokenName || `#${tokenId}`,
     expiration:
       bid?.expiration === 0
         ? 'Never'
