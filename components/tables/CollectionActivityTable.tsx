@@ -1,43 +1,36 @@
-import useSales from 'hooks/useSales'
 import { optimizeImage } from 'lib/optmizeImage'
 import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
-import { Collection, TokenSale } from 'types/reservoir'
 import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
-import { FiExternalLink } from 'react-icons/fi'
+import { FiExternalLink, FiImage, FiRepeat } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import FormatCrypto from 'components/FormatCrypto'
 import { formatDollar } from 'lib/numbers'
+import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
+import { constants } from 'ethers'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  collection?: Collection
+  collectionActivity: ReturnType<typeof useCollectionActivity>
 }
 
-const CollectionActivityTable: FC<Props> = ({ collection }) => {
+const CollectionActivityTable: FC<Props> = ({ collectionActivity }) => {
   const headings = ['Event', 'Item', 'Price', 'From', 'To', 'Time']
-  const { sales, ref: swrInfiniteRef } = useSales(collection?.id)
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
-  useEffect(() => {
-    if (sales.data) {
-      sales.setSize(1)
-      sales.mutate()
-    }
-  }, [])
-
-  const { data: salesData } = sales
-  const flatSalesData = salesData?.flatMap((sale) => sale.sales) || []
-  const noSales = !sales.isValidating && flatSalesData.length == 0
-  const collectionImage = collection?.image as string
+  const {
+    activity: { data: activity, isValidating },
+    ref,
+  } = collectionActivity
+  const noSales = !isValidating && activity.length === 0
 
   return (
     <>
@@ -58,18 +51,10 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
         )}
 
         <tbody>
-          {flatSalesData.map((sale, i) => {
-            if (!sale) {
-              return null
-            }
+          {activity.map((sale) => {
+            if (!sale) return null
 
-            return (
-              <CollectionActivityTableRow
-                key={`${sale?.id}-${i}`}
-                sale={sale}
-                collectionImage={collectionImage}
-              />
-            )
+            return <CollectionActivityTableRow key={sale?.txHash} sale={sale} />
           })}
           {noSales && (
             <div className="mt-20 mb-20 flex w-full flex-col justify-center">
@@ -87,10 +72,10 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
               </div>
             </div>
           )}
-          <tr ref={swrInfiniteRef}></tr>
+          <tr ref={ref}></tr>
         </tbody>
       </table>
-      {sales.isValidating && (
+      {isValidating && (
         <div className="my-20 flex justify-center">
           <LoadingIcon />
         </div>
@@ -100,29 +85,29 @@ const CollectionActivityTable: FC<Props> = ({ collection }) => {
 }
 
 type CollectionActivityTableRowProps = {
-  sale: TokenSale
-  collectionImage?: string
+  sale: Activity[0]
 }
 
 const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   sale,
-  collectionImage,
 }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
-  const [toShortAddress, setToShortAddress] = useState(sale.to || '')
-  const [fromShortAddress, setFromShortAddress] = useState(sale.from || '')
-  const [imageSrc, setImageSrc] = useState(
-    sale.token?.image || collectionImage || ''
+  const [toShortAddress, setToShortAddress] = useState(sale?.toAddress || '')
+  const [fromShortAddress, setFromShortAddress] = useState(
+    sale?.fromAddress || ''
   )
-  const [timeAgo, setTimeAgo] = useState(sale.timestamp || '')
+  const [imageSrc, setImageSrc] = useState(
+    sale?.token?.tokenImage || sale?.collection?.collectionImage || ''
+  )
+  const [timeAgo, setTimeAgo] = useState(sale?.timestamp || '')
   const envChain = useEnvChain()
   const etherscanBaseUrl =
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
   const reservoirClient = useReservoirClient()
 
   useEffect(() => {
-    setToShortAddress(truncateAddress(sale?.to || ''))
-    setFromShortAddress(truncateAddress(sale?.from || ''))
+    setToShortAddress(truncateAddress(sale?.toAddress || ''))
+    setFromShortAddress(truncateAddress(sale?.fromAddress || ''))
     setTimeAgo(
       sale?.timestamp
         ? DateTime.fromSeconds(sale.timestamp).toRelative() || ''
@@ -131,56 +116,66 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   }, [sale])
 
   useEffect(() => {
-    if (sale?.token?.image) {
-      setImageSrc(optimizeImage(sale.token.image, 48))
-    } else if (collectionImage) {
-      setImageSrc(optimizeImage(collectionImage, 48))
+    if (sale?.token?.tokenImage) {
+      setImageSrc(optimizeImage(sale?.token?.tokenImage, 48))
+    } else if (sale?.collection?.collectionImage) {
+      setImageSrc(optimizeImage(sale?.collection?.collectionImage, 48))
     }
-  }, [sale, collectionImage])
+  }, [sale])
 
   if (!sale) {
     return null
   }
 
-  const saleSourceImgSrc =
-    reservoirClient?.source &&
-    sale.orderSource &&
-    reservoirClient?.source === sale.orderSource &&
-    SOURCE_ICON
-      ? SOURCE_ICON
-      : `${API_BASE}/redirect/sources/${sale.orderSource}/logo/v2`
-
   let saleDescription = 'Sale'
 
-  switch (sale?.orderSide) {
+  const logos = {
+    transfer: <FiRepeat />,
+    mint: <FiImage />,
+    burned: null,
+    listing_canceled: null,
+    offer_canceled: null,
+    ask: null,
+    bid: null,
+  }
+
+  switch (sale?.type) {
+    case 'mint': {
+      saleDescription = 'Mint'
+      break
+    }
     case 'ask': {
       saleDescription = 'Sale'
       break
     }
     case 'bid': {
       saleDescription = 'Offer Accepted'
+      break
     }
   }
 
   if (isMobile) {
     return (
       <tr
-        key={sale.id}
+        key={sale.txHash}
         className="h-24 border-b border-gray-300 dark:border-[#525252]"
       >
         <td className="flex flex-col gap-2">
           <div className="mt-6">
-            <img
-              className="mr-2 inline h-6 w-6"
-              src={saleSourceImgSrc}
-              alt={`${sale.orderSource} Source`}
-            />
+            {!!sale.source?.icon && (
+              <img
+                className="mr-2 inline h-6 w-6"
+                // @ts-ignore
+                src={sale.source?.icon || ''}
+                alt={`${sale.source?.name} Source`}
+              />
+            )}
             <span className="text-sm text-neutral-600 dark:text-neutral-300">
               {saleDescription}
             </span>
           </div>
           <Link
-            href={`/${sale.token?.contract}/${sale.token?.tokenId}`}
+            href={`/${sale?.collection?.collectionId}/${sale.token?.tokenId}`}
             passHref
           >
             <a className="flex items-center">
@@ -188,20 +183,23 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 className="rounded object-cover"
                 loader={({ src }) => src}
                 src={imageSrc}
-                alt={`${sale.token?.name} Token Image`}
+                alt={`${sale.token?.tokenName} Token Image`}
                 width={48}
                 height={48}
               />
-              <span className="reservoir-h6 ml-2 truncate dark:text-white">
-                {sale.token?.name || `#${sale.token?.tokenId}`}
-              </span>
+              <div className="grid">
+                <div className="reservoir-h6 ml-2 truncate dark:text-white">
+                  {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+                </div>
+                <div>{sale.collection?.collectionName}</div>
+              </div>
             </a>
           </Link>
           <div>
             <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
               From
             </span>
-            <Link href={`/address/${sale.from}`}>
+            <Link href={`/address/${sale.fromAddress}`}>
               <a className="font-light text-primary-700 dark:text-primary-300">
                 {fromShortAddress}
               </a>
@@ -209,7 +207,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
               to
             </span>
-            <Link href={`/address/${sale.to}`}>
+            <Link href={`/address/${sale.toAddress}`}>
               <a className="font-light text-primary-700 dark:text-primary-300">
                 {toShortAddress}
               </a>
@@ -227,7 +225,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           </div>
         </td>
         <td>
-          <FormatCrypto
+          {/* <FormatCrypto
             amount={sale.price?.amount?.decimal}
             address={sale.price?.currency?.contract}
             decimals={sale.price?.currency?.decimals}
@@ -236,7 +234,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             <div className="text-xs text-neutral-600">
               {formatDollar(sale.price?.amount?.usd)}
             </div>
-          )}
+          )} */}
         </td>
       </tr>
     )
@@ -244,40 +242,51 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   return (
     <tr
-      key={sale.id}
+      key={sale.txHash}
       className="h-24 border-b border-gray-300 dark:border-[#525252]"
     >
       <td>
         <div className="mr-2.5 flex items-center">
-          <img
-            className="mr-2 h-6 w-6"
-            src={saleSourceImgSrc}
-            alt={`${sale.orderSource} Source`}
-          />
+          {!!sale.source?.icon && (
+            <img
+              className="mr-2 h-6 w-6"
+              // @ts-ignore
+              src={sale.source?.icon || ''}
+              alt={`${sale.source?.name} Source`}
+            />
+          )}
           <span className="text-sm text-neutral-600 dark:text-neutral-300">
             {saleDescription}
           </span>
         </div>
       </td>
       <td>
-        <Link href={`/${sale.token?.contract}/${sale.token?.tokenId}`} passHref>
+        <Link
+          href={`/${sale.collection?.collectionId}/${sale.token?.tokenId}`}
+          passHref
+        >
           <a className="mr-2.5 flex items-center">
             <Image
               className="rounded object-cover"
               loader={({ src }) => src}
               src={imageSrc}
-              alt={`${sale.token?.name} Token Image`}
+              alt={`${sale.token?.tokenName} Token Image`}
               width={48}
               height={48}
             />
-            <span className="reservoir-h6 ml-2 truncate dark:text-white">
-              {sale.token?.name}
-            </span>
+            <div className="ml-2 grid truncate">
+              <div className="reservoir-h6 dark:text-white">
+                {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+              </div>
+              <div className="reservoir-small dark:text-white">
+                {sale.collection?.collectionName}
+              </div>
+            </div>
           </a>
         </Link>
       </td>
       <td>
-        <FormatCrypto
+        {/* <FormatCrypto
           amount={sale.price?.amount?.decimal}
           address={sale.price?.currency?.contract}
           decimals={sale.price?.currency?.decimals}
@@ -286,17 +295,17 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <div className="text-xs text-neutral-600">
             {formatDollar(sale.price?.amount?.usd)}
           </div>
-        )}
+        )} */}
       </td>
       <td>
-        <Link href={`/address/${sale.from}`}>
+        <Link href={`/address/${sale.fromAddress}`}>
           <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
             {fromShortAddress}
           </a>
         </Link>
       </td>
       <td>
-        <Link href={`/address/${sale.to}`}>
+        <Link href={`/address/${sale.toAddress}`}>
           <a className="mr-2.5 font-light text-primary-700 dark:text-primary-300">
             {toShortAddress}
           </a>

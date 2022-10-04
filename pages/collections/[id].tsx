@@ -29,6 +29,7 @@ import { toggleOnItem } from 'lib/router'
 import CollectionActivityTable from 'components/tables/CollectionActivityTable'
 import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
+import useCollectionActivity from 'hooks/useCollectionActivity'
 
 // Environment variables
 // For more information about these variables
@@ -72,6 +73,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     collectionResponse.data && collectionResponse.data[0]
       ? collectionResponse.data[0]
       : undefined
+
+  const collectionActivity = useCollectionActivity(id, [])
 
   const stats = useCollectionStats(router, id)
 
@@ -301,7 +304,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
             value="activity"
             className="col-span-full mx-[25px] grid lg:col-start-2 lg:col-end-[-2]"
           >
-            <CollectionActivityTable collection={collection} />
+            <CollectionActivityTable collectionActivity={collectionActivity} />
           </Tabs.Content>
         </Tabs.Root>
       </>
