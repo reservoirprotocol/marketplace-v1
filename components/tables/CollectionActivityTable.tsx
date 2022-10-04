@@ -6,17 +6,17 @@ import { FC, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
-import { FiExternalLink, FiImage, FiRepeat } from 'react-icons/fi'
+import {
+  FiExternalLink,
+  FiImage,
+  FiRepeat,
+  FiTrash2,
+  FiXSquare,
+} from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import FormatCrypto from 'components/FormatCrypto'
 import { formatDollar } from 'lib/numbers'
 import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
-import { constants } from 'ethers'
-
-const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
-const API_BASE =
-  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
@@ -103,7 +103,6 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const envChain = useEnvChain()
   const etherscanBaseUrl =
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
-  const reservoirClient = useReservoirClient()
 
   useEffect(() => {
     setToShortAddress(truncateAddress(sale?.toAddress || ''))
@@ -132,9 +131,9 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const logos = {
     transfer: <FiRepeat />,
     mint: <FiImage />,
-    burned: null,
-    listing_canceled: null,
-    offer_canceled: null,
+    burned: <FiTrash2 />,
+    listing_canceled: <FiXSquare />,
+    offer_canceled: <FiXSquare />,
     ask: null,
     bid: null,
   }
@@ -162,6 +161,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       >
         <td className="flex flex-col gap-2">
           <div className="mt-6">
+            {/* @ts-ignore */}
+            {sale.type && logos[sale.type]}
             {!!sale.source?.icon && (
               <img
                 className="mr-2 inline h-6 w-6"
@@ -247,6 +248,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
     >
       <td>
         <div className="mr-2.5 flex items-center">
+          {/* @ts-ignore */}
+          {sale.type && logos[sale.type]}
           {!!sale.source?.icon && (
             <img
               className="mr-2 h-6 w-6"
