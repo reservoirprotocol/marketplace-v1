@@ -6,11 +6,11 @@ import CancelOffer from 'components/CancelOffer'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import FormatCrypto from 'components/FormatCrypto'
-import { useBids, useCollections } from '@reservoir0x/reservoir-kit-ui'
+import { useBids } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useRouter } from 'next/router'
-import { formatNumber } from 'lib/numbers'
+import LoadingIcon from 'components/LoadingIcon'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -48,29 +48,10 @@ const UserOffersTable: FC<Props> = ({
   }
 
   const data = useBids(params)
-  const bidCollectionIds = data.data.reduce((ids, bid) => {
-    let contract = bid?.tokenSetId?.split(':')[1]
-    if (contract && !ids.includes(contract)) {
-      ids.push(contract)
-    }
-    return ids
-  }, [] as string[])
-  const bidCollections = useCollections(
-    bidCollectionIds && {
-      contract: bidCollectionIds,
-    }
-  )
-  const floorPrices =
-    bidCollections?.data?.reduce((prices, collection) => {
-      if (
-        collection.id &&
-        collection.floorAsk?.price?.amount?.decimal !== null &&
-        collection.floorAsk?.price?.amount?.decimal !== undefined
-      ) {
-        prices[collection.id] = collection.floorAsk?.price?.amount?.decimal
-      }
-      return prices
-    }, {} as { [key: string]: number }) || ({} as { [key: string]: number })
+
+  useEffect(() => {
+    data.setSize(1)
+  }, [])
 
   const { ref, inView } = useInView()
   useEffect(() => {
@@ -79,6 +60,14 @@ const UserOffersTable: FC<Props> = ({
     }
   }, [inView])
   const bids = data.data
+
+  if (data.isFetchingInitialData) {
+    return (
+      <div className="my-20 flex justify-center">
+        <LoadingIcon />
+      </div>
+    )
+  }
 
   if (bids.length === 0) {
     return (
@@ -93,13 +82,7 @@ const UserOffersTable: FC<Props> = ({
       <table className="min-w-full table-auto">
         <thead>
           <tr>
-            {[
-              'Item',
-              'Offer',
-              'Floor Difference',
-              'Expiration',
-              'Marketplace',
-            ].map((item) => (
+            {['Item', 'Offer', 'Expiration', 'Marketplace'].map((item) => (
               <th
                 key={item}
                 scope="col"
@@ -133,8 +116,7 @@ const UserOffersTable: FC<Props> = ({
               price,
               value,
               source,
-              floorPriceDiff,
-            } = processBid(bid, floorPrices)
+            } = processBid(bid)
 
             return (
               <tr
@@ -187,15 +169,6 @@ const UserOffersTable: FC<Props> = ({
                   />
                 </td>
 
-                {/* FLOOR DIFFERENCE */}
-                <td className="dark:text-solid-300 whitespace-nowrap px-6 py-4 font-light text-neutral-600">
-                  {floorPriceDiff && floorPriceDiff !== 0
-                    ? `${formatNumber(Math.abs(floorPriceDiff))}% ${
-                        floorPriceDiff > 0 ? 'above' : 'below'
-                      }`
-                    : '--'}
-                </td>
-
                 {/* EXPIRATION */}
                 <td className="dark:text-solid-300 whitespace-nowrap px-6 py-4 font-light text-neutral-600">
                   {expiration}
@@ -204,7 +177,9 @@ const UserOffersTable: FC<Props> = ({
                 {/* MARKETPLACE */}
                 <td className="whitespace-nowrap px-6 py-4">
                   <a
-                    href={source.link || ''}
+                    href={source.link || '#'}
+                    target="_blank"
+                    rel="noreferrer"
                     className="flex gap-1 font-light text-primary-700"
                   >
                     {source.icon && (
@@ -254,10 +229,7 @@ const UserOffersTable: FC<Props> = ({
 
 export default UserOffersTable
 
-function processBid(
-  bid: ReturnType<typeof useBids>['data']['0'],
-  floorPrices: { [key: string]: number }
-) {
+function processBid(bid: ReturnType<typeof useBids>['data']['0']) {
   const kind = bid?.metadata?.kind
   // @ts-ignore
   const key = bid?.metadata?.data?.attributes?.[0]?.key
@@ -267,17 +239,6 @@ function processBid(
   let contract = bid?.tokenSetId?.split(':')[1]
   let href
   const collectionRedirectUrl = `${API_BASE}/redirect/collections/${contract}/image/v1`
-  const bidPrice =
-    bid?.price?.amount?.decimal !== undefined &&
-    bid?.price?.amount?.decimal !== null
-      ? bid?.price?.amount?.decimal
-      : 0
-  const floorPriceDiff =
-    contract && floorPrices[contract] !== undefined
-      ? ((bidPrice - floorPrices[contract]) /
-          ((bidPrice + floorPrices[contract]) / 2)) *
-        100
-      : null
 
   switch (kind) {
     case 'token':
@@ -306,7 +267,9 @@ function processBid(
     contract,
     tokenId,
     image: bid?.metadata?.data?.image || collectionRedirectUrl,
-    tokenName: bid?.metadata?.data?.tokenName || `#${tokenId}`,
+    tokenName: tokenId
+      ? bid?.metadata?.data?.tokenName || `#${tokenId}`
+      : undefined,
     expiration:
       bid?.expiration === 0
         ? 'Never'
@@ -320,9 +283,8 @@ function processBid(
       link:
         bid?.source?.domain && tokenId
           ? `${API_BASE}/redirect/sources/${bid?.source?.domain}/tokens/${contract}:${tokenId}/link/v2`
-          : (bid?.source?.domain as string) || null,
+          : `https://${bid?.source?.domain as string}` || null,
     },
-    floorPriceDiff,
   }
 
   return { ...data, href }
