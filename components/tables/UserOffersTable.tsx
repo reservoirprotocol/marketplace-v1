@@ -8,10 +8,16 @@ import Toast from 'components/Toast'
 import FormatCrypto from 'components/FormatCrypto'
 import { useBids } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
+import * as Dialog from '@radix-ui/react-dialog'
+import { useRouter } from 'next/router'
+import LoadingIcon from 'components/LoadingIcon'
+
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  data: ReturnType<typeof useBids>
   isOwner: boolean
+  collectionIds?: string[]
   mutate: () => any
   modal: {
     accountData: ReturnType<typeof useAccount>
@@ -22,7 +28,31 @@ type Props = {
   }
 }
 
-const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
+const UserOffersTable: FC<Props> = ({
+  mutate,
+  modal,
+  isOwner,
+  collectionIds,
+}) => {
+  const router = useRouter()
+  const { address } = router.query
+  const params: Parameters<typeof useBids>[0] = {
+    status: 'active',
+    maker: address as string,
+    limit: 20,
+    includeMetadata: true,
+  }
+
+  if (collectionIds) {
+    params.contracts = collectionIds
+  }
+
+  const data = useBids(params)
+
+  useEffect(() => {
+    data.setSize(1)
+  }, [])
+
   const { ref, inView } = useInView()
   useEffect(() => {
     if (inView && data.hasNextPage) {
@@ -30,6 +60,14 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
     }
   }, [inView])
   const bids = data.data
+
+  if (data.isFetchingInitialData) {
+    return (
+      <div className="my-20 flex justify-center">
+        <LoadingIcon />
+      </div>
+    )
+  }
 
   if (bids.length === 0) {
     return (
@@ -40,28 +78,31 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
   }
 
   return (
-    <div className="mb-11 overflow-x-auto border-b border-gray-200 shadow dark:border-neutral-600 sm:rounded-lg">
-      <table className="min-w-full table-auto divide-y divide-gray-200 dark:divide-neutral-600">
-        <thead className="bg-gray-50 dark:bg-neutral-900">
+    <div className="mb-11 overflow-x-auto">
+      <table className="min-w-full table-auto">
+        <thead>
           <tr>
-            {['Type', 'Item', 'Offer', 'Expiration'].map((item) => (
+            {['Item', 'Offer', 'Expiration', 'Marketplace'].map((item) => (
               <th
                 key={item}
                 scope="col"
-                className="reservoir-label-l px-6 py-3 text-left dark:text-white"
+                className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
               >
                 {item}
               </th>
             ))}
             {isOwner && (
-              <th scope="col" className="relative px-6 py-3">
+              <th
+                scope="col"
+                className="relative px-6 py-3 text-sm font-medium text-neutral-600 dark:text-white"
+              >
                 <span className="sr-only">Cancel</span>
               </th>
             )}
           </tr>
         </thead>
         <tbody>
-          {bids?.map((position, index, arr) => {
+          {bids?.map((bid, index, arr) => {
             const {
               collectionName,
               contract,
@@ -70,52 +111,49 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
               key,
               href,
               image,
-              kind,
               tokenName,
               tokenId,
               price,
               value,
-            } = processPosition(position)
+              source,
+            } = processBid(bid)
 
             return (
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] bg-white even:bg-gray-50 dark:bg-neutral-900 dark:text-white dark:even:bg-neutral-800"
+                className="group h-[80px] bg-white dark:bg-neutral-900"
               >
-                {/* TYPE */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 capitalize dark:text-white">
-                  {kind}
-                </td>
-
                 {/* ITEM */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                <td className="whitespace-nowrap px-6 py-4 ">
                   <Link href={href || '#'}>
                     <a className="flex items-center gap-2">
-                      <div className="relative h-10 w-10">
+                      <div className="relative h-16 w-16">
                         {image && (
-                          <div className="aspect-w-1 aspect-h-1 relative">
+                          <div className="aspect-w-1 aspect-h-1 relative overflow-hidden rounded">
                             <img
-                              src={optimizeImage(image, 35)}
+                              src={optimizeImage(image, 64)}
                               alt="Bid Image"
-                              className="w-[35px] object-contain"
-                              width="35"
-                              height="35"
+                              className="w-[64px] object-contain"
+                              width="64"
+                              height="64"
                             />
                           </div>
                         )}
                       </div>
                       <span className="whitespace-nowrap">
-                        <div className="reservoir-body dark:text-white">
-                          {collectionName}
+                        <div className="reservoir-h6 max-w-[250px] overflow-hidden text-ellipsis font-headings text-base dark:text-white">
+                          {tokenName ? tokenName : collectionName}
                         </div>
+                        {tokenName && (
+                          <div className="dark:text-solid-300 text-xs text-neutral-600">
+                            {collectionName}
+                          </div>
+                        )}
                         <div>
-                          <span className="reservoir-body dark:text-white">
+                          <span className="dark:text-solid-300 text-xs text-neutral-600">
                             {key} {value}
                           </span>
-                        </div>
-                        <div className="reservoir-h6 font-headings dark:text-white">
-                          {tokenName}
                         </div>
                       </span>
                     </a>
@@ -123,7 +161,7 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
                 </td>
 
                 {/* OFFER */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                <td className="whitespace-nowrap px-6 py-4 text-black dark:text-white">
                   <FormatCrypto
                     amount={price?.amount?.decimal}
                     address={price?.currency?.contract}
@@ -132,23 +170,52 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
                 </td>
 
                 {/* EXPIRATION */}
-                <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
+                <td className="dark:text-solid-300 whitespace-nowrap px-6 py-4 font-light text-neutral-600">
                   {expiration}
                 </td>
+
+                {/* MARKETPLACE */}
+                <td className="whitespace-nowrap px-6 py-4">
+                  <a
+                    href={source.link || '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex gap-1 font-light text-primary-700"
+                  >
+                    {source.icon && (
+                      <img
+                        className="h-6 w-6"
+                        alt="Source Icon"
+                        src={source.icon}
+                      />
+                    )}
+                    <span className="max-w-[200px] overflow-hidden text-ellipsis">
+                      {source.name}
+                    </span>
+                  </a>
+                </td>
+
                 {isOwner && (
-                  <td className="reservoir-body flex justify-end whitespace-nowrap px-6 py-4 dark:text-white">
-                    <CancelOffer
-                      data={{
-                        id,
-                        contract,
-                        tokenId,
-                      }}
-                      signer={modal.signer}
-                      show={true}
-                      isInTheWrongNetwork={modal.isInTheWrongNetwork}
-                      setToast={modal.setToast}
-                      mutate={mutate}
-                    />
+                  <td className="sticky top-0 right-0 whitespace-nowrap dark:text-white">
+                    <div className="flex items-center">
+                      <CancelOffer
+                        data={{
+                          id,
+                          contract,
+                          tokenId,
+                        }}
+                        signer={modal.signer}
+                        show={true}
+                        isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                        setToast={modal.setToast}
+                        mutate={mutate}
+                        trigger={
+                          <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
+                            Cancel
+                          </Dialog.Trigger>
+                        }
+                      />
+                    </div>
                   </td>
                 )}
               </tr>
@@ -162,21 +229,20 @@ const UserOffersTable: FC<Props> = ({ data, mutate, modal, isOwner }) => {
 
 export default UserOffersTable
 
-function processPosition(
-  position: NonNullable<NonNullable<Props['data']['data']>>[0] | undefined
-) {
-  const kind = position?.metadata?.kind
+function processBid(bid: ReturnType<typeof useBids>['data']['0']) {
+  const kind = bid?.metadata?.kind
   // @ts-ignore
-  const key = position?.metadata?.data?.attributes?.[0]?.key
+  const key = bid?.metadata?.data?.attributes?.[0]?.key
   // @ts-ignore
-  const value = position?.metadata?.data?.attributes?.[0]?.value
+  const value = bid?.metadata?.data?.attributes?.[0]?.value
   let tokenId
-  let contract = position?.tokenSetId?.split(':')[1]
+  let contract = bid?.tokenSetId?.split(':')[1]
   let href
+  const collectionRedirectUrl = `${API_BASE}/redirect/collections/${contract}/image/v1`
 
   switch (kind) {
     case 'token':
-      tokenId = position?.tokenSetId?.split(':')[2]
+      tokenId = bid?.tokenSetId?.split(':')[2]
       href = `/${contract}/${tokenId}`
       break
     // @ts-ignore
@@ -200,15 +266,25 @@ function processPosition(
     kind,
     contract,
     tokenId,
-    image: position?.metadata?.data?.image,
-    tokenName: position?.metadata?.data?.tokenName,
+    image: bid?.metadata?.data?.image || collectionRedirectUrl,
+    tokenName: tokenId
+      ? bid?.metadata?.data?.tokenName || `#${tokenId}`
+      : undefined,
     expiration:
-      position?.expiration === 0
+      bid?.expiration === 0
         ? 'Never'
-        : DateTime.fromMillis(+`${position?.expiration}000`).toRelative(),
-    id: position?.id,
-    collectionName: position?.metadata?.data?.collectionName,
-    price: position?.price,
+        : DateTime.fromMillis(+`${bid?.expiration}000`).toRelative(),
+    id: bid?.id,
+    collectionName: bid?.metadata?.data?.collectionName,
+    price: bid?.price,
+    source: {
+      icon: (bid?.source?.icon as string) || null,
+      name: (bid?.source?.name as string) || null,
+      link:
+        bid?.source?.domain && tokenId
+          ? `${API_BASE}/redirect/sources/${bid?.source?.domain}/tokens/${contract}:${tokenId}/link/v2`
+          : `https://${bid?.source?.domain as string}` || null,
+    },
   }
 
   return { ...data, href }
