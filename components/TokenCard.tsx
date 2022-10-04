@@ -17,6 +17,7 @@ import { useAccount, useNetwork, useSigner } from 'wagmi'
 import recoilCartTokens from 'recoil/cart/atom'
 import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
+import { MutatorCallback } from 'swr'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -36,7 +37,7 @@ if (CURRENCIES) {
 type Props = {
   token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   collectionImage: string | undefined
-  mutate: () => any
+  mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
 }

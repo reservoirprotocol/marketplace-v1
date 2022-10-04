@@ -3,6 +3,7 @@ import LoadingCard from './LoadingCard'
 import { ListModal, useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import TokenCard from './TokenCard'
+import { MutatorCallback } from 'swr'
 
 const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
 
@@ -18,7 +19,7 @@ if (CURRENCIES) {
 type Props = {
   userTokens: ReturnType<typeof useUserTokens>
   owner: string
-  mutate: () => any
+  mutate: MutatorCallback
 }
 
 const UserTokensGrid: FC<Props> = ({ userTokens, mutate, owner }) => {
