@@ -83,26 +83,22 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   })
   const collections = useSearchCommunity()
   const listings = useUserAsks(address, collections)
-  const params: Parameters<typeof useBids>[0] = {
-    status: 'active',
-    maker: address,
-    limit: 20,
-    includeMetadata: true,
-  }
+  let collectionIds: undefined | string[] = undefined
+
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
-    params.contracts = [COLLECTION]
+    collectionIds = [COLLECTION]
   }
 
   if (COMMUNITY || COLLECTION_SET_ID) {
+    collectionIds = []
     collections?.data?.collections
       ?.map(({ contract }) => contract)
       .filter((contract) => !!contract)
       .forEach(
         // @ts-ignore
-        (contract, index) => (params[`contracts[${index}]`] = contract)
+        (contract, index) => (collectionIds[`contracts[${index}]`] = contract)
       )
   }
-  const bidsResponse = useBids(params)
 
   if (!CHAIN_ID) {
     console.debug({ CHAIN_ID })
@@ -122,7 +118,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
-      { name: 'Offers', id: 'buying' },
+      { name: 'Offers Made', id: 'buying' },
       { name: 'Listings', id: 'selling' },
     ]
   }
@@ -171,7 +167,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   userTokens={userTokens}
                   mutate={() => {
                     userTokens.mutate()
-                    bidsResponse.mutate()
                     listings.mutate()
                   }}
                   owner={address || ''}
@@ -182,12 +177,11 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
               <>
                 <Tabs.Content value="buying">
                   <UserOffersTable
-                    data={bidsResponse}
                     mutate={() => {
                       userTokens.mutate()
-                      bidsResponse.mutate()
                     }}
                     isOwner={isOwner}
+                    collectionIds={collectionIds}
                     modal={{
                       accountData,
                       isInTheWrongNetwork,
