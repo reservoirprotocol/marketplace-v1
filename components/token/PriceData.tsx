@@ -292,71 +292,72 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                 isInTheWrongNetwork={isInTheWrongNetwork}
                 setToast={setToast}
               />
-
-              {isInCart && !isOwner && (
-                <button
-                  onClick={() => {
-                    const newCartTokens = [...cartTokens]
-                    const index = newCartTokens.findIndex(
-                      (cartToken) =>
-                        cartToken?.token?.contract === contract &&
-                        cartToken?.token?.tokenId === tokenId
-                    )
-                    newCartTokens.splice(index, 1)
-                    setCartTokens(newCartTokens)
-                  }}
-                  className="mt-4 w-fit text-left outline-none disabled:cursor-not-allowed  dark:border-neutral-600 dark:focus:ring-4  dark:focus:ring-primary-900"
-                >
-                  <span>You can also</span>{' '}
-                  <span className="text-[#FF3B3B]">remove from cart</span>
-                </button>
-              )}
-
-              {!isInCart && !isOwner && isListed && (
-                <button
-                  disabled={!token?.market?.floorAsk?.price}
-                  onClick={() => {
-                    if (token?.token && token.market) {
-                      if (
-                        !cartCurrency ||
-                        token.market.floorAsk?.price?.currency?.contract ===
-                          cartCurrency?.contract
-                      ) {
-                        setCartTokens([
-                          ...cartTokens,
-                          {
-                            token: token.token,
-                            market: token.market,
-                          },
-                        ])
-                      } else {
-                        setCartToSwap([
-                          {
-                            token: token.token,
-                            market: token.market,
-                          },
-                        ])
-                        setClearCartOpen(true)
-                      }
-                    }
-                  }}
-                  className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
-                >
-                  <div className="flex items-center dark:text-white">
-                    <div>
-                      <span>You can also</span>{' '}
-                      <span className="text-primary-700 dark:text-primary-100">
-                        add to cart
-                      </span>
-                    </div>
-
-                    <FaShoppingCart className="ml-[10px] h-[18px] w-[18px] text-primary-700 dark:text-primary-100" />
-                  </div>
-                </button>
-              )}
             </>
           )}
         </div>
+        {isInCart && !isOwner && (
+          <button
+            onClick={() => {
+              const newCartTokens = [...cartTokens]
+              const index = newCartTokens.findIndex(
+                (cartToken) =>
+                  cartToken?.token?.contract === contract &&
+                  cartToken?.token?.tokenId === tokenId
+              )
+              newCartTokens.splice(index, 1)
+              setCartTokens(newCartTokens)
+            }}
+            className="mt-4 w-fit text-left outline-none disabled:cursor-not-allowed  dark:border-neutral-600 dark:focus:ring-4  dark:focus:ring-primary-900"
+          >
+            <span>You can also</span>{' '}
+            <span className="text-[#FF3B3B] dark:text-[#FF9A9A]">
+              remove from cart
+            </span>
+          </button>
+        )}
+
+        {!isInCart && !isOwner && isListed && (
+          <button
+            disabled={!token?.market?.floorAsk?.price}
+            onClick={() => {
+              if (token?.token && token.market) {
+                if (
+                  !cartCurrency ||
+                  token.market.floorAsk?.price?.currency?.contract ===
+                    cartCurrency?.contract
+                ) {
+                  setCartTokens([
+                    ...cartTokens,
+                    {
+                      token: token.token,
+                      market: token.market,
+                    },
+                  ])
+                } else {
+                  setCartToSwap([
+                    {
+                      token: token.token,
+                      market: token.market,
+                    },
+                  ])
+                  setClearCartOpen(true)
+                }
+              }
+            }}
+            className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
+          >
+            <div className="flex items-center dark:text-white">
+              <div>
+                <span>You can also</span>{' '}
+                <span className="text-primary-700 dark:text-primary-100">
+                  add to cart
+                </span>
+              </div>
+
+              <FaShoppingCart className="ml-[10px] h-[18px] w-[18px] text-primary-700 dark:text-primary-100" />
+            </div>
+          </button>
+        )}
       </article>
       <SwapCartModal
         open={clearCartOpen}
