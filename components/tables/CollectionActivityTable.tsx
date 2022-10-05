@@ -15,8 +15,8 @@ import {
 } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import FormatCrypto from 'components/FormatCrypto'
-import { formatDollar } from 'lib/numbers'
 import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
+import { useAccount } from 'wagmi'
 
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
@@ -92,6 +92,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   sale,
 }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
+  const { address } = useAccount()
   const [toShortAddress, setToShortAddress] = useState(sale?.toAddress || '')
   const [fromShortAddress, setFromShortAddress] = useState(
     sale?.fromAddress || ''
@@ -105,14 +106,22 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
 
   useEffect(() => {
-    setToShortAddress(truncateAddress(sale?.toAddress || ''))
-    setFromShortAddress(truncateAddress(sale?.fromAddress || ''))
+    let toShortAddress = truncateAddress(sale?.toAddress || '')
+    let fromShortAddress = truncateAddress(sale?.fromAddress || '')
+    if (address?.toLowerCase() === sale?.toAddress?.toLowerCase()) {
+      toShortAddress = 'You'
+    }
+    if (address?.toLowerCase() === sale?.fromAddress?.toLowerCase()) {
+      fromShortAddress = 'You'
+    }
+    setToShortAddress(toShortAddress)
+    setFromShortAddress(fromShortAddress)
     setTimeAgo(
       sale?.timestamp
         ? DateTime.fromSeconds(sale.timestamp).toRelative() || ''
         : ''
     )
-  }, [sale])
+  }, [sale, address])
 
   useEffect(() => {
     if (sale?.token?.tokenImage) {
@@ -130,15 +139,19 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   const logos = {
     transfer: (
-      <FiRepeat className="w- mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+      <FiRepeat className="w- mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
     ),
-    mint: <FiImage className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />,
-    burned: <FiTrash2 className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />,
+    mint: (
+      <FiImage className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
+    ),
+    burned: (
+      <FiTrash2 className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
+    ),
     listing_canceled: (
-      <FiXSquare className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+      <FiXSquare className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
     ),
     offer_canceled: (
-      <FiXSquare className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+      <FiXSquare className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
     ),
     ask: null,
     bid: null,
