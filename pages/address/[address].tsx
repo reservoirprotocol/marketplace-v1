@@ -16,6 +16,7 @@ import {
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import UserOffersTable from 'components/tables/UserOffersTable'
+import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
 import Avatar from 'components/Avatar'
@@ -24,7 +25,7 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
-import { useUserTokens, useBids } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
@@ -119,6 +120,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Made', id: 'buying' },
+      { name: 'Offers Received', id: 'received' },
       { name: 'Listings', id: 'selling' },
     ]
   }
@@ -183,11 +185,21 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
-                      accountData,
                       isInTheWrongNetwork,
-                      collectionId: undefined,
                       setToast,
-                      signer,
+                    }}
+                  />
+                </Tabs.Content>
+                <Tabs.Content value="received">
+                  <UserOffersReceivedTable
+                    mutate={() => {
+                      userTokens.mutate()
+                    }}
+                    isOwner={isOwner}
+                    collectionIds={collectionIds}
+                    modal={{
+                      isInTheWrongNetwork,
+                      setToast,
                     }}
                   />
                 </Tabs.Content>

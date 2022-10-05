@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import CancelOffer from 'components/CancelOffer'
-import { useAccount, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import FormatCrypto from 'components/FormatCrypto'
 import { useBids } from '@reservoir0x/reservoir-kit-ui'
@@ -20,11 +20,8 @@ type Props = {
   collectionIds?: string[]
   mutate: () => any
   modal: {
-    accountData: ReturnType<typeof useAccount>
-    collectionId: string | undefined
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
-    signer: ReturnType<typeof useSigner>['data']
   }
 }
 
@@ -34,6 +31,7 @@ const UserOffersTable: FC<Props> = ({
   isOwner,
   collectionIds,
 }) => {
+  const { data: signer } = useSigner()
   const router = useRouter()
   const { address } = router.query
   const params: Parameters<typeof useBids>[0] = {
@@ -146,12 +144,12 @@ const UserOffersTable: FC<Props> = ({
                           {tokenName ? tokenName : collectionName}
                         </div>
                         {tokenName && (
-                          <div className="dark:text-solid-300 text-xs text-neutral-600">
+                          <div className="text-xs text-neutral-600 dark:text-neutral-300">
                             {collectionName}
                           </div>
                         )}
                         <div>
-                          <span className="dark:text-solid-300 text-xs text-neutral-600">
+                          <span className="text-xs text-neutral-600 dark:text-neutral-300">
                             {key} {value}
                           </span>
                         </div>
@@ -170,7 +168,7 @@ const UserOffersTable: FC<Props> = ({
                 </td>
 
                 {/* EXPIRATION */}
-                <td className="dark:text-solid-300 whitespace-nowrap px-6 py-4 font-light text-neutral-600">
+                <td className="whitespace-nowrap px-6 py-4 font-light text-neutral-600 dark:text-neutral-300">
                   {expiration}
                 </td>
 
@@ -204,7 +202,7 @@ const UserOffersTable: FC<Props> = ({
                           contract,
                           tokenId,
                         }}
-                        signer={modal.signer}
+                        signer={signer}
                         show={true}
                         isInTheWrongNetwork={modal.isInTheWrongNetwork}
                         setToast={modal.setToast}
