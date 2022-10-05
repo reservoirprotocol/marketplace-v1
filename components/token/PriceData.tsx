@@ -19,6 +19,7 @@ import { formatDollar } from 'lib/numbers'
 import useCoinConversion from 'hooks/useCoinConversion'
 import SwapCartModal from 'components/SwapCartModal'
 import ConnectWalletModal from 'components/ConnectWalletModal'
+import { FaShoppingCart } from 'react-icons/fa'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -215,61 +216,6 @@ const PriceData: FC<Props> = ({ details, collection }) => {
                   mutate={details.mutate}
                 />
               )}
-              {isInCart && !isOwner && (
-                <button
-                  onClick={() => {
-                    const newCartTokens = [...cartTokens]
-                    const index = newCartTokens.findIndex(
-                      (cartToken) =>
-                        cartToken?.token?.contract === contract &&
-                        cartToken?.token?.tokenId === tokenId
-                    )
-                    newCartTokens.splice(index, 1)
-                    setCartTokens(newCartTokens)
-                  }}
-                  className="outline-none"
-                >
-                  <div className="btn-primary-outline w-full text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600  dark:text-red-300 dark:ring-primary-900 dark:focus:ring-4">
-                    Remove
-                  </div>
-                </button>
-              )}
-              {!isInCart && !isOwner && isListed && (
-                <button
-                  disabled={!token?.market?.floorAsk?.price}
-                  onClick={() => {
-                    if (token?.token && token.market) {
-                      if (
-                        !cartCurrency ||
-                        token.market.floorAsk?.price?.currency?.contract ===
-                          cartCurrency?.contract
-                      ) {
-                        setCartTokens([
-                          ...cartTokens,
-                          {
-                            token: token.token,
-                            market: token.market,
-                          },
-                        ])
-                      } else {
-                        setCartToSwap([
-                          {
-                            token: token.token,
-                            market: token.market,
-                          },
-                        ])
-                        setClearCartOpen(true)
-                      }
-                    }
-                  }}
-                  className="outline-none"
-                >
-                  <div className="btn-primary-outline w-full px-[10px] dark:border-neutral-600 dark:text-white dark:ring-primary-900  dark:focus:ring-4">
-                    Add to Cart
-                  </div>
-                </button>
-              )}
-
               <AcceptBidModal
                 trigger={
                   showAcceptOffer ? (
@@ -349,6 +295,69 @@ const PriceData: FC<Props> = ({ details, collection }) => {
             </>
           )}
         </div>
+        {isInCart && !isOwner && (
+          <button
+            onClick={() => {
+              const newCartTokens = [...cartTokens]
+              const index = newCartTokens.findIndex(
+                (cartToken) =>
+                  cartToken?.token?.contract === contract &&
+                  cartToken?.token?.tokenId === tokenId
+              )
+              newCartTokens.splice(index, 1)
+              setCartTokens(newCartTokens)
+            }}
+            className="mt-4 w-fit text-left outline-none disabled:cursor-not-allowed  dark:border-neutral-600 dark:focus:ring-4  dark:focus:ring-primary-900"
+          >
+            <span>You can also</span>{' '}
+            <span className="text-[#FF3B3B] dark:text-[#FF9A9A]">
+              remove from cart
+            </span>
+          </button>
+        )}
+
+        {!isInCart && !isOwner && isListed && (
+          <button
+            disabled={!token?.market?.floorAsk?.price}
+            onClick={() => {
+              if (token?.token && token.market) {
+                if (
+                  !cartCurrency ||
+                  token.market.floorAsk?.price?.currency?.contract ===
+                    cartCurrency?.contract
+                ) {
+                  setCartTokens([
+                    ...cartTokens,
+                    {
+                      token: token.token,
+                      market: token.market,
+                    },
+                  ])
+                } else {
+                  setCartToSwap([
+                    {
+                      token: token.token,
+                      market: token.market,
+                    },
+                  ])
+                  setClearCartOpen(true)
+                }
+              }
+            }}
+            className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
+          >
+            <div className="flex items-center dark:text-white">
+              <div>
+                <span>You can also</span>{' '}
+                <span className="text-primary-700 dark:text-primary-100">
+                  add to cart
+                </span>
+              </div>
+
+              <FaShoppingCart className="ml-[10px] h-[18px] w-[18px] text-primary-700 dark:text-primary-100" />
+            </div>
+          </button>
+        )}
       </article>
       <SwapCartModal
         open={clearCartOpen}
