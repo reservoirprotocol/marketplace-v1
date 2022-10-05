@@ -11,6 +11,8 @@ import { useInView } from 'react-intersection-observer'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useRouter } from 'next/router'
 import LoadingIcon from 'components/LoadingIcon'
+import useCoinConversion from 'hooks/useCoinConversion'
+import { formatDollar } from 'lib/numbers'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -31,6 +33,7 @@ const UserOffersTable: FC<Props> = ({
   isOwner,
   collectionIds,
 }) => {
+  const usdConversion = useCoinConversion('usd')
   const { data: signer } = useSigner()
   const router = useRouter()
   const { address } = router.query
@@ -160,11 +163,18 @@ const UserOffersTable: FC<Props> = ({
 
                 {/* OFFER */}
                 <td className="whitespace-nowrap px-6 py-4 text-black dark:text-white">
-                  <FormatCrypto
-                    amount={price?.amount?.decimal}
-                    address={price?.currency?.contract}
-                    decimals={price?.currency?.decimals}
-                  />
+                  <div className="flex flex-col">
+                    <FormatCrypto
+                      amount={price?.amount?.decimal}
+                      address={price?.currency?.contract}
+                      decimals={price?.currency?.decimals}
+                    />
+                    <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
+                      {formatDollar(
+                        usdConversion * (price?.amount?.decimal || 0)
+                      )}
+                    </span>
+                  </div>
                 </td>
 
                 {/* EXPIRATION */}
