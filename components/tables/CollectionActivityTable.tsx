@@ -129,11 +129,11 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   let saleDescription = 'Sale'
 
   const logos = {
-    transfer: <FiRepeat />,
-    mint: <FiImage />,
-    burned: <FiTrash2 />,
-    listing_canceled: <FiXSquare />,
-    offer_canceled: <FiXSquare />,
+    transfer: <FiRepeat className="mr-[10px] h-[20px] w-[20px]" />,
+    mint: <FiImage className="mr-[10px] h-[20px] w-[20px]" />,
+    burned: <FiTrash2 className="mr-[10px] h-[20px] w-[20px]" />,
+    listing_canceled: <FiXSquare className="mr-[10px] h-[20px] w-[20px]" />,
+    offer_canceled: <FiXSquare className="mr-[10px] h-[20px] w-[20px]" />,
     ask: null,
     bid: null,
   }
@@ -226,12 +226,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           </div>
         </td>
         <td>
-          {/* <FormatCrypto
-            amount={sale.price?.amount?.decimal}
-            address={sale.price?.currency?.contract}
-            decimals={sale.price?.currency?.decimals}
-          />
-          {sale.price?.amount?.usd && (
+          <FormatCrypto amount={sale.price} />
+          {/* {sale.price?.amount?.usd && (
             <div className="text-xs text-neutral-600">
               {formatDollar(sale.price?.amount?.usd)}
             </div>
@@ -289,12 +285,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         </Link>
       </td>
       <td>
-        {/* <FormatCrypto
-          amount={sale.price?.amount?.decimal}
-          address={sale.price?.currency?.contract}
-          decimals={sale.price?.currency?.decimals}
-        />
-        {sale.price?.amount?.usd && (
+        <FormatCrypto amount={sale.price} />
+        {/* {sale.price?.amount?.usd && (
           <div className="text-xs text-neutral-600">
             {formatDollar(sale.price?.amount?.usd)}
           </div>
