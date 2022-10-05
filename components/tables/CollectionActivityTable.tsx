@@ -17,6 +17,7 @@ import useEnvChain from 'hooks/useEnvChain'
 import FormatCrypto from 'components/FormatCrypto'
 import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
 import { useAccount } from 'wagmi'
+import { constants } from 'ethers'
 
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
@@ -212,18 +213,10 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   <div className="reservoir-h6 dark:text-white">
                     {sale.token?.tokenName || `#${sale.token?.tokenId}`}
                   </div>
-                  <div className="reservoir-small dark:text-white">
-                    {sale.collection?.collectionName}
-                  </div>
                 </div>
               </a>
             </Link>
-            <FormatCrypto amount={sale.price} />
-            {/* {sale.price?.amount?.usd && (
-            <div className="text-xs text-neutral-600">
-              {formatDollar(sale.price?.amount?.usd)}
-            </div>
-          )} */}
+            <FormatCrypto amount={sale.price} address={constants.AddressZero} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -303,20 +296,12 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               <div className="reservoir-h6 dark:text-white">
                 {sale.token?.tokenName || `#${sale.token?.tokenId}`}
               </div>
-              <div className="reservoir-small dark:text-white">
-                {sale.collection?.collectionName}
-              </div>
             </div>
           </a>
         </Link>
       </td>
       <td>
-        <FormatCrypto amount={sale.price} />
-        {/* {sale.price?.amount?.usd && (
-          <div className="text-xs text-neutral-600">
-            {formatDollar(sale.price?.amount?.usd)}
-          </div>
-        )} */}
+        <FormatCrypto amount={sale.price} address={constants.AddressZero} />
       </td>
       <td>
         <Link href={`/address/${sale.fromAddress}`}>
