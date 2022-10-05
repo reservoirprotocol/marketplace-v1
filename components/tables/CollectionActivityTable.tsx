@@ -6,18 +6,13 @@ import { FC, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
-import {
-  FiExternalLink,
-  FiImage,
-  FiRepeat,
-  FiTrash2,
-  FiXSquare,
-} from 'react-icons/fi'
+import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
 import FormatCrypto from 'components/FormatCrypto'
 import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
 import { useAccount } from 'wagmi'
 import { constants } from 'ethers'
+import { FaSeedling } from 'react-icons/fa'
 
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
@@ -94,12 +89,15 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
   const { address } = useAccount()
-  const [toShortAddress, setToShortAddress] = useState(sale?.toAddress || '')
-  const [fromShortAddress, setFromShortAddress] = useState(
+  const [toShortAddress, setToShortAddress] = useState<string>(
+    sale?.toAddress || ''
+  )
+  const [fromShortAddress, setFromShortAddress] = useState<string>(
     sale?.fromAddress || ''
   )
   const [imageSrc, setImageSrc] = useState(
-    sale?.token?.tokenImage || sale?.collection?.collectionImage || ''
+    sale?.token?.tokenImage ||
+      `https://api.reservoir.tools/redirect/collections/${sale?.collection?.collectionImage}/image/v1`
   )
   const [timeAgo, setTimeAgo] = useState(sale?.timestamp || '')
   const envChain = useEnvChain()
@@ -109,11 +107,13 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   useEffect(() => {
     let toShortAddress = truncateAddress(sale?.toAddress || '')
     let fromShortAddress = truncateAddress(sale?.fromAddress || '')
-    if (address?.toLowerCase() === sale?.toAddress?.toLowerCase()) {
-      toShortAddress = 'You'
-    }
-    if (address?.toLowerCase() === sale?.fromAddress?.toLowerCase()) {
-      fromShortAddress = 'You'
+    if (!!address) {
+      if (address?.toLowerCase() === sale?.toAddress?.toLowerCase()) {
+        toShortAddress = 'You'
+      }
+      if (address?.toLowerCase() === sale?.fromAddress?.toLowerCase()) {
+        fromShortAddress = 'You'
+      }
     }
     setToShortAddress(toShortAddress)
     setFromShortAddress(fromShortAddress)
@@ -136,14 +136,14 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
     return null
   }
 
-  let saleDescription = 'Sale'
+  let saleDescription = ''
 
   const logos = {
     transfer: (
       <FiRepeat className="w- mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
     ),
     mint: (
-      <FiImage className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
+      <FaSeedling className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
     ),
     burned: (
       <FiTrash2 className="mr-1 h-4 w-4 text-neutral-400 md:mr-[10px] md:h-5 md:w-5" />
@@ -159,16 +159,36 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   }
 
   switch (sale?.type) {
+    case 'ask_cancel': {
+      saleDescription = 'Listing Canceled'
+      break
+    }
+    case 'bid_cancel': {
+      saleDescription = 'Offer Canceled'
+      break
+    }
     case 'mint': {
       saleDescription = 'Mint'
       break
     }
     case 'ask': {
-      saleDescription = 'Sale'
+      saleDescription = 'Listing'
       break
     }
     case 'bid': {
-      saleDescription = 'Offer Accepted'
+      saleDescription = 'Offer'
+      break
+    }
+    case 'transfer': {
+      saleDescription = 'Transfer'
+      break
+    }
+    case 'sale': {
+      saleDescription = 'Sale'
+      break
+    }
+    default: {
+      if (sale.type) saleDescription = sale.type
       break
     }
   }
@@ -191,7 +211,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 alt={`${sale.source?.name} Source`}
               />
             )}
-            <span className="text-sm text-neutral-600 dark:text-neutral-300">
+            <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
               {saleDescription}
             </span>
           </div>
@@ -211,7 +231,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 />
                 <div className="ml-2 grid truncate">
                   <div className="reservoir-h6 dark:text-white">
-                    {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+                    {sale.token?.tokenName ||
+                      (sale.token?.tokenId ? `#${sale.token?.tokenId}` : '')}
                   </div>
                 </div>
               </a>
@@ -224,19 +245,36 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
                 From
               </span>
-              <Link href={`/address/${sale.fromAddress}`}>
-                <a className="font-light text-primary-700 dark:text-primary-300">
-                  {fromShortAddress}
-                </a>
-              </Link>
+              {sale.fromAddress &&
+              sale.fromAddress !== constants.AddressZero ? (
+                <Link href={`/address/${sale.fromAddress}`}>
+                  <a className="font-light text-primary-700 dark:text-primary-300">
+                    {fromShortAddress}
+                  </a>
+                </Link>
+              ) : (
+                <span className="font-light">
+                  {sale.fromAddress === constants.AddressZero
+                    ? fromShortAddress
+                    : '-'}
+                </span>
+              )}
               <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
                 to
               </span>
-              <Link href={`/address/${sale.toAddress}`}>
-                <a className="font-light text-primary-700 dark:text-primary-300">
-                  {toShortAddress}
-                </a>
-              </Link>
+              {sale.toAddress && sale.toAddress !== constants.AddressZero ? (
+                <Link href={`/address/${sale.toAddress}`}>
+                  <a className="font-light text-primary-700 dark:text-primary-300">
+                    {toShortAddress}
+                  </a>
+                </Link>
+              ) : (
+                <span className="font-light">
+                  {sale.toAddress === constants.AddressZero
+                    ? toShortAddress
+                    : '-'}
+                </span>
+              )}
               <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
                 {timeAgo}
               </div>
@@ -273,7 +311,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               alt={`${sale.source?.name} Source`}
             />
           )}
-          <span className="text-sm text-neutral-600 dark:text-neutral-300">
+          <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
             {saleDescription}
           </span>
         </div>
@@ -294,7 +332,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             />
             <div className="ml-2 grid truncate">
               <div className="reservoir-h6 dark:text-white">
-                {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+                {sale.token?.tokenName ||
+                  (sale.token?.tokenId ? `#${sale.token?.tokenId}` : '')}
               </div>
             </div>
           </a>
@@ -304,18 +343,32 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         <FormatCrypto amount={sale.price} address={constants.AddressZero} />
       </td>
       <td>
-        <Link href={`/address/${sale.fromAddress}`}>
-          <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
-            {fromShortAddress}
-          </a>
-        </Link>
+        {sale.fromAddress && sale.fromAddress !== constants.AddressZero ? (
+          <Link href={`/address/${sale.fromAddress}`}>
+            <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
+              {fromShortAddress}
+            </a>
+          </Link>
+        ) : (
+          <span className="ml-2.5 mr-2.5 font-light">
+            {sale.fromAddress === constants.AddressZero
+              ? fromShortAddress
+              : '-'}
+          </span>
+        )}
       </td>
       <td>
-        <Link href={`/address/${sale.toAddress}`}>
-          <a className="mr-2.5 font-light text-primary-700 dark:text-primary-300">
-            {toShortAddress}
-          </a>
-        </Link>
+        {sale.toAddress && sale.toAddress !== constants.AddressZero ? (
+          <Link href={`/address/${sale.toAddress}`}>
+            <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
+              {toShortAddress}
+            </a>
+          </Link>
+        ) : (
+          <span className="ml-2.5 mr-2.5 font-light">
+            {sale.toAddress === constants.AddressZero ? toShortAddress : '-'}
+          </span>
+        )}
       </td>
       <td>
         <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
