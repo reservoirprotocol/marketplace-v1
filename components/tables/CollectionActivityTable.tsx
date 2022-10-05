@@ -129,11 +129,17 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   let saleDescription = 'Sale'
 
   const logos = {
-    transfer: <FiRepeat className="mr-[10px] h-[20px] w-[20px]" />,
-    mint: <FiImage className="mr-[10px] h-[20px] w-[20px]" />,
-    burned: <FiTrash2 className="mr-[10px] h-[20px] w-[20px]" />,
-    listing_canceled: <FiXSquare className="mr-[10px] h-[20px] w-[20px]" />,
-    offer_canceled: <FiXSquare className="mr-[10px] h-[20px] w-[20px]" />,
+    transfer: (
+      <FiRepeat className="w- mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+    ),
+    mint: <FiImage className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />,
+    burned: <FiTrash2 className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />,
+    listing_canceled: (
+      <FiXSquare className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+    ),
+    offer_canceled: (
+      <FiXSquare className="mr-1 h-4 w-4 md:mr-[10px] md:h-5 md:w-5" />
+    ),
     ask: null,
     bid: null,
   }
@@ -159,13 +165,13 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         key={sale.txHash}
         className="h-24 border-b border-gray-300 dark:border-[#525252]"
       >
-        <td className="flex flex-col gap-2">
-          <div className="mt-6">
+        <td className="flex flex-col gap-3">
+          <div className="mt-6 flex items-center">
             {/* @ts-ignore */}
             {sale.type && logos[sale.type]}
             {!!sale.source?.icon && (
               <img
-                className="mr-2 inline h-6 w-6"
+                className="mr-2 inline h-3 w-3"
                 // @ts-ignore
                 src={sale.source?.icon || ''}
                 alt={`${sale.source?.name} Source`}
@@ -175,63 +181,70 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
               {saleDescription}
             </span>
           </div>
-          <Link
-            href={`/${sale?.collection?.collectionId}/${sale.token?.tokenId}`}
-            passHref
-          >
-            <a className="flex items-center">
-              <Image
-                className="rounded object-cover"
-                loader={({ src }) => src}
-                src={imageSrc}
-                alt={`${sale.token?.tokenName} Token Image`}
-                width={48}
-                height={48}
-              />
-              <div className="grid">
-                <div className="reservoir-h6 ml-2 truncate dark:text-white">
-                  {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+          <div className="flex items-center justify-between">
+            <Link
+              href={`/${sale?.collection?.collectionId}/${sale.token?.tokenId}`}
+              passHref
+            >
+              <a className="flex items-center">
+                <Image
+                  className="rounded object-cover"
+                  loader={({ src }) => src}
+                  src={imageSrc}
+                  alt={`${sale.token?.tokenName} Token Image`}
+                  width={48}
+                  height={48}
+                />
+                <div className="ml-2 grid truncate">
+                  <div className="reservoir-h6 dark:text-white">
+                    {sale.token?.tokenName || `#${sale.token?.tokenId}`}
+                  </div>
+                  <div className="reservoir-small dark:text-white">
+                    {sale.collection?.collectionName}
+                  </div>
                 </div>
-                <div>{sale.collection?.collectionName}</div>
-              </div>
-            </a>
-          </Link>
-          <div>
-            <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
-              From
-            </span>
-            <Link href={`/address/${sale.fromAddress}`}>
-              <a className="font-light text-primary-700 dark:text-primary-300">
-                {fromShortAddress}
               </a>
             </Link>
-            <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
-              to
-            </span>
-            <Link href={`/address/${sale.toAddress}`}>
-              <a className="font-light text-primary-700 dark:text-primary-300">
-                {toShortAddress}
-              </a>
-            </Link>
-            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-4 flex items-center gap-2 font-light text-neutral-600 dark:text-neutral-300"
-              >
-                {timeAgo}
-                <FiExternalLink className="h-4 w-4" />
-              </a>
-            </Link>
-          </div>
-        </td>
-        <td>
-          <FormatCrypto amount={sale.price} />
-          {/* {sale.price?.amount?.usd && (
+            <FormatCrypto amount={sale.price} />
+            {/* {sale.price?.amount?.usd && (
             <div className="text-xs text-neutral-600">
               {formatDollar(sale.price?.amount?.usd)}
             </div>
           )} */}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="reservoir-small">
+              <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
+                From
+              </span>
+              <Link href={`/address/${sale.fromAddress}`}>
+                <a className="font-light text-primary-700 dark:text-primary-300">
+                  {fromShortAddress}
+                </a>
+              </Link>
+              <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
+                to
+              </span>
+              <Link href={`/address/${sale.toAddress}`}>
+                <a className="font-light text-primary-700 dark:text-primary-300">
+                  {toShortAddress}
+                </a>
+              </Link>
+              <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
+                {timeAgo}
+              </div>
+            </div>
+            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
+              >
+                <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
+              </a>
+            </Link>
+          </div>
         </td>
       </tr>
     )
@@ -314,7 +327,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300"
           >
             {timeAgo}
-            <FiExternalLink className="h-4 w-4" />
+            <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
           </a>
         </Link>
       </td>
