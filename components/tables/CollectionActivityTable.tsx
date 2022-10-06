@@ -14,6 +14,8 @@ import { constants } from 'ethers'
 import { FaSeedling } from 'react-icons/fa'
 import FormatEth from 'components/FormatEth'
 
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
 }
@@ -97,7 +99,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   )
   const [imageSrc, setImageSrc] = useState(
     sale?.token?.tokenImage ||
-      `https://api.reservoir.tools/redirect/collections/${sale?.collection?.collectionImage}/image/v1`
+      `${RESERVOIR_API_BASE}/redirect/collections/${sale?.collection?.collectionImage}/image/v1`
   )
   const [timeAgo, setTimeAgo] = useState(sale?.timestamp || '')
   const envChain = useEnvChain()
