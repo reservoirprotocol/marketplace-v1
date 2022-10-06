@@ -240,7 +240,12 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 </div>
               </a>
             </Link>
-            <FormatEth amount={sale.price} />
+            {sale.price &&
+            sale.price !== 0 &&
+            sale.type &&
+            !['transfer', 'mint'].includes(sale.type) ? (
+              <FormatEth amount={sale.price} />
+            ) : null}
           </div>
 
           <div className="flex items-center justify-between">
@@ -256,11 +261,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">
-                  {sale.fromAddress === constants.AddressZero
-                    ? fromShortAddress
-                    : '--'}
-                </span>
+                <span className="font-light">--</span>
               )}
               <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
                 to
@@ -272,11 +273,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">
-                  {sale.toAddress === constants.AddressZero
-                    ? toShortAddress
-                    : '--'}
-                </span>
+                <span className="font-light">--</span>
               )}
               <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
                 {timeAgo}
@@ -344,7 +341,12 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         </Link>
       </td>
       <td>
-        <FormatEth amount={sale.price} />
+        {sale.price &&
+        sale.price !== 0 &&
+        sale.type &&
+        !['transfer', 'mint'].includes(sale.type) ? (
+          <FormatEth amount={sale.price} />
+        ) : null}
       </td>
       <td>
         {sale.fromAddress && sale.fromAddress !== constants.AddressZero ? (
@@ -354,11 +356,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">
-            {sale.fromAddress === constants.AddressZero
-              ? fromShortAddress
-              : '--'}
-          </span>
+          <span className="ml-2.5 mr-2.5 font-light">--</span>
         )}
       </td>
       <td>
@@ -369,9 +367,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">
-            {sale.toAddress === constants.AddressZero ? toShortAddress : '--'}
-          </span>
+          <span className="ml-2.5 mr-2.5 font-light">--</span>
         )}
       </td>
       <td>
