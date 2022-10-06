@@ -468,10 +468,11 @@ const AcceptBidButton: FC<AcceptBidButtonProps> = ({
           })
       }}
     >
-      {accepting && (
+      {accepting ? (
         <CgSpinner className="mr-1 h-5 w-5 flex-none animate-spin text-black dark:text-white" />
+      ) : (
+        'Accept'
       )}
-      {accepting ? 'Accepting' : 'Accept'}
     </button>
   )
 }
