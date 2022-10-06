@@ -148,7 +148,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
         </div>
         <div className="px-4 md:px-16">
           <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
-            <Tabs.List className="mb-4 flex w-full border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)]">
+            <Tabs.List className="no-scrollbar mb-4 ml-[-15px] flex w-[calc(100%_+_30px)] overflow-y-scroll border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)] md:ml-0 md:w-full">
               {tabs.map(({ name, id }) => (
                 <Tabs.Trigger
                   key={id}

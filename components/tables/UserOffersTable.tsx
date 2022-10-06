@@ -98,7 +98,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
               key={`${contract}-${index}`}
               className="border-b-[1px] border-solid border-b-neutral-300	py-[16px]"
             >
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <Link href={href || '#'}>
                   <a className="flex items-center gap-2">
                     <div className="relative h-14 w-14">
