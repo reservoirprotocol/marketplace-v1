@@ -174,7 +174,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         })
       }
       return tokens
-    }, [] as Parameters<typeof reservoirClient.actions.buyToken>['0']['tokens'])
+    }, [] as NonNullable<Parameters<typeof reservoirClient.actions.buyToken>['0']['tokens']>)
     await reservoirClient.actions
       .buyToken({
         expectedPrice: sweepTotal,

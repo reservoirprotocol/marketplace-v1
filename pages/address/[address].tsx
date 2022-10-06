@@ -16,6 +16,7 @@ import {
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import UserOffersTable from 'components/tables/UserOffersTable'
+import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
 import Avatar from 'components/Avatar'
@@ -24,7 +25,7 @@ import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useUserAsks from 'hooks/useUserAsks'
-import { useUserTokens, useBids } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
@@ -119,6 +120,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Made', id: 'buying' },
+      { name: 'Offers Received', id: 'received' },
       { name: 'Listings', id: 'selling' },
     ]
   }
@@ -146,14 +148,14 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
         </div>
         <div className="px-4 md:px-16">
           <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
-            <Tabs.List className="mb-4 flex w-full overflow-hidden border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)]">
+            <Tabs.List className="no-scrollbar mb-4 ml-[-15px] flex w-[calc(100%_+_30px)] overflow-y-scroll border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)] md:ml-0 md:w-full">
               {tabs.map(({ name, id }) => (
                 <Tabs.Trigger
                   key={id}
                   id={id}
                   value={id}
                   className={
-                    'group reservoir-label-l relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4  px-8 text-center hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900 dark:text-white dark:radix-state-active:border-primary-900'
+                    'group reservoir-label-l relative min-w-0 shrink-0 whitespace-nowrap border-b-2 border-transparent  py-4 px-8 text-center hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900 dark:text-white dark:radix-state-active:border-primary-900'
                   }
                   onClick={() => toggleOnItem(router, 'tab', id)}
                 >
@@ -177,17 +179,20 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
               <>
                 <Tabs.Content value="buying">
                   <UserOffersTable
-                    mutate={() => {
-                      userTokens.mutate()
+                    collectionIds={collectionIds}
+                    modal={{
+                      isInTheWrongNetwork,
+                      setToast,
                     }}
+                  />
+                </Tabs.Content>
+                <Tabs.Content value="received">
+                  <UserOffersReceivedTable
                     isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
-                      accountData,
                       isInTheWrongNetwork,
-                      collectionId: undefined,
                       setToast,
-                      signer,
                     }}
                   />
                 </Tabs.Content>
