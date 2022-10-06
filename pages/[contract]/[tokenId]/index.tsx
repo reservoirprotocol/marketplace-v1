@@ -25,7 +25,7 @@ import {
 // Reference: https://nextjs.org/docs/basic-features/environment-variables#exposing-environment-variables-to-the-browser
 // REQUIRED
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
