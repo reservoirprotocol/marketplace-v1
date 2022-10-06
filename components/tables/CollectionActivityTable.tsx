@@ -32,6 +32,10 @@ const CollectionActivityTable: FC<Props> = ({ collectionId }) => {
   } = collectionActivity
   const noSales = !isValidating && activity.length === 0
 
+  useEffect(() => {
+    collectionActivity.activity.setSize(1)
+  }, [])
+
   return (
     <>
       <table>
