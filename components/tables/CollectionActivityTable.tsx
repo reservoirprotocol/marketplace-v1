@@ -17,12 +17,14 @@ import FormatEth from 'components/FormatEth'
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Props = {
-  collectionActivity: ReturnType<typeof useCollectionActivity>
+  collectionId: string | undefined
 }
 
-const CollectionActivityTable: FC<Props> = ({ collectionActivity }) => {
+const CollectionActivityTable: FC<Props> = ({ collectionId }) => {
   const headings = ['Event', 'Item', 'Price', 'From', 'To', 'Time']
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
+
+  const collectionActivity = useCollectionActivity(collectionId, [])
 
   const {
     activity: { data: activity, isValidating },
@@ -261,7 +263,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">--</span>
+                <span className="font-light">-</span>
               )}
               <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
                 to
@@ -273,7 +275,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">--</span>
+                <span className="font-light">-</span>
               )}
               <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
                 {timeAgo}
@@ -356,7 +358,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">--</span>
+          <span className="ml-2.5 mr-2.5 font-light">-</span>
         )}
       </td>
       <td>
@@ -367,7 +369,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">--</span>
+          <span className="ml-2.5 mr-2.5 font-light">-</span>
         )}
       </td>
       <td>
