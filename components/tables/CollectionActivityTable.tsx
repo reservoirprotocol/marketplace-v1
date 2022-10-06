@@ -8,11 +8,13 @@ import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
-import FormatCrypto from 'components/FormatCrypto'
 import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
 import { useAccount } from 'wagmi'
 import { constants } from 'ethers'
 import { FaSeedling } from 'react-icons/fa'
+import FormatEth from 'components/FormatEth'
+
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Props = {
   collectionActivity: ReturnType<typeof useCollectionActivity>
@@ -97,7 +99,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   )
   const [imageSrc, setImageSrc] = useState(
     sale?.token?.tokenImage ||
-      `https://api.reservoir.tools/redirect/collections/${sale?.collection?.collectionImage}/image/v1`
+      `${RESERVOIR_API_BASE}/redirect/collections/${sale?.collection?.collectionImage}/image/v1`
   )
   const [timeAgo, setTimeAgo] = useState(sale?.timestamp || '')
   const envChain = useEnvChain()
@@ -232,12 +234,18 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 <div className="ml-2 grid truncate">
                   <div className="reservoir-h6 dark:text-white">
                     {sale.token?.tokenName ||
-                      (sale.token?.tokenId ? `#${sale.token?.tokenId}` : '')}
+                      sale.token?.tokenId ||
+                      sale.collection?.collectionName}
                   </div>
                 </div>
               </a>
             </Link>
-            <FormatCrypto amount={sale.price} address={constants.AddressZero} />
+            {sale.price &&
+            sale.price !== 0 &&
+            sale.type &&
+            !['transfer', 'mint'].includes(sale.type) ? (
+              <FormatEth amount={sale.price} />
+            ) : null}
           </div>
 
           <div className="flex items-center justify-between">
@@ -253,11 +261,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">
-                  {sale.fromAddress === constants.AddressZero
-                    ? fromShortAddress
-                    : '-'}
-                </span>
+                <span className="font-light">--</span>
               )}
               <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
                 to
@@ -269,11 +273,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                   </a>
                 </Link>
               ) : (
-                <span className="font-light">
-                  {sale.toAddress === constants.AddressZero
-                    ? toShortAddress
-                    : '-'}
-                </span>
+                <span className="font-light">--</span>
               )}
               <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
                 {timeAgo}
@@ -333,14 +333,20 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             <div className="ml-2 grid truncate">
               <div className="reservoir-h6 dark:text-white">
                 {sale.token?.tokenName ||
-                  (sale.token?.tokenId ? `#${sale.token?.tokenId}` : '')}
+                  sale.token?.tokenId ||
+                  sale.collection?.collectionName}
               </div>
             </div>
           </a>
         </Link>
       </td>
       <td>
-        <FormatCrypto amount={sale.price} address={constants.AddressZero} />
+        {sale.price &&
+        sale.price !== 0 &&
+        sale.type &&
+        !['transfer', 'mint'].includes(sale.type) ? (
+          <FormatEth amount={sale.price} />
+        ) : null}
       </td>
       <td>
         {sale.fromAddress && sale.fromAddress !== constants.AddressZero ? (
@@ -350,11 +356,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">
-            {sale.fromAddress === constants.AddressZero
-              ? fromShortAddress
-              : '-'}
-          </span>
+          <span className="ml-2.5 mr-2.5 font-light">--</span>
         )}
       </td>
       <td>
@@ -365,9 +367,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </a>
           </Link>
         ) : (
-          <span className="ml-2.5 mr-2.5 font-light">
-            {sale.toAddress === constants.AddressZero ? toShortAddress : '-'}
-          </span>
+          <span className="ml-2.5 mr-2.5 font-light">--</span>
         )}
       </td>
       <td>
