@@ -20,14 +20,13 @@ const API_BASE =
 
 type Props = {
   collectionIds?: string[]
-  mutate: () => any
   modal: {
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
   }
 }
 
-const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
+const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
   const usdConversion = useCoinConversion('usd')
   const { data: signer } = useSigner()
   const router = useRouter()
@@ -152,7 +151,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
                     href={source.link || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="mb-1 flex items-center gap-1 font-light text-primary-700"
+                    className="mb-1 flex items-center gap-1 font-light text-primary-700 dark:text-primary-300"
                   >
                     {source.icon && (
                       <img
@@ -177,7 +176,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
                   show={true}
                   isInTheWrongNetwork={modal.isInTheWrongNetwork}
                   setToast={modal.setToast}
-                  mutate={mutate}
+                  mutate={data.mutate}
                   trigger={
                     <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
                       Cancel
@@ -235,7 +234,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300	bg-white dark:bg-neutral-900	"
+                className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white	dark:border-b-neutral-600 dark:bg-black"
               >
                 {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 ">
@@ -302,7 +301,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
                     href={source.link || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex gap-1 font-light text-primary-700"
+                    className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
                   >
                     {source.icon && (
                       <img
@@ -329,7 +328,7 @@ const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
                       show={true}
                       isInTheWrongNetwork={modal.isInTheWrongNetwork}
                       setToast={modal.setToast}
-                      mutate={mutate}
+                      mutate={data.mutate}
                       trigger={
                         <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
                           Cancel

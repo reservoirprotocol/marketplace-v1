@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useEffect } from 'react'
+import { ComponentProps, FC, useEffect, useState } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -17,6 +17,7 @@ import { formatDollar } from 'lib/numbers'
 import FormatWEth from 'components/FormatWEth'
 import InfoTooltip from 'components/InfoTooltip'
 import { useMediaQuery } from '@react-hookz/web'
+import { CgSpinner } from 'react-icons/cg'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -24,7 +25,6 @@ const API_BASE =
 type Props = {
   isOwner: boolean
   collectionIds?: string[]
-  mutate: () => any
   modal: {
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -32,7 +32,6 @@ type Props = {
 }
 
 const UserOffersReceivedTable: FC<Props> = ({
-  mutate,
   modal,
   isOwner,
   collectionIds,
@@ -105,6 +104,7 @@ const UserOffersReceivedTable: FC<Props> = ({
             <div
               key={`${contract}-${index}`}
               className="border-b-[1px] border-solid border-b-neutral-300	py-[16px]"
+              ref={index === arr.length - 5 ? ref : null}
             >
               <div className="flex items-center justify-between">
                 <Link href={href || '#'}>
@@ -152,7 +152,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                       href={`/address/${maker}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex gap-1 font-light text-primary-700"
+                      className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
                     >
                       {truncateAddress(maker)}
                     </a>{' '}
@@ -161,7 +161,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                       href={source.link || '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1 font-light text-primary-700"
+                      className="flex items-center gap-1 font-light text-primary-700 dark:text-primary-300"
                     >
                       {source.icon && (
                         <img
@@ -182,7 +182,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                   contract={contract as string}
                   orderId={id as string}
                   modal={modal}
-                  mutate={mutate}
+                  mutate={data.mutate}
                 />
               </div>
             </div>
@@ -273,7 +273,7 @@ const UserOffersReceivedTable: FC<Props> = ({
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white dark:bg-neutral-900"
+                className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white dark:border-b-neutral-600 dark:bg-black"
               >
                 {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 ">
@@ -340,7 +340,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                     href={`/address/${maker}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex gap-1 font-light text-primary-700"
+                    className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
                   >
                     {truncateAddress(maker)}
                   </a>
@@ -352,7 +352,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                       href={source.link || '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex gap-1 font-light text-primary-700"
+                      className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
                     >
                       {source.icon && (
                         <img
@@ -376,7 +376,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                         contract={contract as string}
                         orderId={id as string}
                         modal={modal}
-                        mutate={mutate}
+                        mutate={data.mutate}
                       />
                     </div>
                   </td>
@@ -396,7 +396,7 @@ type AcceptBidButtonProps = {
   tokenId: string
   contract: string
   orderId: string
-  mutate: Props['mutate']
+  mutate: ReturnType<typeof useUserTopBids>['mutate']
   modal: Props['modal']
 }
 
@@ -409,46 +409,69 @@ const AcceptBidButton: FC<AcceptBidButtonProps> = ({
 }) => {
   const { data: signer } = useSigner()
   const reservoirClient = useReservoirClient()
+  const [accepting, setAccepting] = useState(false)
   return (
     <button
+      disabled={accepting}
       className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4"
       onClick={() => {
         if (!signer) {
           throw 'Missing a signer'
         }
 
-        reservoirClient?.actions.acceptOffer({
-          signer: signer,
-          token: {
-            tokenId: tokenId,
-            contract: contract,
-          },
-          options: {
-            orderId: orderId,
-          },
-          onProgress: (steps) => {
-            const error = steps.find((step) => step.error)
-            if (error) {
-              modal.setToast({
-                kind: 'error',
-                message: 'The transaction was not completed.',
-                title: 'Could not accept offer',
-              })
-            } else {
-              const allComplete = steps.every((step) =>
-                step.items
-                  ? step.items.every((item) => item.status === 'complete')
-                  : true
-              )
-              if (allComplete) {
-                mutate()
+        reservoirClient?.actions
+          .acceptOffer({
+            signer: signer,
+            token: {
+              tokenId: tokenId,
+              contract: contract,
+            },
+            options: {
+              orderId: orderId,
+            },
+            onProgress: (steps) => {
+              const error = steps.find((step) => step.error)
+              if (error) {
+                modal.setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not accept offer',
+                })
+                setAccepting(false)
+              } else {
+                const allComplete = steps.every((step) =>
+                  step.items
+                    ? step.items.every((item) => item.status === 'complete')
+                    : true
+                )
+                if (allComplete) {
+                  mutate()
+                  setAccepting(false)
+                  modal.setToast({
+                    kind: 'success',
+                    message: 'The offer was accepted!',
+                    title: 'Offer Accepted',
+                  })
+                } else {
+                  setAccepting(true)
+                }
               }
-            }
-          },
-        })
+            },
+          })
+          .catch((e) => {
+            modal.setToast({
+              kind: 'error',
+              message: 'The transaction was not completed.',
+              title: 'Could not accept offer',
+            })
+            setAccepting(false)
+          })
       }}
     >
-      Accept
+      {accepting && (
+        <CgSpinner className="mr-1 h-5 w-5 flex-none animate-spin text-black dark:text-white" />
+      )}
+      {accepting ? 'Accepting' : 'Accept'}
     </button>
   )
 }

@@ -179,9 +179,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
               <>
                 <Tabs.Content value="buying">
                   <UserOffersTable
-                    mutate={() => {
-                      userTokens.mutate()
-                    }}
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,
@@ -191,9 +188,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Content>
                 <Tabs.Content value="received">
                   <UserOffersReceivedTable
-                    mutate={() => {
-                      userTokens.mutate()
-                    }}
                     isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
