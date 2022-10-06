@@ -18,6 +18,7 @@ import {
   useTokens,
   useCollections,
 } from '@reservoir0x/reservoir-kit-ui'
+import { useAccount } from 'wagmi'
 
 // Environment variables
 // For more information about these variables
@@ -66,10 +67,11 @@ const metadata = {
 }
 
 const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
-  const [tokenOpenSea, setTokenOpenSea] = useState<any>({
+  const [tokenOpenSea] = useState<any>({
     animation_url: null,
     extension: null,
   })
+  const account = useAccount()
   const router = useRouter()
   const bannedOnOpenSea = useTokenOpenseaBanned(
     collectionId,
@@ -136,6 +138,9 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     ? metadata.image(token?.token?.image)
     : null
 
+  const isOwner =
+    token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
+
   return (
     <Layout navbar={{}}>
       <Head>
@@ -155,7 +160,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       <div className="col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
         <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
         <PriceData details={tokenData} collection={collection} />
-        <TokenAttributes token={token?.token} collection={collection} />
+        <TokenAttributes
+          token={token?.token}
+          collection={collection}
+          isOwner={isOwner}
+        />
         {token.token?.kind === 'erc1155' && (
           <Listings
             token={`${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`}
