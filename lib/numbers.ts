@@ -62,6 +62,10 @@ function formatBN(
       ? amount
       : +utils.formatUnits(amount, decimals || 18)
 
+  if (amountToFormat === 0) {
+    return amountToFormat
+  }
+
   const parts = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 20,
