@@ -318,7 +318,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                 <td className="whitespace-nowrap px-6 py-4 text-black dark:text-white">
                   <div className="flex flex-col">
                     <FormatWEth amount={netValue} />
-                    <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">
                       {formatDollar(usdConversion * (netValue || 0))}
                     </span>
                   </div>

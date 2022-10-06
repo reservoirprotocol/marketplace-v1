@@ -1,7 +1,9 @@
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import React, {
+  cloneElement,
   ComponentProps,
   FC,
+  ReactElement,
   useContext,
   useEffect,
   useState,
@@ -35,6 +37,7 @@ type Props = {
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
   signer: ReturnType<typeof useSigner>['data']
+  trigger?: ReactElement<typeof Dialog.Trigger>
 }
 
 const CancelListing: FC<Props> = ({
@@ -44,6 +47,7 @@ const CancelListing: FC<Props> = ({
   setToast,
   show,
   signer,
+  trigger,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
@@ -131,30 +135,37 @@ const CancelListing: FC<Props> = ({
       .catch(handleError)
   }
 
+  const onTriggerClick = () => {
+    if (!id || !signer) {
+      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      return
+    }
+    execute(id)
+  }
+
+  const triggerDisabled = waitingTx || isInTheWrongNetwork
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      {show && (
-        <Dialog.Trigger
-          disabled={waitingTx || isInTheWrongNetwork}
-          onClick={() => {
-            if (!id || !signer) {
-              dispatch({ type: 'CONNECT_WALLET', payload: true })
-              return
-            }
-            execute(id)
-          }}
-        >
-          {waitingTx ? (
-            <p className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-              <CgSpinner className="h-4 w-4 animate-spin" />
-            </p>
-          ) : (
-            <p className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-              Cancel Listing
-            </p>
-          )}
-        </Dialog.Trigger>
-      )}
+      {show &&
+        (trigger ? (
+          cloneElement(trigger as React.ReactElement<any>, {
+            disabled: triggerDisabled,
+            onClick: onTriggerClick,
+          })
+        ) : (
+          <Dialog.Trigger disabled={triggerDisabled} onClick={onTriggerClick}>
+            {waitingTx ? (
+              <p className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                <CgSpinner className="h-4 w-4 animate-spin" />
+              </p>
+            ) : (
+              <p className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                Cancel Listing
+              </p>
+            )}
+          </Dialog.Trigger>
+        ))}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>
