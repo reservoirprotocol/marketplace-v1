@@ -13,12 +13,12 @@ import { useRouter } from 'next/router'
 import LoadingIcon from 'components/LoadingIcon'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
+import { useMediaQuery } from '@react-hookz/web'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
-  isOwner: boolean
   collectionIds?: string[]
   mutate: () => any
   modal: {
@@ -27,12 +27,7 @@ type Props = {
   }
 }
 
-const UserOffersTable: FC<Props> = ({
-  mutate,
-  modal,
-  isOwner,
-  collectionIds,
-}) => {
+const UserOffersTable: FC<Props> = ({ mutate, modal, collectionIds }) => {
   const usdConversion = useCoinConversion('usd')
   const { data: signer } = useSigner()
   const router = useRouter()
@@ -49,6 +44,7 @@ const UserOffersTable: FC<Props> = ({
   }
 
   const data = useBids(params)
+  const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
   useEffect(() => {
     data.setSize(1)
@@ -78,6 +74,124 @@ const UserOffersTable: FC<Props> = ({
     )
   }
 
+  if (isMobile) {
+    return (
+      <div className="mb-11 overflow-x-auto">
+        {bids?.map((bid, index, arr) => {
+          const {
+            collectionName,
+            contract,
+            expiration,
+            id,
+            key,
+            href,
+            image,
+            tokenName,
+            tokenId,
+            price,
+            value,
+            source,
+          } = processBid(bid)
+
+          return (
+            <div
+              key={`${contract}-${index}`}
+              className="border-b-[1px] border-solid border-b-neutral-300	py-[16px]"
+            >
+              <div className="flex justify-between">
+                <Link href={href || '#'}>
+                  <a className="flex items-center gap-2">
+                    <div className="relative h-14 w-14">
+                      {image && (
+                        <div className="aspect-w-1 aspect-h-1 relative overflow-hidden rounded">
+                          <img
+                            src={optimizeImage(image, 56)}
+                            alt="Bid Image"
+                            className="w-[56px] object-contain"
+                            width="56"
+                            height="56"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="reservoir-h6 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap font-headings text-sm dark:text-white">
+                        {tokenName ? tokenName : collectionName}
+                      </div>
+                      {tokenName && (
+                        <div className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-xs text-neutral-600 dark:text-neutral-300">
+                          {collectionName}
+                        </div>
+                      )}
+                      {key && value && (
+                        <div>
+                          <span className="text-xs text-neutral-600 dark:text-neutral-300">
+                            {key} {value}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </a>
+                </Link>
+                <div className="flex flex-col">
+                  <FormatCrypto
+                    amount={price?.amount?.decimal}
+                    address={price?.currency?.contract}
+                    decimals={price?.currency?.decimals}
+                  />
+                  <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
+                    {formatDollar(
+                      usdConversion * (price?.amount?.decimal || 0)
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-4">
+                <div>
+                  <a
+                    href={source.link || '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mb-1 flex items-center gap-1 font-light text-primary-700"
+                  >
+                    {source.icon && (
+                      <img
+                        className="h-6 w-6"
+                        alt="Source Icon"
+                        src={source.icon}
+                      />
+                    )}
+                    <span className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                      {source.name}
+                    </span>
+                  </a>
+                  <div className="text-xs font-light text-neutral-600 dark:text-neutral-300">{`Expires ${expiration}`}</div>
+                </div>
+                <CancelOffer
+                  data={{
+                    id,
+                    contract,
+                    tokenId,
+                  }}
+                  signer={signer}
+                  show={true}
+                  isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                  setToast={modal.setToast}
+                  mutate={mutate}
+                  trigger={
+                    <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
+                      Cancel
+                    </Dialog.Trigger>
+                  }
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className="mb-11 overflow-x-auto">
       <table className="min-w-full table-auto">
@@ -92,14 +206,12 @@ const UserOffersTable: FC<Props> = ({
                 {item}
               </th>
             ))}
-            {isOwner && (
-              <th
-                scope="col"
-                className="relative px-6 py-3 text-sm font-medium text-neutral-600 dark:text-white"
-              >
-                <span className="sr-only">Cancel</span>
-              </th>
-            )}
+            <th
+              scope="col"
+              className="relative px-6 py-3 text-sm font-medium text-neutral-600 dark:text-white"
+            >
+              <span className="sr-only">Cancel</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -123,7 +235,7 @@ const UserOffersTable: FC<Props> = ({
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[80px] bg-white dark:bg-neutral-900"
+                className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300	bg-white dark:bg-neutral-900	"
               >
                 {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 ">
@@ -151,11 +263,13 @@ const UserOffersTable: FC<Props> = ({
                             {collectionName}
                           </div>
                         )}
-                        <div>
-                          <span className="text-xs text-neutral-600 dark:text-neutral-300">
-                            {key} {value}
-                          </span>
-                        </div>
+                        {key && value && (
+                          <div>
+                            <span className="text-xs text-neutral-600 dark:text-neutral-300">
+                              {key} {value}
+                            </span>
+                          </div>
+                        )}
                       </span>
                     </a>
                   </Link>
@@ -203,29 +317,27 @@ const UserOffersTable: FC<Props> = ({
                   </a>
                 </td>
 
-                {isOwner && (
-                  <td className="sticky top-0 right-0 whitespace-nowrap dark:text-white">
-                    <div className="flex items-center">
-                      <CancelOffer
-                        data={{
-                          id,
-                          contract,
-                          tokenId,
-                        }}
-                        signer={signer}
-                        show={true}
-                        isInTheWrongNetwork={modal.isInTheWrongNetwork}
-                        setToast={modal.setToast}
-                        mutate={mutate}
-                        trigger={
-                          <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
-                            Cancel
-                          </Dialog.Trigger>
-                        }
-                      />
-                    </div>
-                  </td>
-                )}
+                <td className="sticky top-0 right-0 whitespace-nowrap dark:text-white">
+                  <div className="flex items-center">
+                    <CancelOffer
+                      data={{
+                        id,
+                        contract,
+                        tokenId,
+                      }}
+                      signer={signer}
+                      show={true}
+                      isInTheWrongNetwork={modal.isInTheWrongNetwork}
+                      setToast={modal.setToast}
+                      mutate={mutate}
+                      trigger={
+                        <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
+                          Cancel
+                        </Dialog.Trigger>
+                      }
+                    />
+                  </div>
+                </td>
               </tr>
             )
           })}

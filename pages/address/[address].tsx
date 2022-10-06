@@ -148,14 +148,14 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
         </div>
         <div className="px-4 md:px-16">
           <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
-            <Tabs.List className="mb-4 flex w-full overflow-hidden border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)]">
+            <Tabs.List className="mb-4 flex w-full border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)]">
               {tabs.map(({ name, id }) => (
                 <Tabs.Trigger
                   key={id}
                   id={id}
                   value={id}
                   className={
-                    'group reservoir-label-l relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4  px-8 text-center hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900 dark:text-white dark:radix-state-active:border-primary-900'
+                    'group reservoir-label-l relative min-w-0 shrink-0 whitespace-nowrap border-b-2 border-transparent  py-4 px-8 text-center hover:text-gray-700 focus:z-10 radix-state-active:border-black radix-state-active:text-gray-900 dark:text-white dark:radix-state-active:border-primary-900'
                   }
                   onClick={() => toggleOnItem(router, 'tab', id)}
                 >
@@ -182,7 +182,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     mutate={() => {
                       userTokens.mutate()
                     }}
-                    isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,
