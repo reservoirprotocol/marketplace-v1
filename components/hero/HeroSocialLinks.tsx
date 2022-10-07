@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { FiGlobe, FiMoreVertical } from 'react-icons/fi'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Collection } from 'types/reservoir'
+import useEnvChain from 'hooks/useEnvChain'
 
 type Props = {
   collection?: Collection
@@ -11,12 +12,13 @@ type Props = {
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 
 const HeroSocialLinks: FC<Props> = ({ collection }) => {
+  const chain = useEnvChain()
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const social = {
     twitterUsername: collection?.twitterUsername,
     externalUrl: collection?.externalUrl,
     discordUrl: collection?.discordUrl,
-    etherscanUrl: `https://etherscan.io/address/${collection?.id}`,
+    etherscanUrl: `${chain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'}/address/${collection?.id}`,
   }
 
   if (!social.twitterUsername && !social.externalUrl && !social.discordUrl) {
