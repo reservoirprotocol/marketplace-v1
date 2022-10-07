@@ -1,14 +1,8 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown } from 'react-icons/fi'
 import { paths } from '@reservoir0x/reservoir-kit-client'
-<<<<<<< HEAD
-import { BidModal } from '@reservoir0x/reservoir-kit-ui'
-import { useContractRead, useNetwork, useProvider, useSigner } from 'wagmi'
-=======
-import { useSigner } from 'wagmi'
->>>>>>> parent of 0d992e1... Replace existing bid modal with RK bid modal (#492)
-import AttributeOfferModal from './AttributeOfferModal'
-import CollectionOfferModal from 'components/CollectionOfferModal'
+import { BidModal, Trait } from '@reservoir0x/reservoir-kit-ui'
+import { useNetwork, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import useCollectionStats from 'hooks/useCollectionStats'
@@ -21,23 +15,14 @@ import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
 import { useMediaQuery } from '@react-hookz/web'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
-import { Result } from 'ethers/lib/utils'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const OPENSEA_API_KEY = process.env.NEXT_PUBLIC_OPENSEA_API_KEY
 const ENV_COLLECTION_DESCRIPTIONS =
   process.env.NEXT_PUBLIC_COLLECTION_DESCRIPTIONS
 
 const setToast = (data: ComponentProps<typeof Toast>['data']) => {
   toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
-}
-
-type IMintMode = 'Allowlist' | 'Open' | 'Closed'
-const mintStatus = (mintingOpen: Result | boolean, allowlistOnlyMode: Result | boolean): IMintMode => {
-  if (mintingOpen && allowlistOnlyMode) return 'Allowlist'
-  if (mintingOpen && !allowlistOnlyMode) return 'Open'
-  return 'Closed'
 }
 
 type Props = {
@@ -47,9 +32,6 @@ type Props = {
     collection: paths['/collections/v5']['get']['responses']['200']['schema']
   }
 }
-
-type CollectionModalProps = ComponentProps<typeof CollectionOfferModal>
-type AttibuteModalProps = ComponentProps<typeof AttributeOfferModal>
 
 const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { data: signer } = useSigner()
@@ -63,75 +45,12 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
       : undefined
   const router = useRouter()
   const stats = useCollectionStats(router, collectionId)
-  const [attribute, setAttribute] = useState<
-    AttibuteModalProps['data']['attribute']
-  >({
-    key: undefined,
-    value: undefined,
-  })
-
+  const [attribute, setAttribute] = useState<Trait>(undefined)
   const { tokens } = useTokens(collectionId, [fallback.tokens], router)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
   const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
-<<<<<<< HEAD
   const { chain: activeChain } = useNetwork()
-  const { data: totalSupply } = useContractRead({
-    addressOrName: collection?.primaryContract || '',
-    contractInterface: [{
-      "inputs": [],
-      "name": "collectionSize",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },],
-    functionName: 'collectionSize',
-    chainId: activeChain?.id || 1,
-  }) || null
-  const { data: mintingOpen } = useContractRead({
-    addressOrName: collection?.primaryContract || '',
-    contractInterface: [{
-      "inputs": [],
-      "name": "mintingOpen",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }],
-    functionName: 'mintingOpen',
-    chainId: activeChain?.id || 1,
-  })
-  const { data: onlyAllowlistMode } = useContractRead({
-    addressOrName: collection?.primaryContract || '',
-    contractInterface: [{
-      "inputs": [],
-      "name": "onlyAllowlistMode",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }],
-    functionName: 'onlyAllowlistMode',
-    chainId: activeChain?.id || 1,
-  })
-=======
->>>>>>> parent of 0d992e1... Replace existing bid modal with RK bid modal (#492)
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -144,39 +63,40 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
     // Only enable the attribute modal if one attribute is selected
     if (attributesSelected.length !== 1) {
-      setAttribute({
-        // Extract the key from the query key: attributes[{key}]
-        key: undefined,
-        value: undefined,
-      })
+      setAttribute(undefined)
       return
     }
 
-    setAttribute({
-      // Extract the key from the query key: attributes[{key}]
-      key: attributesSelected[0].slice(11, -1),
-      value: router.query[attributesSelected[0]]?.toString(),
-    })
+    const value = router.query[attributesSelected[0]]?.toString()
+    const key = attributesSelected[0].slice(11, -1)
+
+    if (key && value) {
+      setAttribute({
+        // Extract the key from the query key: attributes[{key}]
+        key,
+        value,
+      })
+    }
   }, [router.query])
 
   if (!CHAIN_ID) {
     throw 'A Chain id is required'
   }
 
-  const env: CollectionModalProps['env'] = {
+  const env = {
     chainId: +CHAIN_ID as ChainId,
-    openSeaApiKey: OPENSEA_API_KEY,
   }
+
+  const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== env.chainId)
 
   const statsObj = {
     count: Number(collection?.tokenCount ?? 0),
-    topOffer: collection?.topBid?.price?.amount?.native,
+    topOffer: collection?.topBid?.price?.amount?.decimal,
+    topOfferCurrency: collection?.topBid?.price?.currency,
     floor: collection?.floorAsk?.price?.amount?.native,
     allTime: collection?.volume?.allTime,
     volumeChange: collection?.volumeChange?.['1day'],
     floorChange: collection?.floorSaleChange?.['1day'],
-    maxSupply: totalSupply?.toString() || null,
-    mintMode: typeof (mintingOpen) === 'boolean' ? mintStatus(mintingOpen, onlyAllowlistMode ?? false) : null
   }
 
   const bannerImage = envBannerImage || collection?.banner
@@ -209,31 +129,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const isSupported =
     !!collection?.tokenSetId && !!collection?.collectionBidSupported
 
-  const isAttributeModal = !!attribute.key && !!attribute.value
-
-  const royalties: CollectionModalProps['royalties'] = {
-    bps: collection?.royalties?.bps,
-    recipient: collection?.royalties?.recipient,
-  }
-
-  const collectionData: CollectionModalProps['data'] = {
-    collection: {
-      id: collection?.id,
-      image: '',
-      name: collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
-  }
-
-  const attributeData: AttibuteModalProps['data'] = {
-    collection: {
-      id: collection?.id,
-      image: collection?.image as string,
-      name: collection?.name,
-      tokenCount: stats?.data?.stats?.tokenCount ?? 0,
-    },
-    attribute,
-  }
+  const isAttributeModal = !!attribute
 
   let isLongDescription = false
   let descriptionHeight = '60px'
@@ -292,28 +188,46 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
             </>
           )}
           <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
-            {isSupported &&
-              (isAttributeModal ? (
-                <AttributeOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={attributeData}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
-                />
-              ) : (
-                <CollectionOfferModal
-                  royalties={royalties}
-                  signer={signer}
-                  data={collectionData}
-                  env={env}
-                  stats={stats}
-                  tokens={tokens}
-                  setToast={setToast}
-                />
-              ))}
+            {isSupported && (
+              <BidModal
+                collectionId={collection?.id}
+                trigger={
+                  <button
+                    disabled={isInTheWrongNetwork}
+                    className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                  >
+                    {isAttributeModal
+                      ? 'Make an Attribute Offer'
+                      : 'Make a Collection Offer'}
+                  </button>
+                }
+                attribute={attribute}
+                onBidComplete={() => {
+                  stats.mutate()
+                  tokens.mutate()
+                }}
+                onBidError={(error) => {
+                  if (error) {
+                    if (
+                      (error as any).cause.code &&
+                      (error as any).cause.code === 4001
+                    ) {
+                      setToast({
+                        kind: 'error',
+                        message: 'You have canceled the transaction.',
+                        title: 'User canceled transaction',
+                      })
+                      return
+                    }
+                  }
+                  setToast({
+                    kind: 'error',
+                    message: 'The transaction was not completed.',
+                    title: 'Could not place bid',
+                  })
+                }}
+              />
+            )}
             {isSmallDevice && (
               <Sweep
                 collection={collection}

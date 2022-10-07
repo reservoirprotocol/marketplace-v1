@@ -1,46 +1,46 @@
 import { FC } from 'react'
 import FormatEth from 'components/FormatEth'
 import { formatNumber } from 'lib/numbers'
-import FormatWEth from 'components/FormatWEth'
+import FormatCrypto from 'components/FormatCrypto'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
-type IMintMode = 'Allowlist' | 'Open' | 'Closed'
+type Currency = NonNullable<
+  NonNullable<
+    NonNullable<ReturnType<typeof useCollections>['data']>[0]['topBid']
+  >['price']
+>['currency']
+
 type Props = {
   count: number
   topOffer: number | undefined
+  topOfferCurrency: Currency
   floor: number | undefined
   allTime: number | undefined
   volumeChange: number | undefined
   floorChange: number | undefined
-  maxSupply?: string | null | undefined
-  mintMode?: IMintMode | null
 }
 
 const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
-  const displayMintMode = !!stats.mintMode && stats.mintMode !== 'Closed'
-
   return (
     <div className="grid min-w-full grid-cols-2 items-center gap-[1px] overflow-hidden rounded-lg border-[1px] border-gray-300 bg-gray-300 dark:border-[#525252] dark:bg-[#525252] md:m-0 md:h-[82px] md:min-w-[647px] md:grid-cols-4 md:gap-2 md:bg-white dark:md:bg-black">
-      <Stat name={!!stats.maxSupply ? 'items / supply' : 'items'}>
+      <Stat name="items">
         <h3 className="reservoir-h6 dark:text-white">
-          {formatNumber(stats.count)}{!!stats.maxSupply ? ` / ${formatNumber(+stats.maxSupply)}` : null}
+          {formatNumber(stats.count)}
         </h3>
       </Stat>
-      {displayMintMode ? (
-        <Stat name="mint status">
-          <h3 className="reservoir-h6 dark:text-white uppercase">
-            {stats.mintMode}
-          </h3>
-        </Stat>
-      ) : (
-        <Stat name="top offer">
-          <h3 className="reservoir-h6 dark:text-white">
-            <FormatWEth amount={stats.topOffer} />
-          </h3>
-        </Stat>
-      )}
+      <Stat name="top offer">
+        <h3 className="reservoir-h6 dark:text-white">
+          <FormatCrypto
+            amount={stats.topOffer}
+            decimals={stats.topOfferCurrency?.decimals}
+            address={stats.topOfferCurrency?.contract}
+          />
+        </h3>
+      </Stat>
       <Stat name="floor">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
           <FormatEth amount={stats.floor} maximumFractionDigits={2} />
+          <PercentageChange value={stats.floorChange} />
         </h3>
       </Stat>
       <Stat name="total volume">

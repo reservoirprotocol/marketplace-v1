@@ -59,12 +59,15 @@ function formatNumber(
  */
 function formatBN(
   amount: BigNumberish | null | undefined,
-  maximumFractionDigits: number
+  maximumFractionDigits: number,
+  decimals?: number
 ) {
   if (typeof amount === 'undefined' || amount === null) return '-'
 
   const amountToFormat =
-    typeof amount === 'number' ? amount : +utils.formatEther(amount)
+    typeof amount === 'number'
+      ? amount
+      : +utils.formatUnits(amount, decimals || 18)
 
   const parts = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
@@ -74,7 +77,8 @@ function formatBN(
   }).formatToParts(amountToFormat)
 
   if (parts && parts.length > 0) {
-    return trauncateFractionAndFormat(parts, maximumFractionDigits)
+    const maxDecimals = amountToFormat > 1000 ? 1 : maximumFractionDigits
+    return trauncateFractionAndFormat(parts, maxDecimals)
   } else {
     return amount
   }

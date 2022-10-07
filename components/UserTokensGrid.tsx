@@ -1,27 +1,43 @@
-import { FC, ComponentProps, useState } from 'react'
+import {
+  FC,
+  ComponentProps,
+  useState,
+  ComponentPropsWithoutRef,
+  useEffect,
+} from 'react'
 import LoadingCard from './LoadingCard'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import { useAccount, useSigner } from 'wagmi'
 import Toast from 'components/Toast'
-import { ListModal } from '@reservoir0x/reservoir-kit-ui'
-import AcceptOffer from 'components/AcceptOffer'
+import {
+  AcceptBidModal,
+  ListModal,
+  useUserTokens,
+} from '@reservoir0x/reservoir-kit-ui'
 
 import FormatEth from './FormatEth'
-import useUserTokens from 'hooks/useUserTokens'
-import FormatWEth from 'components/FormatWEth'
 import FormatCrypto from 'components/FormatCrypto'
+import { useInView } from 'react-intersection-observer'
 
+const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type TokenProps = {
-  token?: NonNullable<
-    NonNullable<ReturnType<typeof useUserTokens>['tokens']['data']>[0]['tokens']
-  >[0]
+  token?: NonNullable<NonNullable<ReturnType<typeof useUserTokens>['data']>>[0]
   modal: Props['modal']
   mutate: Props['mutate']
   isOwner: Props['isOwner']
+}
+
+type ListingCurrencies = ComponentPropsWithoutRef<
+  typeof ListModal
+>['currencies']
+let listingCurrencies: ListingCurrencies = undefined
+
+if (CURRENCIES) {
+  listingCurrencies = JSON.parse(CURRENCIES)
 }
 
 const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
@@ -86,15 +102,20 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
             </div>
           </div>
           <div className="flex items-center space-x-6 px-4 pb-4 lg:pb-3">
-            {token?.ownership?.floorAskPrice && (
+            {token?.ownership?.floorAsk?.price?.amount && (
               <div>
                 <div className="text-xs  text-neutral-500 dark:text-neutral-400">
                   Listing
                 </div>
                 <div className="text-md reservoir-h6 dark:text-white">
                   <FormatCrypto
-                    amount={token.ownership.floorAskPrice.amount?.decimal}
-                    address={token.ownership.floorAskPrice.currency?.contract}
+                    amount={token.ownership.floorAsk?.price?.amount?.decimal}
+                    address={
+                      token.ownership.floorAsk?.price?.currency?.contract
+                    }
+                    decimals={
+                      token.ownership.floorAsk?.price?.currency?.decimals
+                    }
                   />
                 </div>
               </div>
@@ -108,12 +129,13 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
                   <FormatCrypto
                     amount={token?.token?.topBid?.price?.amount.decimal}
                     address={token?.token?.topBid?.price?.currency?.contract}
+                    decimals={token?.token?.topBid.price?.currency?.decimals}
                   />
                 </div>
               </div>
             )}
             {!(
-              token?.ownership?.floorAskPrice &&
+              token?.ownership?.floorAsk?.price &&
               token?.token?.topBid?.price?.amount?.decimal
             ) && (
               <div>
@@ -135,11 +157,12 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
           <ListModal
             trigger={
               <p className="hover:color-primary mr-6 cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                {token?.ownership?.floorAskPrice ? 'Edit Listing' : 'List'}
+                {token?.ownership?.floorAsk?.price ? 'Edit Listing' : 'List'}
               </p>
             }
             collectionId={token?.token?.collection?.id}
             tokenId={token?.token?.tokenId}
+            currencies={listingCurrencies}
             onListingError={(err: any) => {
               if (err?.code === 4001) {
                 modal.setToast({
@@ -160,21 +183,43 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
             }}
           />
           {token?.token?.topBid?.price?.amount?.decimal && (
-            <AcceptOffer
-              data={{
-                contract: token?.token?.contract,
-                tokenId: token?.token?.tokenId,
+            <AcceptBidModal
+              trigger={
+                <button
+                  disabled={modal.isInTheWrongNetwork}
+                  className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80"
+                >
+                  Accept Offer
+                </button>
+              }
+              collectionId={token?.token?.contract}
+              tokenId={token?.token?.tokenId}
+              onClose={mutate}
+              onBidAcceptError={(error: any) => {
+                if (error?.type === 'price mismatch') {
+                  modal.setToast({
+                    kind: 'error',
+                    message: 'Offer was lower than expected.',
+                    title: 'Could not accept offer',
+                  })
+                  return
+                }
+                // Handle user rejection
+                if (error?.code === 4001) {
+                  modal.setToast({
+                    kind: 'error',
+                    message: 'You have canceled the transaction.',
+                    title: 'User canceled transaction',
+                  })
+                  return
+                }
+                modal.setToast({
+                  kind: 'error',
+                  message: 'The transaction was not completed.',
+                  title: 'Could not accept offer',
+                })
               }}
-              show={true}
-              signer={modal.signer}
-              isInTheWrongNetwork={modal.isInTheWrongNetwork}
-              setToast={modal.setToast}
-              mutate={mutate}
-            >
-              <p className="hover:color-primary cursor-pointer text-sm font-semibold opacity-0 transition-all hover:!opacity-100 group-hover:opacity-80">
-                Accept Offer
-              </p>
-            </AcceptOffer>
+            />
           )}
         </div>
       )}
@@ -183,8 +228,7 @@ const Token: FC<TokenProps> = ({ token, modal, mutate, isOwner }) => {
 }
 
 type Props = {
-  data: ReturnType<typeof useUserTokens>
-
+  userTokens: ReturnType<typeof useUserTokens>
   mutate: () => any
   isOwner: boolean
   modal: {
@@ -196,18 +240,24 @@ type Props = {
   }
 }
 
-const UserTokensGrid: FC<Props> = ({
-  data: { tokens, ref },
-  modal,
-  mutate,
-  isOwner,
-}) => {
-  const { data, isValidating } = tokens
-  const mappedTokens = data ? data.map(({ tokens }) => tokens).flat() : []
-  const isEmpty = mappedTokens.length === 0
-  const didReactEnd = isEmpty || data?.[data.length - 1]?.tokens?.length === 0
+const UserTokensGrid: FC<Props> = ({ userTokens, modal, mutate, isOwner }) => {
+  const {
+    data: tokens,
+    isFetchingInitialData,
+    isFetchingPage,
+    hasNextPage,
+    fetchNextPage,
+  } = userTokens
+  const isEmpty = tokens.length === 0
+  const { ref, inView } = useInView()
 
-  if (isEmpty) {
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView])
+
+  if (isEmpty && !isFetchingPage) {
     return (
       <div className="grid justify-center text-xl font-semibold">No tokens</div>
     )
@@ -215,11 +265,11 @@ const UserTokensGrid: FC<Props> = ({
 
   return (
     <div className="mx-auto mb-8 grid max-w-[2400px] gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5">
-      {isEmpty && isValidating
+      {isFetchingInitialData
         ? Array(20).map((_, index) => (
             <LoadingCard key={`loading-card-${index}`} />
           ))
-        : mappedTokens?.map((token, idx) => (
+        : tokens?.map((token, idx) => (
             <Token
               token={token}
               key={idx}
@@ -228,15 +278,18 @@ const UserTokensGrid: FC<Props> = ({
               isOwner={isOwner}
             />
           ))}
-      {!didReactEnd &&
-        Array(20)
+      {isFetchingPage ? (
+        Array(10)
           .fill(null)
           .map((_, index) => {
             if (index === 0) {
-              return <LoadingCard viewRef={ref} key={`loading-card-${index}`} />
+              return <LoadingCard key={`loading-card-${index}`} />
             }
             return <LoadingCard key={`loading-card-${index}`} />
-          })}
+          })
+      ) : (
+        <span ref={ref}></span>
+      )}
     </div>
   )
 }

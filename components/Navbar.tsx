@@ -7,6 +7,8 @@ import setParams from 'lib/params'
 import NavbarLogo from 'components/navbar/NavbarLogo'
 import ThemeSwitcher from './ThemeSwitcher'
 import CartMenu from './CartMenu'
+import SearchMenu from './SearchMenu'
+import { useMediaQuery } from '@react-hookz/web'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -36,6 +38,9 @@ const Navbar: FC = () => {
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
+  const isMobile = useMediaQuery('(max-width: 520px)')
+  const [hasCommunityDropdown, setHasCommunityDropdown] =
+    useState<boolean>(false)
 
   const externalLinks: { name: string; url: string }[] = []
 
@@ -75,29 +80,39 @@ const Navbar: FC = () => {
           initialResults.collections.length >= 2 &&
           initialResults.collections.length <= 10
 
-        if (
+        const hasCommunityDropdown =
           !DEFAULT_TO_SEARCH &&
           (COMMUNITY || COLLECTION_SET_ID) &&
           smallCommunity
-        ) {
+
+        if (hasCommunityDropdown) {
           setFilterComponent(
             <CommunityDropdown
               collections={initialResults?.collections}
               defaultCollectionId={COLLECTION}
             />
           )
+          setHasCommunityDropdown(true)
         } else {
           setShowLinks(false)
-          setFilterComponent(
-            <SearchCollections
-              communityId={COMMUNITY}
-              initialResults={initialResults}
-            />
-          )
+          setHasCommunityDropdown(false)
+          isMobile
+            ? setFilterComponent(
+                <SearchMenu
+                  communityId={COMMUNITY}
+                  initialResults={initialResults}
+                />
+              )
+            : setFilterComponent(
+                <SearchCollections
+                  communityId={COMMUNITY}
+                  initialResults={initialResults}
+                />
+              )
         }
       })
     }
-  }, [filterableCollection])
+  }, [filterableCollection, isMobile])
 
   return (
     <nav className="sticky top-0 z-[1000] col-span-full mb-[10px] flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-4 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-6 md:px-16">
@@ -117,17 +132,21 @@ const Navbar: FC = () => {
           ))}
         </div>
       )}
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="absolute left-0 right-0 z-[1] flex w-full justify-center">
-          {filterComponent && filterComponent}
-        </div>
+      <div
+        className={`flex ${
+          !hasCommunityDropdown && isMobile
+            ? 'ml-auto'
+            : 'h-full w-full items-center justify-center'
+        }`}
+      >
+        {filterComponent && filterComponent}
       </div>
+      <CartMenu />
       <HamburgerMenu externalLinks={externalLinks} />
       <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
         <ConnectWallet />
         <ThemeSwitcher />
       </div>
-      <CartMenu />
     </nav>
   )
 }

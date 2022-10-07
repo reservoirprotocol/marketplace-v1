@@ -2,15 +2,11 @@ import React, { FC, useEffect, useState } from 'react'
 import AttributeButton from 'components/AttributeButton'
 import { DebounceInput } from 'react-debounce-input'
 import { matchSorter } from 'match-sorter'
-import { sortAttributes } from './functions'
-import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 
 type Props = {
-  attribute: NonNullable<
-    paths['/collections/{collection}/attributes/all/v1']['get']['responses']['200']['schema']['attributes']
-  >[number]
+  attribute: NonNullable<ReturnType<typeof useAttributes>['data']>[0]
   refreshData: () => void
 }
 
@@ -22,10 +18,27 @@ const AttributeSelector: FC<Props> = ({
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    let results = matchSorter(values || [], query, {
+    const results = matchSorter(values || [], query, {
       keys: ['value'],
     })
-    sortAttributes(results)
+      .sort((a, b) => {
+        if (!a.value || !b.value) return 0
+        var nameA = a.value?.toUpperCase()
+        var nameB = b.value?.toUpperCase()
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+
+        // names must be equal
+        return 0
+      })
+      .sort((a, b) => {
+        if (!a.count || !b.count) return 0
+        return b.count - a.count
+      })
     setsearchedValues(results)
   }, [query, values])
 

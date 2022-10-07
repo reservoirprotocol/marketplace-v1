@@ -1,27 +1,23 @@
-import FormatCurrency from 'components/FormatCurrency'
+import FormatCrypto from 'components/FormatCrypto'
+import { constants } from 'ethers'
 import { FC, ComponentProps } from 'react'
 
-const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
-
-type FormatEthProps = {
-  logoWidth?: number
-}
-
-type Props = ComponentProps<typeof FormatCurrency> & FormatEthProps
+type Props = ComponentProps<typeof FormatCrypto>
 
 const FormatEth: FC<Props> = ({
   amount,
   maximumFractionDigits,
-  logoWidth = 8,
+  logoWidth,
+  decimals,
 }) => {
-  const icon = DARK_MODE ? '/eth-dark.svg' : '/eth.svg'
   return (
-    <FormatCurrency
+    <FormatCrypto
+      logoWidth={logoWidth}
       amount={amount}
+      address={constants.AddressZero}
+      decimals={decimals}
       maximumFractionDigits={maximumFractionDigits}
-    >
-      <img src={icon} alt="ETH logo" style={{ width: `${logoWidth}px` }} />
-    </FormatCurrency>
+    />
   )
 }
 

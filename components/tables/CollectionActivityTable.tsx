@@ -235,6 +235,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <FormatCrypto
             amount={sale.price?.amount?.decimal}
             address={sale.price?.currency?.contract}
+            decimals={sale.price?.currency?.decimals}
           />
           {sale.price?.amount?.usd && (
             <div className="text-xs text-neutral-600">
@@ -284,6 +285,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
         <FormatCrypto
           amount={sale.price?.amount?.decimal}
           address={sale.price?.currency?.contract}
+          decimals={sale.price?.currency?.decimals}
         />
         {sale.price?.amount?.usd && (
           <div className="text-xs text-neutral-600">
