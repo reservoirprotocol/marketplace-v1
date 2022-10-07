@@ -1,7 +1,9 @@
 import { truncateAddress } from 'lib/truncateText'
 import React, { FC, useState } from 'react'
+import useEnvChain from 'hooks/useEnvChain'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { TokenDetails } from 'types/reservoir'
+import TokenMarketplace from './Marketplace'
 import { setToast } from './setToast'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
@@ -11,6 +13,7 @@ type Props = {
 }
 
 const TokenInfo: FC<Props> = ({ token }) => {
+  const chain = useEnvChain()
   const [refreshLoading, setRefreshLoading] = useState(false)
 
   // const token = details.data?.tokens?.[0]
@@ -72,30 +75,10 @@ const TokenInfo: FC<Props> = ({ token }) => {
           Token Info
         </div>
         <div className="flex items-center gap-2">
-          <a
-            className="reservoir-h6 font-headings"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://looksrare.org/collections/${token?.contract}/${token?.tokenId}`}
-          >
-            <img
-              src="/icons/LooksRare.svg"
-              alt="LooksRare Icon"
-              className="h-6 w-6"
-            />
-          </a>
-          <a
-            className="reservoir-h6 font-headings"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://opensea.io/assets/${token?.contract}/${token?.tokenId}`}
-          >
-            <img
-              src="/icons/OpenSea.svg"
-              alt="OpenSea Icon"
-              className="h-6 w-6"
-            />
-          </a>
+          <TokenMarketplace marketplace='looksrare' token={token} />
+          <TokenMarketplace marketplace='opensea' token={token} />
+          <TokenMarketplace marketplace='x2y2' token={token} />
+          <TokenMarketplace marketplace='quix' token={token} />
         </div>
       </div>
       {token?.contract && (
@@ -108,7 +91,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
               className="reservoir-h6 flex items-center gap-2 font-headings text-primary-700 dark:text-primary-100"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://etherscan.io/address/${token?.contract}`}
+              href={`${chain?.blockExplorers?.etherscan?.url || 'https://etherescan.io'}/address/${token?.contract}`}
             >
               {truncateAddress(token?.contract)}
               <FiExternalLink className="h-4 w-4" />
@@ -140,9 +123,8 @@ const TokenInfo: FC<Props> = ({ token }) => {
         >
           Refresh{' '}
           <FiRefreshCcw
-            className={`h-4 w-4 ${
-              refreshLoading ? 'animate-spin-reverse' : ''
-            }`}
+            className={`h-4 w-4 ${refreshLoading ? 'animate-spin-reverse' : ''
+              }`}
           />
         </button>
       </div>

@@ -1,5 +1,5 @@
 import FormatCurrency from 'components/FormatCurrency'
-import { FC, ComponentProps } from 'react'
+import { FC, ComponentProps, SyntheticEvent } from 'react'
 
 type FormatCryptoProps = {
   address?: string
@@ -18,6 +18,10 @@ const FormatCrypto: FC<Props> = ({
   logoWidth = 16,
 }) => {
   const logoUrl = `${API_BASE}/redirect/currency/${address}/icon/v1`
+  const handleFallback = (e: SyntheticEvent) => {
+    const img = e.target as HTMLImageElement
+    img.src = `https://api.reservoir.tools/redirect/currency/${address}/icon/v1`
+  };
 
   return (
     <FormatCurrency
@@ -28,6 +32,7 @@ const FormatCrypto: FC<Props> = ({
         <img
           src={logoUrl}
           alt="Currency Logo"
+          onError={handleFallback}
           style={{ width: `${logoWidth}px` }}
         />
       )}
