@@ -12,19 +12,19 @@ const MARKETPLACES = {
   opensea: {
     name: 'OpenSea',
     tokenUrl: (network = 'ethereum', token?: TokenDetails) => `https://opensea.io/assets/${network}/${token?.contract}/${token?.tokenId}`,
-    networks: ['optimism', 'ethereum', 'polygon'],
+    networks: ['optimism', 'ethereum', 'homestead', 'polygon'],
     imgSrc: '/icons/OpenSea.svg',
   },
   looksrare: {
     name: 'LooksRare',
     tokenUrl: (_network = '', token?: TokenDetails) => `https://looksrare.org/collections/${token?.contract}/${token?.tokenId}`,
-    networks: ['ethereum'],
+    networks: ['ethereum', 'homestead'],
     imgSrc: '/icons/LooksRare.svg',
   },
   x2y2: {
     name: 'X2Y2',
     tokenUrl: (_network = '', token?: TokenDetails) => `https://x2y2.io/eth/${token?.contract}/${token?.tokenId}`,
-    networks: ['ethereum'],
+    networks: ['ethereum', 'homestead'],
     imgSrc: '/icons/X2Y2.svg',
   },
   quix: {
