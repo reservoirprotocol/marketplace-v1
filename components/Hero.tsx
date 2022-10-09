@@ -165,7 +165,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   ref={descriptionRef}
                   className="text-center text-sm text-[#262626] transition-[width] duration-300 ease-in-out dark:text-white"
                 >
-                  <ReactMarkdown linkTarget="_blank">
+                  <ReactMarkdown className="markdown-support" linkTarget="_blank">
                     {header.description}
                   </ReactMarkdown>
                 </p>
