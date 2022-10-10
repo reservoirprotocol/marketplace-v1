@@ -18,7 +18,7 @@ export default function useCoinConversion(
   )
 
   if (data && data[0] && data[0].current_price) {
-    return data[0].current_price
+    return data[0].current_price as number
   }
   return null
 }

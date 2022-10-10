@@ -1,4 +1,4 @@
-import { ComponentProps, FC, useEffect } from 'react'
+import { ComponentProps, FC, useEffect, useState } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -12,6 +12,8 @@ import { useListings } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import { useRouter } from 'next/router'
 import * as Dialog from '@radix-ui/react-dialog'
+import LoadingIcon from 'components/LoadingIcon'
+import { useMediaQuery } from '@react-hookz/web'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -26,18 +28,30 @@ type Props = {
 
 const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
   const router = useRouter()
+  const isMobile = useMediaQuery('only screen and (max-width : 730px)')
+  const [showActive, setShowActive] = useState(true)
   const { address } = router.query
   const params: Parameters<typeof useListings>['0'] = {
     maker: address as string,
     includeMetadata: true,
+    status: showActive ? 'active' : 'inactive',
   }
   if (collectionIds) {
     params.contracts = collectionIds
   }
 
-  const { data: listings, fetchNextPage, mutate } = useListings(params)
-
+  const {
+    data: listings,
+    fetchNextPage,
+    mutate,
+    setSize,
+    isFetchingInitialData,
+  } = useListings(params)
   const { ref, inView } = useInView()
+
+  useEffect(() => {
+    setSize(1)
+  }, [])
 
   useEffect(() => {
     if (inView) {
@@ -45,62 +59,103 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
     }
   }, [inView])
 
-  if (listings.length === 0) {
+  if (isFetchingInitialData) {
     return (
-      <div className="mt-14 grid justify-center dark:text-white">
-        You don&apos;t have any items listed for sale.
+      <div className="my-20 flex justify-center">
+        <LoadingIcon />
+      </div>
+    )
+  }
+
+  if (isMobile) {
+    return (
+      <div className="mb-11 overflow-x-auto">
+        {listings.map((listing, index, arr) => (
+          <UserListingsMobileRow
+            key={`${listing?.id}-${index}`}
+            ref={index === arr.length - 5 ? ref : null}
+            listing={listing}
+            modal={modal}
+            mutate={mutate}
+          />
+        ))}
       </div>
     )
   }
 
   return (
     <div className="mb-11 overflow-x-auto">
-      <table className="min-w-full table-auto dark:divide-neutral-600">
-        <thead className="bg-white dark:bg-black">
-          <tr>
-            {['Item', 'Price', 'Expiration', 'Marketplace'].map((item) => (
-              <th
-                key={item}
-                scope="col"
-                className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
-              >
-                {item}
+      <div className="flex gap-3">
+        <button
+          className={`rounded-full border-[1px] border-solid border-neutral-300  py-3 px-4 hover:opacity-[0.85] ${
+            showActive ? 'bg-primary-100' : 'bg-white'
+          }`}
+          onClick={() => setShowActive(true)}
+        >
+          Active
+        </button>
+        <button
+          className={`${!showActive ? 'bg-primary-100' : 'bg-white'}
+            rounded-full border-[1px] border-solid border-neutral-300 py-3
+          px-4 hover:opacity-[0.85]`}
+          onClick={() => setShowActive(false)}
+        >
+          Inactive
+        </button>
+      </div>
+      {listings.length === 0 && (
+        <div className="mt-14 grid justify-center dark:text-white">
+          You don&apos;t have any {showActive ? 'active' : 'inactive'} listings.
+        </div>
+      )}
+      {listings.length > 0 && (
+        <table className="min-w-full table-auto dark:divide-neutral-600">
+          <thead className="bg-white dark:bg-black">
+            <tr>
+              {['Item', 'Price', 'Expiration', 'Marketplace'].map((item) => (
+                <th
+                  key={item}
+                  scope="col"
+                  className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
+                >
+                  {item}
+                </th>
+              ))}
+              <th scope="col" className="relative px-6 py-3">
+                <span className="sr-only">Cancel</span>
               </th>
+            </tr>
+          </thead>
+          <tbody>
+            {listings.map((listing, index, arr) => (
+              <UserListingsTableRow
+                key={`${listing?.id}-${index}`}
+                ref={index === arr.length - 5 ? ref : null}
+                listing={listing}
+                modal={modal}
+                mutate={mutate}
+              />
             ))}
-            <th scope="col" className="relative px-6 py-3">
-              <span className="sr-only">Edit</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {listings.map((listing, index, arr) => (
-            <UseListingsTableRow
-              key={`${listing?.id}-${index}`}
-              ref={index === arr.length - 5 ? ref : null}
-              listing={listing}
-              modal={modal}
-              mutate={mutate}
-            />
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }
 
-type UserListingsTableRowProps = {
+type UserListingsRowProps = {
   listing: ReturnType<typeof useListings>['data'][0]
   modal: Props['modal']
   mutate: ReturnType<typeof useListings>['mutate']
   ref: null | ((node?: Element | null) => void)
 }
 
-const UseListingsTableRow = ({
+const UserListingsTableRow = ({
   listing,
   modal,
   mutate,
   ref,
-}: UserListingsTableRowProps) => {
+}: UserListingsRowProps) => {
   const { data: signer } = useSigner()
   const usdConversion = useCoinConversion(
     listing?.price?.currency?.symbol ? 'usd' : undefined,
@@ -167,7 +222,7 @@ const UseListingsTableRow = ({
           decimals={price?.currency?.decimals}
         />
         {usdPrice && (
-          <div className="text-sm text-neutral-600 dark:text-neutral-300">
+          <div className="text-xs text-neutral-600 dark:text-neutral-300">
             {formatDollar(usdPrice)}
           </div>
         )}
@@ -217,6 +272,119 @@ const UseListingsTableRow = ({
         </div>
       </td>
     </tr>
+  )
+}
+
+const UserListingsMobileRow = ({
+  listing,
+  modal,
+  mutate,
+  ref,
+}: UserListingsRowProps) => {
+  const { data: signer } = useSigner()
+  const usdConversion = useCoinConversion(
+    listing?.price?.currency?.symbol ? 'usd' : undefined,
+    listing?.price?.currency?.symbol
+  )
+
+  const usdPrice =
+    usdConversion && listing?.price?.amount?.decimal
+      ? usdConversion * listing?.price?.amount?.decimal
+      : null
+
+  const {
+    collectionName,
+    contract,
+    expiration,
+    id,
+    image,
+    name,
+    tokenHref,
+    tokenId,
+    price,
+    source,
+  } = processListing(listing)
+
+  return (
+    <div
+      className="border-b-[1px] border-solid border-b-neutral-300	py-[16px]"
+      ref={ref}
+    >
+      <div className="flex items-center justify-between">
+        <Link href={tokenHref || '#'}>
+          <a className="flex items-center gap-2">
+            <div className="relative h-14 w-14">
+              {image && (
+                <div className="aspect-w-1 aspect-h-1 relative overflow-hidden rounded">
+                  <img
+                    src={optimizeImage(image, 56)}
+                    alt="Bid Image"
+                    className="w-[56px] object-contain"
+                    width="56"
+                    height="56"
+                  />
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="reservoir-h6 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap font-headings text-sm dark:text-white">
+                {name}
+              </div>
+              <div className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-xs text-neutral-600 dark:text-neutral-300">
+                {collectionName}
+              </div>
+            </div>
+          </a>
+        </Link>
+        <div className="flex flex-col">
+          <FormatCrypto
+            amount={price?.amount?.decimal}
+            address={price?.currency?.contract}
+            decimals={price?.currency?.decimals}
+          />
+          {usdPrice && (
+            <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
+              {formatDollar(usdPrice)}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center justify-between pt-4">
+        <div>
+          <a
+            href={source.link || '#'}
+            target="_blank"
+            rel="noreferrer"
+            className="mb-1 flex items-center gap-1 font-light text-primary-700 dark:text-primary-300"
+          >
+            {source.icon && (
+              <img className="h-6 w-6" alt="Source Icon" src={source.icon} />
+            )}
+            <span className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+              {source.name}
+            </span>
+          </a>
+          <div className="text-xs font-light text-neutral-600 dark:text-neutral-300">{`Expires ${expiration}`}</div>
+        </div>
+        <CancelListing
+          data={{
+            id,
+            contract,
+            tokenId,
+          }}
+          signer={signer}
+          show={true}
+          isInTheWrongNetwork={modal.isInTheWrongNetwork}
+          setToast={modal.setToast}
+          mutate={mutate}
+          trigger={
+            <Dialog.Trigger className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-[#FF3B3B] dark:border-neutral-600 dark:bg-black dark:text-[#FF9A9A] dark:ring-primary-900 dark:focus:ring-4">
+              Cancel
+            </Dialog.Trigger>
+          }
+        />
+      </div>
+    </div>
   )
 }
 
