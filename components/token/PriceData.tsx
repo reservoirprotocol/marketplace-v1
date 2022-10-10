@@ -69,13 +69,15 @@ const PriceData: FC<Props> = ({ details, collection }) => {
     token?.market?.floorAsk?.price?.currency?.symbol
   )
 
-  const topBidUsdPrice = token?.market?.topBid?.price?.amount?.decimal
-    ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.decimal
-    : null
+  const topBidUsdPrice =
+    topBidUsdConversion && token?.market?.topBid?.price?.amount?.decimal
+      ? topBidUsdConversion * token?.market?.topBid?.price?.amount?.decimal
+      : null
 
-  const floorAskUsdPrice = token?.market?.floorAsk?.price?.amount?.decimal
-    ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
-    : null
+  const floorAskUsdPrice =
+    floorAskUsdConversion && token?.market?.floorAsk?.price?.amount?.decimal
+      ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
+      : null
 
   const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
   const sourceDomain = token?.market?.floorAsk?.source?.domain as
