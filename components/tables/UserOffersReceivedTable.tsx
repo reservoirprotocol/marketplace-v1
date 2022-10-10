@@ -310,7 +310,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                   <Tooltip
                     side="top"
                     content={
-                      <div className="flex w-[150px] flex-col gap-2">
+                      <div className="flex min-w-[150px] flex-col gap-2">
                         <div className="flex justify-between gap-1 text-xs text-neutral-100">
                           <div>Top Offer</div>
                           <FormatWEth amount={price} />
