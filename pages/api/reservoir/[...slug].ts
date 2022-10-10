@@ -1,7 +1,7 @@
 import { setParams } from '@reservoir0x/reservoir-kit-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // A proxy API endpoint to redirect all requests to `/api/reservoir/*` to

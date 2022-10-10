@@ -11,7 +11,7 @@ type Props = {
 
 const FormatCurrency: FC<Props> = ({
   amount,
-  maximumFractionDigits = 4,
+  maximumFractionDigits = 2,
   children,
   decimals,
 }) => {
