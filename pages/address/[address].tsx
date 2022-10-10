@@ -117,8 +117,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
-      { name: 'Offers Made', id: 'buying' },
       { name: 'Offers Received', id: 'received' },
+      { name: 'Offers Made', id: 'buying' },
       { name: 'Listings', id: 'selling' },
     ]
   }

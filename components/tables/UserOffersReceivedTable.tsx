@@ -13,11 +13,13 @@ import LoadingIcon from 'components/LoadingIcon'
 import { useSigner } from 'wagmi'
 import { truncateAddress } from 'lib/truncateText'
 import useCoinConversion from 'hooks/useCoinConversion'
-import { formatDollar } from 'lib/numbers'
+import { formatDollar, formatNumber } from 'lib/numbers'
 import FormatWEth from 'components/FormatWEth'
 import InfoTooltip from 'components/InfoTooltip'
 import { useMediaQuery } from '@react-hookz/web'
 import { CgSpinner } from 'react-icons/cg'
+import FormatEth from 'components/FormatEth'
+import Tooltip from 'components/Tooltip'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -136,9 +138,11 @@ const UserOffersReceivedTable: FC<Props> = ({
                 </Link>
                 <div className="flex flex-col">
                   <FormatWEth amount={price} />
-                  <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
-                    {formatDollar(usdConversion * (price || 0))}
-                  </span>
+                  {usdConversion && (
+                    <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
+                      {formatDollar(usdConversion * (price || 0))}
+                    </span>
+                  )}
                   <span className="text-right text-xs font-light text-neutral-400 dark:text-neutral-300">
                     {floorDifference}
                   </span>
@@ -203,17 +207,12 @@ const UserOffersReceivedTable: FC<Props> = ({
                 tooltip: null,
               },
               {
-                title: 'Best Offer',
+                title: 'Top Offer',
                 tooltip: 'We show you the best offer available per token',
               },
               {
-                title: 'You Get',
-                tooltip: 'The amount you get deducting all fees',
-              },
-              {
-                title: 'Floor Difference',
-                tooltip:
-                  'The percentage difference between an offer price and the floor price',
+                title: 'Floor Price',
+                tooltip: null,
               },
               {
                 title: 'Expiration',
@@ -263,6 +262,8 @@ const UserOffersReceivedTable: FC<Props> = ({
               tokenId,
               price,
               netValue,
+              feeBreakdown,
+              floorAskPrice,
               floorDifference,
               source,
               maker,
@@ -306,27 +307,60 @@ const UserOffersReceivedTable: FC<Props> = ({
 
                 {/* OFFER */}
                 <td className="whitespace-nowrap px-6 py-4 text-black dark:text-white">
-                  <div className="flex flex-col">
-                    <FormatWEth amount={price} />
-                    <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
-                      {formatDollar(usdConversion * (price || 0))}
-                    </span>
-                  </div>
-                </td>
+                  <Tooltip
+                    side="top"
+                    content={
+                      <div className="flex w-[150px] flex-col gap-2">
+                        <div className="flex justify-between gap-1 text-xs text-neutral-100">
+                          <div>Top Offer</div>
+                          <FormatWEth amount={price} />
+                        </div>
 
-                {/* OFFER NET */}
-                <td className="whitespace-nowrap px-6 py-4 text-black dark:text-white">
-                  <div className="flex flex-col">
-                    <FormatWEth amount={netValue} />
-                    <span className="text-sm text-neutral-600 dark:text-neutral-300">
-                      {formatDollar(usdConversion * (netValue || 0))}
-                    </span>
-                  </div>
+                        {feeBreakdown?.map((fee, i) => (
+                          <div
+                            key={i}
+                            className="flex justify-between gap-2 text-xs text-neutral-400"
+                          >
+                            {fee.kind === 'royalty' && <div>Royalty</div>}
+                            {fee.kind === 'marketplace' && (
+                              <div>Marketplace</div>
+                            )}
+                            <div className="flex items-center gap-1">
+                              -
+                              <FormatWEth
+                                amount={price * ((fee?.bps || 0) / 10000)}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex justify-between gap-2 text-xs text-neutral-100">
+                          <div>You Get</div>
+                          <FormatWEth amount={netValue} />
+                        </div>
+                      </div>
+                    }
+                  >
+                    <div className="flex flex-col">
+                      <FormatWEth amount={price} />
+                      {usdConversion && (
+                        <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
+                          {formatDollar(usdConversion * (price || 0))}
+                        </span>
+                      )}
+                    </div>
+                  </Tooltip>
                 </td>
 
                 {/* FlOOR DIFFERENCE */}
                 <td className="whitespace-nowrap px-6 py-4 font-light text-neutral-600 dark:text-neutral-300">
-                  {floorDifference}
+                  <div className="flex flex-col">
+                    {floorAskPrice ? <FormatEth amount={floorAskPrice} /> : '-'}
+                    {floorAskPrice ? (
+                      <span className="text-xs text-neutral-600 dark:text-neutral-300">
+                        {floorDifference}
+                      </span>
+                    ) : null}
+                  </div>
                 </td>
 
                 {/* EXPIRATION */}
@@ -501,13 +535,17 @@ function processBid(bid: ReturnType<typeof useUserTopBids>['data']['0']) {
     collectionName: bid?.token?.collection?.name,
     price: price,
     netValue: bid?.value,
+    feeBreakdown: bid?.feeBreakdown,
     source: {
       icon: (bid?.source?.icon as string) || null,
       name: (bid?.source?.name as string) || null,
       link: (bid?.source?.url as string) || null,
     },
+    floorAskPrice,
     floorDifference: floorDifference
-      ? `${floorDifference}% ${floorDifference > 0 ? 'above' : 'below'}`
+      ? `${formatNumber(Math.abs(floorDifference))}% ${
+          floorDifference > 0 ? 'above the floor' : 'below the floor'
+        }`
       : '-',
     maker: bid?.maker || '',
   }
