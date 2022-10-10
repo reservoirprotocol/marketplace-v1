@@ -36,3 +36,28 @@ model-viewer {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
+
+
+.markdown-support h1, h2, h3, h4, h5 {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.markdown-support p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.markdown-support hr {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.markdown-support strong {
+  font-weight: 500;
+}
+
+.markdown-support a {
+  text-decoration: underline;
+}
