@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import Popover from './Popover'
+import Tooltip from './Tooltip'
 type Props = {
   side: string
   content: string
@@ -10,7 +10,7 @@ type Props = {
 
 const InfoTooltip = ({ side, content, width }: Props) => {
   return (
-    <Popover
+    <Tooltip
       side={side}
       width={width}
       content={
@@ -22,7 +22,7 @@ const InfoTooltip = ({ side, content, width }: Props) => {
       <div className="text-neutral-400">
         <FontAwesomeIcon icon={faInfoCircle} />
       </div>
-    </Popover>
+    </Tooltip>
   )
 }
 

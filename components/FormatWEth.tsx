@@ -1,5 +1,4 @@
 import FormatCrypto from 'components/FormatCrypto'
-import { constants } from 'ethers'
 import { FC, ComponentProps } from 'react'
 
 type Props = ComponentProps<typeof FormatCrypto>
@@ -16,7 +15,8 @@ const FormatWEth: FC<Props> = ({
   maximumFractionDigits,
   logoWidth,
 }) => {
-  const address = CHAIN_ID !== undefined && CHAIN_ID in wethContracts
+  const address =
+    CHAIN_ID !== undefined && CHAIN_ID in wethContracts
       ? wethContracts[+CHAIN_ID]
       : wethContracts[1]
 

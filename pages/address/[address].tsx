@@ -24,7 +24,6 @@ import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
-import useUserAsks from 'hooks/useUserAsks'
 import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
@@ -83,7 +82,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     fallbackData: [fallback.tokens],
   })
   const collections = useSearchCommunity()
-  const listings = useUserAsks(address, collections)
   let collectionIds: undefined | string[] = undefined
 
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
@@ -119,8 +117,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
-      { name: 'Offers Made', id: 'buying' },
       { name: 'Offers Received', id: 'received' },
+      { name: 'Offers Made', id: 'buying' },
       { name: 'Listings', id: 'selling' },
     ]
   }
@@ -169,7 +167,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                   userTokens={userTokens}
                   mutate={() => {
                     userTokens.mutate()
-                    listings.mutate()
                   }}
                   owner={address || ''}
                 />
@@ -198,18 +195,10 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Content>
                 <Tabs.Content value="selling" className="col-span-full">
                   <UserListingsTable
-                    data={listings}
-                    mutate={() => {
-                      userTokens.mutate()
-                      listings.mutate()
-                    }}
-                    isOwner={isOwner}
+                    collectionIds={collectionIds}
                     modal={{
-                      accountData,
                       isInTheWrongNetwork,
-                      collectionId: undefined,
                       setToast,
-                      signer,
                     }}
                   />
                 </Tabs.Content>
