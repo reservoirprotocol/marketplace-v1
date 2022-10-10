@@ -146,7 +146,7 @@ const TokenCard: FC<Props> = ({
                   amount={token?.market?.floorAsk?.price?.amount?.decimal}
                   address={token?.market?.floorAsk?.price?.currency?.contract}
                   decimals={token.market?.floorAsk?.price?.currency?.decimals}
-                  maximumFractionDigits={2}
+                  maximumFractionDigits={4}
                 />
               </div>
               <div className="text-right">

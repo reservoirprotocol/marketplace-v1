@@ -10,7 +10,7 @@ function formatDollar(price?: number | null) {
   return price !== undefined && price !== null ? formatUsdCurrency(price) : '-'
 }
 
-const trauncateFractionAndFormat = (
+const truncateFractionAndFormat = (
   parts: Intl.NumberFormatPart[],
   digits: number
 ) => {
@@ -21,14 +21,7 @@ const trauncateFractionAndFormat = (
       }
 
       let formattedValue = ''
-      for (
-        let idx = 0, counter = 0;
-        idx < value.length && counter < digits;
-        idx++
-      ) {
-        if (value[idx] !== '0') {
-          counter++
-        }
+      for (let idx = 0; idx < value.length && idx < digits; idx++) {
         formattedValue += value[idx]
       }
       return formattedValue
@@ -69,6 +62,10 @@ function formatBN(
       ? amount
       : +utils.formatUnits(amount, decimals || 18)
 
+  if (amountToFormat === 0) {
+    return amountToFormat
+  }
+
   const parts = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 20,
@@ -77,8 +74,16 @@ function formatBN(
   }).formatToParts(amountToFormat)
 
   if (parts && parts.length > 0) {
-    const maxDecimals = amountToFormat > 1000 ? 1 : maximumFractionDigits
-    return trauncateFractionAndFormat(parts, maxDecimals)
+    const lowestValue = Number(
+      `0.${new Array(maximumFractionDigits).join('0')}1`
+    )
+    if (amountToFormat > 1000) {
+      return truncateFractionAndFormat(parts, 1)
+    } else if (amountToFormat < 1 && amountToFormat < lowestValue) {
+      return `< ${lowestValue}`
+    } else {
+      return truncateFractionAndFormat(parts, maximumFractionDigits)
+    }
   } else {
     return amount
   }

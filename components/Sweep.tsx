@@ -168,7 +168,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
     setWaitingTx(true)
     const tokens = sweepTokens.reduce((tokens, token) => {
       if (token?.token?.tokenId && token.token.contract) {
-        tokens.push({
+        tokens?.push({
           tokenId: token.token.tokenId,
           contract: token.token.contract,
         })

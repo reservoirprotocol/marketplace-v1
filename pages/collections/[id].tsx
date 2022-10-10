@@ -301,7 +301,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
             value="activity"
             className="col-span-full mx-[25px] grid lg:col-start-2 lg:col-end-[-2]"
           >
-            <CollectionActivityTable collection={collection} />
+            <CollectionActivityTable collectionId={id} />
           </Tabs.Content>
         </Tabs.Root>
       </>
