@@ -38,7 +38,7 @@ import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 // OPTIONAL
-const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
+const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 

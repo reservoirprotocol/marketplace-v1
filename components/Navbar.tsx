@@ -39,6 +39,8 @@ const Navbar: FC = () => {
     null
   )
   const isMobile = useMediaQuery('(max-width: 520px)')
+  const [hasCommunityDropdown, setHasCommunityDropdown] =
+    useState<boolean>(false)
 
   const externalLinks: { name: string; url: string }[] = []
 
@@ -78,19 +80,22 @@ const Navbar: FC = () => {
           initialResults.collections.length >= 2 &&
           initialResults.collections.length <= 10
 
-        if (
+        const hasCommunityDropdown =
           !DEFAULT_TO_SEARCH &&
           (COMMUNITY || COLLECTION_SET_ID) &&
           smallCommunity
-        ) {
+
+        if (hasCommunityDropdown) {
           setFilterComponent(
             <CommunityDropdown
               collections={initialResults?.collections}
               defaultCollectionId={COLLECTION}
             />
           )
+          setHasCommunityDropdown(true)
         } else {
           setShowLinks(false)
+          setHasCommunityDropdown(false)
           isMobile
             ? setFilterComponent(
                 <SearchMenu
@@ -127,29 +132,21 @@ const Navbar: FC = () => {
           ))}
         </div>
       )}
-      {isMobile ? (
-        <div className="ml-auto flex gap-2">
-          {filterComponent && filterComponent}
-          <CartMenu />
-          <HamburgerMenu externalLinks={externalLinks} />
-          <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
-            <ConnectWallet />
-            <ThemeSwitcher />
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="flex h-full w-full items-center justify-center">
-            {filterComponent && filterComponent}
-          </div>
-          <CartMenu />
-          <HamburgerMenu externalLinks={externalLinks} />
-          <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
-            <ConnectWallet />
-            <ThemeSwitcher />
-          </div>
-        </>
-      )}
+      <div
+        className={`flex ${
+          !hasCommunityDropdown && isMobile
+            ? 'ml-auto'
+            : 'h-full w-full items-center justify-center'
+        }`}
+      >
+        {filterComponent && filterComponent}
+      </div>
+      <CartMenu />
+      <HamburgerMenu externalLinks={externalLinks} />
+      <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
+        <ConnectWallet />
+        <ThemeSwitcher />
+      </div>
     </nav>
   )
 }

@@ -2,6 +2,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { Collection, TokenDetails } from 'types/reservoir'
+import ReactMarkdown from 'react-markdown'
 
 type Props = {
   collection?: Collection
@@ -28,7 +29,9 @@ const CollectionInfo: FC<Props> = ({ collection, token }) => {
       </Link>
       {tokenDescription && (
         <div className="reservoir-body-2 mt-4 break-words dark:text-white">
-          {tokenDescription}
+          <ReactMarkdown className="markdown-support" linkTarget="_blank">
+            {tokenDescription}
+          </ReactMarkdown>
         </div>
       )}
     </article>
