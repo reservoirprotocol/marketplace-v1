@@ -137,6 +137,7 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
                     amount={price?.amount?.decimal}
                     address={price?.currency?.contract}
                     decimals={price?.currency?.decimals}
+                    maximumFractionDigits={8}
                   />
                   {usdConversion && (
                     <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
@@ -283,6 +284,7 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
                       amount={price?.amount?.decimal}
                       address={price?.currency?.contract}
                       decimals={price?.currency?.decimals}
+                      maximumFractionDigits={8}
                     />
                     {usdConversion && (
                       <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">

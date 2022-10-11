@@ -329,19 +329,23 @@ const UserOffersReceivedTable: FC<Props> = ({
                               -
                               <FormatWEth
                                 amount={price * ((fee?.bps || 0) / 10000)}
+                                maximumFractionDigits={8}
                               />
                             </div>
                           </div>
                         ))}
                         <div className="flex justify-between gap-2 text-xs text-neutral-100">
                           <div>You Get</div>
-                          <FormatWEth amount={netValue} />
+                          <FormatWEth
+                            amount={netValue}
+                            maximumFractionDigits={8}
+                          />
                         </div>
                       </div>
                     }
                   >
                     <div className="flex flex-col">
-                      <FormatWEth amount={price} />
+                      <FormatWEth amount={price} maximumFractionDigits={8} />
                       {usdConversion && (
                         <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
                           {formatDollar(usdConversion * (price || 0))}
