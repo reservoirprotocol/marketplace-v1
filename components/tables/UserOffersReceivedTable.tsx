@@ -1,23 +1,18 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useEffect } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import Toast from 'components/Toast'
-import {
-  useUserTopBids,
-  useReservoirClient,
-} from '@reservoir0x/reservoir-kit-ui'
+import { useUserTopBids, AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import { useRouter } from 'next/router'
 import LoadingIcon from 'components/LoadingIcon'
-import { useSigner } from 'wagmi'
 import { truncateAddress } from 'lib/truncateText'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar, formatNumber } from 'lib/numbers'
 import FormatWEth from 'components/FormatWEth'
 import InfoTooltip from 'components/InfoTooltip'
 import { useMediaQuery } from '@react-hookz/web'
-import { CgSpinner } from 'react-icons/cg'
 import FormatEth from 'components/FormatEth'
 import Tooltip from 'components/Tooltip'
 
@@ -66,6 +61,31 @@ const UserOffersReceivedTable: FC<Props> = ({
     }
   }, [inView])
   const bids = data.data
+
+  const onBidAcceptError = (error: any) => {
+    if (error?.type === 'price mismatch') {
+      modal.setToast({
+        kind: 'error',
+        message: 'Offer was lower than expected.',
+        title: 'Could not accept offer',
+      })
+      return
+    }
+    // Handle user rejection
+    if (error?.code === 4001) {
+      modal.setToast({
+        kind: 'error',
+        message: 'You have canceled the transaction.',
+        title: 'User canceled transaction',
+      })
+      return
+    }
+    modal.setToast({
+      kind: 'error',
+      message: 'The transaction was not completed.',
+      title: 'Could not accept offer',
+    })
+  }
 
   if (data.isFetchingInitialData) {
     return (
@@ -181,12 +201,16 @@ const UserOffersReceivedTable: FC<Props> = ({
                   </div>
                   <div className="text-xs font-light text-neutral-600 dark:text-neutral-300">{`Expires ${expiration}`}</div>
                 </div>
-                <AcceptBidButton
-                  tokenId={tokenId as string}
-                  contract={contract as string}
-                  orderId={id as string}
-                  modal={modal}
-                  mutate={data.mutate}
+                <AcceptBidModal
+                  trigger={
+                    <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                      Accept
+                    </button>
+                  }
+                  collectionId={contract}
+                  tokenId={tokenId}
+                  onClose={() => data.mutate()}
+                  onBidAcceptError={onBidAcceptError}
                 />
               </div>
             </div>
@@ -267,7 +291,6 @@ const UserOffersReceivedTable: FC<Props> = ({
               floorDifference,
               source,
               maker,
-              id,
             } = processBid(bid)
 
             return (
@@ -313,7 +336,10 @@ const UserOffersReceivedTable: FC<Props> = ({
                       <div className="flex min-w-[150px] flex-col gap-2">
                         <div className="flex justify-between gap-1 text-xs text-neutral-100">
                           <div>Top Offer</div>
-                          <FormatWEth amount={price} />
+                          <FormatWEth
+                            amount={price}
+                            maximumFractionDigits={8}
+                          />
                         </div>
 
                         {feeBreakdown?.map((fee, i) => (
@@ -409,12 +435,16 @@ const UserOffersReceivedTable: FC<Props> = ({
                 {isOwner && (
                   <td className="sticky top-0 right-0 whitespace-nowrap dark:text-white">
                     <div className="flex items-center">
-                      <AcceptBidButton
-                        tokenId={tokenId as string}
-                        contract={contract as string}
-                        orderId={id as string}
-                        modal={modal}
-                        mutate={data.mutate}
+                      <AcceptBidModal
+                        trigger={
+                          <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                            Accept
+                          </button>
+                        }
+                        collectionId={contract}
+                        tokenId={tokenId}
+                        onClose={() => data.mutate()}
+                        onBidAcceptError={onBidAcceptError}
                       />
                     </div>
                   </td>
@@ -429,91 +459,6 @@ const UserOffersReceivedTable: FC<Props> = ({
 }
 
 export default UserOffersReceivedTable
-
-type AcceptBidButtonProps = {
-  tokenId: string
-  contract: string
-  orderId: string
-  mutate: ReturnType<typeof useUserTopBids>['mutate']
-  modal: Props['modal']
-}
-
-const AcceptBidButton: FC<AcceptBidButtonProps> = ({
-  tokenId,
-  contract,
-  orderId,
-  mutate,
-  modal,
-}) => {
-  const { data: signer } = useSigner()
-  const reservoirClient = useReservoirClient()
-  const [accepting, setAccepting] = useState(false)
-  return (
-    <button
-      disabled={accepting}
-      className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-      onClick={() => {
-        if (!signer) {
-          throw 'Missing a signer'
-        }
-
-        reservoirClient?.actions
-          .acceptOffer({
-            signer: signer,
-            token: {
-              tokenId: tokenId,
-              contract: contract,
-            },
-            options: {
-              orderId: orderId,
-            },
-            onProgress: (steps) => {
-              const error = steps.find((step) => step.error)
-              if (error) {
-                modal.setToast({
-                  kind: 'error',
-                  message: 'The transaction was not completed.',
-                  title: 'Could not accept offer',
-                })
-                setAccepting(false)
-              } else {
-                const allComplete = steps.every((step) =>
-                  step.items
-                    ? step.items.every((item) => item.status === 'complete')
-                    : true
-                )
-                if (allComplete) {
-                  mutate()
-                  setAccepting(false)
-                  modal.setToast({
-                    kind: 'success',
-                    message: 'The offer was accepted!',
-                    title: 'Offer Accepted',
-                  })
-                } else {
-                  setAccepting(true)
-                }
-              }
-            },
-          })
-          .catch((e) => {
-            modal.setToast({
-              kind: 'error',
-              message: 'The transaction was not completed.',
-              title: 'Could not accept offer',
-            })
-            setAccepting(false)
-          })
-      }}
-    >
-      {accepting ? (
-        <CgSpinner className="mr-1 h-5 w-5 flex-none animate-spin text-black dark:text-white" />
-      ) : (
-        'Accept'
-      )}
-    </button>
-  )
-}
 
 function processBid(bid: ReturnType<typeof useUserTopBids>['data']['0']) {
   const tokenId = bid?.token?.tokenId
@@ -535,7 +480,6 @@ function processBid(bid: ReturnType<typeof useUserTopBids>['data']['0']) {
       bid?.validUntil === 0
         ? 'Never'
         : DateTime.fromMillis(+`${bid?.validUntil}000`).toRelative(),
-    id: bid?.id,
     collectionName: bid?.token?.collection?.name,
     price: price,
     netValue: bid?.value,
