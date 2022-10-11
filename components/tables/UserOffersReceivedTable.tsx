@@ -111,7 +111,6 @@ const UserOffersReceivedTable: FC<Props> = ({
             collectionName,
             contract,
             expiration,
-            id,
             href,
             image,
             tokenName,
