@@ -277,7 +277,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                 className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white dark:border-b-neutral-600 dark:bg-black"
               >
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4 ">
+                <td className="whitespace-nowrap px-6 py-4">
                   <Link href={href || '#'}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-16 w-16">
@@ -329,19 +329,23 @@ const UserOffersReceivedTable: FC<Props> = ({
                               -
                               <FormatWEth
                                 amount={price * ((fee?.bps || 0) / 10000)}
+                                maximumFractionDigits={8}
                               />
                             </div>
                           </div>
                         ))}
                         <div className="flex justify-between gap-2 text-xs text-neutral-100">
                           <div>You Get</div>
-                          <FormatWEth amount={netValue} />
+                          <FormatWEth
+                            amount={netValue}
+                            maximumFractionDigits={8}
+                          />
                         </div>
                       </div>
                     }
                   >
                     <div className="flex flex-col">
-                      <FormatWEth amount={price} />
+                      <FormatWEth amount={price} maximumFractionDigits={8} />
                       {usdConversion && (
                         <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
                           {formatDollar(usdConversion * (price || 0))}
