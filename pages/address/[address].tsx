@@ -119,7 +119,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Received', id: 'received' },
       { name: 'Offers Made', id: 'buying' },
-      { name: 'Offers Received', id: 'received' },
       { name: 'Listings', id: 'selling' },
     ]
   }
