@@ -277,7 +277,7 @@ const UserOffersReceivedTable: FC<Props> = ({
                 className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white dark:border-b-neutral-600 dark:bg-black"
               >
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4 ">
+                <td className="whitespace-nowrap px-6 py-4">
                   <Link href={href || '#'}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-16 w-16">

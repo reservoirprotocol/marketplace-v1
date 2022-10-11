@@ -28,6 +28,7 @@ import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import UserActivityTab from 'components/tables/UserActivityTab'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
@@ -123,6 +124,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     ]
   }
 
+  tabs.push({ name: 'Activity', id: 'activity' })
+
   return (
     <Layout navbar={{}}>
       <Head>{metadata.title(`${address} Profile`)}</Head>
@@ -201,6 +204,9 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                       setToast,
                     }}
                   />
+                </Tabs.Content>
+                <Tabs.Content value="activity" className="col-span-full">
+                  <UserActivityTab user={address} />
                 </Tabs.Content>
               </>
             )}
