@@ -220,6 +220,7 @@ const UserListingsTableRow = ({
           amount={price?.amount?.decimal}
           address={price?.currency?.contract}
           decimals={price?.currency?.decimals}
+          maximumFractionDigits={8}
         />
         {usdPrice && (
           <div className="text-xs text-neutral-600 dark:text-neutral-300">
@@ -341,6 +342,7 @@ const UserListingsMobileRow = ({
             amount={price?.amount?.decimal}
             address={price?.currency?.contract}
             decimals={price?.currency?.decimals}
+            maximumFractionDigits={8}
           />
           {usdPrice && (
             <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
