@@ -59,7 +59,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
                   <a
                     key={url}
                     href={url}
-                    rel="noopener noferrer"
+                    rel="noopener noreferrer"
                     className="reservoir-label-l border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
                   >
                     {name}
