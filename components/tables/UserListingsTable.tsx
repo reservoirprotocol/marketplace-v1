@@ -46,11 +46,16 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
     mutate,
     setSize,
     isFetchingInitialData,
-  } = useListings(params)
+  } = useListings(params, {
+    revalidateOnMount: false,
+  })
   const { ref, inView } = useInView()
 
   useEffect(() => {
-    setSize(1)
+    mutate()
+    return () => {
+      setSize(1)
+    }
   }, [])
 
   useEffect(() => {

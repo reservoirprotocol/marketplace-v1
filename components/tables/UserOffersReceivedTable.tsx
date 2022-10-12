@@ -48,10 +48,15 @@ const UserOffersReceivedTable: FC<Props> = ({
     })
   }
 
-  const data = useUserTopBids(address as string, params)
+  const data = useUserTopBids(address as string, params, {
+    revalidateOnMount: false,
+  })
 
   useEffect(() => {
-    data.setSize(1)
+    data.mutate()
+    return () => {
+      data.setSize(1)
+    }
   }, [])
 
   const { ref, inView } = useInView()
@@ -97,7 +102,7 @@ const UserOffersReceivedTable: FC<Props> = ({
 
   if (bids.length === 0) {
     return (
-      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
+      <div className="mt-14 grid justify-center dark:text-white">
         You have not received any offers.
       </div>
     )

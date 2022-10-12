@@ -1,34 +1,54 @@
-import { FC, ComponentPropsWithoutRef, useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import LoadingCard from './LoadingCard'
-import { ListModal, useUserTokens } from '@reservoir0x/reservoir-kit-ui'
+import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import TokenCard from './TokenCard'
-import { MutatorCallback } from 'swr'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 
-const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
-
-type ListingCurrencies = ComponentPropsWithoutRef<
-  typeof ListModal
->['currencies']
-let listingCurrencies: ListingCurrencies = undefined
-
-if (CURRENCIES) {
-  listingCurrencies = JSON.parse(CURRENCIES)
-}
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = {
-  userTokens: ReturnType<typeof useUserTokens>
+  fallback: {
+    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+  }
   owner: string
-  mutate: MutatorCallback
 }
 
-const UserTokensGrid: FC<Props> = ({ userTokens, mutate, owner }) => {
+const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
+  const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
+    limit: 20,
+    includeTopBid: true,
+  }
+  if (COLLECTION_SET_ID) {
+    userTokensParams.collectionsSetId = COLLECTION_SET_ID
+  } else {
+    if (COMMUNITY) userTokensParams.community = COMMUNITY
+  }
+
+  if (COLLECTION && (!COMMUNITY || !COLLECTION_SET_ID)) {
+    userTokensParams.collection = COLLECTION
+  }
+  const userTokens = useUserTokens(owner, userTokensParams, {
+    fallbackData: [fallback.tokens],
+    revalidateOnMount: false,
+  })
+
+  useEffect(() => {
+    userTokens.mutate()
+    return () => {
+      userTokens.setSize(1)
+    }
+  }, [])
+
   const {
     data: tokens,
     isFetchingInitialData,
     isFetchingPage,
     hasNextPage,
     fetchNextPage,
+    mutate,
   } = userTokens
   const isEmpty = tokens.length === 0
   const { ref, inView } = useInView()
