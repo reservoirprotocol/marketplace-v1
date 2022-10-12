@@ -68,6 +68,13 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
   }
 
   if (isMobile) {
+    if (listings.length === 0) {
+      return (
+        <div className="mt-14 grid justify-center dark:text-white">
+          You don&apos;t have any {showActive ? 'active' : 'inactive'} listings.
+        </div>
+      )
+    }
     return (
       <div className="mb-11 overflow-x-auto">
         {listings.map((listing, index, arr) => (
