@@ -465,7 +465,7 @@ function processBid(bid: ReturnType<typeof useUserTopBids>['data']['0']) {
   const href = `/${contract}/${tokenId}`
   const collectionRedirectUrl = `${API_BASE}/redirect/collections/${bid?.token?.collection?.name}/image/v1`
   const price = bid?.price || 0
-  const floorAskPrice = bid?.token?.floorAskPrice || 0
+  const floorAskPrice = bid?.token?.collection?.floorAskPrice || 0
   const floorDifference = floorAskPrice
     ? ((price - floorAskPrice) / ((price + floorAskPrice) / 2)) * 100
     : 0
