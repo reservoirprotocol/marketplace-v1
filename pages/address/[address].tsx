@@ -181,9 +181,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     }}
                   />
                 </Tabs.Content>
-                <Tabs.Content value="activity" className="col-span-full">
-                  <UserActivityTab user={address} />
-                </Tabs.Content>
               </>
             )}
             <Tabs.Content value="activity" className="col-span-full">
