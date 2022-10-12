@@ -1,4 +1,11 @@
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import {
+  ComponentProps,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -46,11 +53,16 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
     mutate,
     setSize,
     isFetchingInitialData,
-  } = useListings(params)
+  } = useListings(params, {
+    revalidateOnMount: false,
+  })
   const { ref, inView } = useInView()
 
   useEffect(() => {
-    setSize(1)
+    mutate()
+    return () => {
+      setSize(1)
+    }
   }, [])
 
   useEffect(() => {
@@ -67,85 +79,57 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds }) => {
     )
   }
 
-  if (isMobile) {
-    if (listings.length === 0) {
-      return (
-        <div className="mt-14 grid justify-center dark:text-white">
-          You don&apos;t have any {showActive ? 'active' : 'inactive'} listings.
-        </div>
-      )
-    }
-    return (
-      <div className="mb-11 overflow-x-auto">
-        {listings.map((listing, index, arr) => (
-          <UserListingsMobileRow
-            key={`${listing?.id}-${index}`}
-            ref={index === arr.length - 5 ? ref : null}
-            listing={listing}
-            modal={modal}
-            mutate={mutate}
-          />
-        ))}
-      </div>
-    )
-  }
-
   return (
     <div className="mb-11 overflow-x-auto">
-      <div className="flex gap-3">
-        <button
-          className={`rounded-full border-[1px] border-solid border-neutral-300  py-3 px-4 hover:opacity-[0.85] ${
-            showActive ? 'bg-primary-100' : 'bg-white'
-          }`}
-          onClick={() => setShowActive(true)}
-        >
-          Active
-        </button>
-        <button
-          className={`${!showActive ? 'bg-primary-100' : 'bg-white'}
-            rounded-full border-[1px] border-solid border-neutral-300 py-3
-          px-4 hover:opacity-[0.85]`}
-          onClick={() => setShowActive(false)}
-        >
-          Inactive
-        </button>
-      </div>
+      <ActiveFilters setShowActive={setShowActive} showActive={showActive} />
       {listings.length === 0 && (
         <div className="mt-14 grid justify-center dark:text-white">
           You don&apos;t have any {showActive ? 'active' : 'inactive'} listings.
         </div>
       )}
-      {listings.length > 0 && (
-        <table className="min-w-full table-auto dark:divide-neutral-600">
-          <thead className="bg-white dark:bg-black">
-            <tr>
-              {['Item', 'Price', 'Expiration', 'Marketplace'].map((item) => (
-                <th
-                  key={item}
-                  scope="col"
-                  className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
-                >
-                  {item}
-                </th>
-              ))}
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Cancel</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {listings.map((listing, index, arr) => (
-              <UserListingsTableRow
-                key={`${listing?.id}-${index}`}
-                ref={index === arr.length - 5 ? ref : null}
-                listing={listing}
-                modal={modal}
-                mutate={mutate}
-              />
-            ))}
-          </tbody>
-        </table>
-      )}
+      {isMobile
+        ? listings.map((listing, index, arr) => (
+            <UserListingsMobileRow
+              key={`${listing?.id}-${index}`}
+              ref={index === arr.length - 5 ? ref : null}
+              listing={listing}
+              modal={modal}
+              mutate={mutate}
+            />
+          ))
+        : listings.length > 0 && (
+            <table className="min-w-full table-auto dark:divide-neutral-600">
+              <thead className="bg-white dark:bg-black">
+                <tr>
+                  {['Item', 'Price', 'Expiration', 'Marketplace'].map(
+                    (item) => (
+                      <th
+                        key={item}
+                        scope="col"
+                        className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
+                      >
+                        {item}
+                      </th>
+                    )
+                  )}
+                  <th scope="col" className="relative px-6 py-3">
+                    <span className="sr-only">Cancel</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {listings.map((listing, index, arr) => (
+                  <UserListingsTableRow
+                    key={`${listing?.id}-${index}`}
+                    ref={index === arr.length - 5 ? ref : null}
+                    listing={listing}
+                    modal={modal}
+                    mutate={mutate}
+                  />
+                ))}
+              </tbody>
+            </table>
+          )}
     </div>
   )
 }
@@ -393,6 +377,37 @@ const UserListingsMobileRow = ({
           }
         />
       </div>
+    </div>
+  )
+}
+
+type ActiveFilterProps = {
+  showActive: boolean
+  setShowActive: Dispatch<SetStateAction<boolean>>
+}
+
+const ActiveFilters: FC<ActiveFilterProps> = ({
+  showActive,
+  setShowActive,
+}) => {
+  return (
+    <div className="flex gap-3">
+      <button
+        className={`rounded-full border-[1px] border-solid border-neutral-300  py-3 px-4 hover:opacity-[0.85] ${
+          showActive ? 'bg-primary-100' : 'bg-white'
+        }`}
+        onClick={() => setShowActive(true)}
+      >
+        Active
+      </button>
+      <button
+        className={`${!showActive ? 'bg-primary-100' : 'bg-white'}
+      rounded-full border-[1px] border-solid border-neutral-300 py-3
+    px-4 hover:opacity-[0.85]`}
+        onClick={() => setShowActive(false)}
+      >
+        Inactive
+      </button>
     </div>
   )
 }

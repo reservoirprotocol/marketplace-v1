@@ -42,12 +42,18 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
     params.contracts = collectionIds
   }
 
-  const data = useBids(params)
-  const isMobile = useMediaQuery('only screen and (max-width : 730px)')
+  const data = useBids(params, {
+    revalidateOnMount: false,
+  })
 
   useEffect(() => {
-    data.setSize(1)
+    data.mutate()
+    return () => {
+      data.setSize(1)
+    }
   }, [])
+
+  const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
   const { ref, inView } = useInView()
   useEffect(() => {

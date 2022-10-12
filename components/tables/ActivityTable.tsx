@@ -39,30 +39,6 @@ const ActivityTable: FC<Props> = ({ data }) => {
     if (inView) data.fetchNextPage()
   }, [inView])
 
-  const noActivity = !data.isValidating && activity.length === 0
-
-  useEffect(() => {
-    data.setSize(1)
-  }, [])
-
-  if (noActivity) {
-    return (
-      <div className="mt-20 mb-20 flex w-full flex-col justify-center">
-        <img
-          src="/magnifying-glass.svg"
-          className="h-[59px]"
-          alt="Magnifying Glass"
-        />
-        <div className="reservoir-h6 mt-4 mb-2 text-center dark:text-white">
-          No activity yet
-        </div>
-        <div className="text-center text-xs font-light dark:text-white">
-          There hasn&apos;t been any activity for this <br /> collection yet.
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <table className="w-full">
@@ -120,6 +96,9 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
   const envChain = useEnvChain()
   const etherscanBaseUrl =
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const href = sale?.token?.tokenId
+    ? `/${sale?.collection?.collectionId}/${sale?.token?.tokenId}`
+    : `/collections/${sale?.collection?.collectionId}`
 
   useEffect(() => {
     let toShortAddress = truncateAddress(sale?.toAddress || '')
@@ -233,10 +212,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <Link
-              href={`/${sale?.collection?.collectionId}/${sale.token?.tokenId}`}
-              passHref
-            >
+            <Link href={href} passHref>
               <a className="flex items-center">
                 <Image
                   className="rounded object-cover"
@@ -334,10 +310,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
         </div>
       </td>
       <td className="px-6 py-4">
-        <Link
-          href={`/${sale.collection?.collectionId}/${sale.token?.tokenId}`}
-          passHref
-        >
+        <Link href={href} passHref>
           <a className="mr-2.5 flex items-center">
             <Image
               className="rounded object-cover"

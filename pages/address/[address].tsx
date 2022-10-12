@@ -24,7 +24,6 @@ import { ComponentProps } from 'react'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import Head from 'next/head'
-import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
@@ -65,23 +64,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     },
   })
   const { chain: activeChain } = useNetwork()
-  const { data: signer } = useSigner()
-  const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
-    limit: 20,
-    includeTopBid: true,
-  }
-  if (COLLECTION_SET_ID) {
-    userTokensParams.collectionsSetId = COLLECTION_SET_ID
-  } else {
-    if (COMMUNITY) userTokensParams.community = COMMUNITY
-  }
-
-  if (COLLECTION && (!COMMUNITY || !COLLECTION_SET_ID)) {
-    userTokensParams.collection = COLLECTION
-  }
-  const userTokens = useUserTokens(address, userTokensParams, {
-    fallbackData: [fallback.tokens],
-  })
   const collections = useSearchCommunity()
   let collectionIds: undefined | string[] = undefined
 
@@ -166,13 +148,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             </Tabs.List>
             <Tabs.Content value="portfolio">
               <div className="mt-6">
-                <UserTokensGrid
-                  userTokens={userTokens}
-                  mutate={() => {
-                    userTokens.mutate()
-                  }}
-                  owner={address || ''}
-                />
+                <UserTokensGrid fallback={fallback} owner={address || ''} />
               </div>
             </Tabs.Content>
             {isOwner && (
