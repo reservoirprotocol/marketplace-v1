@@ -294,15 +294,17 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
                 {timeAgo}
               </div>
             </div>
-            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
-              >
-                <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
-              </a>
-            </Link>
+            {sale.txHash && (
+              <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
+                >
+                  <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
+                </a>
+              </Link>
+            )}
           </div>
         </td>
       </tr>
@@ -386,16 +388,16 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
         )}
       </td>
       <td className="px-6 py-4">
-        <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300"
-          >
-            {timeAgo}
-            <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
-          </a>
-        </Link>
+        <div className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
+          {timeAgo}
+          {sale.txHash && (
+            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
+              <a target="_blank" rel="noopener noreferrer">
+                <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
+              </a>
+            </Link>
+          )}
+        </div>
       </td>
     </tr>
   )
