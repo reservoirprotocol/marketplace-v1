@@ -72,14 +72,10 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   }
 
   if (COMMUNITY || COLLECTION_SET_ID) {
-    collectionIds = []
-    collections?.data?.collections
-      ?.map(({ contract }) => contract)
-      .filter((contract) => !!contract)
-      .forEach(
-        // @ts-ignore
-        (contract, index) => (collectionIds[`contracts[${index}]`] = contract)
-      )
+    collectionIds =
+      (collections?.data?.collections
+        ?.map(({ contract }) => contract)
+        .filter((contract) => !!contract) as string[]) || []
   }
 
   if (!CHAIN_ID) {
