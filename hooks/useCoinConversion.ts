@@ -13,11 +13,12 @@ export default function useCoinConversion(
     {
       refreshInterval: 60 * 1000 * 5, //5m Interval
       revalidateOnFocus: false,
+      refreshWhenHidden: false,
     }
   )
 
   if (data && data[0] && data[0].current_price) {
-    return data[0].current_price
+    return data[0].current_price as number
   }
   return null
 }

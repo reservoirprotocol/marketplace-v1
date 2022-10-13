@@ -345,9 +345,11 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                             logoWidth={7}
                           />
                         </div>
-                        <div className="text-sm font-normal text-neutral-600 dark:text-neutral-300">
-                          {formatDollar(usdConversion * sweepTotal)}
-                        </div>
+                        {usdConversion && (
+                          <div className="text-sm font-normal text-neutral-600 dark:text-neutral-300">
+                            {formatDollar(usdConversion * sweepTotal)}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <button

@@ -3,7 +3,7 @@ import { atom } from 'recoil'
 
 type UseTokensReturnType = ReturnType<typeof useTokens>
 
-type Token = {
+export type Token = {
   token: NonNullable<
     NonNullable<NonNullable<UseTokensReturnType['data']>[0]>['token']
   >

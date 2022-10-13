@@ -8,44 +8,47 @@ import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
 import useEnvChain from 'hooks/useEnvChain'
-import useCollectionActivity, { Activity } from 'hooks/useCollectionActivity'
 import { useAccount } from 'wagmi'
 import { constants } from 'ethers'
 import { FaSeedling } from 'react-icons/fa'
 import FormatEth from 'components/FormatEth'
+import { useCollectionActivity } from '@reservoir0x/reservoir-kit-ui'
+import { useInView } from 'react-intersection-observer'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+type CollectionActivityResponse = ReturnType<typeof useCollectionActivity>
+type CollectionActivity = CollectionActivityResponse['data'][0]
+type UsersActivityResponse = ReturnType<typeof useCollectionActivity>
+type UsersActivity = UsersActivityResponse['data'][0]
+type ActivityResponse = CollectionActivityResponse | UsersActivityResponse
+type Activity = CollectionActivity | UsersActivity
 
 type Props = {
-  collectionId: string | undefined
+  data: ActivityResponse
 }
 
-const CollectionActivityTable: FC<Props> = ({ collectionId }) => {
-  const headings = ['Event', 'Item', 'Price', 'From', 'To', 'Time']
+const ActivityTable: FC<Props> = ({ data }) => {
+  const headings = ['Event', 'Item', 'Amount', 'From', 'To', 'Time']
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
-  const collectionActivity = useCollectionActivity(collectionId, [])
+  const { ref, inView } = useInView()
 
-  const {
-    activity: { data: activity, isValidating },
-    ref,
-  } = collectionActivity
-  const noSales = !isValidating && activity.length === 0
+  const activity = data.data
 
   useEffect(() => {
-    collectionActivity.activity.setSize(1)
-  }, [])
+    if (inView) data.fetchNextPage()
+  }, [inView])
 
   return (
     <>
-      <table>
-        {!isMobile && !noSales && (
+      <table className="w-full">
+        {!isMobile && (
           <thead>
             <tr className="text-left">
               {headings.map((name, i) => (
                 <th
                   key={i}
-                  className="reservoir-subtitle pt-8 pb-7 font-medium text-neutral-600 dark:text-neutral-300"
+                  className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
                 >
                   {name}
                 </th>
@@ -58,28 +61,12 @@ const CollectionActivityTable: FC<Props> = ({ collectionId }) => {
           {activity.map((sale) => {
             if (!sale) return null
 
-            return <CollectionActivityTableRow key={sale?.txHash} sale={sale} />
+            return <ActivityTableRow key={sale?.txHash} sale={sale} />
           })}
-          {noSales && (
-            <div className="mt-20 mb-20 flex w-full flex-col justify-center">
-              <img
-                src="/magnifying-glass.svg"
-                className="h-[59px]"
-                alt="Magnifying Glass"
-              />
-              <div className="reservoir-h6 mt-4 mb-2 text-center dark:text-white">
-                No activity yet
-              </div>
-              <div className="text-center text-xs font-light dark:text-white">
-                There hasn&apos;t been any activity for this <br /> collection
-                yet.
-              </div>
-            </div>
-          )}
           <tr ref={ref}></tr>
         </tbody>
       </table>
-      {isValidating && (
+      {data.isValidating && (
         <div className="my-20 flex justify-center">
           <LoadingIcon />
         </div>
@@ -88,13 +75,11 @@ const CollectionActivityTable: FC<Props> = ({ collectionId }) => {
   )
 }
 
-type CollectionActivityTableRowProps = {
-  sale: Activity[0]
+type ActivityTableRowProps = {
+  sale: Activity
 }
 
-const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
-  sale,
-}) => {
+const ActivityTableRow: FC<ActivityTableRowProps> = ({ sale }) => {
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
   const { address } = useAccount()
   const [toShortAddress, setToShortAddress] = useState<string>(
@@ -111,6 +96,9 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
   const envChain = useEnvChain()
   const etherscanBaseUrl =
     envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const href = sale?.token?.tokenId
+    ? `/${sale?.collection?.collectionId}/${sale?.token?.tokenId}`
+    : `/collections/${sale?.collection?.collectionId}`
 
   useEffect(() => {
     let toShortAddress = truncateAddress(sale?.toAddress || '')
@@ -211,12 +199,12 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <div className="mt-6 flex items-center">
             {/* @ts-ignore */}
             {sale.type && logos[sale.type]}
-            {!!sale.source?.icon && (
+            {!!sale.order?.source?.icon && (
               <img
                 className="mr-2 inline h-3 w-3"
                 // @ts-ignore
-                src={sale.source?.icon || ''}
-                alt={`${sale.source?.name} Source`}
+                src={sale.order?.source?.icon || ''}
+                alt={`${sale.order?.source?.name} Source`}
               />
             )}
             <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
@@ -224,10 +212,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <Link
-              href={`/${sale?.collection?.collectionId}/${sale.token?.tokenId}`}
-              passHref
-            >
+            <Link href={href} passHref>
               <a className="flex items-center">
                 <Image
                   className="rounded object-cover"
@@ -285,15 +270,17 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
                 {timeAgo}
               </div>
             </div>
-            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
-              >
-                <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
-              </a>
-            </Link>
+            {sale.txHash && (
+              <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
+                >
+                  <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
+                </a>
+              </Link>
+            )}
           </div>
         </td>
       </tr>
@@ -305,16 +292,16 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       key={sale.txHash}
       className="h-24 border-b border-gray-300 dark:border-[#525252]"
     >
-      <td>
+      <td className="px-6 py-4">
         <div className="mr-2.5 flex items-center">
           {/* @ts-ignore */}
           {sale.type && logos[sale.type]}
-          {!!sale.source?.icon && (
+          {!!sale.order?.source?.icon && (
             <img
               className="mr-2 h-6 w-6"
               // @ts-ignore
-              src={sale.source?.icon || ''}
-              alt={`${sale.source?.name} Source`}
+              src={sale.order?.source?.icon || ''}
+              alt={`${sale.order?.source?.name} Source`}
             />
           )}
           <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
@@ -322,11 +309,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           </span>
         </div>
       </td>
-      <td>
-        <Link
-          href={`/${sale.collection?.collectionId}/${sale.token?.tokenId}`}
-          passHref
-        >
+      <td className="px-6 py-4">
+        <Link href={href} passHref>
           <a className="mr-2.5 flex items-center">
             <Image
               className="rounded object-cover"
@@ -346,7 +330,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           </a>
         </Link>
       </td>
-      <td>
+      <td className="px-6 py-4">
         {sale.price &&
         sale.price !== 0 &&
         sale.type &&
@@ -354,7 +338,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <FormatEth amount={sale.price} />
         ) : null}
       </td>
-      <td>
+      <td className="px-6 py-4">
         {sale.fromAddress && sale.fromAddress !== constants.AddressZero ? (
           <Link href={`/address/${sale.fromAddress}`}>
             <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
@@ -365,7 +349,7 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <span className="ml-2.5 mr-2.5 font-light">-</span>
         )}
       </td>
-      <td>
+      <td className="px-6 py-4">
         {sale.toAddress && sale.toAddress !== constants.AddressZero ? (
           <Link href={`/address/${sale.toAddress}`}>
             <a className="ml-2.5 mr-2.5 font-light text-primary-700 dark:text-primary-300">
@@ -376,20 +360,20 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
           <span className="ml-2.5 mr-2.5 font-light">-</span>
         )}
       </td>
-      <td>
-        <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300"
-          >
-            {timeAgo}
-            <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
-          </a>
-        </Link>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
+          {timeAgo}
+          {sale.txHash && (
+            <Link href={`${etherscanBaseUrl}/tx/${sale.txHash}`}>
+              <a target="_blank" rel="noopener noreferrer">
+                <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
+              </a>
+            </Link>
+          )}
+        </div>
       </td>
     </tr>
   )
 }
 
-export default CollectionActivityTable
+export default ActivityTable
