@@ -393,17 +393,23 @@ const ActiveFilters: FC<ActiveFilterProps> = ({
   return (
     <div className="flex gap-3">
       <button
-        className={`rounded-full border-[1px] border-solid border-neutral-300  py-3 px-4 hover:opacity-[0.85] ${
-          showActive ? 'bg-primary-100' : 'bg-white'
+        className={`rounded-full border-[1px] border-solid border-neutral-300 py-3  px-4 hover:opacity-[0.85] dark:border-neutral-600 dark:text-white ${
+          showActive
+            ? 'bg-primary-100 dark:bg-neutral-600'
+            : 'bg-white dark:bg-black'
         }`}
         onClick={() => setShowActive(true)}
       >
         Active
       </button>
       <button
-        className={`${!showActive ? 'bg-primary-100' : 'bg-white'}
-      rounded-full border-[1px] border-solid border-neutral-300 py-3
-    px-4 hover:opacity-[0.85]`}
+        className={`${
+          !showActive
+            ? 'bg-primary-100 dark:bg-neutral-600'
+            : 'bg-white dark:bg-black'
+        }
+      rounded-full border-[1px] border-solid border-neutral-300 py-3 px-4 hover:opacity-[0.85]
+    dark:border-neutral-600 dark:text-white`}
         onClick={() => setShowActive(false)}
       >
         Inactive
