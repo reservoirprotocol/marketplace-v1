@@ -1464,6 +1464,14 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-slot" "1.0.0"
 
+"@radix-ui/react-primitive@1.0.1-rc.2":
+  version "1.0.1-rc.2"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-primitive/-/react-primitive-1.0.1-rc.2.tgz#27bd4b180d6324bc48e9bbe469ca9886fa96815c"
+  integrity sha512-MTutQ9tZhD/RKpKZurfypVBs9/q3ptjUyxPLKlt04x9wPzhoprRhbLOlKZq5EkQ3BvuWShVy6nguc44i5NAjaQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-slot" "1.0.0"
+
 "@radix-ui/react-roving-focus@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-roving-focus/-/react-roving-focus-1.0.0.tgz#aadeb65d5dbcdbdd037078156ae1f57c2ff754ee"
@@ -1480,10 +1488,10 @@
     "@radix-ui/react-use-callback-ref" "1.0.0"
     "@radix-ui/react-use-controllable-state" "1.0.0"
 
-"@radix-ui/react-scroll-area@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-scroll-area/-/react-scroll-area-1.0.0.tgz#10d0262a52266af528798f36947145f7e3a3a52c"
-  integrity sha512-3SNFukAjS5remgtpAVR9m3Zgo23ZojBZ8V3TCyR3A+56x2mtVqKlPV4+e8rScZUFMuvtbjIdQCmsJBFBazKZig==
+"@radix-ui/react-scroll-area@1.0.1-rc.2":
+  version "1.0.1-rc.2"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-scroll-area/-/react-scroll-area-1.0.1-rc.2.tgz#96a5a57231a508558bbb6b38bc12e116b9b54375"
+  integrity sha512-FMq/3KijXCLyOiYwMKyOjxoBWrmTJHsJ+O5tf8DSqrz9vNKFesPAf0z7ol+1I5Af3lJFSkZv/w4oskT9hnQouw==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/number" "1.0.0"
@@ -1492,7 +1500,7 @@
     "@radix-ui/react-context" "1.0.0"
     "@radix-ui/react-direction" "1.0.0"
     "@radix-ui/react-presence" "1.0.0"
-    "@radix-ui/react-primitive" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.1-rc.2"
     "@radix-ui/react-use-callback-ref" "1.0.0"
     "@radix-ui/react-use-layout-effect" "1.0.0"
 
@@ -1720,10 +1728,10 @@
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.4.12":
-  version "0.4.12"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.4.12.tgz#43b6e45e22074fc2ce267847a9c3b19ae75023dc"
-  integrity sha512-woGkmC1APgid1fwm8G4fkiT8algdiOfWlIKsQSvBjBzk9Gug99No0XvvHYavIqer4wBTyuINlGVeXqAp5zw0+g==
+"@reservoir0x/reservoir-kit-ui@0.4.13":
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.4.13.tgz#03c2bcfb8d1b024424591ef3a0a4cad6805f6a1e"
+  integrity sha512-tQpRxoH0vyTaIlOWj9nMj2Fc+PBxc2Rak8oIK/b88KuyyT9iH187m83PXWhb9BR4E4/zt4q/dmjgb4xeG57soA==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1731,7 +1739,7 @@
     "@radix-ui/colors" "^0.1.8"
     "@radix-ui/react-dialog" "1.0.1-rc.2"
     "@radix-ui/react-popover" "1.0.1-rc.2"
-    "@radix-ui/react-scroll-area" "^1.0.0"
+    "@radix-ui/react-scroll-area" "1.0.1-rc.2"
     "@radix-ui/react-select" "1.0.1-rc.2"
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
