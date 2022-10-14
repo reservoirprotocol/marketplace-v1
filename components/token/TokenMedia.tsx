@@ -47,7 +47,7 @@ const Media: FC<{
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video className="mb-4 w-[533px] rounded" controls>
+      <video className="mb-4 w-[533px] rounded" poster={tokenImage} controls>
         <source src={media} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
