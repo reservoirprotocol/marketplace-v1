@@ -17,16 +17,12 @@ import 'styles/roobert.css'
 import 'styles/rodger.css'
 import 'styles/ingrammono.css'
 import type { AppContext, AppProps } from 'next/app'
-import App from 'next/app'
-import { WagmiConfig, createClient, allChains, configureChains } from 'wagmi'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { publicProvider } from 'wagmi/providers/public'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { default as NextApp } from 'next/app'
+import { ConnectKitProvider, getDefaultClient } from 'connectkit'
+import { WagmiConfig, createClient } from 'wagmi'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider, useTheme } from 'next-themes'
 import { RecoilRoot } from 'recoil'
 import {
   darkTheme,
@@ -35,7 +31,7 @@ import {
   ReservoirKitProviderProps,
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -60,53 +56,48 @@ const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 
-// Set up chains
-const { chains, provider } = configureChains(allChains, [
-  alchemyProvider({ apiKey: alchemyId }),
-  publicProvider(),
-])
+const client = createClient(
+  getDefaultClient({
+    appName: SOURCE_NAME || 'Reservoir Market',
+    alchemyId: alchemyId,
+  })
+)
 
-// Set up connectors
-const client = createClient({
-  autoConnect: true,
-  provider,
-  connectors: [
-    new InjectedConnector({
-      chains,
-      options: { name: 'Injected' },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'reservoir.market',
-      },
-    }),
-  ],
-})
+function AppWrapper(props: AppProps & { baseUrl: string }) {
+  const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
 
-function MyApp({
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme={defaultTheme}
+      forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+    >
+      <App {...props} />
+    </ThemeProvider>
+  )
+}
+
+const App: FC<AppProps & { baseUrl: string }> = ({
   Component,
   pageProps,
   baseUrl,
-}: AppProps & { baseUrl: string }) {
+}) => {
+  const { theme } = useTheme()
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
   const [reservoirKitTheme, setReservoirKitTheme] = useState<
     ReservoirKitTheme | undefined
   >()
+  const marketplaceTheme = THEME_SWITCHING_ENABLED ? theme : defaultTheme
 
   useEffect(() => {
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
     const primaryColorPalette = (
       presetColors as Record<string, Record<string, string>>
     )[primaryColor]
-    if (defaultTheme == 'dark') {
+
+    if (marketplaceTheme == 'dark') {
       setReservoirKitTheme(
         darkTheme({
           headlineFont: FONT_FAMILY,
@@ -125,7 +116,7 @@ function MyApp({
         })
       )
     }
-  }, [defaultTheme])
+  }, [defaultTheme, theme])
 
   let options: ReservoirKitProviderProps['options'] = {
     apiKey: RESERVOIR_API_KEY,
@@ -152,17 +143,18 @@ function MyApp({
       <GlobalProvider>
         <RecoilRoot>
           <WagmiConfig client={client}>
-            <AnalyticsProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme={defaultTheme}
-                forcedTheme={
-                  !THEME_SWITCHING_ENABLED ? defaultTheme : undefined
-                }
-              >
+            <ConnectKitProvider
+              mode={marketplaceTheme === 'dark' ? 'dark' : 'light'}
+              customTheme={{
+                '--ck-primary-button-border-radius': '4px',
+                '--ck-border-radius': '4px',
+                '--ck-font-family': BODY_FONT_FAMILY,
+              }}
+            >
+              <AnalyticsProvider>
                 <Component {...pageProps} />
-              </ThemeProvider>
-            </AnalyticsProvider>
+              </AnalyticsProvider>
+            </ConnectKitProvider>
           </WagmiConfig>
         </RecoilRoot>
       </GlobalProvider>
@@ -170,9 +162,9 @@ function MyApp({
   )
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
+AppWrapper.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await App.getInitialProps(appContext)
+  const appProps = await NextApp.getInitialProps(appContext)
   let baseUrl = ''
 
   if (appContext.ctx.req?.headers.host) {
@@ -184,4 +176,4 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   return { ...appProps, baseUrl }
 }
 
-export default MyApp
+export default AppWrapper
