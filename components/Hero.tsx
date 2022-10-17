@@ -126,8 +126,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     shortDescription: description ? description.slice(0, 150) : description,
   }
 
-  const isSupported =
-    !!collection?.tokenSetId && !!collection?.collectionBidSupported
+  const isSupported = !!collection?.collectionBidSupported
 
   const isAttributeModal = !!attribute
 
@@ -165,7 +164,10 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   ref={descriptionRef}
                   className="text-center text-sm text-[#262626] transition-[width] duration-300 ease-in-out dark:text-white"
                 >
-                  <ReactMarkdown className="markdown-support" linkTarget="_blank">
+                  <ReactMarkdown
+                    className="markdown-support"
+                    linkTarget="_blank"
+                  >
                     {header.description}
                   </ReactMarkdown>
                 </p>
