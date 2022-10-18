@@ -18,8 +18,14 @@ import 'styles/rodger.css'
 import 'styles/ingrammono.css'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
-import { ConnectKitProvider, getDefaultClient } from 'connectkit'
-import { WagmiConfig, createClient, chainId, allChains } from 'wagmi'
+import {
+  WagmiConfig,
+  createClient,
+  chain,
+  configureChains,
+  allChains,
+  chainId,
+} from 'wagmi'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider, useTheme } from 'next-themes'
@@ -32,6 +38,16 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { FC, useEffect, useState } from 'react'
+import '@rainbow-me/rainbowkit/styles.css'
+
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme as rainbowKitDarkTheme,
+  lightTheme as rainbowKitLightTheme,
+} from '@rainbow-me/rainbowkit'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -52,6 +68,7 @@ const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 import presetColors from '../colors'
+
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
@@ -59,17 +76,25 @@ const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-const chains = allChains.find(
+const envChain = allChains.find(
   (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
 )
 
-const client = createClient(
-  getDefaultClient({
-    appName: SOURCE_NAME || 'Reservoir Market',
-    alchemyId: alchemyId,
-    chains: chains ? [chains] : undefined,
-  })
+const { chains, provider } = configureChains(
+  envChain ? [envChain] : [chain.mainnet],
+  [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
 )
+
+const { connectors } = getDefaultWallets({
+  appName: SOURCE_NAME || 'Reservoir Market',
+  chains,
+})
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
 
 function AppWrapper(props: AppProps & { baseUrl: string }) {
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
@@ -95,6 +120,11 @@ const App: FC<AppProps & { baseUrl: string }> = ({
   const [reservoirKitTheme, setReservoirKitTheme] = useState<
     ReservoirKitTheme | undefined
   >()
+  const [rainbowKitTheme, setRainbowKitTheme] = useState<
+    | ReturnType<typeof rainbowKitDarkTheme>
+    | ReturnType<typeof rainbowKitLightTheme>
+    | undefined
+  >()
   const marketplaceTheme = THEME_SWITCHING_ENABLED ? theme : defaultTheme
 
   useEffect(() => {
@@ -112,6 +142,11 @@ const App: FC<AppProps & { baseUrl: string }> = ({
           primaryHoverColor: primaryColorPalette['900'],
         })
       )
+      setRainbowKitTheme(
+        rainbowKitDarkTheme({
+          borderRadius: 'small',
+        })
+      )
     } else {
       setReservoirKitTheme(
         lightTheme({
@@ -119,6 +154,11 @@ const App: FC<AppProps & { baseUrl: string }> = ({
           font: BODY_FONT_FAMILY,
           primaryColor: primaryColorPalette['700'],
           primaryHoverColor: primaryColorPalette['900'],
+        })
+      )
+      setRainbowKitTheme(
+        rainbowKitLightTheme({
+          borderRadius: 'small',
         })
       )
     }
@@ -148,19 +188,16 @@ const App: FC<AppProps & { baseUrl: string }> = ({
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
       <GlobalProvider>
         <RecoilRoot>
-          <WagmiConfig client={client}>
-            <ConnectKitProvider
-              mode={marketplaceTheme === 'dark' ? 'dark' : 'light'}
-              customTheme={{
-                '--ck-primary-button-border-radius': '4px',
-                '--ck-border-radius': '4px',
-                '--ck-font-family': BODY_FONT_FAMILY,
-              }}
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider
+              chains={chains}
+              theme={rainbowKitTheme}
+              modalSize="compact"
             >
               <AnalyticsProvider>
                 <Component {...pageProps} />
               </AnalyticsProvider>
-            </ConnectKitProvider>
+            </RainbowKitProvider>
           </WagmiConfig>
         </RecoilRoot>
       </GlobalProvider>

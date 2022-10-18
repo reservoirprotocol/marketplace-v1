@@ -1,30 +1,45 @@
-import { ConnectKitButton } from 'connectkit'
-import { ButtonHTMLAttributes, FC } from 'react'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { FC } from 'react'
+import { useAccount } from 'wagmi'
 
 type Props = {
-  className: string
+  className?: HTMLButtonElement['className']
 }
 
-const ConnectWalletButton: FC<ButtonHTMLAttributes<HTMLButtonElement>> = (
-  props
-) => {
-  const { className, ...attributes } = props
+const ConnectWalletButton: FC<Props> = ({ className }) => {
+  const account = useAccount()
   return (
-    <ConnectKitButton.Custom>
-      {({ show }) => {
+    <ConnectButton.Custom>
+      {({ openConnectModal, authenticationStatus, mounted }) => {
+        const ready = mounted && authenticationStatus !== 'loading'
+
         return (
-          <button
-            className={`btn-primary-fill dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4 ${
-              className ? className : ''
-            }`}
-            onClick={show}
-            {...attributes}
+          <div
+            {...((!ready || account.isConnected) && {
+              'aria-hidden': true,
+              style: {
+                opacity: 0,
+                pointerEvents: 'none',
+                userSelect: 'none',
+                display: 'none',
+              },
+            })}
           >
-            Connect Wallet
-          </button>
+            {(() => {
+              return (
+                <button
+                  onClick={openConnectModal}
+                  type="button"
+                  className={`btn-primary-fill dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4 ${className}`}
+                >
+                  Connect Wallet
+                </button>
+              )
+            })()}
+          </div>
         )
       }}
-    </ConnectKitButton.Custom>
+    </ConnectButton.Custom>
   )
 }
 
