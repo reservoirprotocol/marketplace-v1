@@ -174,7 +174,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {account.isDisconnected ? (
-            <ConnectWalletButton />
+            <ConnectWalletButton className="w-full" />
           ) : (
             <>
               {isOwner && (
