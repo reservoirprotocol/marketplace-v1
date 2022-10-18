@@ -34,7 +34,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
 
   const hasExternalLinks = externalLinks.length > 0
   return (
-    <Dialog.Root onOpenChange={setOpen} open={open}>
+    <Dialog.Root onOpenChange={setOpen} open={open} modal={false}>
       <Dialog.Trigger className="z-10 block p-1.5 md:hidden">
         <FiMenu className="h-6 w-6" />
       </Dialog.Trigger>
