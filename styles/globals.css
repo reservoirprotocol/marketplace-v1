@@ -48,7 +48,7 @@ model-viewer {
   scrollbar-width: none;  /* Firefox */
 }
 
-.markdown-support h1, h2, h3, h4, h5 {
+.markdown-support h1, .markdown-support h2, .markdown-support h3, .markdown-support h4, .markdown-support h5 {
   font-weight: bold;
   margin-top: 0;
   margin-bottom: 1em;
