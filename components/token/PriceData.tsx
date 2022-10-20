@@ -18,8 +18,8 @@ import { Collection } from 'types/reservoir'
 import { formatDollar } from 'lib/numbers'
 import useCoinConversion from 'hooks/useCoinConversion'
 import SwapCartModal from 'components/SwapCartModal'
-import ConnectWalletModal from 'components/ConnectWalletModal'
 import { FaShoppingCart } from 'react-icons/fa'
+import ConnectWalletButton from 'components/ConnectWalletButton'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -174,7 +174,7 @@ const PriceData: FC<Props> = ({ details, collection }) => {
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
           {account.isDisconnected ? (
-            <ConnectWalletModal />
+            <ConnectWalletButton className="w-full" />
           ) : (
             <>
               {isOwner && (
