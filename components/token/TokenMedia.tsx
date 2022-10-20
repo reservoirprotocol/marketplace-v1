@@ -112,7 +112,7 @@ const Media: FC<{
   ) {
     return (
       <iframe
-        className="mb-6 aspect-square w-full"
+        className="mb-6 aspect-square w-full h-full rounded-2xl"
         height="533"
         width="533"
         src={media}
