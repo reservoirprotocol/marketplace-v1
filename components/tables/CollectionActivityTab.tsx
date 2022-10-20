@@ -7,10 +7,11 @@ type Props = {
 }
 
 const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
-  const query: Parameters<typeof useCollectionActivity>['1'] = {
+  const query: Parameters<typeof useCollectionActivity>['0'] = {
     limit: 20,
+    collectionId,
   }
-  const data = useCollectionActivity(collectionId, query, {
+  const data = useCollectionActivity(query, {
     revalidateOnMount: false,
     fallbackData: [],
   })
