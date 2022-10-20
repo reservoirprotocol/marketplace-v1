@@ -47,7 +47,7 @@ const Media: FC<{
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video className="mb-4 w-full rounded" poster={tokenImage} controls>
+      <video className="mb-4 w-full rounded" poster={tokenImage} controls autoplay loop playsinline muted>
         <source src={media} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
