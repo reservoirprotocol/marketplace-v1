@@ -13,6 +13,7 @@ export default function useTokens(
   collectionId: string | undefined,
   fallbackData: Tokens[],
   router: NextRouter,
+  includeTopBid: boolean = true,
   source?: boolean | undefined
 ) {
   const { ref, inView } = useInView()
@@ -21,7 +22,7 @@ export default function useTokens(
   const query: Parameters<typeof useTokensRk>['0'] = {
     limit: 20,
     collection: collectionId,
-    includeTopBid: true,
+    includeTopBid: includeTopBid,
     sortBy: 'floorAskPrice',
   }
 
