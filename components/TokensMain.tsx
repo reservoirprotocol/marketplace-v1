@@ -54,7 +54,8 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   const { tokens, ref: refTokens } = useTokens(
     collectionId,
     [fallback.tokens],
-    router
+    router,
+    false
   )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
