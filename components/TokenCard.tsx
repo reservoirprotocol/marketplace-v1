@@ -188,7 +188,9 @@ const TokenCard: FC<Props> = ({
               collectionId={token.token?.contract}
               tokenId={token.token?.tokenId}
               currencies={listingCurrencies}
-              onListingComplete={mutate}
+              onListingComplete={() => {
+                mutate()
+              }}
               onListingError={(err: any) => {
                 if (err?.code === 4001) {
                   setToast({

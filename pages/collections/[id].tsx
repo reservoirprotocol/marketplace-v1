@@ -79,6 +79,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     id,
     [fallback.tokens],
     router,
+    false,
     localListings
   )
 
@@ -410,7 +411,7 @@ export const getStaticProps: GetStaticProps<{
   let tokensQuery: paths['/tokens/v5']['get']['parameters']['query'] = {
     collection: id,
     sortBy: 'floorAskPrice',
-    includeTopBid: true,
+    includeTopBid: false,
     limit: 20,
   }
 

@@ -1,4 +1,5 @@
 import { paths } from '@reservoir0x/reservoir-kit-client'
+import FormatWEth from './FormatWEth'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -91,7 +92,7 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                           Offer
                         </span>
                         <span className="reservoir-h6 font-headings dark:text-white">
-                          <FormatEth amount={attribute?.topBid?.value} />
+                          <FormatWEth amount={attribute?.topBid?.value} />
                         </span>
                       </div>
                       <div className="grid text-right">
