@@ -10,6 +10,7 @@ const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
   const query: Parameters<typeof useCollectionActivity>['0'] = {
     limit: 20,
     collection: collectionId,
+    types: ['sale'],
   }
   const data = useCollectionActivity(query, {
     revalidateOnMount: false,
