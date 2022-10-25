@@ -38,7 +38,8 @@ const Navbar: FC = () => {
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
-  const isMobile = useMediaQuery('(max-width: 520px)')
+  const isMobile = useMediaQuery('(max-width: 770px)')
+  const showDesktopSearch = useMediaQuery('(min-width: 1200px)')
   const [hasCommunityDropdown, setHasCommunityDropdown] =
     useState<boolean>(false)
 
@@ -96,7 +97,7 @@ const Navbar: FC = () => {
         } else {
           setShowLinks(false)
           setHasCommunityDropdown(false)
-          isMobile
+          !showDesktopSearch
             ? setFilterComponent(
                 <SearchMenu
                   communityId={COMMUNITY}
@@ -112,9 +113,7 @@ const Navbar: FC = () => {
         }
       })
     }
-  }, [filterableCollection, isMobile])
-
-  if (typeof window === 'undefined') return null
+  }, [filterableCollection, showDesktopSearch])
 
   return (
     <nav className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-4 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-6 md:px-16">
@@ -134,21 +133,29 @@ const Navbar: FC = () => {
           ))}
         </div>
       )}
-      <div
-        className={`flex ${
-          !hasCommunityDropdown && isMobile
-            ? 'ml-auto'
-            : 'h-full w-full items-center justify-center'
-        }`}
-      >
-        {filterComponent && filterComponent}
-      </div>
-      <CartMenu />
-      <HamburgerMenu externalLinks={externalLinks} />
-      <div className="z-10 ml-auto hidden shrink-0 md:flex md:gap-2">
-        <ConnectWallet />
-        <ThemeSwitcher />
-      </div>
+      {(hasCommunityDropdown || showDesktopSearch) && (
+        <div className="absolute top-0 left-0 right-0 flex h-full w-full items-center justify-center">
+          {filterComponent && filterComponent}
+        </div>
+      )}
+      {isMobile ? (
+        <div className="ml-auto flex">
+          {!hasCommunityDropdown && filterComponent && filterComponent}
+          <CartMenu />
+          <HamburgerMenu externalLinks={externalLinks} />
+        </div>
+      ) : (
+        <div className="z-10 ml-auto shrink-0 md:flex md:gap-2">
+          {!hasCommunityDropdown && !showDesktopSearch && (
+            <div className="ml-auto flex">
+              {filterComponent && filterComponent}
+            </div>
+          )}
+          <CartMenu />
+          <ConnectWallet />
+          <ThemeSwitcher />
+        </div>
+      )}
     </nav>
   )
 }
