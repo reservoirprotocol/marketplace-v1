@@ -14,7 +14,7 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import FormatEth from './FormatEth'
 import { GlobalContext } from 'context/GlobalState'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useIsMounted } from '@react-hookz/web'
+import useMounted from 'hooks/useMounted'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const DISABLE_POWERED_BY_RESERVOIR =
@@ -28,9 +28,9 @@ const ConnectWallet: FC = () => {
   const { disconnect } = useDisconnect()
   const wallet = connectors[0]
   const { dispatch } = useContext(GlobalContext)
-  const isMounted = useIsMounted()
+  const isMounted = useMounted()
 
-  if (!isMounted()) {
+  if (!isMounted) {
     return null
   }
 
