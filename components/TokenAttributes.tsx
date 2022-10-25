@@ -10,7 +10,7 @@ import {
 import { formatNumber } from 'lib/numbers'
 import * as Accordion from '@radix-ui/react-accordion'
 import { StyledChevron, StyledContent } from './radix/Accordion'
-import { useIsMounted } from '@react-hookz/web'
+import useMounted from 'hooks/useMounted'
 
 type Props = {
   token?: TokenDetails
@@ -19,9 +19,9 @@ type Props = {
 }
 
 const TokenAttributes: FC<Props> = ({ token, collection, isOwner }) => {
-  const isMounted = useIsMounted()
+  const isMounted = useMounted()
 
-  if (!isMounted()) {
+  if (!isMounted) {
     return null
   }
 

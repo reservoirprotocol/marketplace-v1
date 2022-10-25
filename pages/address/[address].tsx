@@ -22,7 +22,7 @@ import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import UserActivityTab from 'components/tables/UserActivityTab'
-import { useIsMounted } from '@react-hookz/web'
+import useMounted from 'hooks/useMounted'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
@@ -38,7 +38,7 @@ const metadata = {
 }
 
 const Address: NextPage<Props> = ({ address, fallback }) => {
-  const isMounted = useIsMounted()
+  const isMounted = useMounted()
   const router = useRouter()
   const accountData = useAccount()
 
@@ -79,7 +79,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     return <div>There was an error</div>
   }
 
-  if (!isMounted()) {
+  if (!isMounted) {
     return null
   }
 
