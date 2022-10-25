@@ -18,6 +18,7 @@ import recoilCartTokens from 'recoil/cart/atom'
 import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
+import { useMediaQuery } from '@react-hookz/web'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -58,6 +59,7 @@ const TokenCard: FC<Props> = ({
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
 
   const reservoirClient = useReservoirClient()
+  const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
   if (!token) return null
 
@@ -69,6 +71,7 @@ const TokenCard: FC<Props> = ({
   )
   const isOwner =
     token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
+  const imageSize = singleColumnBreakpoint ? 533 : 250
 
   return (
     <div
@@ -89,11 +92,11 @@ const TokenCard: FC<Props> = ({
           {token?.token?.image ? (
             <Image
               loader={({ src }) => src}
-              src={optimizeImage(token?.token?.image, 250)}
+              src={optimizeImage(token?.token?.image, imageSize)}
               alt={`${token?.token?.name}`}
               className="w-full"
-              width={250}
-              height={250}
+              width={imageSize}
+              height={imageSize}
               objectFit="cover"
               layout="responsive"
             />
@@ -102,7 +105,7 @@ const TokenCard: FC<Props> = ({
               <div className="absolute inset-0 grid place-items-center backdrop-blur-lg">
                 <div>
                   <img
-                    src={optimizeImage(collectionImage, 250)}
+                    src={optimizeImage(collectionImage, imageSize)}
                     alt={`${token?.token?.collection?.name}`}
                     className="mx-auto mb-4 h-16 w-16 overflow-hidden rounded-full border-2 border-white"
                     width="64"
@@ -114,7 +117,7 @@ const TokenCard: FC<Props> = ({
                 </div>
               </div>
               <img
-                src={optimizeImage(collectionImage, 250)}
+                src={optimizeImage(collectionImage, imageSize)}
                 alt={`${token?.token?.collection?.name}`}
                 className="aspect-square w-full object-cover"
                 width="250"
