@@ -17,6 +17,7 @@ import {
   useTokenOpenseaBanned,
   useTokens,
   useCollections,
+  useUserTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useAccount } from 'wagmi'
 
@@ -93,6 +94,16 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
   })
 
   const tokens = tokenData.data
+  const token = tokens?.[0] || { token: tokenDetails }
+  const checkUserOwnership = token.token?.kind === 'erc1155'
+  const { data: userTokens } = useUserTokens(
+    checkUserOwnership ? account.address : undefined,
+    {
+      tokens: [
+        `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
+      ],
+    }
+  )
 
   useEffect(() => {
     if (CHAIN_ID && (+CHAIN_ID === 1 || +CHAIN_ID === 5)) {
@@ -119,7 +130,6 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     return <div>There was an error</div>
   }
 
-  const token = tokens?.[0] || { token: tokenDetails }
   const tokenName = `${token?.token?.name || `#${token?.token?.tokenId}`}`
 
   // META
@@ -139,7 +149,12 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     : null
 
   const isOwner =
-    token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
+    userTokens &&
+    userTokens[0] &&
+    userTokens[0].ownership?.tokenCount &&
+    +userTokens[0].ownership.tokenCount > 0
+      ? true
+      : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
 
   return (
     <Layout navbar={{}}>
@@ -159,7 +174,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
         <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
-        <PriceData details={tokenData} collection={collection} />
+        <PriceData
+          details={tokenData}
+          collection={collection}
+          isOwner={isOwner}
+        />
         <TokenAttributes
           token={token?.token}
           collection={collection}
