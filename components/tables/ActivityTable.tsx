@@ -86,8 +86,10 @@ const ActivityTable: FC<Props> = ({
           return (
             <button
               key={i}
-              className={`flex gap-3 rounded-full border-[1px] border-neutral-300 px-4 py-3 md:hover:bg-primary-100 ${
-                isSelected ? 'bg-primary-100' : 'bg-white'
+              className={`flex gap-3 rounded-full border-[1px] border-neutral-300 px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
+                isSelected
+                  ? 'bg-primary-100 dark:bg-neutral-600'
+                  : 'bg-white dark:bg-black'
               }`}
               onClick={() => {
                 let updatedTypes: Props['types'] = types?.slice() || []
