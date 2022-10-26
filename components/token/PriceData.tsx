@@ -8,6 +8,7 @@ import {
   AcceptBidModal,
   useTokens,
 } from '@reservoir0x/reservoir-kit-ui'
+import { ReservoirClientActions } from '@reservoir0x/reservoir-kit-client'
 import React, { ComponentPropsWithoutRef, FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
@@ -21,6 +22,7 @@ import SwapCartModal from 'components/SwapCartModal'
 import { FaShoppingCart } from 'react-icons/fa'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
+import { useRouter } from 'next/router'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -44,6 +46,7 @@ if (CURRENCIES) {
 }
 
 const PriceData: FC<Props> = ({ details, collection }) => {
+  const router = useRouter()
   const isMounted = useMounted()
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
@@ -55,6 +58,11 @@ const PriceData: FC<Props> = ({ details, collection }) => {
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
   const account = useAccount()
+  const [bidsJson, setBidsJson] = useState(
+    `[{"token": "${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}","expirationTime": "${Math.trunc(
+      (new Date().getTime() + 1 * 60 * 60 * 1000) / 1000
+    )}","orderKind": "forward","orderbook": "reservoir","weiPrice": "100000000000000000"}]`
+  )
 
   const token = details.data ? details.data[0] : undefined
 
@@ -267,21 +275,51 @@ const PriceData: FC<Props> = ({ details, collection }) => {
               />
 
               {!isOwner && (
-                <BidModal
-                  collectionId={collection?.id}
-                  tokenId={token?.token?.tokenId}
-                  trigger={
-                    <button
-                      disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                    >
-                      Make Offer
-                    </button>
-                  }
-                  onBidComplete={() => {
-                    details && details.mutate()
-                  }}
-                />
+                <>
+                  <textarea
+                    value={bidsJson}
+                    onChange={(e) => setBidsJson(e.target.value)}
+                    placeholder="Enter Bids JSON"
+                  />
+                  <button
+                    disabled={isInTheWrongNetwork}
+                    className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                    onClick={() => {
+                      if (!signer) {
+                        throw 'Missing a signer, please sign in'
+                      }
+
+                      const data: Parameters<
+                        ReservoirClientActions['placeBid']
+                      >['0']['bids'] = JSON.parse(bidsJson)
+
+                      reservoirClient?.actions.placeBid({
+                        signer: signer,
+                        bids: data,
+                        onProgress: (steps) => {
+                          console.log('onBidProgress', steps)
+                        },
+                      })
+                    }}
+                  >
+                    Make FWD Offer
+                  </button>
+                  <BidModal
+                    collectionId={collection?.id}
+                    tokenId={token?.token?.tokenId}
+                    trigger={
+                      <button
+                        disabled={isInTheWrongNetwork}
+                        className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                      >
+                        Make Offer
+                      </button>
+                    }
+                    onBidComplete={() => {
+                      details && details.mutate()
+                    }}
+                  />
+                </>
               )}
 
               <CancelOffer
