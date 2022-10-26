@@ -2,7 +2,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { FC, useEffect, useState } from 'react'
+import { FC, ReactElement, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
@@ -40,9 +40,15 @@ type Props = {
   data: ActivityResponse
   types: CollectionActivityTypes | UserActivityTypes
   onTypesChange: (types: CollectionActivityTypes | UserActivityTypes) => void
+  emptyPlaceholder: ReactElement
 }
 
-const ActivityTable: FC<Props> = ({ data, types, onTypesChange }) => {
+const ActivityTable: FC<Props> = ({
+  data,
+  types,
+  onTypesChange,
+  emptyPlaceholder,
+}) => {
   const headings = ['Event', 'Item', 'Amount', 'From', 'To', 'Time']
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
   const filters = ['Sales', 'Listings', 'Offers', 'Transfer', 'Mints']
@@ -129,33 +135,38 @@ const ActivityTable: FC<Props> = ({ data, types, onTypesChange }) => {
           )
         })}
       </div>
-      <table className="w-full">
-        {!isMobile && (
-          <thead>
-            <tr className="text-left">
-              {headings.map((name, i) => (
-                <th
-                  key={i}
-                  className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
-                >
-                  {name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-        )}
+      {!data.isValidating && (!activities || activities.length === 0) ? (
+        emptyPlaceholder
+      ) : (
+        <table className="w-full">
+          {!isMobile && (
+            <thead>
+              <tr className="text-left">
+                {headings.map((name, i) => (
+                  <th
+                    key={i}
+                    className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
+                  >
+                    {name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
 
-        <tbody>
-          {activities.map((activity) => {
-            if (!activity) return null
+          <tbody>
+            {activities.map((activity) => {
+              if (!activity) return null
 
-            return (
-              <ActivityTableRow key={activity?.txHash} activity={activity} />
-            )
-          })}
-          <tr ref={ref}></tr>
-        </tbody>
-      </table>
+              return (
+                <ActivityTableRow key={activity?.txHash} activity={activity} />
+              )
+            })}
+            <tr ref={ref}></tr>
+          </tbody>
+        </table>
+      )}
+
       {data.isValidating && (
         <div className="my-20 flex justify-center">
           <LoadingIcon />
