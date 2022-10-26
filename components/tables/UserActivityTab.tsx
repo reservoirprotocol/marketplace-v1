@@ -18,6 +18,8 @@ const UserActivityTab: FC<Props> = ({ user }) => {
   }
   const data = useUsersActivity(user ? [user] : undefined, query, {
     revalidateOnMount: false,
+    fallbackData: [],
+    revalidateFirstPage: true,
   })
 
   useEffect(() => {

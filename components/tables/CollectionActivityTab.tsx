@@ -23,6 +23,7 @@ const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
   const data = useCollectionActivity(query, {
     revalidateOnMount: false,
     fallbackData: [],
+    revalidateFirstPage: true,
   })
 
   useEffect(() => {
