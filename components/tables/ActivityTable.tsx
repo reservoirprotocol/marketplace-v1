@@ -74,13 +74,13 @@ const ActivityTable: FC<Props> = ({ data, types, onTypesChange }) => {
 
   return (
     <>
-      <div className="m-5 flex gap-4">
+      <div className="mt-2 flex flex-wrap gap-2 md:m-5 md:gap-4">
         {filters.map((filter, i) => {
           const isSelected = enabledFilters.includes(filter)
           return (
             <button
               key={i}
-              className={`flex gap-3 rounded-full border-[1px] border-neutral-300 px-4 py-3 hover:bg-primary-100 ${
+              className={`flex gap-3 rounded-full border-[1px] border-neutral-300 px-4 py-3 md:hover:bg-primary-100 ${
                 isSelected ? 'bg-primary-100' : 'bg-white'
               }`}
               onClick={() => {
