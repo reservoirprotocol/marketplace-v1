@@ -1,16 +1,24 @@
 import { useCollectionActivity } from '@reservoir0x/reservoir-kit-ui'
 import ActivityTable from 'components/tables/ActivityTable'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 type Props = {
   collectionId?: string
 }
 
+type ActivityQuery = NonNullable<
+  Exclude<Parameters<typeof useCollectionActivity>['0'], boolean>
+>
+
 const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
-  const query: Parameters<typeof useCollectionActivity>['0'] = {
+  const [activityTypes, setActivityTypes] = useState<ActivityQuery['types']>([
+    'sale',
+  ])
+
+  const query: ActivityQuery = {
     limit: 20,
     collection: collectionId,
-    types: ['sale'],
+    types: activityTypes,
   }
   const data = useCollectionActivity(query, {
     revalidateOnMount: false,
@@ -44,7 +52,15 @@ const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
     )
   }
 
-  return <ActivityTable data={data} />
+  return (
+    <ActivityTable
+      data={data}
+      types={activityTypes}
+      onTypesChange={(types) => {
+        setActivityTypes(types)
+      }}
+    />
+  )
 }
 
 export default CollectionActivityTab

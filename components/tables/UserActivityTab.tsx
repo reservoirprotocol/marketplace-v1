@@ -1,14 +1,20 @@
 import { useUsersActivity } from '@reservoir0x/reservoir-kit-ui'
 import ActivityTable from 'components/tables/ActivityTable'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 type Props = {
   user?: string
 }
 
+type ActivityQuery = NonNullable<
+  Exclude<Parameters<typeof useUsersActivity>['1'], boolean>
+>
+
 const UserActivityTab: FC<Props> = ({ user }) => {
-  const query: Parameters<typeof useUsersActivity>['1'] = {
+  const [activityTypes, setActivityTypes] = useState<ActivityQuery['types']>([])
+  const query: ActivityQuery = {
     limit: 20,
+    types: activityTypes,
   }
   const data = useUsersActivity(user ? [user] : undefined, query, {
     revalidateOnMount: false,
@@ -31,7 +37,15 @@ const UserActivityTab: FC<Props> = ({ user }) => {
     )
   }
 
-  return <ActivityTable data={data} />
+  return (
+    <ActivityTable
+      data={data}
+      types={activityTypes}
+      onTypesChange={(types) => {
+        setActivityTypes(types)
+      }}
+    />
+  )
 }
 
 export default UserActivityTab
