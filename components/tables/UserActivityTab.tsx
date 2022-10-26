@@ -27,16 +27,6 @@ const UserActivityTab: FC<Props> = ({ user }) => {
     }
   }, [])
 
-  const noActivity = !data.isValidating && data.data.length === 0
-
-  if (noActivity) {
-    return (
-      <div className="reservoir-body mt-14 grid justify-center dark:text-white">
-        There hasn&apos;t been any activity yet.
-      </div>
-    )
-  }
-
   return (
     <ActivityTable
       data={data}
@@ -44,6 +34,11 @@ const UserActivityTab: FC<Props> = ({ user }) => {
       onTypesChange={(types) => {
         setActivityTypes(types)
       }}
+      emptyPlaceholder={
+        <div className="reservoir-body mt-14 grid justify-center dark:text-white">
+          There hasn&apos;t been any activity yet.
+        </div>
+      }
     />
   )
 }
