@@ -118,7 +118,8 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
     accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
-  const isListed = token?.market?.floorAsk?.price !== null
+  const isListed =
+    token?.market?.floorAsk?.price !== null && token?.token?.kind !== 'erc1155'
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
   const tokenId = token?.token?.tokenId
