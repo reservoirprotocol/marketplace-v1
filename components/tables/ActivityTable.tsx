@@ -85,11 +85,12 @@ const ActivityTable: FC<Props> = ({
           const isSelected = enabledFilters.includes(filter)
           return (
             <button
+              disabled={data.isFetchingPage || data.isValidating}
               key={i}
-              className={`flex gap-3 rounded-full border-[1px] border-neutral-300 px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
+              className={`flex gap-3 rounded-full px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
                 isSelected
                   ? 'bg-primary-100 dark:bg-neutral-600'
-                  : 'bg-white dark:bg-black'
+                  : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
               }`}
               onClick={() => {
                 let updatedTypes: Props['types'] = types?.slice() || []
@@ -157,11 +158,14 @@ const ActivityTable: FC<Props> = ({
           )}
 
           <tbody>
-            {activities.map((activity) => {
+            {activities.map((activity, i) => {
               if (!activity) return null
 
               return (
-                <ActivityTableRow key={activity?.txHash} activity={activity} />
+                <ActivityTableRow
+                  key={`${activity?.txHash}-${i}`}
+                  activity={activity}
+                />
               )
             })}
             <tr ref={ref}></tr>
