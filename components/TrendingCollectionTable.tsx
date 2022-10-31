@@ -173,7 +173,7 @@ function processCollection(
   const data = {
     contract: collection?.primaryContract,
     id: collection?.id,
-    image: collection?.image,
+    image: collection?.image || 'https://ik.imagekit.io/autobahn/showroom-default-image_cZvv3FPZ-.png',
     name: collection?.name,
     days1: collection?.volume?.['1day'],
     days7: collection?.volume?.['7day'],

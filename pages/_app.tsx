@@ -62,16 +62,21 @@ const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 //extending allChains by Gnosis Chain
 const allChainsExtended = [...allChains, {
-  id: 100,
-  name: 'Gnosis',
+  id: 45_000,
+  name: 'Autobahn Network',
+  network: 'autobahn',
   nativeCurrency: {
-    name: 'xDai',
-    symbol: 'xDAI',
     decimals: 18,
+    name: 'TXL',
+    symbol: 'TXL',
   },
-  rpcUrls: { default: 'https://rpc.ankr.com/gnosis' },
+  rpcUrls: {
+    default: 'https://autobahn-rpc.com',
+  },
   testnet: false,
-  network: 'gnosis',
+  blockExplorers: {
+    default: { name: 'Autobahn Explorer', url: 'https://autobahn-explorer.com' },
+  },
 }];
 
 
