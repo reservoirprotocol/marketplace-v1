@@ -10,6 +10,7 @@ import CartMenu from './CartMenu'
 import SearchMenu from './SearchMenu'
 import { useMediaQuery } from '@react-hookz/web'
 import useMounted from 'hooks/useMounted'
+import ListItemButton from './ListItemButton'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -155,12 +156,13 @@ const Navbar: FC = () => {
           {!hasCommunityDropdown && !showDesktopSearch && (
             <div className="ml-auto flex">
               {filterComponent && filterComponent}
-            </div>
-          )}
-          <CartMenu />
-          <ConnectWallet />
-          <ThemeSwitcher />
-        </div>
+              </div>
+            )}
+            <CartMenu />
+            <ListItemButton />
+            <ConnectWallet />
+            <ThemeSwitcher />
+          </div>
       )}
     </nav>
   )
