@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 85.591 78.321" enable-background="new 0 0 85.591 78.321" xml:space="preserve">
+<g>
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="39.1603" x2="85.5909" y2="39.1603">
+		<stop  offset="0" style="stop-color:#E700D7"/>
+		<stop  offset="1" style="stop-color:#00B0F8"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M84.966,73.359L62.772,33.216L50.62,55.207c-0.377,0.683-1.244,0.932-1.926,0.555l-13.463-7.439
+		c-0.682-0.377-0.932-1.244-0.555-1.926l17.686-32.008L45.539,2.047c-1.509-2.729-3.978-2.729-5.486,0L0.625,73.359
+		c-1.509,2.729-0.192,4.962,2.926,4.962h13.485l4.184-7.572c0.377-0.682,1.244-0.932,1.926-0.555l14.708,8.127h44.185
+		C85.158,78.321,86.474,76.088,84.966,73.359z"/>
+</g>
+</svg>

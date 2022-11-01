@@ -28,10 +28,10 @@ export default function calculateOffer(
       missingEth,
       missingWeth,
       error: `You have insufficient funds to place this bid.
-      Increase your balance by ${formatBN(missingEth, 5)} ETH or ${formatBN(
+      Increase your balance by ${formatBN(missingEth, 5)} TXL or ${formatBN(
         missingWeth,
         5
-      )} wETH.`,
+      )} WTXL.`,
       warning: null,
     }
   } else if (signerWeth.lt(total)) {

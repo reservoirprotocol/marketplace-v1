@@ -245,7 +245,7 @@ const AttributeOfferModal: FC<Props> = ({
                     htmlFor="price"
                     className="reservoir-h6 font-headings dark:text-white"
                   >
-                    Price (wETH)
+                    Price (wTXL)
                   </label>
                   <input
                     placeholder="Amount"

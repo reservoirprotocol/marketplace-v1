@@ -250,7 +250,7 @@ const CollectionOfferModal: FC<Props> = ({
                   htmlFor="price"
                   className="reservoir-h6 font-headings dark:text-white"
                 >
-                  Price (wETH)
+                  Price (WTXL)
                 </label>
                 <input
                   placeholder="Amount"

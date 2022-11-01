@@ -18,8 +18,8 @@ const FormatWEth: FC<Props> = ({
       maximumFractionDigits={maximumFractionDigits}
     >
       <img
-        src="/weth.svg"
-        alt="WETH logo"
+        src="/wtxl.svg"
+        alt="WTXL logo"
         style={{ width: `${logoWidth}px` }}
       />
     </FormatCurrency>

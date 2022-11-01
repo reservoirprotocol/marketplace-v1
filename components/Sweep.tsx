@@ -201,7 +201,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           setToast({
             kind: 'error',
             message: 'You have insufficient funds to buy this token.',
-            title: 'Not enough ETH balance',
+            title: 'Not enough TXL balance',
           })
           return
         }

@@ -265,7 +265,7 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
                   htmlFor="price"
                   className="reservoir-h6 font-headings dark:text-white"
                 >
-                  Price (wETH)
+                  Price (WTXL)
                 </label>
                 <input
                   placeholder="Amount"
