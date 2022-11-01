@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.1",
     "@datadog/browser-rum": "^4.2.0",
     "@headlessui/react": "^1.5.0",
     "@radix-ui/colors": "^0.1.8",
@@ -28,6 +29,8 @@
     "@stitches/react": "^1.2.8",
     "downshift": "^6.1.7",
     "ethers": "^5.7.1",
+    "graphql": "^16.6.0",
+    "install": "^0.13.0",
     "lodash.debounce": "^4.0.8",
     "luxon": "^2.3.0",
     "match-sorter": "^6.3.1",
