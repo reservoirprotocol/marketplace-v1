@@ -17,8 +17,6 @@ import {
   useUsersActivity,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClose } from '@fortawesome/free-solid-svg-icons'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 type CollectionActivityResponse = ReturnType<typeof useCollectionActivity>
@@ -89,7 +87,7 @@ const ActivityTable: FC<Props> = ({
               key={i}
               className={`flex gap-3 rounded-full px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
                 isSelected
-                  ? 'bg-primary-100 dark:bg-neutral-600'
+                  ? 'border-[1px] border-transparent bg-primary-100 dark:bg-neutral-600'
                   : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
               }`}
               onClick={() => {
@@ -128,12 +126,7 @@ const ActivityTable: FC<Props> = ({
                 onTypesChange(updatedTypes)
               }}
             >
-              <span>{filter}</span>
-              {isSelected && (
-                <div className="text-neutral-400">
-                  <FontAwesomeIcon icon={faClose} />
-                </div>
-              )}
+              {filter}
             </button>
           )
         })}
