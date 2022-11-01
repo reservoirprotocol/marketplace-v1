@@ -68,6 +68,8 @@ const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 import presetColors from '../colors'
+import { backendClient } from 'src/graphql/BackendClient'
+import { ApolloProvider } from '@apollo/client'
 
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
@@ -185,6 +187,7 @@ const App: FC<AppProps & { baseUrl: string }> = ({
   }
 
   return (
+    <ApolloProvider client={backendClient}>
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
       <GlobalProvider>
         <RecoilRoot>
@@ -202,6 +205,7 @@ const App: FC<AppProps & { baseUrl: string }> = ({
         </RecoilRoot>
       </GlobalProvider>
     </ReservoirKitProvider>
+    </ApolloProvider>
   )
 }
 
