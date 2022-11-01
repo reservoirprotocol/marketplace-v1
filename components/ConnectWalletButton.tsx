@@ -30,9 +30,13 @@ const ConnectWalletButton: FC<Props> = ({ className }) => {
                 <button
                   onClick={openConnectModal}
                   type="button"
-                  className={`btn-primary-fill dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4 ${className}`}
+                  className={`btn-primary-fill h-full px-[12px] border-none dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4 ${className}`}
                 >
-                  Connect Wallet
+                  <img
+                    src="/icons/wallet.svg"
+                    alt="Wallet Icon"
+                    className=""
+                  />
                 </button>
               )
             })()}
