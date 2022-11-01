@@ -32,6 +32,7 @@ const CURRENCIES = process.env.NEXT_PUBLIC_LISTING_CURRENCIES
 type Props = {
   details: ReturnType<typeof useTokens>
   collection?: Collection
+  isOwner: boolean
 }
 
 type ListingCurrencies = ComponentPropsWithoutRef<
@@ -43,7 +44,7 @@ if (CURRENCIES) {
   listingCurrencies = JSON.parse(CURRENCIES)
 }
 
-const PriceData: FC<Props> = ({ details, collection }) => {
+const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const isMounted = useMounted()
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
@@ -113,13 +114,14 @@ const PriceData: FC<Props> = ({ details, collection }) => {
 
   if (!CHAIN_ID) return null
 
-  const isOwner =
-    token?.token?.owner?.toLowerCase() === accountData?.address?.toLowerCase()
   const isTopBidder =
     accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
-  const isListed = token?.market?.floorAsk?.price !== null
+  const isListed = token
+    ? token?.market?.floorAsk?.price !== null &&
+      token?.token?.kind !== 'erc1155'
+    : false
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
   const tokenId = token?.token?.tokenId
