@@ -14,7 +14,7 @@ import FormatEth from './FormatEth'
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
   attributes: SWRInfiniteResponse<
-    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema'],
+    paths['/collections/{collection}/attributes/explore/v3']['get']['responses']['200']['schema'],
     any
   >
 }
@@ -179,10 +179,10 @@ const ExploreImagesGrid = ({
   value,
 }: {
   sample_images: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v3']['get']['responses']['200']['schema']['attributes']
   >[0]['sampleImages']
   value: NonNullable<
-    paths['/collections/{collection}/attributes/explore/v2']['get']['responses']['200']['schema']['attributes']
+    paths['/collections/{collection}/attributes/explore/v3']['get']['responses']['200']['schema']['attributes']
   >[0]['value']
 }) => (
   <>
