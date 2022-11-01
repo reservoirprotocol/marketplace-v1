@@ -7,6 +7,7 @@ import {
   useEnsAvatar,
   useEnsName,
 } from 'wagmi'
+import EthAccount from './EthAccount'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
@@ -15,6 +16,7 @@ import { GlobalContext } from 'context/GlobalState'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
 import Avatar from './Avatar'
+import { truncateAddress, truncateEns } from 'lib/truncateText'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const DISABLE_POWERED_BY_RESERVOIR =
@@ -23,6 +25,7 @@ const DISABLE_POWERED_BY_RESERVOIR =
 const ConnectWallet: FC = () => {
   const account = useAccount()
   const { data: ensAvatar } = useEnsAvatar({ addressOrName: account?.address })
+  const { data: ensName } = useEnsName({ address: account?.address })
   const { connectors } = useConnect()
   const { disconnect } = useDisconnect()
   const wallet = connectors[0]
@@ -37,8 +40,8 @@ const ConnectWallet: FC = () => {
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="btn-primary-outline px-2 ml-auto border-transparent bg-gray-100 normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
-        <Avatar address={account.address} avatar={ensAvatar} size={24}/>
+      <DropdownMenu.Trigger className="btn-primary-outline p-0 py-0 rounded-full ml-auto border-transparent normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
+        <Avatar address={account.address} avatar={ensAvatar} size={40}/>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align="end" sideOffset={6}>
@@ -47,6 +50,13 @@ const ConnectWallet: FC = () => {
             DISABLE_POWERED_BY_RESERVOIR ? 'rounded' : 'rounded-t'
           }`}
         >
+          <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
+            {ensName ? (
+              <span>{truncateEns(ensName)}</span>
+            ) : (
+              <span>{truncateAddress(account.address || '')}</span>
+            )}
+          </div>
           <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
             <span>Balance </span>
             <span>
