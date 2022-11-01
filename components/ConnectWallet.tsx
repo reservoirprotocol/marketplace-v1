@@ -40,7 +40,7 @@ const ConnectWallet: FC = () => {
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="btn-primary-outline p-0 py-0 rounded-full ml-auto border-transparent normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
+      <DropdownMenu.Trigger className="btn-primary-outline rounded-full p-0 ml-auto border-transparent normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
         <Avatar address={account.address} avatar={ensAvatar} size={40}/>
       </DropdownMenu.Trigger>
 
