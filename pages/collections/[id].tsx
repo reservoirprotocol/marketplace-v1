@@ -202,7 +202,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
                         <div className='h-9 w-px bg-gray-300 dark:bg-neutral-600'></div>
                         <div className='flex items-center gap-1'>
-                          <FormatEth amount={stats?.data?.stats?.market?.floorAsk?.price} /> floor price
+                          <FormatEth amount={stats?.data?.stats?.market?.floorAsk?.price?.amount?.decimal} /> floor price
                         </div>
                       </>
                     )}
