@@ -1,0 +1,55 @@
+name: Rules Validator
+on:
+  pull_request:
+    branches:
+      - '**'
+      - '!main'
+      - '!develop'
+  push:
+    branches:
+      - '**'
+
+jobs:
+  rules_validator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Check Branch
+        run: echo ${GITHUB_REF#refs/heads/}
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo NEXT_PUBLIC_NFTFY_API_BASE=${{ secrets.NEXT_PUBLIC_NFTFY_API_BASE }} >> .env
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Prettier (Check Style)
+        run: yarn prettier
+
+      - name: Spell (Check Dictionary Language)
+        run: yarn cspell
+
+      - name: ESLint (Check Code Pattern)
+        run: yarn lint
+
+
+      - name: Build Application
+        run: yarn build

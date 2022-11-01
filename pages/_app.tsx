@@ -1,53 +1,42 @@
-import 'styles/globals.css'
-import 'styles/inter.css'
+import { ApolloProvider } from '@apollo/client'
+import {
+  darkTheme as rainbowKitDarkTheme,
+  getDefaultWallets,
+  lightTheme as rainbowKitLightTheme,
+  RainbowKitProvider
+} from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/styles.css'
+import { darkTheme, lightTheme, ReservoirKitProvider, ReservoirKitProviderProps, ReservoirKitTheme } from '@reservoir0x/reservoir-kit-ui'
+import AnalyticsProvider from 'components/AnalyticsProvider'
+import { GlobalProvider } from 'context/GlobalState'
+import { ThemeProvider, useTheme } from 'next-themes'
+import type { AppContext, AppProps } from 'next/app'
+import { default as NextApp } from 'next/app'
+import { FC, useEffect, useState } from 'react'
+import { RecoilRoot } from 'recoil'
+import 'styles/chalkboard.css'
 import 'styles/druk.css'
+import 'styles/editorialnew.css'
+import 'styles/frankruhllibre.css'
+import 'styles/gazpacho.css'
+import 'styles/globals.css'
+import 'styles/gothicusroman.css'
+import 'styles/ingrammono.css'
+import 'styles/inter.css'
+import 'styles/lucidagrande.css'
 import 'styles/montserrat.css'
+import 'styles/nunitosans.css'
 import 'styles/open-sans.css'
 import 'styles/playfair-display.css'
 import 'styles/roboto.css'
-import 'styles/chalkboard.css'
-import 'styles/frankruhllibre.css'
-import 'styles/gazpacho.css'
-import 'styles/editorialnew.css'
-import 'styles/lucidagrande.css'
-import 'styles/nunitosans.css'
-import 'styles/styreneb.css'
-import 'styles/gothicusroman.css'
-import 'styles/roobert.css'
 import 'styles/rodger.css'
-import 'styles/ingrammono.css'
-import type { AppContext, AppProps } from 'next/app'
-import { default as NextApp } from 'next/app'
-import {
-  WagmiConfig,
-  createClient,
-  chain,
-  configureChains,
-  allChains,
-  chainId,
-} from 'wagmi'
-import { GlobalProvider } from 'context/GlobalState'
-import AnalyticsProvider from 'components/AnalyticsProvider'
-import { ThemeProvider, useTheme } from 'next-themes'
-import { RecoilRoot } from 'recoil'
-import {
-  darkTheme,
-  lightTheme,
-  ReservoirKitProvider,
-  ReservoirKitProviderProps,
-  ReservoirKitTheme,
-} from '@reservoir0x/reservoir-kit-ui'
-import { FC, useEffect, useState } from 'react'
-import '@rainbow-me/rainbowkit/styles.css'
-
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  darkTheme as rainbowKitDarkTheme,
-  lightTheme as rainbowKitLightTheme,
-} from '@rainbow-me/rainbowkit'
+import 'styles/roobert.css'
+import 'styles/styreneb.css'
+import { allChains, chain, chainId, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
+import presetColors from '../colors'
+import { nftfyClient } from '../src/graphql/nftfy/Client'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -65,11 +54,7 @@ const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
 const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
 const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
 const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
-const DISABLE_POWERED_BY_RESERVOIR =
-  process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
-import presetColors from '../colors'
-import { backendClient } from 'src/graphql/BackendClient'
-import { ApolloProvider } from '@apollo/client'
+const DISABLE_POWERED_BY_RESERVOIR = process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
@@ -78,62 +63,46 @@ const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-const envChain = allChains.find(
-  (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
-)
+const envChain = allChains.find(chain => chain.id === +(CHAIN_ID || chainId.mainnet))
 
-const { chains, provider } = configureChains(
-  envChain ? [envChain] : [chain.mainnet],
-  [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
-)
+const { chains, provider } = configureChains(envChain ? [envChain] : [chain.mainnet], [
+  alchemyProvider({ apiKey: alchemyId }),
+  publicProvider()
+])
 
 const { connectors } = getDefaultWallets({
   appName: SOURCE_NAME || 'Reservoir Market',
-  chains,
+  chains
 })
 
 const wagmiClient = createClient({
   autoConnect: true,
   connectors,
-  provider,
+  provider
 })
 
 function AppWrapper(props: AppProps & { baseUrl: string }) {
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme={defaultTheme}
-      forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
-    >
+    <ThemeProvider attribute='class' defaultTheme={defaultTheme} forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}>
       <App {...props} />
     </ThemeProvider>
   )
 }
 
-const App: FC<AppProps & { baseUrl: string }> = ({
-  Component,
-  pageProps,
-  baseUrl,
-}) => {
+const App: FC<AppProps & { baseUrl: string }> = ({ Component, pageProps, baseUrl }) => {
   const { theme } = useTheme()
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
-  const [reservoirKitTheme, setReservoirKitTheme] = useState<
-    ReservoirKitTheme | undefined
-  >()
+  const [reservoirKitTheme, setReservoirKitTheme] = useState<ReservoirKitTheme | undefined>()
   const [rainbowKitTheme, setRainbowKitTheme] = useState<
-    | ReturnType<typeof rainbowKitDarkTheme>
-    | ReturnType<typeof rainbowKitLightTheme>
-    | undefined
+    ReturnType<typeof rainbowKitDarkTheme> | ReturnType<typeof rainbowKitLightTheme> | undefined
   >()
   const marketplaceTheme = THEME_SWITCHING_ENABLED ? theme : defaultTheme
 
   useEffect(() => {
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
-    const primaryColorPalette = (
-      presetColors as Record<string, Record<string, string>>
-    )[primaryColor]
+    const primaryColorPalette = (presetColors as Record<string, Record<string, string>>)[primaryColor]
 
     if (marketplaceTheme == 'dark') {
       setReservoirKitTheme(
@@ -141,12 +110,12 @@ const App: FC<AppProps & { baseUrl: string }> = ({
           headlineFont: FONT_FAMILY,
           font: BODY_FONT_FAMILY,
           primaryColor: primaryColorPalette['700'],
-          primaryHoverColor: primaryColorPalette['900'],
+          primaryHoverColor: primaryColorPalette['900']
         })
       )
       setRainbowKitTheme(
         rainbowKitDarkTheme({
-          borderRadius: 'small',
+          borderRadius: 'small'
         })
       )
     } else {
@@ -155,12 +124,12 @@ const App: FC<AppProps & { baseUrl: string }> = ({
           headlineFont: FONT_FAMILY,
           font: BODY_FONT_FAMILY,
           primaryColor: primaryColorPalette['700'],
-          primaryHoverColor: primaryColorPalette['900'],
+          primaryHoverColor: primaryColorPalette['900']
         })
       )
       setRainbowKitTheme(
         rainbowKitLightTheme({
-          borderRadius: 'small',
+          borderRadius: 'small'
         })
       )
     }
@@ -168,43 +137,34 @@ const App: FC<AppProps & { baseUrl: string }> = ({
 
   let options: ReservoirKitProviderProps['options'] = {
     apiKey: RESERVOIR_API_KEY,
-    apiBase:
-      typeof window !== 'undefined'
-        ? `${window.location.origin}${PROXY_API_BASE}`
-        : `${baseUrl}${PROXY_API_BASE}`,
-    disablePoweredByReservoir:
-      DISABLE_POWERED_BY_RESERVOIR != undefined &&
-      DISABLE_POWERED_BY_RESERVOIR != null,
-    source: SOURCE_DOMAIN,
+    apiBase: typeof window !== 'undefined' ? `${window.location.origin}${PROXY_API_BASE}` : `${baseUrl}${PROXY_API_BASE}`,
+    disablePoweredByReservoir: DISABLE_POWERED_BY_RESERVOIR != undefined && DISABLE_POWERED_BY_RESERVOIR != null,
+    source: SOURCE_DOMAIN
   }
 
   if (FEE_BPS && FEE_RECIPIENT) {
     options = {
       ...options,
       marketplaceFee: +FEE_BPS,
-      marketplaceFeeRecipient: FEE_RECIPIENT,
+      marketplaceFeeRecipient: FEE_RECIPIENT
     }
   }
 
   return (
-    <ApolloProvider client={backendClient}>
-    <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
-      <GlobalProvider>
-        <RecoilRoot>
-          <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider
-              chains={chains}
-              theme={rainbowKitTheme}
-              modalSize="compact"
-            >
-              <AnalyticsProvider>
-                <Component {...pageProps} />
-              </AnalyticsProvider>
-            </RainbowKitProvider>
-          </WagmiConfig>
-        </RecoilRoot>
-      </GlobalProvider>
-    </ReservoirKitProvider>
+    <ApolloProvider client={nftfyClient}>
+      <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
+        <GlobalProvider>
+          <RecoilRoot>
+            <WagmiConfig client={wagmiClient}>
+              <RainbowKitProvider chains={chains} theme={rainbowKitTheme} modalSize='compact'>
+                <AnalyticsProvider>
+                  <Component {...pageProps} />
+                </AnalyticsProvider>
+              </RainbowKitProvider>
+            </WagmiConfig>
+          </RecoilRoot>
+        </GlobalProvider>
+      </ReservoirKitProvider>
     </ApolloProvider>
   )
 }

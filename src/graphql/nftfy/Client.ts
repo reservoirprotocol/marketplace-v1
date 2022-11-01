@@ -1,10 +1,10 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
-import { globalConfig } from '../globalConfig'
+import { globalConfig } from '../../config'
 
-export const backendClient = new ApolloClient({
+export const nftfyClient = new ApolloClient({
   ssrMode: typeof window === 'undefined',
   link: new HttpLink({
-    uri: globalConfig.nftfyBackend
+    uri: globalConfig.nftfy.api.base
   }),
   cache: new InMemoryCache({
     typePolicies: {

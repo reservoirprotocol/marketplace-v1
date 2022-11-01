@@ -1,34 +1,29 @@
-import type {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
-import { useRouter } from 'next/router'
-import Layout from 'components/Layout'
-import { useState } from 'react'
-import useCollectionStats from 'hooks/useCollectionStats'
-import useTokens from 'hooks/useTokens'
-import useCollectionAttributes from 'hooks/useCollectionAttributes'
-import { setToast } from 'components/token/setToast'
+import * as Tabs from '@radix-ui/react-tabs'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
-import Hero from 'components/Hero'
-import { formatNumber } from 'lib/numbers'
-import Sidebar from 'components/Sidebar'
+import { useAttributes, useCollections } from '@reservoir0x/reservoir-kit-ui'
 import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
-import SortMenuExplore from 'components/SortMenuExplore'
-import ViewMenu from 'components/ViewMenu'
-import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
-import TokensGrid from 'components/TokensGrid'
-import Head from 'next/head'
 import FormatEth from 'components/FormatEth'
-import * as Tabs from '@radix-ui/react-tabs'
-import { toggleOnItem } from 'lib/router'
+import Hero from 'components/Hero'
+import Layout from 'components/Layout'
+import Sidebar from 'components/Sidebar'
+import SortMenuExplore from 'components/SortMenuExplore'
 import Sweep from 'components/Sweep'
-import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
+import { setToast } from 'components/token/setToast'
+import TokensGrid from 'components/TokensGrid'
+import ViewMenu from 'components/ViewMenu'
+import useCollectionAttributes from 'hooks/useCollectionAttributes'
+import useCollectionStats from 'hooks/useCollectionStats'
+import useTokens from 'hooks/useTokens'
+import { formatNumber } from 'lib/numbers'
+import { toggleOnItem } from 'lib/router'
+import type { GetStaticPaths, GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { FiRefreshCcw } from 'react-icons/fi'
 
 // Environment variables
 // For more information about these variables
@@ -65,26 +60,16 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const collectionResponse = useCollections(
     { id },
     {
-      fallback: fallback.collection,
+      fallback: fallback.collection
     }
   )
-  const collection =
-    collectionResponse.data && collectionResponse.data[0]
-      ? collectionResponse.data[0]
-      : undefined
+  const collection = collectionResponse.data && collectionResponse.data[0] ? collectionResponse.data[0] : undefined
 
   const stats = useCollectionStats(router, id)
 
-  const { tokens, ref: refTokens } = useTokens(
-    id,
-    [fallback.tokens],
-    router,
-    false,
-    localListings
-  )
+  const { tokens, ref: refTokens } = useTokens(id, [fallback.tokens], router, false, localListings)
 
-  const { collectionAttributes, ref: refCollectionAttributes } =
-    useCollectionAttributes(router, id)
+  const { collectionAttributes, ref: refCollectionAttributes } = useCollectionAttributes(router, id)
 
   const attributes = useAttributes(id)
 
@@ -101,7 +86,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
       setToast({
         kind: 'error',
         message: message || 'Request to refresh collection was rejected.',
-        title: 'Refresh collection failed',
+        title: 'Refresh collection failed'
       })
 
       setRefreshLoading(false)
@@ -111,7 +96,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
       if (!collectionId) throw new Error('No collection ID')
 
       const data = {
-        collection: collectionId,
+        collection: collectionId
       }
 
       const pathname = `${PROXY_API_BASE}/collections/refresh/v1`
@@ -121,9 +106,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
       const res = await fetch(pathname, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       })
 
       if (!res.ok) {
@@ -135,7 +120,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
       setToast({
         kind: 'success',
         message: 'Request to refresh collection was accepted.',
-        title: 'Refresh collection',
+        title: 'Refresh collection'
       })
     } catch (err) {
       handleError()
@@ -146,34 +131,30 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     setRefreshLoading(false)
   }
 
-  const title = metaTitle ? (
-    <title>{metaTitle}</title>
-  ) : (
-    <title>{collection?.name}</title>
-  )
+  const title = metaTitle ? <title>{metaTitle}</title> : <title>{collection?.name}</title>
   const description = metaDescription ? (
-    <meta name="description" content={metaDescription} />
+    <meta name='description' content={metaDescription} />
   ) : (
-    <meta name="description" content={collection?.description as string} />
+    <meta name='description' content={collection?.description as string} />
   )
 
   const bannerImage = (envBannerImage || collection?.banner) as string
 
   const image = metaImage ? (
     <>
-      <meta name="twitter:image" content={metaImage} />
-      <meta name="og:image" content={metaImage} />
+      <meta name='twitter:image' content={metaImage} />
+      <meta name='og:image' content={metaImage} />
     </>
   ) : (
     <>
-      <meta name="twitter:image" content={bannerImage} />
-      <meta property="og:image" content={bannerImage} />
+      <meta name='twitter:image' content={bannerImage} />
+      <meta property='og:image' content={bannerImage} />
     </>
   )
 
   const tabs = [
     { name: 'Items', id: 'items' },
-    { name: 'Activity', id: 'activity' },
+    { name: 'Activity', id: 'activity' }
   ]
 
   return (
@@ -187,9 +168,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         <Hero collectionId={id} fallback={fallback} />
         <Tabs.Root
           value={router.query?.tab?.toString() || 'items'}
-          className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21"
+          className='col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21'
         >
-          <Tabs.List className="col-span-full flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
+          <Tabs.List className='col-span-full flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]'>
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
@@ -204,7 +185,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               </Tabs.Trigger>
             ))}
           </Tabs.List>
-          <Tabs.Content value="items" asChild>
+          <Tabs.Content value='items' asChild>
             <>
               <Sidebar
                 attributes={attributes.data}
@@ -212,96 +193,67 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   tokens.setSize(1)
                 }}
               />
-              <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
-                <div className="mb-4 hidden items-center justify-between md:flex">
-                  <div className="flex items-center gap-6">
+              <div className='col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4'>
+                <div className='mb-4 hidden items-center justify-between md:flex'>
+                  <div className='flex items-center gap-6'>
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
 
-                        <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                        <div className="flex items-center gap-1">
-                          <FormatEth
-                            amount={stats?.data?.stats?.market?.floorAsk?.price}
-                          />{' '}
-                          floor price
+                        <div className='h-9 w-px bg-gray-300 dark:bg-neutral-600'></div>
+                        <div className='flex items-center gap-1'>
+                          <FormatEth amount={stats?.data?.stats?.market?.floorAsk?.price} /> floor price
                         </div>
                       </>
                     )}
                   </div>
-                  <div className="flex gap-4">
-                    {router.query?.attribute_key ||
-                    router.query?.attribute_key === '' ? (
+                  <div className='flex gap-4'>
+                    {router.query?.attribute_key || router.query?.attribute_key === '' ? (
                       <>
-                        <SortMenuExplore
-                          setSize={collectionAttributes.setSize}
-                        />
+                        <SortMenuExplore setSize={collectionAttributes.setSize} />
                         <ViewMenu />
                       </>
                     ) : null}
                     <button
-                      className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                      title="Refresh collection"
+                      className='btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4'
+                      title='Refresh collection'
                       disabled={refreshLoading}
                       onClick={() => refreshCollection(id)}
                     >
-                      <FiRefreshCcw
-                        className={`h-5 w-5 ${
-                          refreshLoading ? 'animate-spin-reverse' : ''
-                        }`}
-                      />
+                      <FiRefreshCcw className={`h-5 w-5 ${refreshLoading ? 'animate-spin-reverse' : ''}`} />
                     </button>
-                    <Sweep
-                      collection={collection}
-                      tokens={tokens.data}
-                      setToast={setToast}
-                      mutate={tokens.mutate}
-                    />
+                    <Sweep collection={collection} tokens={tokens.data} setToast={setToast} mutate={tokens.mutate} />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className='mb-10 flex items-center justify-between'>
                   <div>
-                    <AttributesFlex className="flex flex-wrap gap-3" />
+                    <AttributesFlex className='flex flex-wrap gap-3' />
                     <ExploreFlex />
                   </div>
                   {(SOURCE_ID || SOURCE_DOMAIN) && (
-                    <div className="flex items-center gap-4">
+                    <div className='flex items-center gap-4'>
                       <input
-                        type="checkbox"
-                        name="localListings"
-                        id="localListings"
-                        className="scale-125 transform"
-                        onChange={(e) => setLocalListings(e.target.checked)}
+                        type='checkbox'
+                        name='localListings'
+                        id='localListings'
+                        className='scale-125 transform'
+                        onChange={e => setLocalListings(e.target.checked)}
                       />
-                      <label
-                        htmlFor="localListings"
-                        className="reservoir-body dark:text-white"
-                      >
+                      <label htmlFor='localListings' className='reservoir-body dark:text-white'>
                         Show Only Local Listings
                       </label>
                     </div>
                   )}
                 </div>
-                {router.query?.attribute_key ||
-                router.query?.attribute_key === '' ? (
-                  <ExploreTokens
-                    attributes={collectionAttributes}
-                    viewRef={refCollectionAttributes}
-                  />
+                {router.query?.attribute_key || router.query?.attribute_key === '' ? (
+                  <ExploreTokens attributes={collectionAttributes} viewRef={refCollectionAttributes} />
                 ) : (
-                  <TokensGrid
-                    tokens={tokens}
-                    viewRef={refTokens}
-                    collectionImage={collection?.image as string}
-                  />
+                  <TokensGrid tokens={tokens} viewRef={refTokens} collectionImage={collection?.image as string} />
                 )}
               </div>
             </>
           </Tabs.Content>
-          <Tabs.Content
-            value="activity"
-            className="col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-2]"
-          >
+          <Tabs.Content value='activity' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-2]'>
             <CollectionActivityTab collectionId={id} />
           </Tabs.Content>
         </Tabs.Root>
@@ -316,15 +268,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
     return {
       paths: [{ params: { id: COLLECTION } }],
-      fallback: false,
+      fallback: false
     }
   }
 
   if (COLLECTION && (COMMUNITY || COLLECTION_SET_ID)) {
     const url = new URL(`${RESERVOIR_API_BASE}/search/collections/v1`)
 
-    const query: paths['/search/collections/v1']['get']['parameters']['query'] =
-      { limit: 20 }
+    const query: paths['/search/collections/v1']['get']['parameters']['query'] = { limit: 20 }
 
     if (COLLECTION_SET_ID) {
       query.collectionsSetId = COLLECTION_SET_ID
@@ -336,38 +287,37 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
     const res = await fetch(url.href)
 
-    const collections =
-      (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
+    const collections = (await res.json()) as paths['/search/collections/v1']['get']['responses']['200']['schema']
 
     if (!collections?.collections) {
       return {
         paths: [{ params: { id: COLLECTION } }],
-        fallback: false,
+        fallback: false
       }
     }
 
     if (collections.collections?.length === 0) {
       return {
         paths: [{ params: { id: COLLECTION } }],
-        fallback: false,
+        fallback: false
       }
     }
 
     const paths = collections?.collections?.map(({ contract }) => ({
       params: {
-        id: contract,
-      },
+        id: contract
+      }
     }))
 
     return {
       paths,
-      fallback: false,
+      fallback: false
     }
   }
 
   return {
     paths: [],
-    fallback: 'blocking',
+    fallback: 'blocking'
   }
 }
 
@@ -383,7 +333,7 @@ export const getStaticProps: GetStaticProps<{
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
-      'x-api-key': RESERVOIR_API_KEY,
+      'x-api-key': RESERVOIR_API_KEY
     }
   }
 
@@ -392,18 +342,16 @@ export const getStaticProps: GetStaticProps<{
   // COLLECTION
   const collectionUrl = new URL(`${RESERVOIR_API_BASE}/collections/v5`)
 
-  let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] =
-    {
-      id,
-      includeTopBid: true,
-    }
+  let collectionQuery: paths['/collections/v5']['get']['parameters']['query'] = {
+    id,
+    includeTopBid: true
+  }
 
   setParams(collectionUrl, collectionQuery)
 
   const collectionRes = await fetch(collectionUrl.href, options)
 
-  const collection =
-    (await collectionRes.json()) as Props['fallback']['collection']
+  const collection = (await collectionRes.json()) as Props['fallback']['collection']
 
   // TOKENS
   const tokensUrl = new URL(`${RESERVOIR_API_BASE}/tokens/v5`)
@@ -412,7 +360,7 @@ export const getStaticProps: GetStaticProps<{
     collection: id,
     sortBy: 'floorAskPrice',
     includeTopBid: false,
-    limit: 20,
+    limit: 20
   }
 
   setParams(tokensUrl, tokensQuery)
@@ -423,6 +371,6 @@ export const getStaticProps: GetStaticProps<{
 
   return {
     props: { fallback: { collection, tokens }, id },
-    revalidate: 20,
+    revalidate: 20
   }
 }

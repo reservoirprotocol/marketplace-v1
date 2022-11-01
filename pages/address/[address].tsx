@@ -1,28 +1,23 @@
-import Layout from 'components/Layout'
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
-import { useRouter } from 'next/router'
-import { useAccount, useNetwork, useEnsName, useEnsAvatar } from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
-import { toggleOnItem } from 'lib/router'
-import UserOffersTable from 'components/tables/UserOffersTable'
-import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
-import UserListingsTable from 'components/tables/UserListingsTable'
-import UserTokensGrid from 'components/UserTokensGrid'
-import Avatar from 'components/Avatar'
-import { ComponentProps } from 'react'
-import Toast from 'components/Toast'
-import toast from 'react-hot-toast'
-import Head from 'next/head'
-import useSearchCommunity from 'hooks/useSearchCommunity'
-import { truncateAddress } from 'lib/truncateText'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import Avatar from 'components/Avatar'
+import Layout from 'components/Layout'
 import UserActivityTab from 'components/tables/UserActivityTab'
+import UserListingsTable from 'components/tables/UserListingsTable'
+import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
+import UserOffersTable from 'components/tables/UserOffersTable'
+import Toast from 'components/Toast'
+import UserTokensGrid from 'components/UserTokensGrid'
 import useMounted from 'hooks/useMounted'
+import useSearchCommunity from 'hooks/useSearchCommunity'
+import { toggleOnItem } from 'lib/router'
+import { truncateAddress } from 'lib/truncateText'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { ComponentProps } from 'react'
+import toast from 'react-hot-toast'
+import { useAccount, useEnsAvatar, useEnsName, useNetwork } from 'wagmi'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
@@ -34,7 +29,7 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const metadata = {
-  title: (title: string) => <title>{title}</title>,
+  title: (title: string) => <title>{title}</title>
 }
 
 const Address: NextPage<Props> = ({ address, fallback }) => {
@@ -47,7 +42,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   }
 
   const { data: ensAvatar } = useEnsAvatar({
-    addressOrName: address,
+    addressOrName: address
   })
 
   const { data: ensName } = useEnsName({
@@ -57,7 +52,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     },
     onError(error) {
       console.log('Error', error)
-    },
+    }
   })
   const { chain: activeChain } = useNetwork()
   const collections = useSearchCommunity()
@@ -68,10 +63,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   }
 
   if (COMMUNITY || COLLECTION_SET_ID) {
-    collectionIds =
-      (collections?.data?.collections
-        ?.map(({ contract }) => contract)
-        .filter((contract) => !!contract) as string[]) || []
+    collectionIds = (collections?.data?.collections?.map(({ contract }) => contract).filter(contract => !!contract) as string[]) || []
   }
 
   if (!CHAIN_ID) {
@@ -83,9 +75,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     return null
   }
 
-  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
-    data
-  ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = data => toast.custom(t => <Toast t={t} toast={toast} data={data} />)
 
   const isInTheWrongNetwork = activeChain?.id !== +CHAIN_ID
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
@@ -98,7 +88,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Received', id: 'received' },
       { name: 'Offers Made', id: 'buying' },
-      { name: 'Listings', id: 'selling' },
+      { name: 'Listings', id: 'selling' }
     ]
   }
 
@@ -107,27 +97,19 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   return (
     <Layout navbar={{}}>
       <Head>{metadata.title(`${address} Profile`)}</Head>
-      <div className="col-span-full">
-        <div className="mt-4 mb-4 w-full px-4 md:px-16">
-          <div className="flex">
-            {address && (
-              <Avatar address={address} avatar={ensAvatar} size={80} />
-            )}
-            <div className="ml-4 flex flex-col justify-center">
-              <p className="reservoir-h6 text-xl font-semibold dark:text-white">
-                {ensName || formattedAddress}
-              </p>
-              {ensName && (
-                <p className="reservoir-label text-md font-semibold opacity-60">
-                  {formattedAddress}
-                </p>
-              )}
+      <div className='col-span-full'>
+        <div className='mt-4 mb-4 w-full px-4 md:px-16'>
+          <div className='flex'>
+            {address && <Avatar address={address} avatar={ensAvatar} size={80} />}
+            <div className='ml-4 flex flex-col justify-center'>
+              <p className='reservoir-h6 text-xl font-semibold dark:text-white'>{ensName || formattedAddress}</p>
+              {ensName && <p className='reservoir-label text-md font-semibold opacity-60'>{formattedAddress}</p>}
             </div>
           </div>
         </div>
-        <div className="px-4 md:px-16">
+        <div className='px-4 md:px-16'>
           <Tabs.Root value={router.query?.tab?.toString() || 'portfolio'}>
-            <Tabs.List className="no-scrollbar mb-4 ml-[-15px] flex w-[calc(100%_+_30px)] overflow-y-scroll border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)] md:ml-0 md:w-full">
+            <Tabs.List className='no-scrollbar mb-4 ml-[-15px] flex w-[calc(100%_+_30px)] overflow-y-scroll border-b border-[rgba(0,0,0,0.05)] dark:border-[rgba(255,255,255,0.2)] md:ml-0 md:w-full'>
               {tabs.map(({ name, id }) => (
                 <Tabs.Trigger
                   key={id}
@@ -142,44 +124,44 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Trigger>
               ))}
             </Tabs.List>
-            <Tabs.Content value="portfolio">
-              <div className="mt-6">
+            <Tabs.Content value='portfolio'>
+              <div className='mt-6'>
                 <UserTokensGrid fallback={fallback} owner={address || ''} />
               </div>
             </Tabs.Content>
             {isOwner && (
               <>
-                <Tabs.Content value="buying">
+                <Tabs.Content value='buying'>
                   <UserOffersTable
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,
-                      setToast,
+                      setToast
                     }}
                   />
                 </Tabs.Content>
-                <Tabs.Content value="received">
+                <Tabs.Content value='received'>
                   <UserOffersReceivedTable
                     isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,
-                      setToast,
+                      setToast
                     }}
                   />
                 </Tabs.Content>
-                <Tabs.Content value="selling" className="col-span-full">
+                <Tabs.Content value='selling' className='col-span-full'>
                   <UserListingsTable
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,
-                      setToast,
+                      setToast
                     }}
                   />
                 </Tabs.Content>
               </>
             )}
-            <Tabs.Content value="activity" className="col-span-full">
+            <Tabs.Content value='activity' className='col-span-full'>
               <UserActivityTab user={address} />
             </Tabs.Content>
           </Tabs.Root>
@@ -194,7 +176,7 @@ export default Address
 export const getStaticPaths: GetStaticPaths = () => {
   return {
     paths: [],
-    fallback: 'blocking',
+    fallback: 'blocking'
   }
 }
 
@@ -210,7 +192,7 @@ export const getStaticProps: GetStaticProps<{
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
-      'x-api-key': RESERVOIR_API_KEY,
+      'x-api-key': RESERVOIR_API_KEY
     }
   }
 
@@ -218,7 +200,7 @@ export const getStaticProps: GetStaticProps<{
 
   let query: paths['/users/{user}/tokens/v5']['get']['parameters']['query'] = {
     limit: 20,
-    offset: 0,
+    offset: 0
   }
 
   if (COLLECTION_SET_ID) {
@@ -237,8 +219,8 @@ export const getStaticProps: GetStaticProps<{
     props: {
       address,
       fallback: {
-        tokens,
-      },
-    },
+        tokens
+      }
+    }
   }
 }

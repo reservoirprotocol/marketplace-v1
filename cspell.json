@@ -1,0 +1,16 @@
+{
+  "version": "1",
+  "language": "en",
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/vscode-extension/**",
+    "**/.git/**",
+    ".vscode",
+    "report",
+    "**.mock.**",
+    "components",
+    "pages",
+    "package.json"
+  ],
+  "words": ["nftfy"]
+}

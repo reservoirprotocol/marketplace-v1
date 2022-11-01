@@ -1,13 +1,13 @@
-import Layout from 'components/Layout'
-import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
-import { paths } from '@reservoir0x/reservoir-kit-client'
-import setParams from 'lib/params'
-import Head from 'next/head'
-import TrendingCollectionTable from 'components/TrendingCollectionTable'
-import SortTrendingCollections from 'components/SortTrendingCollections'
 import { useMediaQuery } from '@react-hookz/web'
-import { useEffect } from 'react'
+import { paths } from '@reservoir0x/reservoir-kit-client'
+import Layout from 'components/Layout'
+import SortTrendingCollections from 'components/SortTrendingCollections'
+import TrendingCollectionTable from 'components/TrendingCollectionTable'
+import setParams from 'lib/params'
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 // Environment variables
 // For more information about these variables
@@ -32,23 +32,19 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
-  description: (description: string) => (
-    <meta name="description" content={description} />
-  ),
-  tagline: (tagline: string | undefined) => (
-    <>{tagline || 'Discover, buy and sell NFTs'}</>
-  ),
+  description: (description: string) => <meta name='description' content={description} />,
+  tagline: (tagline: string | undefined) => <>{tagline || 'Discover, buy and sell NFTs'}</>,
   image: (image?: string) => {
     if (image) {
       return (
         <>
-          <meta name="twitter:image" content={image} />
-          <meta name="og:image" content={image} />
+          <meta name='twitter:image' content={image} />
+          <meta name='og:image' content={image} />
         </>
       )
     }
     return null
-  },
+  }
 }
 
 const Home: NextPage<Props> = ({ fallback }) => {
@@ -82,14 +78,12 @@ const Home: NextPage<Props> = ({ fallback }) => {
         {description}
         {image}
       </Head>
-      <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
-        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
+      <header className='col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0'>
+        <h1 className='reservoir-h1 text-center dark:text-white'>{tagline}</h1>
       </header>
-      <div className="col-span-full px-6 md:px-16">
-        <div className="mb-9 flex w-full items-center justify-between">
-          <div className="reservoir-h4 dark:text-white">
-            Trending Collections
-          </div>
+      <div className='col-span-full px-6 md:px-16'>
+        <div className='mb-9 flex w-full items-center justify-between'>
+          <div className='reservoir-h4 dark:text-white'>Trending Collections</div>
           {!isSmallDevice && <SortTrendingCollections />}
         </div>
         <TrendingCollectionTable fallback={fallback} />
@@ -109,7 +103,7 @@ export const getStaticProps: GetStaticProps<{
 
   if (RESERVOIR_API_KEY) {
     options.headers = {
-      'x-api-key': RESERVOIR_API_KEY,
+      'x-api-key': RESERVOIR_API_KEY
     }
   }
 
@@ -117,7 +111,7 @@ export const getStaticProps: GetStaticProps<{
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
-    sortBy: '1DayVolume',
+    sortBy: '1DayVolume'
   }
 
   if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
@@ -132,8 +126,8 @@ export const getStaticProps: GetStaticProps<{
   return {
     props: {
       fallback: {
-        collections,
-      },
-    },
+        collections
+      }
+    }
   }
 }

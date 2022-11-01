@@ -38,7 +38,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const options: RequestInit | undefined = {
-      method,
+      method
     }
 
     const headers = new Headers()
@@ -50,17 +50,11 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       options.body = JSON.stringify(body)
     }
 
-    if (
-      reqHeaders['x-rkc-version'] &&
-      typeof reqHeaders['x-rkc-version'] === 'string'
-    ) {
+    if (reqHeaders['x-rkc-version'] && typeof reqHeaders['x-rkc-version'] === 'string') {
       headers.set('x-rkc-version', reqHeaders['x-rkc-version'])
     }
 
-    if (
-      reqHeaders['x-rkui-version'] &&
-      typeof reqHeaders['x-rkui-version'] === 'string'
-    ) {
+    if (reqHeaders['x-rkui-version'] && typeof reqHeaders['x-rkui-version'] === 'string') {
       headers.set('x-rkui-version', reqHeaders['x-rkui-version'])
     }
 
