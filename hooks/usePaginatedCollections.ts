@@ -15,7 +15,7 @@ type Collections = paths['/collections/v5']['get']['responses']['200']['schema']
 
 export default function usePaginatedCollections(
   router: NextRouter,
-  fallback?: Collections
+  fallback?: Collections,
 ) {
   const { ref, inView } = useInView()
 
@@ -61,7 +61,7 @@ const getKey: (
   if (previousPageData && !previousPageData?.continuation) return null
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
-    limit: 20,
+    limit: 10,
     sortBy: '1DayVolume',
   }
 

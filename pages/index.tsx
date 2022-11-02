@@ -5,6 +5,7 @@ import setParams from 'lib/params'
 import Head from 'next/head'
 import TrendingCollectionTable from 'components/TrendingCollectionTable'
 import SortTrendingCollections from 'components/SortTrendingCollections'
+import Footer from 'components/Footer'
 import { useMediaQuery } from '@react-hookz/web'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -94,6 +95,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
         </div>
         <TrendingCollectionTable fallback={fallback} />
       </div>
+      <Footer/>
     </Layout>
   )
 }
@@ -116,7 +118,7 @@ export const getStaticProps: GetStaticProps<{
   const url = new URL('/collections/v5', RESERVOIR_API_BASE)
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
-    limit: 20,
+    limit: 10,
     sortBy: '1DayVolume',
   }
 
