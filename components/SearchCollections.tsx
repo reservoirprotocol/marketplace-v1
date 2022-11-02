@@ -15,6 +15,8 @@ type Props = {
   initialResults?: SearchCollectionsAPISuccessResponse
 }
 
+const DEFAULT_IMAGE = 'https://ik.imagekit.io/autobahn/showroom-default-image_cZvv3FPZ-.png';
+
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
@@ -75,6 +77,8 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
 
   const isEmpty = results?.collections?.length === 0
 
+  console.log(initialResults);
+
   return (
     <Downshift
       onInputValueChange={(value) => debouncedSearch(value)}
@@ -104,7 +108,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
           <input
             type="text"
             tabIndex={-1}
-            className="reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:ring-primary-900 dark:placeholder:text-neutral-400  dark:focus:ring-4 lg:w-[447px]"
+            className="reservoir-label-m sm:reservoir-label-l input-primary-outline w-full pl-9 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:ring-primary-900 dark:placeholder:text-neutral-400 dark:focus:ring-4 lg:w-[447px]"
             placeholder="Search for a collection"
             {...getInputProps()}
           />
@@ -152,8 +156,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                       >
                         <img
                           src={
-                            collection?.image ??
-                            'https://via.placeholder.com/30'
+                            collection?.image || DEFAULT_IMAGE
                           }
                           alt={`${collection?.name}'s logo.`}
                           className="h-9 w-9 shrink-0 overflow-hidden rounded-full"
@@ -202,7 +205,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
                   >
                     <img
                       src={
-                        collection?.image ?? 'https://via.placeholder.com/30'
+                        collection?.image || DEFAULT_IMAGE
                       }
                       alt={`${collection?.name}'s logo.`}
                       className="h-9 w-9 shrink-0 overflow-hidden rounded-full"

@@ -1,5 +1,6 @@
 import { ComponentProps, FC } from 'react'
 import { Toaster } from 'react-hot-toast'
+import Footer from './Footer';
 import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
@@ -19,6 +20,7 @@ const Layout: FC<Props> = ({ children, navbar }) => {
         <Navbar {...navbar} />
         {children}
       </main>
+      <Footer />
     </>
   )
 }

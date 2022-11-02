@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import Link from 'next/link'
+import cn from 'classnames';
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from 'components/FormatEth'
 import useCollections from 'hooks/useCollections'
@@ -71,11 +72,15 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               supply,
             } = processCollection(collection)
 
+            console.log("collection", collection);
+
             return (
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className="group h-[88px] border-b border-neutral-300 dark:border-neutral-600 dark:text-white"
+                className={cn("group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white", {
+                  "border-b": index !== arr.length - 1
+                })}
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
