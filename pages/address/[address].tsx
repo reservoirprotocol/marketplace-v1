@@ -88,7 +88,8 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Received', id: 'received' },
       { name: 'Offers Made', id: 'buying' },
-      { name: 'Listings', id: 'selling' }
+      { name: 'Pools', id: 'pools' },
+      { name: 'Rewards', id: 'rewards' }
     ]
   }
 
@@ -161,6 +162,12 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                 </Tabs.Content>
               </>
             )}
+            <Tabs.Content value='rewards' className='col-span-full'>
+              <div className='mt-14 grid justify-center dark:text-white'>[Release 12/2022] Integration with Nftfy RockPool</div>
+            </Tabs.Content>
+            <Tabs.Content value='pools' className='col-span-full'>
+              <div className='mt-14 grid justify-center dark:text-white'>[Release 12/2022] Integration with Nftfy Rewards</div>
+            </Tabs.Content>
             <Tabs.Content value='activity' className='col-span-full'>
               <UserActivityTab user={address} />
             </Tabs.Content>

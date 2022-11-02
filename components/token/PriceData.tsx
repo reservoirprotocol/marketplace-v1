@@ -1,26 +1,22 @@
+import {
+  AcceptBidModal, BidModal, ListModal, useReservoirClient, useTokens
+} from '@reservoir0x/reservoir-kit-ui'
 import BuyNow from 'components/BuyNow'
 import CancelListing from 'components/CancelListing'
 import CancelOffer from 'components/CancelOffer'
-import {
-  ListModal,
-  BidModal,
-  useReservoirClient,
-  AcceptBidModal,
-  useTokens,
-} from '@reservoir0x/reservoir-kit-ui'
+import ConnectWalletButton from 'components/ConnectWalletButton'
+import FormatCrypto from 'components/FormatCrypto'
+import SwapCartModal from 'components/SwapCartModal'
+import useCoinConversion from 'hooks/useCoinConversion'
+import useMounted from 'hooks/useMounted'
+import { formatDollar } from 'lib/numbers'
 import React, { ComponentPropsWithoutRef, FC, ReactNode, useState } from 'react'
+import { FaShoppingCart } from 'react-icons/fa'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
+import { Collection } from 'types/reservoir'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
-import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
-import FormatCrypto from 'components/FormatCrypto'
-import { Collection } from 'types/reservoir'
-import { formatDollar } from 'lib/numbers'
-import useCoinConversion from 'hooks/useCoinConversion'
-import SwapCartModal from 'components/SwapCartModal'
-import { FaShoppingCart } from 'react-icons/fa'
-import ConnectWalletButton from 'components/ConnectWalletButton'
-import useMounted from 'hooks/useMounted'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID

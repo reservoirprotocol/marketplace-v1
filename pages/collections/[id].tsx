@@ -154,7 +154,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
   const tabs = [
     { name: 'Items', id: 'items' },
-    { name: 'Activity', id: 'activity' }
+    { name: 'Activity', id: 'activity' },
+    { name: 'Pools', id: 'pools' },
+    { name: 'Rewards', id: 'rewards' }
   ]
 
   return (
@@ -255,6 +257,16 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.Content>
           <Tabs.Content value='activity' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-2]'>
             <CollectionActivityTab collectionId={id} />
+          </Tabs.Content>
+          <Tabs.Content value='pools' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-3]'>
+            <div className='justify-right mt-14  dark:text-white'>
+              <h3>[Release 12/2022] Integration with Nftfy RockPool</h3>
+            </div>
+          </Tabs.Content>
+          <Tabs.Content value='rewards' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-4]'>
+            <div className='justify-right mt-14  dark:text-white'>
+              <h3>[Release 12/2022] Integration with Nftfy Rewards</h3>
+            </div>
           </Tabs.Content>
         </Tabs.Root>
       </>
