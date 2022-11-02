@@ -29,39 +29,42 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const isTestNet = CHAIN_ID === '4'
 
   return (
-    <Link href={NAVBAR_LOGO_LINK || '/'}>
-      <a
-        className={`relative inline-flex flex-none items-center gap-1 ${className}`}
-      >
-        <img
-          src={logo}
-          alt={logoAlt}
-          className={`h-9 w-auto ${!variant ? 'md:hidden' : ''} ${
-            desktopVariant ? 'hidden' : ''
-          } ${mobileVariant ? 'block' : ''}`}
-        />
-        <img
-          src={desktopLogo}
-          alt={logoAlt}
-          className={`h-9 w-auto md:block ${
-            !variant ? 'hidden md:block' : ''
-          } ${mobileVariant ? 'hidden' : ''} ${desktopVariant ? 'block' : ''}`}
-        />
-        {isTestNet && (
-          <div
-            className={`reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px]
-          ${
-            !variant || desktopVariant
-              ? 'md:absolute md:left-[-50px] md:bottom-[8px]'
-              : ''
-          }
-          `}
-          >
-            Testnet
-          </div>
-        )}
-      </a>
-    </Link>
+    <div className="flex flex-col sm:flex-row justify-center items-center">
+      <Link href={NAVBAR_LOGO_LINK || '/'}>
+        <a
+          className={`relative inline-flex flex-none items-center gap-1 ${className}`}
+        >
+          <img
+            src={logo}
+            alt={logoAlt}
+            className={`h-9 w-auto ${!variant ? 'md:hidden' : ''} ${
+              desktopVariant ? 'hidden' : ''
+            } ${mobileVariant ? 'block' : ''}`}
+          />
+          <img
+            src={desktopLogo}
+            alt={logoAlt}
+            className={`h-9 w-auto md:block ${
+              !variant ? 'hidden md:block' : ''
+            } ${mobileVariant ? 'hidden' : ''} ${desktopVariant ? 'block' : ''}`}
+          />
+          {isTestNet && (
+            <div
+              className={`reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px]
+            ${
+              !variant || desktopVariant
+                ? 'md:absolute md:left-[-50px] md:bottom-[8px]'
+                : ''
+            }
+            `}
+            >
+              Testnet
+            </div>
+          )}
+        </a>
+      </Link>
+      <div className="text-xs items-center inline-flex font-bold leading-sm uppercase px-3 py-1 bg-purple-200 text-purple-700 rounded-full">Beta</div>
+    </div>
   )
 }
 
