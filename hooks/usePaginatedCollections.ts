@@ -15,7 +15,7 @@ type Collections = paths['/collections/v5']['get']['responses']['200']['schema']
 
 export default function usePaginatedCollections(
   router: NextRouter,
-  fallback?: Collections,
+  fallback?: Collections
 ) {
   const { ref, inView } = useInView()
 
