@@ -151,7 +151,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
       <Hero fallback={fallback} collectionId={collectionId} />
       <div className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21">
         <hr className="col-span-full border-gray-300 dark:border-neutral-600" />
-        <Sidebar attributes={attributes} setTokensSize={tokens.setSize} />
+        <Sidebar attributes={attributes} openOnMobile={false} setTokensSize={tokens.setSize} />
         <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
           <div className="mb-10 hidden items-center justify-between md:flex">
             <div className="flex items-center gap-6">
