@@ -1,16 +1,17 @@
 import { useMediaQuery } from '@react-hookz/web'
 import { FC } from 'react'
-import { FiGlobe, FiMoreVertical } from 'react-icons/fi'
+import { FiGlobe, FiMoreVertical, FiRefreshCcw } from 'react-icons/fi'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Collection } from 'types/reservoir'
 
 type Props = {
-  collection?: Collection
+  refreshCollection: (collectionId: string | undefined) => Promise<void>,
+  collection?: Collection,
 }
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 
-const HeroSocialLinks: FC<Props> = ({ collection }) => {
+const HeroSocialLinks: FC<Props> = ({ refreshCollection, collection }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const social = {
     twitterUsername: collection?.twitterUsername,
@@ -102,6 +103,19 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
                 </a>
               </DropdownMenu.Item>
             )}
+            {collection?.id &&
+              <DropdownMenu.Item asChild>
+                <button
+                  className={dropdownItemClasses}
+                  onClick={() => refreshCollection(collection?.id)}
+                >
+                  <FiRefreshCcw
+                    className='h-4 w-4'
+                  />
+                  Refresh Metadata
+                </button>
+              </DropdownMenu.Item>
+            }
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
