@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import LoadingCard from './LoadingCard'
 import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
@@ -17,6 +17,7 @@ type Props = {
 }
 
 const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
+  const [mutated, setMutated] = useState<boolean>(false)
   const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
     limit: 20,
     includeTopBid: true,
@@ -36,7 +37,7 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
   })
 
   useEffect(() => {
-    userTokens.mutate()
+    userTokens.mutate().then(() => setMutated(true))
     return () => {
       userTokens.setSize(1)
     }
@@ -63,6 +64,10 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
     return (
       <div className="grid justify-center text-xl font-semibold">No tokens</div>
     )
+  }
+
+  if (!mutated) {
+    return <div></div>
   }
 
   return (
