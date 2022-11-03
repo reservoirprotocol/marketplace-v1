@@ -61,7 +61,7 @@ const getKey: (
   if (previousPageData && !previousPageData?.continuation) return null
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
-    limit: 10,
+    limit: 20,
     sortBy: '1DayVolume',
   }
 
