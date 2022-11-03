@@ -170,7 +170,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
             setExpanded(true)
           }}
         >
-          Explore All
+          Load More
         </button>
       }
     </div>
