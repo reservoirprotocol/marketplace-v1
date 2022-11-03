@@ -118,7 +118,7 @@ export const getStaticProps: GetStaticProps<{
   const url = new URL('/collections/v5', RESERVOIR_API_BASE)
 
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
-    limit: 10,
+    limit: 20,
     sortBy: '1DayVolume',
   }
 
