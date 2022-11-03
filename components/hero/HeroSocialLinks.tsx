@@ -38,7 +38,8 @@ const HeroSocialLinks: FC<Props> = ({ refreshCollection, collection }) => {
             <FiMoreVertical className="h-6 w-6 dark:text-[#D4D4D4]" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
-            sideOffset={10}
+            sideOffset={8}
+            align='end'
             className="min-w-[172px] overflow-hidden rounded-lg border bg-white shadow-md radix-side-bottom:animate-slide-down dark:border-[#525252] dark:bg-neutral-900 md:max-w-[422px]"
           >
             {typeof social.discordUrl === 'string' && (
@@ -110,7 +111,7 @@ const HeroSocialLinks: FC<Props> = ({ refreshCollection, collection }) => {
                   onClick={() => refreshCollection(collection?.id)}
                 >
                   <FiRefreshCcw
-                    className='h-4 w-4'
+                    className='h-6 w-6'
                   />
                   Refresh Metadata
                 </button>
