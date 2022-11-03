@@ -6,7 +6,7 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
@@ -28,8 +28,7 @@ import { toggleOnItem } from 'lib/router'
 import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
-import { DateTime } from 'luxon'
-import { FiRefreshCcw } from 'react-icons/fi'
+import RefreshButton from 'components/RefreshButton'
 
 // Environment variables
 // For more information about these variables
@@ -61,9 +60,6 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [localListings, setLocalListings] = useState(false)
-  const [time, setTime] = useState<DateTime>(DateTime.now())
-  const [timeDifference, setTimeDifference] = useState<string | null>('0s ago')
-  const [isLoading, setIsLoading] = useState(false)
 
   const collectionResponse = useCollections(
     { id },
@@ -90,39 +86,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     useCollectionAttributes(router, id)
 
   const attributes = useAttributes(id)
-
-   const refreshData = async () => {
-    setIsLoading(true)
-    // await setTimeout(()=>{}, 10000)
-    setTime(DateTime.now())
-    await new Promise(resolve => setTimeout(resolve, 300))
-    tokens.setSize(1)
-    setIsLoading(false)
-  }
-
-  useEffect(() => {
-    refreshData()
-  }, [router.query])
-
-  useEffect(() => {
-    const handleRouteChange = (url : string) => {
-      console.log('route change')
-    }
-    router.events.on('routeChangeStart', handleRouteChange)
-
-    // If the component is unmounted, unsubscribe
-    // from the event with the `off` method:
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
-    }
-  }, [])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeDifference(time.plus({seconds: 1}).toRelative({style: "narrow"}))
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [time]);
 
   if (!CHAIN_ID) return null
 
@@ -201,21 +164,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6 font-semibold">
-                    <button
-                      onClick={() => refreshData()}
-                      className='flex inline-flex items-center font-light'
-                    >
-                      <FiRefreshCcw
-                        className='h-5 w-5 mr-2'
-                      />
-                      {isLoading
-                        ?
-                        'Loading items...'
-                        :
-                        <>Updated {timeDifference}</>
-                      }
-                    </button>
-
+                    <RefreshButton
+                      refreshData={() => {
+                        tokens.setSize(1)
+                      }} />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
