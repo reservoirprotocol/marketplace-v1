@@ -154,7 +154,7 @@ const Navbar: FC = () => {
           <HamburgerMenu externalLinks={externalLinks} />
         </div>
       ) : (
-        <div className="z-10 ml-auto shrink-0 md:flex md:gap-2">
+        <div className="z-10 ml-auto shrink-0 md:flex gap-2 xl:gap-4">
           {!hasCommunityDropdown && !showDesktopSearch && (
             <div className="ml-auto flex">
               {filterComponent && filterComponent}
