@@ -15,7 +15,7 @@ export default function calculateOffer(
   bps: number
 ) {
   let bpsDivider = BigNumber.from('10000')
-  let total = userInput.mul(bpsDivider).div(bpsDivider.sub(BigNumber.from(bps)))
+  let total = userInput.add(userInput.mul(BigNumber.from(bps)).div(bpsDivider))
   let fee = total.sub(userInput)
 
   if (signerWeth.add(signerEth).lt(total)) {
