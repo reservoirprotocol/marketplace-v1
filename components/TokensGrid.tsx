@@ -13,9 +13,10 @@ type Props = {
   tokens: ReturnType<typeof useTokens>['tokens']
   collectionImage: string | undefined
   viewRef: ReturnType<typeof useInView>['ref']
+  isLoading: boolean
 }
 
-const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
+const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading }) => {
   const { data, mutate } = tokens
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | Token[]>()
@@ -46,8 +47,8 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage }) => {
         className="masonry-grid"
         columnClassName="masonry-grid_column"
       >
-        {tokens.isFetchingInitialData
-          ? Array(10)
+        {tokens.isFetchingInitialData || isLoading
+          ? Array(20)
               .fill(null)
               .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
           : data?.map((token) => {

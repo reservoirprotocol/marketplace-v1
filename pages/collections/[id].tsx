@@ -60,6 +60,7 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [localListings, setLocalListings] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const collectionResponse = useCollections(
     { id },
@@ -167,7 +168,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <RefreshButton
                       refreshData={() => {
                         tokens.setSize(1)
-                      }} />
+                      }} 
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                      />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
@@ -234,6 +238,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     tokens={tokens}
                     viewRef={refTokens}
                     collectionImage={collection?.image as string}
+                    isLoading={isLoading}
                   />
                 )}
               </div>

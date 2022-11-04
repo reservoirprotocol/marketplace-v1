@@ -1,30 +1,34 @@
 import { DateTime } from 'luxon'
 import router from 'next/router'
-import { FC, useEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
 import { FiRefreshCcw } from 'react-icons/fi'
 
 type Props = {
   refreshData: () => void
+  isLoading: boolean
+  setIsLoading: Dispatch<SetStateAction<boolean>>
 }
 
-const RefreshButton: FC<Props> = ({ refreshData }) => {
+const RefreshButton: FC<Props> = ({ refreshData, isLoading, setIsLoading }) => {
   const [lastUpdated, setLastUpdated] = useState<DateTime>(DateTime.now())
   const [timeDifference, setTimeDifference] = useState<string | null>('0s ago')
-  const [isLoading, setIsLoading] = useState(false)
-  
+
+  const countRef = useRef(lastUpdated);
+  countRef.current = lastUpdated;
+
   const handleRefreshData = async () => {
     setIsLoading(true)
-    setLastUpdated(DateTime.now())
-    await new Promise(resolve => setTimeout(resolve, 300))
     refreshData()
+    setLastUpdated(DateTime.now())
+    await new Promise((resolve) => { setTimeout(resolve, 500)})
     setIsLoading(false)
   }
 
   useEffect(() => {
     const handleRouteChange = async () => {
       setIsLoading(true)
-      setLastUpdated(DateTime.now())
       await new Promise(resolve => setTimeout(resolve, 500))
+      setLastUpdated(DateTime.now())
       setIsLoading(false)
     }
     router.events.on('routeChangeStart', handleRouteChange)
@@ -36,13 +40,14 @@ const RefreshButton: FC<Props> = ({ refreshData }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeDifference(lastUpdated.plus({ seconds: 0 }).toRelative({ style: "narrow" }))
-    }, 200);
+      setTimeDifference(countRef.current.plus({ seconds: 0 }).toRelative({style: 'narrow'}))
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [lastUpdated]);
+  }, []);
 
   return (
-    <div className='flex inline-flex items-center font-light'>
+    <div className='flex inline-flex items-center font-light w-70'>
       <button
         onClick={() => handleRefreshData()}
         className='btn-primary-outline px-2 rounded-full mr-2 border-none hover:border'
@@ -57,7 +62,6 @@ const RefreshButton: FC<Props> = ({ refreshData }) => {
         :
         <span>Updated {timeDifference}</span>
       }
-
     </div>
   )
 }
