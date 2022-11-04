@@ -36,5 +36,8 @@
   "typescript.tsserver.watchOptions": {
     "watchFile": "useFsEvents"
   },
-  "editor.accessibilitySupport": "off"
+  "editor.accessibilitySupport": "off",
+
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active"
 }

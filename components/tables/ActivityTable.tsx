@@ -1,22 +1,22 @@
+import { useMediaQuery } from '@react-hookz/web'
+import {
+  useCollectionActivity,
+  useUsersActivity
+} from '@reservoir0x/reservoir-kit-ui'
+import FormatEth from 'components/FormatEth'
+import LoadingIcon from 'components/LoadingIcon'
+import { constants } from 'ethers'
+import useEnvChain from 'hooks/useEnvChain'
 import { optimizeImage } from 'lib/optmizeImage'
 import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
+import Image from 'next/image'
 import Link from 'next/link'
 import { FC, ReactElement, useEffect, useState } from 'react'
-import Image from 'next/image'
-import { useMediaQuery } from '@react-hookz/web'
-import LoadingIcon from 'components/LoadingIcon'
-import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
-import useEnvChain from 'hooks/useEnvChain'
-import { useAccount } from 'wagmi'
-import { constants } from 'ethers'
 import { FaSeedling } from 'react-icons/fa'
-import FormatEth from 'components/FormatEth'
-import {
-  useCollectionActivity,
-  useUsersActivity,
-} from '@reservoir0x/reservoir-kit-ui'
+import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
 import { useInView } from 'react-intersection-observer'
+import { useAccount } from 'wagmi'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 type CollectionActivityResponse = ReturnType<typeof useCollectionActivity>

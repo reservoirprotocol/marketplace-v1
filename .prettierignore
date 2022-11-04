@@ -1,7 +1,6 @@
 .next
 node_modules
 *.md
-components
 context
 hooks
 lib

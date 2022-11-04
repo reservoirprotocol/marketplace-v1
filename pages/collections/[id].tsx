@@ -24,6 +24,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { FiRefreshCcw } from 'react-icons/fi'
+import SpecificPublicTable from '../../src/components/rockpool/SpecificPublicTable'
 
 // Environment variables
 // For more information about these variables
@@ -260,7 +261,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.Content>
           <Tabs.Content value='pools' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-3]'>
             <div className='justify-right mt-14  dark:text-white'>
-              <h3>[Release 12/2022] Integration with Nftfy RockPool</h3>
+              {id && <SpecificPublicTable chainId={Number(CHAIN_ID)} collectionAddress={id} />}
             </div>
           </Tabs.Content>
           <Tabs.Content value='rewards' className='col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-4]'>
