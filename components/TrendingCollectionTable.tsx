@@ -47,7 +47,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
     : ['Collection', 'Volume', 'Floor Price', 'Supply']
 
   return (
-    <div className="mb-11 overflow-x-auto">
+    <div className="mb-11 overflow-x-auto overflow-y-hidden">
       <table className="min-w-full table-auto mb-2">
         <thead>
           <tr>
@@ -170,7 +170,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
       {FOOTER_ENABLED && !expanded &&
         <button
-          className='mx-auto btn-primary-outline border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4'
+          className='mx-auto my-3 btn-primary-outline border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4'
           onClick={() => {
             setExpanded(true)
           }}
