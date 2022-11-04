@@ -40,6 +40,7 @@ type Props = {
 const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   const router = useRouter()
   const [refreshLoading, setRefreshLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const collections = useCollections(
     { id: collectionId },
@@ -209,6 +210,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
               tokens={tokens}
               viewRef={refTokens}
               collectionImage={collection?.image as string}
+              isLoading={isLoading}
             />
           )}
         </div>
