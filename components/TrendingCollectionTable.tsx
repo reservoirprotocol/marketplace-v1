@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
 import { useState } from 'react'
+import { CgSpinner } from 'react-icons/cg'
 
 const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED
 
@@ -162,6 +163,10 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
           })}
         </tbody>
       </table>
+
+      {FOOTER_ENABLED && expanded && collections.isValidating &&
+        <CgSpinner className="mx-auto h-6 w-6 animate-spin" />
+      }
 
       {FOOTER_ENABLED && !expanded &&
         <button
