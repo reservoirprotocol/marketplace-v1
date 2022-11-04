@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import ExploreTable from './ExploreTable'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 
 type Props = {
   viewRef: (node?: Element | null | undefined) => void
@@ -100,7 +100,9 @@ const ExploreTokens: FC<Props> = ({ viewRef, attributes }) => {
                           Price
                         </span>
                         <span className="reservoir-h6 font-headings dark:text-white">
-                          <FormatEth amount={attribute?.floorAskPrices?.[0]} />
+                          <FormatNativeCrypto
+                            amount={attribute?.floorAskPrices?.[0]}
+                          />
                         </span>
                       </div>
                     </div>

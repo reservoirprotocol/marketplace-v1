@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import formatUrl from 'lib/formatUrl'
 import { FC } from 'react'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import {
   Collection,
   TokenDetails,
@@ -99,7 +99,7 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
             {attribute.value}
           </span>
           <span>
-            <FormatEth amount={attribute.floorAskPrice} />
+            <FormatNativeCrypto amount={attribute.floorAskPrice} />
           </span>
         </div>
         <div className="flex justify-between gap-1 text-xs dark:text-neutral-300">

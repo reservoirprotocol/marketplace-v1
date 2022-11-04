@@ -4,7 +4,7 @@ import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 
 const ExploreTable = ({
   mappedAttributes,
@@ -61,13 +61,16 @@ const ExploreTable = ({
             <td className="pr-3">{formatNumber(attribute?.tokenCount)}</td>
             <td className="pr-3">{formatNumber(attribute?.onSaleCount)}</td>
             <td className="pr-3">
-              <FormatEth
+              <FormatNativeCrypto
                 amount={attribute?.floorAskPrices?.[0]}
                 logoWidth={7}
               />
             </td>
             <td className="pr-3">
-              <FormatEth amount={attribute?.topBid?.value} logoWidth={7} />
+              <FormatNativeCrypto
+                amount={attribute?.topBid?.value}
+                logoWidth={7}
+              />
             </td>
 
             <td className="w-[230px] pr-3">
