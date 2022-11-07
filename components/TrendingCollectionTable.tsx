@@ -8,6 +8,10 @@ import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
+import { useState } from 'react'
+import { CgSpinner } from 'react-icons/cg'
+
+const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED
 
 type Props = {
   fallback: {
@@ -20,10 +24,14 @@ type Volumes = '1DayVolume' | '7DayVolume' | '30DayVolume'
 const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
+  const [expanded, setExpanded] = useState<boolean>(false);
+
   const { collections, ref } = usePaginatedCollections(
     router,
     fallback.collections
   )
+
+  const shouldInfiniteLoad = !FOOTER_ENABLED || (FOOTER_ENABLED && expanded && collections.size < 5)
 
   const { data } = collections
 
@@ -39,8 +47,8 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
     : ['Collection', 'Volume', 'Floor Price', 'Supply']
 
   return (
-    <div className="mb-11 overflow-x-auto">
-      <table className="min-w-full table-auto">
+    <div className="mb-11 overflow-x-auto overflow-y-hidden">
+      <table className="min-w-full table-auto mb-2">
         <thead>
           <tr>
             {columns.map((item) => (
@@ -74,11 +82,15 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               supply,
             } = processCollection(collection)
 
+            if(FOOTER_ENABLED && !expanded && index > 9) {
+              return
+            }
+
             return (
               <tr
                 key={`${contract}-${index}`}
-                ref={index === arr.length - 5 ? ref : null}
-                className="group h-[88px] border-b border-neutral-300 dark:border-neutral-600 dark:text-white"
+                ref={index === arr.length - 5 && shouldInfiniteLoad ? ref : null}
+                className={`${index === arr.length - 1 || (!expanded && index == 9) ? '' : 'border-b'} group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white`} 
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
@@ -151,6 +163,21 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
           })}
         </tbody>
       </table>
+
+      {FOOTER_ENABLED && expanded && collections.isValidating &&
+        <CgSpinner className="mx-auto h-6 w-6 animate-spin" />
+      }
+
+      {FOOTER_ENABLED && !expanded &&
+        <button
+          className='mx-auto my-3 btn-primary-outline border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4'
+          onClick={() => {
+            setExpanded(true)
+          }}
+        >
+          Load More
+        </button>
+      }
     </div>
   )
 }
