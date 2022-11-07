@@ -58,7 +58,7 @@ const RefreshButton: FC<Props> = ({ refreshData, isLoading, setIsLoading }) => {
   }, [lastUpdated]);
 
   return (
-    <div className='flex inline-flex items-center font-light min-w-70'>
+    <div className='hidden lg:flex inline-flex items-center font-light min-w-70'>
       <button
         onClick={() => handleRefreshData()}
         className='btn-primary-outline px-2 rounded-full mr-2 border-none hover:border'
