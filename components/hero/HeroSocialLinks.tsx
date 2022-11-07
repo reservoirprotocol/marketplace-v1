@@ -12,7 +12,7 @@ type Props = {
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 
 const HeroSocialLinks: FC<Props> = ({ refreshCollection, collection }) => {
-  const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)')
   const social = {
     twitterUsername: collection?.twitterUsername,
     externalUrl: collection?.externalUrl,

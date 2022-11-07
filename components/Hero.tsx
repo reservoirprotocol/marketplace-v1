@@ -51,7 +51,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { tokens } = useTokens(collectionId, [fallback.tokens], router, false)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
-  const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)')
   const { chain: activeChain } = useNetwork()
 
   const dropdownItemClasses =
