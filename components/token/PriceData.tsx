@@ -21,6 +21,7 @@ import SwapCartModal from 'components/SwapCartModal'
 import { FaShoppingCart } from 'react-icons/fa'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
+import { useRouter } from 'next/router'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -45,6 +46,7 @@ if (CURRENCIES) {
 }
 
 const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
+  const router = useRouter()
   const isMounted = useMounted()
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
@@ -56,6 +58,10 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | typeof cartTokens>()
   const account = useAccount()
+  const bidOpenState = useState(true)
+
+  const queryBidId = router.query.bidId as string
+  const deeplinkToAcceptBid = router.query.acceptBid === 'true'
 
   const token = details.data ? details.data[0] : undefined
 
@@ -239,6 +245,12 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                     </button>
                   ) : null
                 }
+                openState={
+                  isOwner && (queryBidId || deeplinkToAcceptBid)
+                    ? bidOpenState
+                    : undefined
+                }
+                bidId={queryBidId}
                 collectionId={collection?.id}
                 tokenId={token?.token?.tokenId}
                 onClose={() => details && details.mutate()}
