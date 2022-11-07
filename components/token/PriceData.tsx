@@ -246,7 +246,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   ) : null
                 }
                 openState={
-                  showAcceptOffer && (queryBidId || deeplinkToAcceptBid)
+                  isOwner && (queryBidId || deeplinkToAcceptBid)
                     ? bidOpenState
                     : undefined
                 }
