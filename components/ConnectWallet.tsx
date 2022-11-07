@@ -15,6 +15,8 @@ import FormatEth from './FormatEth'
 import { GlobalContext } from 'context/GlobalState'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
+import Avatar from './Avatar'
+import { truncateAddress, truncateEns } from 'lib/truncateText'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const DISABLE_POWERED_BY_RESERVOIR =
@@ -38,14 +40,8 @@ const ConnectWallet: FC = () => {
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="btn-primary-outline ml-auto rounded-full border-transparent bg-gray-100 normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
-        <EthAccount
-          address={account.address}
-          ens={{
-            avatar: ensAvatar,
-            name: ensName,
-          }}
-        />
+      <DropdownMenu.Trigger className="btn-primary-outline rounded-full p-0 ml-auto border-transparent normal-case dark:border-neutral-600 dark:bg-neutral-900 dark:ring-primary-900 dark:focus:ring-4">
+        <Avatar address={account.address} avatar={ensAvatar} size={40}/>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content align="end" sideOffset={6}>
@@ -54,6 +50,13 @@ const ConnectWallet: FC = () => {
             DISABLE_POWERED_BY_RESERVOIR ? 'rounded' : 'rounded-t'
           }`}
         >
+          <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
+            {ensName ? (
+              <span>{truncateEns(ensName)}</span>
+            ) : (
+              <span>{truncateAddress(account.address || '')}</span>
+            )}
+          </div>
           <div className="group flex w-full items-center justify-between rounded px-4 py-3 outline-none transition">
             <span>Balance </span>
             <span>
