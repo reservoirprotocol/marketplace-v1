@@ -17,7 +17,7 @@ const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="col-span-3 hidden border-r-[1px] border-gray-300 dark:border-neutral-600 md:block "
+      className="min-w-max w-1/3 max-w-xs max-w-hidden hidden border-r-[1px] border-gray-300 dark:border-neutral-600 md:block "
     >
       <div className="overflow-hidden">
         <button
