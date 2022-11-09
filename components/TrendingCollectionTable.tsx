@@ -11,7 +11,7 @@ import { useMediaQuery } from '@react-hookz/web'
 import { useState } from 'react'
 import { CgSpinner } from 'react-icons/cg'
 
-const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED
+const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED == 'true'
 
 type Props = {
   fallback: {
