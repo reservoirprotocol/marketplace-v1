@@ -167,7 +167,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   <div className="flex items-center gap-6 font-semibold">
                     <RefreshButton
                       refreshData={() => {
-                        tokens.setSize(1)
                         tokens.mutate()
                       }} 
                       isLoading={isLoading}
