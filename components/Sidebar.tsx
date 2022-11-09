@@ -16,6 +16,9 @@ type Props = {
 }
 
 const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
+
+  if (attributes && attributes.length === 0) return null
+  
   return (
     <Accordion.Root
       type="multiple"
