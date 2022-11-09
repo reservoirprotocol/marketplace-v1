@@ -1,5 +1,5 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
-import { FiChevronDown } from 'react-icons/fi'
+import { FiChevronDown, FiMoreVertical, FiRefreshCcw } from 'react-icons/fi'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { BidModal, Trait } from '@reservoir0x/reservoir-kit-ui'
 import { useNetwork, useSigner } from 'wagmi'
@@ -15,7 +15,9 @@ import Sweep from './Sweep'
 import ReactMarkdown from 'react-markdown'
 import { useMediaQuery } from '@react-hookz/web'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
+const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const ENV_COLLECTION_DESCRIPTIONS =
@@ -49,8 +51,11 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { tokens } = useTokens(collectionId, [fallback.tokens], router, false)
   const [descriptionExpanded, setDescriptionExpanded] = useState(false)
   const descriptionRef = useRef<HTMLParagraphElement | null>(null)
-  const isSmallDevice = useMediaQuery('only screen and (max-width : 750px)')
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)')
   const { chain: activeChain } = useNetwork()
+
+  const dropdownItemClasses =
+      'reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800'
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -140,6 +145,51 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
       : '60px'
   }
 
+  const refreshCollection = async function (collectionId: string | undefined) {
+    function handleError(message?: string) {
+      setToast({
+        kind: 'error',
+        message: message || 'Request to refresh collection was rejected.',
+        title: 'Refresh collection failed',
+      })
+    }
+
+    try {
+      if (!collectionId) throw new Error('No collection ID')
+
+      const data = {
+        collection: collectionId,
+      }
+
+      const pathname = `${PROXY_API_BASE}/collections/refresh/v1`
+
+      const res = await fetch(pathname, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const json = await res.json()
+        handleError(json?.message)
+        return
+      }
+
+      setToast({
+        kind: 'success',
+        message: 'Request to refresh collection was accepted.',
+        title: 'Refresh collection',
+      })
+    } catch (err) {
+      handleError()
+      console.error(err)
+      return
+    }
+  }
+
+
   return (
     <>
       <HeroBackground banner={header.banner}>
@@ -154,7 +204,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
           </h1>
-          <HeroSocialLinks collection={collection} />
+          <HeroSocialLinks collection={collection} refreshCollection={refreshCollection}/>
           <HeroStats stats={statsObj} />
           {header.description && (
             <>
@@ -232,6 +282,32 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   })
                 }}
               />
+            )}
+            {!isSmallDevice && (
+              <div className="">
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger className="btn-primary-outline rounded-lg border border-[#D4D4D4] bg-white p-2 dark:border-[#525252] dark:bg-black dark:ring-[#525252] dark:focus:ring-4">
+                    <FiMoreVertical className="h-6 w-6 dark:text-[#D4D4D4]" />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content
+                    sideOffset={4}
+                    align="start"
+                    className="min-w-[172px] overflow-hidden rounded-lg border bg-white shadow-md radix-side-bottom:animate-slide-down dark:border-[#525252] dark:bg-neutral-900 md:max-w-[422px]"
+                  >
+                    <DropdownMenu.Item asChild>
+                      <button
+                        className={dropdownItemClasses}
+                        onClick={() => refreshCollection(collectionId)}
+                      >
+                        <FiRefreshCcw
+                          className='h-4 w-4'
+                        />
+                        Refresh Metadata
+                      </button>
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </div>
             )}
             {isSmallDevice && (
               <Sweep

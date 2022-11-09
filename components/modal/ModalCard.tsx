@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import Steps from 'components/Steps'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import Link from 'next/link'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -116,7 +116,7 @@ export const ListPrice = ({
       <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5 text-[#111827]">
         <span className="whitespace-nowrap">List Price</span>
         <div>
-          <FormatEth amount={floorSellValue} logoWidth={7} />
+          <FormatNativeCrypto amount={floorSellValue} logoWidth={7} />
         </div>
       </div>
     )
@@ -135,7 +135,7 @@ export const TopOffer = ({
       <div className="reservoir-label-m flex items-center gap-2 rounded-[8px] bg-[#E2CCFF] px-2 py-0.5">
         <span className="whitespace-nowrap">Current Top Offer</span>
         <div>
-          <FormatEth amount={topBuyValue} logoWidth={7} />
+          <FormatNativeCrypto amount={topBuyValue} logoWidth={7} />
         </div>
       </div>
     )

@@ -14,7 +14,7 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { GlobalContext } from 'context/GlobalState'
 import { HiX } from 'react-icons/hi'
 import { optimizeImage } from 'lib/optmizeImage'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 import AttributesFlex from './AttributesFlex'
 import ModalCard from './modal/ModalCard'
 import { styled } from '@stitches/react'
@@ -322,7 +322,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                             alt={`${token?.token?.name} image`}
                           />
                           <div className="reservoir-subtitle text-center text-xs dark:text-white md:text-sm">
-                            <FormatEth
+                            <FormatNativeCrypto
                               amount={
                                 token?.market?.floorAsk?.price?.amount?.native
                               }
@@ -338,7 +338,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       </div>
                       <div>
                         <div className="reservoir-h5 text-right dark:text-white">
-                          <FormatEth
+                          <FormatNativeCrypto
                             amount={sweepTotal}
                             maximumFractionDigits={4}
                           />
