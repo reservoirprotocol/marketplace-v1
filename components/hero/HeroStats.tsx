@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import { formatNumber } from 'lib/numbers'
 import FormatCrypto from 'components/FormatCrypto'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
@@ -39,13 +39,16 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
       </Stat>
       <Stat name="floor">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
-          <FormatEth amount={stats.floor} maximumFractionDigits={2} />
+          <FormatNativeCrypto amount={stats.floor} maximumFractionDigits={2} />
           <PercentageChange value={stats.floorChange} />
         </h3>
       </Stat>
       <Stat name="total volume">
         <h3 className="reservoir-h6 flex items-center justify-center gap-1 dark:text-white">
-          <FormatEth amount={stats.allTime} maximumFractionDigits={2} />
+          <FormatNativeCrypto
+            amount={stats.allTime}
+            maximumFractionDigits={2}
+          />
         </h3>
       </Stat>
     </div>

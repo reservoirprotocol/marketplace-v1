@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import usePaginatedCollections from 'hooks/usePaginatedCollections'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
@@ -117,7 +117,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 {/* VOLUME */}
                 {!isSmallDevice && (
                   <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                    <FormatEth
+                    <FormatNativeCrypto
                       amount={
                         sort === '7DayVolume'
                           ? days7
@@ -140,7 +140,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
                 {/* FLOOR PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={floorPrice} />
+                  <FormatNativeCrypto amount={floorPrice} />
                   <PercentageChange
                     value={
                       sort === '7DayVolume'
