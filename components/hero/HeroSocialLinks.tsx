@@ -1,17 +1,18 @@
 import { useMediaQuery } from '@react-hookz/web'
 import { FC } from 'react'
-import { FiGlobe, FiMoreVertical } from 'react-icons/fi'
+import { FiGlobe, FiMoreVertical, FiRefreshCcw } from 'react-icons/fi'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Collection } from 'types/reservoir'
 
 type Props = {
-  collection?: Collection
+  refreshCollection: (collectionId: string | undefined) => Promise<void>,
+  collection?: Collection,
 }
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 
-const HeroSocialLinks: FC<Props> = ({ collection }) => {
-  const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
+const HeroSocialLinks: FC<Props> = ({ refreshCollection, collection }) => {
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)')
   const social = {
     twitterUsername: collection?.twitterUsername,
     externalUrl: collection?.externalUrl,
@@ -37,7 +38,8 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
             <FiMoreVertical className="h-6 w-6 dark:text-[#D4D4D4]" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
-            sideOffset={10}
+            sideOffset={8}
+            align='end'
             className="min-w-[172px] overflow-hidden rounded-lg border bg-white shadow-md radix-side-bottom:animate-slide-down dark:border-[#525252] dark:bg-neutral-900 md:max-w-[422px]"
           >
             {typeof social.discordUrl === 'string' && (
@@ -102,6 +104,19 @@ const HeroSocialLinks: FC<Props> = ({ collection }) => {
                 </a>
               </DropdownMenu.Item>
             )}
+            {collection?.id &&
+              <DropdownMenu.Item asChild>
+                <button
+                  className={dropdownItemClasses}
+                  onClick={() => refreshCollection(collection?.id)}
+                >
+                  <FiRefreshCcw
+                    className='h-6 w-6'
+                  />
+                  Refresh Metadata
+                </button>
+              </DropdownMenu.Item>
+            }
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
