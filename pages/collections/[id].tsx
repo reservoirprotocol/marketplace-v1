@@ -212,7 +212,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   tokens.setSize(1)
                 }}
               />
-              <div className="w-full col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
+              <div className="w-full mx-6 mt-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
                     {tokenCount > 0 && (
