@@ -16,11 +16,7 @@ import Hero from 'components/Hero'
 import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
 import AttributesFlex from 'components/AttributesFlex'
-import ExploreFlex from 'components/ExploreFlex'
-import SortMenuExplore from 'components/SortMenuExplore'
-import ViewMenu from 'components/ViewMenu'
 import { FiRefreshCcw } from 'react-icons/fi'
-import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
 import FormatEth from 'components/FormatEth'
@@ -230,15 +226,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     )}
                   </div>
                   <div className="flex gap-4">
-                    {router.query?.attribute_key ||
-                    router.query?.attribute_key === '' ? (
-                      <>
-                        <SortMenuExplore
-                          setSize={collectionAttributes.setSize}
-                        />
-                        <ViewMenu />
-                      </>
-                    ) : null}
                     <button
                       className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                       title="Refresh collection"
@@ -262,7 +249,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 <div className="mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
-                    <ExploreFlex />
                   </div>
                   {(SOURCE_ID || SOURCE_DOMAIN) && (
                     <div className="flex items-center gap-4">
@@ -282,19 +268,11 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     </div>
                   )}
                 </div>
-                {router.query?.attribute_key ||
-                router.query?.attribute_key === '' ? (
-                  <ExploreTokens
-                    attributes={collectionAttributes}
-                    viewRef={refCollectionAttributes}
-                  />
-                ) : (
-                  <TokensGrid
-                    tokens={tokens}
-                    viewRef={refTokens}
-                    collectionImage={collection?.image as string}
-                  />
-                )}
+                <TokensGrid
+                  tokens={tokens}
+                  viewRef={refTokens}
+                  collectionImage={collection?.image as string}
+                />
               </div>
             </div>
           </Tabs.Content>
