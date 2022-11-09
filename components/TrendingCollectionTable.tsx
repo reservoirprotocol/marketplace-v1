@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import Link from 'next/link'
 import cn from 'classnames';
 import { optimizeImage } from 'lib/optmizeImage'
@@ -16,7 +16,19 @@ type Props = {
   }
 }
 
-type Volumes = '1DayVolume' | '7DayVolume' | '30DayVolume'
+// some that have just been created for testing
+const excludedCollections = [
+  '0x03c60045cba7a02e3b9a14c1a309a45ef8540725',
+  '0xc68c664cd312f47b11ed7372434f499c09e0b515',
+  '0xc738431286da1c78e5cf8e344845aff54e372916',
+  '0x446799ddde0235c362390cc6441dbde048e53187',
+  '0x1fb62a79569f355cbed2ece752bff3bb485748e5',
+  '0xbab235c346a65b4804b8b8ffab6d8c2055c347b3',
+  '0x1fb62a79569f355cbed2ece752bff3bb485748e5',
+  '0xe4c3f610673dc5a10a3e287212a73fd73aff5339',
+  '0x12471610a626ea84c248ddcd59f8104f33233e46',
+  '0x5c00077d04a8b12f2a32cacda979c2c2120f9f5c'
+];
 
 const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
@@ -28,9 +40,11 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const sort = router?.query['sort']?.toString()
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
-  const mappedCollections = data
-    ? data.flatMap(({ collections }) => collections)
-    : []
+  const mappedCollections = useMemo(() => {
+    return (data
+      ? data.flatMap(({ collections }) => collections)
+      : []).filter(collection => !excludedCollections.includes(collection?.id!))
+  }, [data])
 
   const columns = isSmallDevice
     ? ['Collection', 'Floor Price']
@@ -71,8 +85,6 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               floorPrice,
               supply,
             } = processCollection(collection)
-
-            console.log("collection", collection);
 
             return (
               <tr
