@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import usePaginatedCollections from 'hooks/usePaginatedCollections'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
@@ -11,7 +11,7 @@ import { useMediaQuery } from '@react-hookz/web'
 import { useState } from 'react'
 import { CgSpinner } from 'react-icons/cg'
 
-const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED
+const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED == 'true'
 
 type Props = {
   fallback: {
@@ -90,7 +90,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 && shouldInfiniteLoad ? ref : null}
-                className={`${index === arr.length - 1 || (!expanded && index == 9) ? '' : 'border-b'} group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white`} 
+                className={`${index === arr.length - 1 || (FOOTER_ENABLED && !expanded && index == 9) ? '' : 'border-b'} group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white`} 
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
@@ -117,7 +117,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                 {/* VOLUME */}
                 {!isSmallDevice && (
                   <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                    <FormatEth
+                    <FormatNativeCrypto
                       amount={
                         sort === '7DayVolume'
                           ? days7
@@ -140,7 +140,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
                 {/* FLOOR PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={floorPrice} />
+                  <FormatNativeCrypto amount={floorPrice} />
                   <PercentageChange
                     value={
                       sort === '7DayVolume'

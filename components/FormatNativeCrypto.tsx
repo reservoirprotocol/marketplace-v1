@@ -4,21 +4,23 @@ import { FC, ComponentProps } from 'react'
 
 type Props = ComponentProps<typeof FormatCrypto>
 
-const FormatEth: FC<Props> = ({
+const FormatNativeCrypto: FC<Props> = ({
   amount,
   maximumFractionDigits,
   logoWidth,
-  decimals,
 }) => {
+  const address = constants.AddressZero
+  const decimals = 18
+
   return (
     <FormatCrypto
       logoWidth={logoWidth}
       amount={amount}
-      address={constants.AddressZero}
+      address={address}
       decimals={decimals}
       maximumFractionDigits={maximumFractionDigits}
     />
   )
 }
 
-export default FormatEth
+export default FormatNativeCrypto

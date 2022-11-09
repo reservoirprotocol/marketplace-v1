@@ -11,7 +11,7 @@ import useEnvChain from 'hooks/useEnvChain'
 import { useAccount } from 'wagmi'
 import { constants } from 'ethers'
 import { FaSeedling } from 'react-icons/fa'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import {
   useCollectionActivity,
   useUsersActivity,
@@ -335,7 +335,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
             activity.price !== 0 &&
             activity.type &&
             !['transfer', 'mint'].includes(activity.type) ? (
-              <FormatEth amount={activity.price} />
+              <FormatNativeCrypto amount={activity.price} />
             ) : null}
           </div>
 
@@ -436,7 +436,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
         activity.price !== 0 &&
         activity.type &&
         !['transfer', 'mint'].includes(activity.type) ? (
-          <FormatEth amount={activity.price} />
+          <FormatNativeCrypto amount={activity.price} />
         ) : null}
       </td>
       <td className="px-6 py-4">

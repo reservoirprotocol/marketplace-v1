@@ -19,16 +19,16 @@ import AttributesFlex from 'components/AttributesFlex'
 import ExploreFlex from 'components/ExploreFlex'
 import SortMenuExplore from 'components/SortMenuExplore'
 import ViewMenu from 'components/ViewMenu'
-import { FiRefreshCcw } from 'react-icons/fi'
 import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
+import RefreshButton from 'components/RefreshButton'
 
 // Environment variables
 // For more information about these variables
@@ -60,7 +60,7 @@ type Props = InferGetStaticPropsType<typeof getStaticProps>
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [localListings, setLocalListings] = useState(false)
-  const [refreshLoading, setRefreshLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const collectionResponse = useCollections(
     { id },
@@ -95,56 +95,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   }
 
   const tokenCount = stats?.data?.stats?.tokenCount ?? 0
-
-  async function refreshCollection(collectionId: string | undefined) {
-    function handleError(message?: string) {
-      setToast({
-        kind: 'error',
-        message: message || 'Request to refresh collection was rejected.',
-        title: 'Refresh collection failed',
-      })
-
-      setRefreshLoading(false)
-    }
-
-    try {
-      if (!collectionId) throw new Error('No collection ID')
-
-      const data = {
-        collection: collectionId,
-      }
-
-      const pathname = `${PROXY_API_BASE}/collections/refresh/v1`
-
-      setRefreshLoading(true)
-
-      const res = await fetch(pathname, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!res.ok) {
-        const json = await res.json()
-        handleError(json?.message)
-        return
-      }
-
-      setToast({
-        kind: 'success',
-        message: 'Request to refresh collection was accepted.',
-        title: 'Refresh collection',
-      })
-    } catch (err) {
-      handleError()
-      console.error(err)
-      return
-    }
-
-    setRefreshLoading(false)
-  }
 
   const title = metaTitle ? (
     <title>{metaTitle}</title>
@@ -214,15 +164,25 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               />
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-6 font-semibold">
+                    <RefreshButton
+                      refreshData={() => {
+                        tokens.mutate()
+                      }} 
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                      />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
 
                         <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
                         <div className="flex items-center gap-1">
-                          <FormatEth
-                            amount={stats?.data?.stats?.market?.floorAsk?.price?.amount?.decimal}
+                          <FormatNativeCrypto
+                            amount={
+                              stats?.data?.stats?.market?.floorAsk?.price
+                                ?.amount?.decimal
+                            }
                           />{' '}
                           floor price
                         </div>
@@ -239,18 +199,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                         <ViewMenu />
                       </>
                     ) : null}
-                    <button
-                      className="btn-primary-outline dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-                      title="Refresh collection"
-                      disabled={refreshLoading}
-                      onClick={() => refreshCollection(id)}
-                    >
-                      <FiRefreshCcw
-                        className={`h-5 w-5 ${
-                          refreshLoading ? 'animate-spin-reverse' : ''
-                        }`}
-                      />
-                    </button>
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -293,6 +241,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     tokens={tokens}
                     viewRef={refTokens}
                     collectionImage={collection?.image as string}
+                    isLoading={isLoading}
                   />
                 )}
               </div>

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { optimizeImage } from 'lib/optmizeImage'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 
 type Props = {
   data: {
@@ -39,7 +39,7 @@ const StepsModalHeader: FC<Props> = ({ data }) => {
             <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
               <span className="whitespace-nowrap">Current Top Offer</span>
               <div className="font-semibold">
-                <FormatEth
+                <FormatNativeCrypto
                   amount={data.token.topBuyValue}
                   logoWidth={7}
                 />
@@ -50,7 +50,7 @@ const StepsModalHeader: FC<Props> = ({ data }) => {
             <div className="flex items-center gap-2 rounded-md bg-blue-100 px-2 py-0.5 text-blue-900">
               <span className="whitespace-nowrap">List Price</span>
               <div className="font-semibold">
-                <FormatEth
+                <FormatNativeCrypto
                   amount={data.token.floorSellValue}
                   logoWidth={7}
                 />

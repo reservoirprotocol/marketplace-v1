@@ -11,7 +11,7 @@ import EthAccount from './EthAccount'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 import { GlobalContext } from 'context/GlobalState'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
@@ -116,5 +116,5 @@ type Props = {
 
 export const Balance: FC<Props> = ({ address }) => {
   const { data: balance } = useBalance({ addressOrName: address })
-  return <FormatEth amount={balance?.value} />
+  return <FormatNativeCrypto amount={balance?.value} />
 }

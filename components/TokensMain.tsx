@@ -16,7 +16,7 @@ import TokensGrid from './TokensGrid'
 import ViewMenu from './ViewMenu'
 import Toast from './Toast'
 import { FiRefreshCcw } from 'react-icons/fi'
-import FormatEth from './FormatEth'
+import FormatNativeCrypto from './FormatNativeCrypto'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
@@ -40,6 +40,7 @@ type Props = {
 const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
   const router = useRouter()
   const [refreshLoading, setRefreshLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const collections = useCollections(
     { id: collectionId },
@@ -167,7 +168,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
 
                   <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
                   <div className="flex items-center gap-1">
-                    <FormatEth
+                    <FormatNativeCrypto
                       amount={stats?.data?.stats?.market?.floorAsk?.price?.amount?.decimal}
                     />{' '}
                     floor price
@@ -209,6 +210,7 @@ const TokensMain: FC<Props> = ({ collectionId, fallback, setToast }) => {
               tokens={tokens}
               viewRef={refTokens}
               collectionImage={collection?.image as string}
+              isLoading={isLoading}
             />
           )}
         </div>
