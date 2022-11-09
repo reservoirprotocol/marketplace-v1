@@ -130,7 +130,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   }
 
   const isSupported =
-    !!collection.data?.collection?.tokenSetId &&
+    !!collection.data?.collection?.tokenSetId?.startsWith('contract:') &&
     !!collection.data?.collection?.collectionBidSupported
 
   const isAttributeModal = !!attribute.key && !!attribute.value
