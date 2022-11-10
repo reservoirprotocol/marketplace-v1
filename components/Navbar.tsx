@@ -63,7 +63,7 @@ const Navbar: FC = () => {
 
   const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
   const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
-  const themeSwitcherEnabled = THEME_SWITCHING_ENABLED;
+  const themeSwitcherEnabled = THEME_SWITCHING_ENABLED
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -148,27 +148,27 @@ const Navbar: FC = () => {
         </div>
       )}
       {isMobile ? (
-        <div className="ml-auto flex">
+        <div className="ml-auto flex gap-x-5">
           {!hasCommunityDropdown && filterComponent && filterComponent}
           <CartMenu />
           <HamburgerMenu externalLinks={externalLinks} />
         </div>
       ) : (
-        <div className="z-10 ml-auto shrink-0 md:flex gap-2 xl:gap-4">
+        <div className="z-10 ml-auto shrink-0 gap-2 md:flex xl:gap-4">
           {!hasCommunityDropdown && !showDesktopSearch && (
             <div className="ml-auto flex">
               {filterComponent && filterComponent}
-              </div>
-            )}
-            <CartMenu />
-            {hasCommunityDropdown && themeSwitcherEnabled && !showDesktopSearch?
-              null
-              :
-              <ListItemButton />
-            }
-            <ConnectWallet />
-            <ThemeSwitcher />
-          </div>
+            </div>
+          )}
+          <CartMenu />
+          {hasCommunityDropdown &&
+          themeSwitcherEnabled &&
+          !showDesktopSearch ? null : (
+            <ListItemButton />
+          )}
+          <ConnectWallet />
+          <ThemeSwitcher />
+        </div>
       )}
     </nav>
   )
