@@ -211,7 +211,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 </div>
                 <div className="mb-10 flex items-center justify-between">
                   <div>
-                    <AttributesFlex className="flex flex-wrap gap-3" />
+                    <AttributesFlex className="flex hidden flex-wrap gap-3 md:flex" />
                     <ExploreFlex />
                   </div>
                   {(SOURCE_ID || SOURCE_DOMAIN) && (
