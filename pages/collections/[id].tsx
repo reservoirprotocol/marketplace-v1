@@ -52,14 +52,11 @@ const metaImage = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
-  const [localListings, setLocalListings] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const collectionResponse = useCollections(
@@ -79,8 +76,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     id,
     [fallback.tokens],
     router,
-    false,
-    localListings
+    false
   )
 
   const { collectionAttributes, ref: refCollectionAttributes } =
@@ -168,10 +164,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
-                      }} 
+                      }}
                       isLoading={isLoading}
                       setIsLoading={setIsLoading}
-                      />
+                    />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
@@ -212,23 +208,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
                   </div>
-                  {(SOURCE_ID || SOURCE_DOMAIN) && (
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="checkbox"
-                        name="localListings"
-                        id="localListings"
-                        className="scale-125 transform"
-                        onChange={(e) => setLocalListings(e.target.checked)}
-                      />
-                      <label
-                        htmlFor="localListings"
-                        className="reservoir-body dark:text-white"
-                      >
-                        Show Only Local Listings
-                      </label>
-                    </div>
-                  )}
                 </div>
                 {router.query?.attribute_key ||
                 router.query?.attribute_key === '' ? (
