@@ -6,7 +6,7 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
@@ -57,6 +57,12 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [localListings, setLocalListings] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+
+  const scrollToTop = () => {
+    let top = (scrollRef.current?.offsetTop || 0) - 91 //Offset from parent element minus height of navbar
+    window.scrollTo({ top: top, behavior: 'smooth' })
+  }
 
   const collectionResponse = useCollections(
     { id },
@@ -133,7 +139,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         <Hero collectionId={id} fallback={fallback} />
         <Tabs.Root
           value={router.query?.tab?.toString() || 'items'}
-          className="flex flex-col w-screen"
+          className="flex w-screen flex-col"
         >
           <Tabs.List className="flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
@@ -151,23 +157,24 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
             ))}
           </Tabs.List>
           <Tabs.Content value="items" asChild>
-            <div className='flex flex-row'>
+            <div ref={scrollRef} className="relative flex flex-row">
               <Sidebar
                 attributes={attributes.data}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
+                scrollToTop={scrollToTop}
               />
-              <div className="w-full mx-6 mt-4">
+              <div className="mx-6 mt-4 w-full">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6 font-semibold">
                     <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
-                      }} 
+                      }}
                       isLoading={isLoading}
                       setIsLoading={setIsLoading}
-                      />
+                    />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
@@ -227,7 +234,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.Content>
           <Tabs.Content
             value="activity"
-            className="max-w-[1500px] mx-[25px] md:mx-auto md:w-full pt-2"
+            className="mx-[25px] max-w-[1500px] pt-2 md:mx-auto md:w-full"
           >
             <CollectionActivityTab collectionId={id} />
           </Tabs.Content>
