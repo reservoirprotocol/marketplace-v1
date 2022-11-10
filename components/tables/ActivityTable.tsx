@@ -194,8 +194,8 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
   )
   const [timeAgo, setTimeAgo] = useState(activity?.timestamp || '')
   const envChain = useEnvChain()
-  const etherscanBaseUrl =
-    envChain?.blockExplorers?.etherscan?.url || 'https://etherscan.io'
+  const blockExplorerBaseUrl =
+    envChain?.blockExplorers?.default?.url || 'https://etherscan.io'
   const href = activity?.token?.tokenId
     ? `/${activity?.collection?.collectionId}/${activity?.token?.tokenId}`
     : `/collections/${activity?.collection?.collectionId}`
@@ -372,7 +372,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               </div>
             </div>
             {activity.txHash && (
-              <Link href={`${etherscanBaseUrl}/tx/${activity.txHash}`}>
+              <Link href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`}>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -466,7 +466,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
         <div className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
           {timeAgo}
           {activity.txHash && (
-            <Link href={`${etherscanBaseUrl}/tx/${activity.txHash}`}>
+            <Link href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`}>
               <a target="_blank" rel="noopener noreferrer">
                 <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
               </a>
