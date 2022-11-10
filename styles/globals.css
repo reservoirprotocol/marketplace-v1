@@ -71,3 +71,17 @@ model-viewer {
 .markdown-support a {
   text-decoration: underline;
 }
+
+.markdown-support ol {
+  margin: 1rem 0;
+  list-style-type: decimal;
+}
+
+.markdown-support ul {
+  margin: 1rem 0;
+  list-style-type: disc;
+}
+
+.markdown-support li {
+  margin-left: 2rem;
+}

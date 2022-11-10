@@ -16,10 +16,6 @@ import Hero from 'components/Hero'
 import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
 import AttributesFlex from 'components/AttributesFlex'
-import ExploreFlex from 'components/ExploreFlex'
-import SortMenuExplore from 'components/SortMenuExplore'
-import ViewMenu from 'components/ViewMenu'
-import ExploreTokens from 'components/ExploreTokens'
 import TokensGrid from 'components/TokensGrid'
 import Head from 'next/head'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
@@ -137,9 +133,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         <Hero collectionId={id} fallback={fallback} />
         <Tabs.Root
           value={router.query?.tab?.toString() || 'items'}
-          className="col-span-full grid grid-cols-4 gap-x-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21"
+          className="flex flex-col w-screen"
         >
-          <Tabs.List className="col-span-full flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
+          <Tabs.List className="flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
@@ -155,14 +151,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
             ))}
           </Tabs.List>
           <Tabs.Content value="items" asChild>
-            <>
+            <div className='flex flex-row'>
               <Sidebar
                 attributes={attributes.data}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
               />
-              <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
+              <div className="w-full mx-6 mt-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6 font-semibold">
                     <RefreshButton
@@ -190,15 +186,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     )}
                   </div>
                   <div className="flex gap-4">
-                    {router.query?.attribute_key ||
-                    router.query?.attribute_key === '' ? (
-                      <>
-                        <SortMenuExplore
-                          setSize={collectionAttributes.setSize}
-                        />
-                        <ViewMenu />
-                      </>
-                    ) : null}
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -210,7 +197,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 <div className="mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
-                    <ExploreFlex />
                   </div>
                   {(SOURCE_ID || SOURCE_DOMAIN) && (
                     <div className="flex items-center gap-4">
@@ -230,26 +216,18 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     </div>
                   )}
                 </div>
-                {router.query?.attribute_key ||
-                router.query?.attribute_key === '' ? (
-                  <ExploreTokens
-                    attributes={collectionAttributes}
-                    viewRef={refCollectionAttributes}
-                  />
-                ) : (
-                  <TokensGrid
-                    tokens={tokens}
-                    viewRef={refTokens}
-                    collectionImage={collection?.image as string}
-                    isLoading={isLoading}
-                  />
-                )}
+                <TokensGrid
+                  tokens={tokens}
+                  viewRef={refTokens}
+                  collectionImage={collection?.image as string}
+                  isLoading={isLoading}
+                />
               </div>
-            </>
+            </div>
           </Tabs.Content>
           <Tabs.Content
             value="activity"
-            className="col-span-full mx-[25px] grid pt-2 lg:col-start-2 lg:col-end-[-2]"
+            className="max-w-[1500px] mx-[25px] md:mx-auto md:w-full pt-2"
           >
             <CollectionActivityTab collectionId={id} />
           </Tabs.Content>
