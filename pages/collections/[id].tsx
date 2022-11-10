@@ -29,6 +29,8 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
+import MobileFilters from 'components/filter/MobileFilters'
+import { useMediaQuery } from '@react-hookz/web'
 
 // Environment variables
 // For more information about these variables
@@ -168,10 +170,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
-                      }} 
+                      }}
                       isLoading={isLoading}
                       setIsLoading={setIsLoading}
-                      />
+                    />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
@@ -245,6 +247,12 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   />
                 )}
               </div>
+              <MobileFilters
+                attributes={attributes.data}
+                refreshData={() => {
+                  tokens.setSize(1)
+                }}
+              />
             </>
           </Tabs.Content>
           <Tabs.Content
