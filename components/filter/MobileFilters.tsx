@@ -65,7 +65,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
   return (
     <Dialog.Root onOpenChange={setOpen} open={open} modal={true}>
       <div className="sticky bottom-6 z-10 flex w-screen flex-col items-center md:hidden">
-        <Dialog.Trigger className="btn-primary-outline min-w-[200px] rounded-full bg-white py-3.5 px-12 text-center shadow-[0px_10px_8px_rgba(0,0,0,0.04)] shadow-[_0px_4px_3px_rgba(0,0,0,0.1)]">
+        <Dialog.Trigger className="btn-primary-outline min-w-[200px] rounded-full bg-white py-3.5 px-12 text-center shadow-[0px_10px_8px_rgba(0,0,0,0.04)] shadow-[_0px_4px_3px_rgba(0,0,0,0.1)] dark:bg-black">
           <span>Filter</span>
           {filtersEnabled && (
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5F5F5] text-sm dark:bg-[#262626]">
@@ -76,9 +76,8 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
       </div>
 
       <Dialog.Content
-        className="fixed inset-0 z-[1100] transform overflow-y-scroll bg-white shadow-md dark:bg-black "
+        className="fixed inset-0 z-[1100] transform overflow-y-scroll bg-white shadow-md dark:bg-black"
         onInteractOutside={(e) => {
-          console.log('here')
           e.preventDefault()
         }}
       >
@@ -120,7 +119,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
                   <div className="flex flex-col items-start">
                     {attribute.key}
                     {router.query[`attributes[${attribute.key}]`] && (
-                      <p className="text-xs text-[#525252]">
+                      <p className="text-xs text-[#525252] dark:text-[#D4D4D4]">
                         {router.query[`attributes[${attribute.key}]`]}
                       </p>
                     )}
