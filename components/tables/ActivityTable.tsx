@@ -17,7 +17,7 @@ import {
   useUsersActivity,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
-import MobileActivityFilters from 'components/filter/MobileActivityFilters'
+import MobileActivityFilter from 'components/filter/MobileActivityFilter'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 type CollectionActivityResponse = ReturnType<typeof useCollectionActivity>
@@ -80,7 +80,7 @@ const ActivityTable: FC<Props> = ({
   return (
     <>
       {isMobile ? (
-        <MobileActivityFilters
+        <MobileActivityFilter
           filters={filters}
           enabledFilters={enabledFilters}
           data={data}

@@ -29,7 +29,7 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
-import MobileFilters from 'components/filter/MobileFilters'
+import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 
 // Environment variables
 // For more information about these variables
@@ -246,7 +246,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   />
                 )}
               </div>
-              <MobileFilters
+              <MobileTokensFilter
                 attributes={attributes.data}
                 refreshData={() => {
                   tokens.setSize(1)

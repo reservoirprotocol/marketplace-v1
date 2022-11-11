@@ -19,7 +19,7 @@ type Props = {
   refreshData: () => void
 }
 
-const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
+const MobileTokensFilter: FC<Props> = ({ attributes, refreshData }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [filtersLength, setFiltersLength] = useState(0)
@@ -141,4 +141,4 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
   )
 }
 
-export default MobileFilters
+export default MobileTokensFilter

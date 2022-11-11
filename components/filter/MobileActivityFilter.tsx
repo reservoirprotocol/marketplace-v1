@@ -36,7 +36,7 @@ type Props = {
     | undefined
 }
 
-const MobileActivityFilters: FC<Props> = ({
+const MobileActivityFilter: FC<Props> = ({
   filters,
   enabledFilters,
   data,
@@ -161,4 +161,4 @@ const MobileActivityFilters: FC<Props> = ({
   )
 }
 
-export default MobileActivityFilters
+export default MobileActivityFilter
