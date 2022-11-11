@@ -9,7 +9,7 @@ type Props = {
   attribute: string
   value: string
   refreshData: () => void
-  scrollToTop: () => void
+  scrollToTop?: () => void
 }
 
 const AttributeButton: FC<Props> = ({
@@ -37,7 +37,9 @@ const AttributeButton: FC<Props> = ({
           }
         }
         refreshData()
-        scrollToTop()
+        if (scrollToTop) {
+          scrollToTop()
+        }
       }}
       className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
         router.query[`attributes[${attribute}]`] &&
