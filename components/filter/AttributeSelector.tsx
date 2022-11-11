@@ -8,7 +8,7 @@ import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 type Props = {
   attribute: NonNullable<ReturnType<typeof useAttributes>['data']>[0]
   refreshData: () => void
-  scrollToTop: () => void
+  scrollToTop?: () => void
 }
 
 const AttributeSelector: FC<Props> = ({
