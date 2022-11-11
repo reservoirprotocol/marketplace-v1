@@ -22,7 +22,7 @@ const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="sticky top-[91px] mr-4 hidden max-h-screen w-min min-w-[300px] max-w-sm overflow-auto border-r-[1px] border-gray-300 dark:border-neutral-600 md:block md:w-1/3 "
+      className="sticky top-[91px] mr-4 hidden max-h-[calc(100vh-+91px)] w-min min-w-[300px] max-w-sm overflow-auto border-r-[1px] border-gray-300 pb-12 dark:border-neutral-600 md:block md:w-1/3 "
     >
       <div className="border-b-[1px] border-gray-300 px-6 py-5 text-left text-lg font-semibold transition dark:border-neutral-600 dark:text-white">
         Filters
