@@ -29,6 +29,7 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
+import SortTokens from 'components/SortTokens'
 
 // Environment variables
 // For more information about these variables
@@ -168,10 +169,10 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
-                      }} 
+                      }}
                       isLoading={isLoading}
                       setIsLoading={setIsLoading}
-                      />
+                    />
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} items</div>
@@ -190,15 +191,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     )}
                   </div>
                   <div className="flex gap-4">
-                    {router.query?.attribute_key ||
-                    router.query?.attribute_key === '' ? (
-                      <>
-                        <SortMenuExplore
-                          setSize={collectionAttributes.setSize}
-                        />
-                        <ViewMenu />
-                      </>
-                    ) : null}
+                    <SortTokens />
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -207,7 +200,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className="z-20 mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
