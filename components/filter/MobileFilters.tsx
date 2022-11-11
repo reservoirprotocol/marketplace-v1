@@ -65,7 +65,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
   return (
     <Dialog.Root onOpenChange={setOpen} open={open} modal={true}>
       <div className="sticky bottom-6 z-10 flex w-screen flex-col items-center md:hidden">
-        <Dialog.Trigger className="btn-primary-outline min-w-[200px] rounded-full bg-white py-3.5 px-12 text-center shadow-[0px_10px_8px_rgba(0,0,0,0.04)] shadow-[_0px_4px_3px_rgba(0,0,0,0.1)] dark:bg-black">
+        <Dialog.Trigger className="btn-primary-outline min-w-[200px] rounded-full bg-white py-3 px-12 text-center shadow-[0px_10px_8px_rgba(0,0,0,0.04)] shadow-[_0px_4px_3px_rgba(0,0,0,0.1)] dark:bg-black">
           <span>Filter</span>
           {filtersEnabled && (
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5F5F5] text-sm dark:bg-[#262626]">
@@ -76,7 +76,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
       </div>
 
       <Dialog.Content
-        className="fixed inset-0 z-[1100] transform overflow-y-scroll bg-white shadow-md dark:bg-black"
+        className="fixed inset-0 z-[1100] transform overflow-y-auto overscroll-contain bg-white shadow-md dark:bg-black"
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
@@ -96,7 +96,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
                 className="btn-primary-outline border-none py-1.5 px-[5px] text-sm font-light text-[#7000FF] dark:text-[#E2CCFF]"
                 onClick={() => clearQuery()}
               >
-                Clear
+                Clear all
               </button>
             )}
           </div>
@@ -106,7 +106,7 @@ const MobileFilters: FC<Props> = ({ attributes, refreshData }) => {
         </div>
         <Accordion.Root
           type="multiple"
-          className="border-r-[1px] border-gray-300 dark:border-neutral-600 md:block "
+          className="overflow-hidden border-r-[1px] border-gray-300 pb-12 dark:border-neutral-600 md:block"
         >
           {attributes?.map((attribute) => (
             <Accordion.Item

@@ -30,7 +30,6 @@ import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import MobileFilters from 'components/filter/MobileFilters'
-import { useMediaQuery } from '@react-hookz/web'
 
 // Environment variables
 // For more information about these variables
@@ -211,7 +210,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 </div>
                 <div className="mb-10 flex items-center justify-between">
                   <div>
-                    <AttributesFlex className="flex hidden flex-wrap gap-3 md:flex" />
+                    <AttributesFlex className="flex flex-wrap gap-3" />
                     <ExploreFlex />
                   </div>
                   {(SOURCE_ID || SOURCE_DOMAIN) && (
