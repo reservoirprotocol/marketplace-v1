@@ -58,7 +58,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
   const scrollToTop = () => {
     let top = (scrollRef.current?.offsetTop || 0) - 91 //Offset from parent element minus height of navbar
-    window.scrollTo({ top: top, behavior: 'smooth' })
+    window.scrollTo({ top: top })
   }
 
   const collectionResponse = useCollections(
