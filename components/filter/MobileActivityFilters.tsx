@@ -103,8 +103,8 @@ const MobileActivityFilters: FC<Props> = ({
                 className={`mr-4 flex h-6 w-6 items-center justify-center rounded border dark:bg-[#262626]
                 ${
                   isSelected
-                    ? 'border-[1px] border-transparent bg-[#7000FF] dark:bg-neutral-600'
-                    : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
+                    ? 'border-[1px] border-transparent bg-[#7000FF] dark:bg-[#7000FF]'
+                    : 'border-[1px] border-neutral-300 bg-white dark:border-[#525252] dark:bg-black'
                 }`}
                 defaultChecked
                 checked={isSelected}
