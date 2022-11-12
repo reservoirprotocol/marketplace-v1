@@ -47,7 +47,7 @@ const SortTokens: FC = () => {
 
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
-      <DropdownMenu.Trigger className="btn-primary-outline w-[228px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4">
+      <DropdownMenu.Trigger className="btn-primary-outline hidden w-[228px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
         <span className="reservoir-label-l dark:text-gray-100">
           {sortSelection}
         </span>
