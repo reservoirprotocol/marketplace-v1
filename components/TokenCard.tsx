@@ -38,6 +38,7 @@ if (CURRENCIES) {
 type Props = {
   token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   collectionImage: string | undefined
+  collectionSize?: number | undefined
   mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
@@ -46,6 +47,7 @@ type Props = {
 const TokenCard: FC<Props> = ({
   token,
   collectionImage,
+  collectionSize,
   mutate,
   setClearCartOpen,
   setCartToSwap,
@@ -134,11 +136,14 @@ const TokenCard: FC<Props> = ({
             : 'group-hover:bottom-[0px]'
         }`}
       >
-        <div
-          className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
-          title={token?.token?.name || token?.token?.tokenId}
-        >
-          {token?.token?.name || `#${token?.token?.tokenId}`}
+        <div className="flex justify-between">
+          <div
+            className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
+            title={token?.token?.name || token?.token?.tokenId}
+          >
+            {token?.token?.name || `#${token?.token?.tokenId}`}
+          </div>
+          <p>{collectionSize}</p>
         </div>
         <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
