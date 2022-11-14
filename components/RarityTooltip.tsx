@@ -13,7 +13,7 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
     <Tooltip.Provider>
       <Tooltip.Root delayDuration={0} disableHoverableContent>
         <Tooltip.Trigger asChild>
-          <div className="mr-4 flex h-6 cursor-pointer items-center justify-between rounded-md border border-neutral-300 px-2.5 py-1.5 text-sm ">
+          <div className="mr-4 flex h-6 min-w-max cursor-pointer items-center justify-between rounded-md border border-neutral-300 px-2 py-1.5 text-sm ">
             <img src="/icons/rarity-icon.svg" className="mr-1 h-4 w-4" />
             <span>{rarityRank}</span>
           </div>
