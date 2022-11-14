@@ -36,7 +36,12 @@ const ConnectWallet: FC = () => {
     return null
   }
 
-  if (!account.isConnected) return <ConnectWalletButton showIcon />
+  if (!account.isConnected)
+    return (
+      <ConnectWalletButton>
+        <img src="/icons/wallet.svg" alt="Wallet Icon" />
+      </ConnectWalletButton>
+    )
 
   return (
     <DropdownMenu.Root>
