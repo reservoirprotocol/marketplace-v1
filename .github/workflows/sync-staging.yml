@@ -1,0 +1,24 @@
+name: Sync Back to Develop
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    name: Syncing branches
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Git config
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+      - name: Sync staging with dev
+        run: |
+          git fetch --unshallow
+          git checkout staging
+          git pull
+          git merge --no-ff dev -m "Auto-merge dev into staging"
+          git push
