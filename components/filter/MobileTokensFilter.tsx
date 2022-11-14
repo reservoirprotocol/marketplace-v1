@@ -17,9 +17,14 @@ const StyledChevron = styled(FiChevronUp, {
 type Props = {
   attributes: ReturnType<typeof useAttributes>['data']
   refreshData: () => void
+  scrollToTop: () => void
 }
 
-const MobileTokensFilter: FC<Props> = ({ attributes, refreshData }) => {
+const MobileTokensFilter: FC<Props> = ({
+  attributes,
+  refreshData,
+  scrollToTop,
+}) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [filtersLength, setFiltersLength] = useState(0)
@@ -131,6 +136,7 @@ const MobileTokensFilter: FC<Props> = ({ attributes, refreshData }) => {
                 <AttributeSelector
                   attribute={attribute}
                   refreshData={refreshData}
+                  scrollToTop={scrollToTop}
                 />
               </Accordion.Content>
             </Accordion.Item>

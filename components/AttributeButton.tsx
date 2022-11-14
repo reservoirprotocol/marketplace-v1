@@ -9,7 +9,7 @@ type Props = {
   attribute: string
   value: string
   refreshData: () => void
-  scrollToTop?: () => void
+  scrollToTop: () => void
 }
 
 const AttributeButton: FC<Props> = ({
