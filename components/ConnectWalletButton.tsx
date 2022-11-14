@@ -1,13 +1,13 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { FC } from 'react'
+import { FC, ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
 type Props = {
   className?: HTMLButtonElement['className']
-  showIcon?: boolean
+  children: ReactElement
 }
 
-const ConnectWalletButton: FC<Props> = ({ className, showIcon }) => {
+const ConnectWalletButton: FC<Props> = ({ className, children }) => {
   const account = useAccount()
 
   return (
@@ -34,11 +34,7 @@ const ConnectWalletButton: FC<Props> = ({ className, showIcon }) => {
                   type="button"
                   className={`btn-primary-fill h-full border-none px-3 dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4 ${className}`}
                 >
-                  {showIcon ? (
-                    <img src="/icons/wallet.svg" alt="Wallet Icon" />
-                  ) : (
-                    <span>Connect Wallet</span>
-                  )}
+                  {children}
                 </button>
               )
             })()}
