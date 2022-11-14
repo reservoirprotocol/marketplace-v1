@@ -19,6 +19,7 @@ import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
+import RarityTooltip from './RarityTooltip'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -136,14 +137,19 @@ const TokenCard: FC<Props> = ({
             : 'group-hover:bottom-[0px]'
         }`}
       >
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <div
             className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
             title={token?.token?.name || token?.token?.tokenId}
           >
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </div>
-          <p>{collectionSize}</p>
+          {collectionSize && token.token?.rarityRank && (
+            <RarityTooltip
+              rarityRank={token.token?.rarityRank}
+              collectionSize={collectionSize}
+            />
+          )}
         </div>
         <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
