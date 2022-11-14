@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, MutableRefObject, useEffect, useState } from 'react'
 import AttributeButton from 'components/AttributeButton'
 import { DebounceInput } from 'react-debounce-input'
 import { matchSorter } from 'match-sorter'
@@ -8,11 +8,13 @@ import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 type Props = {
   attribute: NonNullable<ReturnType<typeof useAttributes>['data']>[0]
   refreshData: () => void
+  scrollToTop: () => void
 }
 
 const AttributeSelector: FC<Props> = ({
   attribute: { key, values },
   refreshData,
+  scrollToTop,
 }) => {
   const [searchedValues, setsearchedValues] = useState(values || [])
   const [query, setQuery] = useState('')
@@ -80,6 +82,7 @@ const AttributeSelector: FC<Props> = ({
               attribute={key}
               key={`${value}${index}`}
               refreshData={refreshData}
+              scrollToTop={scrollToTop}
             >
               <span className="reservoir-body dark:text-white">{value}</span>
               <span className="reservoir-body dark:text-white">{count}</span>
