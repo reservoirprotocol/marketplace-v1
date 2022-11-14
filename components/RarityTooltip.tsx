@@ -7,6 +7,8 @@ type Props = {
 }
 
 const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
+  const rankPercentile = Math.floor((rarityRank / collectionSize) * 100)
+
   return (
     <Tooltip.Provider>
       <Tooltip.Root delayDuration={0} disableHoverableContent>
@@ -23,8 +25,7 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
           >
             <span>Rarity Score</span>
             <span>
-              {rarityRank} / {collectionSize}{' '}
-              {`(${Math.floor((rarityRank / collectionSize) * 100)}%)`}
+              {rarityRank} / {collectionSize} {`(${rankPercentile}%)`}
             </span>
             <Tooltip.Arrow />
           </Tooltip.Content>
