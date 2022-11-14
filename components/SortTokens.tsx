@@ -1,4 +1,3 @@
-import { toggleOffItem } from 'lib/router'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { FC } from 'react'
@@ -47,7 +46,7 @@ const SortTokens: FC = () => {
 
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
-      <DropdownMenu.Trigger className="btn-primary-outline hidden w-[228px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
+      <DropdownMenu.Trigger className="btn-primary-outline hidden w-[200px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
         <span className="reservoir-label-l dark:text-gray-100">
           {sortSelection}
         </span>
@@ -61,7 +60,7 @@ const SortTokens: FC = () => {
       <DropdownMenu.Content
         align="end"
         sideOffset={12}
-        className="z-20 w-48 divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-800 md:w-56"
+        className="z-20 w-[200px] divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-800"
       >
         {Object.keys(options).map((key) => (
           <DropdownMenu.Item
