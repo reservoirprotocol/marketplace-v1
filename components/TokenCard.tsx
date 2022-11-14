@@ -144,7 +144,7 @@ const TokenCard: FC<Props> = ({
           >
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </div>
-          {collectionSize && token.token?.rarityRank && (
+          {collectionSize && collectionSize >= 2 && token.token?.rarityRank && (
             <RarityTooltip
               rarityRank={token.token?.rarityRank}
               collectionSize={collectionSize}
