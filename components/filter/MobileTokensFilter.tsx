@@ -69,7 +69,7 @@ const MobileTokensFilter: FC<Props> = ({
 
   return (
     <Dialog.Root onOpenChange={setOpen} open={open} modal={true}>
-      <div className="sticky bottom-6 z-10 flex w-screen flex-col items-center md:hidden">
+      <div className="fixed bottom-6 z-10 flex w-screen flex-col items-center md:hidden">
         <Dialog.Trigger className="btn-primary-outline min-w-[200px] rounded-full bg-white py-3 px-12 text-center shadow-[0px_10px_8px_rgba(0,0,0,0.04)] shadow-[_0px_4px_3px_rgba(0,0,0,0.1)] dark:bg-black">
           <span>Filter</span>
           {filtersEnabled && (
