@@ -1,40 +1,31 @@
 import * as Accordion from '@radix-ui/react-accordion'
-import { toggleOffItem, toggleOnAttributeKey } from 'lib/router'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, MutableRefObject } from 'react'
 import AttributeSelector from './filter/AttributeSelector'
 import { FiChevronDown } from 'react-icons/fi'
 import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
+import { styled } from '@stitches/react'
+
+const StyledChevron = styled(FiChevronDown, {
+  transition: 'transform',
+  '[data-state=open] &': { transform: 'rotate(180deg)' },
+})
 
 type Props = {
   attributes: ReturnType<typeof useAttributes>['data']
   refreshData: () => void
+  scrollToTop: () => void
 }
 
-const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
-  const router = useRouter()
+const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
+  if (attributes && attributes.length === 0) return null
 
   return (
     <Accordion.Root
       type="multiple"
-      className="col-span-3 hidden border-r-[1px] border-gray-300 dark:border-neutral-600 md:block "
+      className="sticky top-[91px] mr-4 hidden max-h-[calc(100vh-+91px)] w-min min-w-[300px] max-w-sm overflow-auto border-r-[1px] border-gray-300 pb-12 dark:border-neutral-600 md:block md:w-1/3 "
     >
-      <div className="overflow-hidden">
-        <button
-          onClick={() => {
-            router.query?.attribute_key === ''
-              ? toggleOffItem(router, 'attribute_key')
-              : toggleOnAttributeKey(router, 'attribute_key', '')
-          }}
-          className={`w-full border-b-[1px] border-gray-300 px-6 py-5 text-left transition dark:border-neutral-600 dark:text-white ${
-            router.query.attribute_key &&
-            router.query.attribute_key.toString() === ''
-              ? 'bg-primary-100 hover:bg-primary-300 dark:hover:bg-primary-900'
-              : 'hover:bg-primary-100 dark:hover:bg-primary-900'
-          }`}
-        >
-          Explore All
-        </button>
+      <div className="border-b-[1px] border-gray-300 px-6 py-5 text-left text-lg font-semibold transition dark:border-neutral-600 dark:text-white">
+        Filters
       </div>
       {attributes?.map((attribute) => (
         <Accordion.Item
@@ -42,53 +33,17 @@ const Sidebar: FC<Props> = ({ attributes, refreshData }) => {
           key={attribute.key}
           className="overflow-hidden"
         >
-          <Accordion.Header
-            className={`flex w-full justify-between border-b-[1px] border-gray-300 dark:border-neutral-600  ${
-              router.query.attribute_key &&
-              router.query.attribute_key.toString() === attribute.key
-                ? 'divide-gray-800 dark:divide-gray-300'
-                : 'divide-gray-300 dark:divide-gray-800'
-            }`}
-          >
-            <button
-              onClick={() => {
-                if (attribute.key) {
-                  router.query?.attribute_key === attribute.key
-                    ? toggleOffItem(router, 'attribute_key')
-                    : toggleOnAttributeKey(
-                        router,
-                        'attribute_key',
-                        attribute.key
-                      )
-                }
-              }}
-              className={`w-full py-5 px-6 text-left capitalize transition dark:text-white ${
-                router.query.attribute_key &&
-                router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 hover:bg-primary-300  dark:bg-primary-900 dark:hover:bg-primary-900'
-                  : 'hover:bg-primary-100 dark:hover:bg-primary-900'
-              }`}
-            >
+          <Accordion.Header className="flex w-full justify-between border-b-[1px] border-gray-300 dark:border-neutral-600">
+            <Accordion.Trigger className="flex w-full items-center justify-between p-5 transition hover:bg-primary-100 dark:hover:bg-primary-900">
               {attribute.key}
-            </button>
-            <div
-              className={`flex items-center ${
-                router.query.attribute_key &&
-                router.query.attribute_key.toString() === attribute.key
-                  ? 'bg-primary-100 hover:bg-primary-300 dark:bg-primary-900 dark:hover:bg-primary-900'
-                  : 'hover:bg-primary-100 dark:hover:bg-primary-900'
-              }`}
-            >
-              <div className="h-6 w-px bg-gray-300 dark:bg-neutral-600"></div>
-              <Accordion.Trigger className="p-5 transition">
-                <FiChevronDown className="h-5 w-5" aria-hidden />
-              </Accordion.Trigger>
-            </div>
+              <StyledChevron className="h-5 w-5" aria-hidden />
+            </Accordion.Trigger>
           </Accordion.Header>
           <Accordion.Content>
             <AttributeSelector
               attribute={attribute}
               refreshData={refreshData}
+              scrollToTop={scrollToTop}
             />
           </Accordion.Content>
         </Accordion.Item>
