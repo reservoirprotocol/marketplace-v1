@@ -298,7 +298,13 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                         min={1}
                         max={maxInput}
                         step={1}
-                        onChange={(e) => setSweepAmount(+e.target.value)}
+                        onChange={(e) => {
+                          let amount = +e.target.value
+                          if (amount > maxInput) {
+                            amount = maxInput
+                          }
+                          setSweepAmount(amount)
+                        }}
                         type="number"
                         name="amount"
                         id="amount"
