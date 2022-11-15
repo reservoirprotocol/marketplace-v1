@@ -26,7 +26,7 @@ import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
-import SortTokens from 'components/SortTokens' main
+import SortTokens from 'components/SortTokens'
 
 // Environment variables
 // For more information about these variables
