@@ -17,6 +17,7 @@ import {
   useUsersActivity,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
+import MobileActivityFilter from 'components/filter/MobileActivityFilter'
 
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 type CollectionActivityResponse = ReturnType<typeof useCollectionActivity>
@@ -78,59 +79,69 @@ const ActivityTable: FC<Props> = ({
 
   return (
     <>
-      <div className="mt-2 flex flex-wrap gap-2 md:m-5 md:gap-4">
-        {filters.map((filter, i) => {
-          const isSelected = enabledFilters.includes(filter)
-          return (
-            <button
-              disabled={data.isFetchingPage || data.isValidating}
-              key={i}
-              className={`flex gap-3 rounded-full px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
-                isSelected
-                  ? 'border-[1px] border-transparent bg-primary-100 dark:bg-neutral-600'
-                  : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
-              }`}
-              onClick={() => {
-                let updatedTypes: Props['types'] = types?.slice() || []
-                let activityType:
-                  | 'sale'
-                  | 'ask'
-                  | 'bid'
-                  | 'transfer'
-                  | 'mint'
-                  | undefined = undefined
+      {isMobile ? (
+        <MobileActivityFilter
+          filters={filters}
+          enabledFilters={enabledFilters}
+          data={data}
+          onTypesChange={onTypesChange}
+          types={types}
+        />
+      ) : (
+        <div className="mt-2 flex flex-wrap gap-2 md:m-5 md:gap-4">
+          {filters.map((filter, i) => {
+            const isSelected = enabledFilters.includes(filter)
+            return (
+              <button
+                disabled={data.isFetchingPage || data.isValidating}
+                key={i}
+                className={`flex gap-3 rounded-full px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
+                  isSelected
+                    ? 'border-[1px] border-transparent bg-primary-100 dark:bg-neutral-600'
+                    : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
+                }`}
+                onClick={() => {
+                  let updatedTypes: Props['types'] = types?.slice() || []
+                  let activityType:
+                    | 'sale'
+                    | 'ask'
+                    | 'bid'
+                    | 'transfer'
+                    | 'mint'
+                    | undefined = undefined
 
-                if (filter === 'Sales') {
-                  activityType = 'sale'
-                } else if (filter === 'Listings') {
-                  activityType = 'ask'
-                } else if (filter === 'Offers') {
-                  activityType = 'bid'
-                } else if (filter === 'Transfer') {
-                  activityType = 'transfer'
-                } else if (filter === 'Mints') {
-                  activityType = 'mint'
-                }
+                  if (filter === 'Sales') {
+                    activityType = 'sale'
+                  } else if (filter === 'Listings') {
+                    activityType = 'ask'
+                  } else if (filter === 'Offers') {
+                    activityType = 'bid'
+                  } else if (filter === 'Transfer') {
+                    activityType = 'transfer'
+                  } else if (filter === 'Mints') {
+                    activityType = 'mint'
+                  }
 
-                if (!activityType) {
-                  return
-                }
+                  if (!activityType) {
+                    return
+                  }
 
-                if (enabledFilters.includes(filter)) {
-                  updatedTypes = updatedTypes.filter(
-                    (type) => activityType !== type
-                  )
-                } else {
-                  updatedTypes.push(activityType)
-                }
-                onTypesChange(updatedTypes)
-              }}
-            >
-              {filter}
-            </button>
-          )
-        })}
-      </div>
+                  if (enabledFilters.includes(filter)) {
+                    updatedTypes = updatedTypes.filter(
+                      (type) => activityType !== type
+                    )
+                  } else {
+                    updatedTypes.push(activityType)
+                  }
+                  onTypesChange(updatedTypes)
+                }}
+              >
+                {filter}
+              </button>
+            )
+          })}
+        </div>
+      )}
       {!data.isValidating && (!activities || activities.length === 0) ? (
         emptyPlaceholder
       ) : (
