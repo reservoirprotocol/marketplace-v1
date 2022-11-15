@@ -1,5 +1,6 @@
 **Terms of Use**
-Last updated: November 15, 2022
+
+*Last updated: November 15, 2022*
 
 Reservoir is an NFT developer platform developed and made available by Uneven Labs, Inc., a Delaware corporation (“Uneven Labs,” “we,” “our,” or “us”). This platform consists of multiple components that can be accessed through our website located at [https://reservoir.tools/](https://reservoir.tools/), including the Reservoir API (a hosted Application Programming Interface for building NFT applications), the ReservoirKit (a developer toolkit), and the Reservoir Protocol (an open-source NFT liquidity aggregation protocol). Details on the components of the Reservoir Platform can be found at [https://docs.reservoir.tools/docs/what-is-reservoir](https://docs.reservoir.tools/docs/what-is-reservoir). The Reservoir Protocol is comprised of open-source software, which is publicly available and located at [https://github.com/reservoirprotocol](https://github.com/reservoirprotocol).
 
