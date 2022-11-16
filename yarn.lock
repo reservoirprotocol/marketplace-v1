@@ -1769,17 +1769,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.2"
 
-"@reservoir0x/reservoir-kit-client@0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.1.15.tgz#82ca8fe87bcbb6c00fa2f9c7186d429c27a6922f"
-  integrity sha512-Z87adiT5jZU/z8aI4BRkUDwnwiPY4x2TWNB0ZJ4v2fSKW4cTq+fTFNTuHm8T90CallscgaxGaDdKCMPaXG5rYg==
+"@reservoir0x/reservoir-kit-client@0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.1.16.tgz#d1610ca5408d707f65eea2da14c3c1d5d01f2045"
+  integrity sha512-BhelBbGI02W+J4QB7pPOdQomSG1iPojVcYY+DtV9zqsIGfPXCP8VXfSiXCjwWlH9rIBmhY8bgnwIORw9kSpjGg==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.5.9":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.5.9.tgz#88809576fddcd4ecbcf96e857b079d7bc6d409af"
-  integrity sha512-m554uRxYfsFB6DKsi6Y42b2xcgQMa1SLUCwyDTslvRKIr5xn8hpmkOpO1f7CbjQpt6/QoIpXm56wDST4m182cg==
+"@reservoir0x/reservoir-kit-ui@0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.5.10.tgz#c1f990008331e10b7eaedacbccc35e3abf60de20"
+  integrity sha512-kUZvXWFf6LvB90uk5IYUB0ARpRNYEmBmwNmc8XT06tGXUGYIuHIYaWWA5gp+al8c+wzhkputtQpqRN+XlzUgpw==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1791,7 +1791,7 @@
     "@radix-ui/react-select" "1.0.1-rc.2"
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
-    "@reservoir0x/reservoir-kit-client" "0.1.15"
+    "@reservoir0x/reservoir-kit-client" "0.1.16"
     "@stitches/react" "^1.2.8"
     dayjs "^1.11.4"
     flatpickr "^4.6.13"
