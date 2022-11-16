@@ -4,14 +4,18 @@ import AttributeSelector from './filter/AttributeSelector'
 import { FiChevronDown } from 'react-icons/fi'
 import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import { styled } from '@stitches/react'
+import { paths } from '@reservoir0x/reservoir-kit-client'
 
 const StyledChevron = styled(FiChevronDown, {
   transition: 'transform',
   '[data-state=open] &': { transform: 'rotate(180deg)' },
 })
 
+type Attributes =
+  paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']['attributes']
+
 type Props = {
-  attributes: ReturnType<typeof useAttributes>['data']
+  attributes: Attributes
   refreshData: () => void
   scrollToTop: () => void
 }
