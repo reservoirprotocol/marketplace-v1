@@ -17,6 +17,7 @@ export default function useCollectionStats(
 
     const query: paths['/stats/v2']['get']['parameters']['query'] = {
       collection: collectionId,
+      normalizeRoyalties: true
     }
 
     // Extract all queries of attribute type
