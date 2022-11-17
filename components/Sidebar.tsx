@@ -11,7 +11,7 @@ const StyledChevron = styled(FiChevronDown, {
 })
 
 type Props = {
-  attributes: ReturnType<typeof useAttributes>['data']
+  attributes: ReturnType<typeof useAttributes>['data'] | undefined
   refreshData: () => void
   scrollToTop: () => void
 }
