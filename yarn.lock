@@ -1251,6 +1251,21 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-primitive" "1.0.0"
 
+"@radix-ui/react-checkbox@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-checkbox/-/react-checkbox-1.0.1.tgz#80cb38b1fd2cbe73f3ad0f4db8aebead0ab0617a"
+  integrity sha512-TisH0B8hWmYP3ONRduYCyN04rR9yLPIw/Rwyn1RoC1suSoGCa8Wn+YPdSSSarSszeIbcg3p2lBkDp2XXit4sZw==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.0"
+    "@radix-ui/react-compose-refs" "1.0.0"
+    "@radix-ui/react-context" "1.0.0"
+    "@radix-ui/react-presence" "1.0.0"
+    "@radix-ui/react-primitive" "1.0.1"
+    "@radix-ui/react-use-controllable-state" "1.0.0"
+    "@radix-ui/react-use-previous" "1.0.0"
+    "@radix-ui/react-use-size" "1.0.0"
+
 "@radix-ui/react-collapsible@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-collapsible/-/react-collapsible-1.0.0.tgz#0d94fc847c2d4bee1ab646d15c87bd3be6448873"
@@ -1469,6 +1484,14 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-slot" "1.0.0"
 
+"@radix-ui/react-primitive@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-primitive/-/react-primitive-1.0.1.tgz#c1ebcce283dd2f02e4fbefdaa49d1cb13dbc990a"
+  integrity sha512-fHbmislWVkZaIdeF6GZxF0A/NH/3BjrGIYj+Ae6eTmTCr7EB0RQAAVEiqsXK6p3/JcRqVSBQoceZroj30Jj3XA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-slot" "1.0.1"
+
 "@radix-ui/react-primitive@1.0.1-rc.2":
   version "1.0.1-rc.2"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-primitive/-/react-primitive-1.0.1-rc.2.tgz#27bd4b180d6324bc48e9bbe469ca9886fa96815c"
@@ -1559,6 +1582,14 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.0.0.tgz#7fa805b99891dea1e862d8f8fbe07f4d6d0fd698"
   integrity sha512-3mrKauI/tWXo1Ll+gN5dHcxDPdm/Df1ufcDLCecn+pnCIVcdWE7CujXo8QaXOWRJyZyQWWbpB8eFwHzWXlv5mQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-compose-refs" "1.0.0"
+
+"@radix-ui/react-slot@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.0.1.tgz#e7868c669c974d649070e9ecbec0b367ee0b4d81"
+  integrity sha512-avutXAFL1ehGvAXtPquu0YK5oz6ctS474iM3vNGQIkswrVhdrS52e3uoMQBzZhNRAIE0jBnUyXWNmSjGHhCFcw==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-compose-refs" "1.0.0"
@@ -1738,17 +1769,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.2"
 
-"@reservoir0x/reservoir-kit-client@0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.1.13.tgz#0a397c2b7bfe4e26928fbece4156b41ecf428760"
-  integrity sha512-8/bndVPTWEI5th7P9NNjEy0jXZn3VIT/hkgxoFBF1eAcaIpGCxY/R+/w5cNpc/zcpxrtgZX1bK5Lr6WssIWe0Q==
+"@reservoir0x/reservoir-kit-client@0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.1.16.tgz#d1610ca5408d707f65eea2da14c3c1d5d01f2045"
+  integrity sha512-BhelBbGI02W+J4QB7pPOdQomSG1iPojVcYY+DtV9zqsIGfPXCP8VXfSiXCjwWlH9rIBmhY8bgnwIORw9kSpjGg==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.5.7":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.5.7.tgz#339291ad712ca85aa48ccc82da72390a44eb5595"
-  integrity sha512-9ysNvP0XIg1oS5vbhllZemFvWKoTqZy+ysff8609u4eKKzfP19z9JNANEwkoij6T3h0fg3Nkug/IdCrdUCEvPw==
+"@reservoir0x/reservoir-kit-ui@0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.5.10.tgz#c1f990008331e10b7eaedacbccc35e3abf60de20"
+  integrity sha512-kUZvXWFf6LvB90uk5IYUB0ARpRNYEmBmwNmc8XT06tGXUGYIuHIYaWWA5gp+al8c+wzhkputtQpqRN+XlzUgpw==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1760,7 +1791,7 @@
     "@radix-ui/react-select" "1.0.1-rc.2"
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
-    "@reservoir0x/reservoir-kit-client" "0.1.13"
+    "@reservoir0x/reservoir-kit-client" "0.1.16"
     "@stitches/react" "^1.2.8"
     dayjs "^1.11.4"
     flatpickr "^4.6.13"

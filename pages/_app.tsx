@@ -174,6 +174,7 @@ const App: FC<AppProps & { baseUrl: string }> = ({
       DISABLE_POWERED_BY_RESERVOIR != undefined &&
       DISABLE_POWERED_BY_RESERVOIR != null,
     source: SOURCE_DOMAIN,
+    normalizeRoyalties: true,
   }
 
   if (FEE_BPS && FEE_RECIPIENT) {
