@@ -51,8 +51,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
     })
   }
 
-  console.log(address)
-
   const data = useUserTopBids(address as string, params, {
     revalidateOnMount: false,
   })
