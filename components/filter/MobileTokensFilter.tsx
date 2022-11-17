@@ -6,7 +6,6 @@ import { FC, useEffect, useState } from 'react'
 import { FiChevronUp } from 'react-icons/fi'
 import AttributeSelector from './AttributeSelector'
 import { styled } from '@stitches/react'
-import { paths } from '@reservoir0x/reservoir-kit-client'
 
 const StyledChevron = styled(FiChevronUp, {
   transition: 'transform',
@@ -15,11 +14,8 @@ const StyledChevron = styled(FiChevronUp, {
   },
 })
 
-type Attributes =
-  paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']['attributes']
-
 type Props = {
-  attributes: Attributes
+  attributes: ReturnType<typeof useAttributes>['data'] | undefined
   refreshData: () => void
   scrollToTop: () => void
 }
