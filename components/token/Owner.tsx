@@ -34,14 +34,16 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
       <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
         {rarityRank && collectionSize && rankPercentile && (
           <div className="mb-3 flex w-full">
-            <div className="hidden min-w-max items-center justify-between whitespace-nowrap rounded-md border border-neutral-300 px-2 py-1.5 text-sm sm:flex">
+            <div className="hidden min-w-max items-center justify-between whitespace-nowrap rounded-md border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 sm:flex">
               <img
                 src="/icons/rarity-icon.svg"
                 alt="Rarity icon"
                 className="mr-1 h-4 w-4"
               />
-              <span className="mr-1 text-[#525252]">Rarity Score</span>
-              <span className="text-black">
+              <span className="mr-1 text-[#525252] dark:text-[#D4D4D4]">
+                Rarity Score
+              </span>
+              <span className="text-black dark:text-[#FFFFFF]">
                 {rarityRank} / {collectionSize} {`(${rankPercentile}%)`}
               </span>
             </div>
