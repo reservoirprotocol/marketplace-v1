@@ -6,7 +6,6 @@ import { FC, useEffect, useState } from 'react'
 import { FiChevronUp } from 'react-icons/fi'
 import AttributeSelector from './AttributeSelector'
 import { styled } from '@stitches/react'
-import { paths } from '@reservoir0x/reservoir-kit-client'
 
 const StyledChevron = styled(FiChevronUp, {
   transition: 'transform',

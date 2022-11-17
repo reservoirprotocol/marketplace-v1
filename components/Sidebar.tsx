@@ -4,7 +4,6 @@ import AttributeSelector from './filter/AttributeSelector'
 import { FiChevronDown } from 'react-icons/fi'
 import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import { styled } from '@stitches/react'
-import { paths } from '@reservoir0x/reservoir-kit-client'
 
 const StyledChevron = styled(FiChevronDown, {
   transition: 'transform',
