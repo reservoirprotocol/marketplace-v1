@@ -15,14 +15,6 @@ type Props = {
 
 const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
   const token = details?.token
-  const rarityRank = token?.rarityRank
-  const collectionSize = collection?.tokenCount
-    ? parseInt(collection?.tokenCount)
-    : undefined
-  const rankPercentile =
-    rarityRank && collectionSize
-      ? Math.floor((rarityRank / collectionSize) * 100)
-      : undefined
 
   const owner =
     token?.kind === 'erc1155' && details?.market?.floorAsk?.maker
@@ -32,29 +24,34 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
-        {rarityRank && collectionSize && rankPercentile && (
-          <div className="mb-3 flex w-full">
-            <div className="hidden min-w-max items-center justify-between whitespace-nowrap rounded-md border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 sm:flex">
-              <img
-                src="/icons/rarity-icon.svg"
-                alt="Rarity icon"
-                className="mr-1 h-4 w-4"
-              />
-              <span className="mr-1 text-[#525252] dark:text-[#D4D4D4]">
-                Rarity Score
-              </span>
-              <span className="text-black dark:text-[#FFFFFF]">
-                {rarityRank} / {collectionSize} {`(${rankPercentile}%)`}
-              </span>
+        {token?.rarityRank &&
+          collection?.tokenCount &&
+          token?.kind != 'erc1155' && (
+            <div className="mb-3 flex w-full">
+              <div className="hidden min-w-max items-center justify-between whitespace-nowrap rounded-md border border-neutral-300 px-2 py-1.5 text-sm dark:border-neutral-600 sm:flex">
+                <img
+                  src="/icons/rarity-icon.svg"
+                  alt="Rarity icon"
+                  className="mr-1 h-4 w-4"
+                />
+                <span className="mr-1 text-[#525252] dark:text-[#D4D4D4]">
+                  Rarity Score
+                </span>
+                <span className="text-black dark:text-[#FFFFFF]">
+                  {token?.rarityRank} / {collection?.tokenCount}{' '}
+                  {`(${Math.floor(
+                    (token?.rarityRank / parseInt(collection?.tokenCount)) * 100
+                  )}%)`}
+                </span>
+              </div>
+              <div className="flex sm:hidden">
+                <RarityTooltip
+                  rarityRank={token?.rarityRank}
+                  collectionSize={parseInt(collection?.tokenCount)}
+                />
+              </div>
             </div>
-            <div className="flex sm:hidden">
-              <RarityTooltip
-                rarityRank={rarityRank}
-                collectionSize={collectionSize}
-              />
-            </div>
-          </div>
-        )}
+          )}
         <div className="reservoir-h3 mb-3 flex items-center gap-4 overflow-hidden font-headings dark:text-white">
           <div>{token?.name || `#${token?.tokenId}`}</div>
           {bannedOnOpenSea && (
