@@ -1,9 +1,13 @@
-import { ComponentProps, FC, useEffect } from 'react'
+import { ComponentProps, ComponentPropsWithoutRef, FC, useEffect } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import Toast from 'components/Toast'
-import { useUserTopBids, AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
+import {
+  useUserTopBids,
+  AcceptBidModal,
+  ListModal,
+} from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import LoadingIcon from 'components/LoadingIcon'
 import useCoinConversion from 'hooks/useCoinConversion'
@@ -13,6 +17,7 @@ import InfoTooltip from 'components/InfoTooltip'
 import { useMediaQuery } from '@react-hookz/web'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import Tooltip from 'components/Tooltip'
+import { setToast } from 'components/token/setToast'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -26,6 +31,11 @@ type Props = {
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
   }
 }
+
+type ListingCurrencies = ComponentPropsWithoutRef<
+  typeof ListModal
+>['currencies']
+let listingCurrencies: ListingCurrencies = undefined
 
 const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
   const params: Parameters<typeof useUserTopBids>[1] = {
@@ -177,14 +187,42 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
               <div className="flex items-center justify-center pt-4">
                 <AcceptBidModal
                   trigger={
-                    <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                      Accept
+                    <button className="btn-primary-outline mr-3 min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                      Accept Offer
                     </button>
                   }
                   collectionId={contract}
                   tokenId={tokenId}
                   onClose={() => data.mutate()}
                   onBidAcceptError={onBidAcceptError}
+                />
+                <ListModal
+                  trigger={
+                    <button className="btn-primary-outline min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                      List Item
+                    </button>
+                  }
+                  collectionId={contract}
+                  tokenId={tokenId}
+                  currencies={listingCurrencies}
+                  onListingComplete={() => {
+                    data.mutate()
+                  }}
+                  onListingError={(err: any) => {
+                    if (err?.code === 4001) {
+                      setToast({
+                        kind: 'error',
+                        message: 'You have canceled the transaction.',
+                        title: 'User canceled transaction',
+                      })
+                      return
+                    }
+                    setToast({
+                      kind: 'error',
+                      message: 'The transaction was not completed.',
+                      title: 'Could not list token',
+                    })
+                  }}
                 />
               </div>
             </div>
@@ -209,7 +247,7 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                 tooltip: 'We show you the best offer available per token',
               },
               {
-                title: 'Floor Price',
+                title: 'Collection Floor',
                 tooltip: null,
               },
             ].map((item, i) => (
@@ -335,7 +373,7 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                     }
                   >
                     <div className="flex flex-col">
-                      <div className="flex items-center">
+                      <div className="mb-0.5 flex items-center">
                         {source.icon && (
                           <img
                             className="mr-1 h-4 w-4"
@@ -344,12 +382,17 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                           />
                         )}
                         <FormatWEth amount={price} maximumFractionDigits={8} />
+                        {usdConversion && (
+                          <span className="ml-1 text-xs text-neutral-600 dark:text-neutral-300">
+                            {`(${formatDollar(usdConversion * (price || 0))})`}
+                          </span>
+                        )}
                       </div>
-                      {usdConversion && (
-                        <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
-                          {formatDollar(usdConversion * (price || 0))}
+                      {floorAskPrice ? (
+                        <span className="text-xs text-neutral-600 dark:text-neutral-300">
+                          {floorDifference}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                   </Tooltip>
                 </td>
@@ -362,11 +405,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                     ) : (
                       '-'
                     )}
-                    {floorAskPrice ? (
-                      <span className="text-xs text-neutral-600 dark:text-neutral-300">
-                        {floorDifference}
-                      </span>
-                    ) : null}
                   </div>
                 </td>
 
@@ -374,14 +412,42 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                   <div className="flex items-center">
                     <AcceptBidModal
                       trigger={
-                        <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                          Accept
+                        <button className="btn-primary-outline mr-3 min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                          Accept Offer
                         </button>
                       }
                       collectionId={contract}
                       tokenId={tokenId}
                       onClose={() => data.mutate()}
                       onBidAcceptError={onBidAcceptError}
+                    />
+                    <ListModal
+                      trigger={
+                        <button className="btn-primary-outline min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                          List Item
+                        </button>
+                      }
+                      collectionId={contract}
+                      tokenId={tokenId}
+                      currencies={listingCurrencies}
+                      onListingComplete={() => {
+                        data.mutate()
+                      }}
+                      onListingError={(err: any) => {
+                        if (err?.code === 4001) {
+                          setToast({
+                            kind: 'error',
+                            message: 'You have canceled the transaction.',
+                            title: 'User canceled transaction',
+                          })
+                          return
+                        }
+                        setToast({
+                          kind: 'error',
+                          message: 'The transaction was not completed.',
+                          title: 'Could not list token',
+                        })
+                      }}
                     />
                   </div>
                 </td>
