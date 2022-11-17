@@ -11,11 +11,8 @@ const StyledChevron = styled(FiChevronDown, {
   '[data-state=open] &': { transform: 'rotate(180deg)' },
 })
 
-type Attributes =
-  paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']['attributes']
-
 type Props = {
-  attributes: Attributes
+  attributes: ReturnType<typeof useAttributes>['data'] | undefined
   refreshData: () => void
   scrollToTop: () => void
 }
