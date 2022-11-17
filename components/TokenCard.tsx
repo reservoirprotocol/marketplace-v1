@@ -144,12 +144,15 @@ const TokenCard: FC<Props> = ({
           >
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </div>
-          {collectionSize && collectionSize >= 2 && token.token?.rarityRank && (
-            <RarityTooltip
-              rarityRank={token.token?.rarityRank}
-              collectionSize={collectionSize}
-            />
-          )}
+          {collectionSize &&
+            collectionSize >= 2 &&
+            token.token?.rarityRank &&
+            token.token?.kind != 'erc1155' && (
+              <RarityTooltip
+                rarityRank={token.token?.rarityRank}
+                collectionSize={collectionSize}
+              />
+            )}
         </div>
         <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&

@@ -90,10 +90,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
   if (!CHAIN_ID) return null
 
-  if (tokens.error) {
-    return <div>There was an error</div>
-  }
-
   const tokenCount = stats?.data?.stats?.tokenCount ?? 0
 
   const title = metaTitle ? (
