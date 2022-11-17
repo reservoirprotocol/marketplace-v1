@@ -5,9 +5,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import Toast from 'components/Toast'
 import { useUserTopBids, AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
-// import { useRouter } from 'next/router'
 import LoadingIcon from 'components/LoadingIcon'
-import { truncateAddress } from 'lib/truncateText'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar, formatNumber } from 'lib/numbers'
 import FormatWEth from 'components/FormatWEth'
@@ -30,8 +28,6 @@ type Props = {
 }
 
 const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
-  // const router = useRouter()
-  // const { address } = router.query
   const params: Parameters<typeof useUserTopBids>[1] = {
     limit: 20,
   }
@@ -114,7 +110,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
           const {
             collectionName,
             contract,
-            expiration,
             href,
             image,
             tokenName,
@@ -122,7 +117,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
             price,
             source,
             floorDifference,
-            maker,
           } = processBid(bid)
 
           return (
@@ -251,7 +245,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
             const {
               collectionName,
               contract,
-              expiration,
               href,
               image,
               tokenName,
@@ -262,7 +255,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
               floorAskPrice,
               floorDifference,
               source,
-              maker,
             } = processBid(bid)
 
             return (
