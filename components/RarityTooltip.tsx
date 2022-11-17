@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import * as Tooltip from '@radix-ui/react-tooltip'
 
 type Props = {
@@ -7,26 +7,12 @@ type Props = {
 }
 
 const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
-  const [open, setOpen] = useState(false)
   const rankPercentile = Math.floor((rarityRank / collectionSize) * 100)
 
   return (
     <Tooltip.Provider>
       <Tooltip.Root delayDuration={0}>
-        <Tooltip.Trigger
-          onMouseEnter={() => {
-            setOpen(true)
-          }}
-          onMouseLeave={() => {
-            setOpen(false)
-          }}
-          onFocus={() => {
-            setOpen(true)
-          }}
-          onBlur={() => {
-            setOpen(false)
-          }}
-        >
+        <Tooltip.Trigger>
           <div className="mr-4 flex h-6 min-w-max cursor-pointer items-center justify-between rounded-md border border-neutral-300 px-2 py-1.5 text-sm ">
             <img
               src="/icons/rarity-icon.svg"
