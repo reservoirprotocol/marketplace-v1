@@ -1,35 +1,48 @@
+import ConnectWalletButton from 'components/ConnectWalletButton'
 import Layout from 'components/Layout'
-import {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  NextPage,
-} from 'next'
-import { useRouter } from 'next/router'
-import { useAccount, useNetwork, useEnsName, useEnsAvatar } from 'wagmi'
-import * as Tabs from '@radix-ui/react-tabs'
-import { toggleOnItem } from 'lib/router'
-import UserOffersTable from 'components/tables/UserOffersTable'
-import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
-import UserListingsTable from 'components/tables/UserListingsTable'
-import UserTokensGrid from 'components/UserTokensGrid'
-import Avatar from 'components/Avatar'
-import { ComponentProps } from 'react'
+import SellTable from 'components/tables/SellTable'
+import { NextPage } from 'next'
+import { useAccount } from 'wagmi'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
-import Head from 'next/head'
-import useSearchCommunity from 'hooks/useSearchCommunity'
-import { truncateAddress } from 'lib/truncateText'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
-import UserActivityTab from 'components/tables/UserActivityTab'
-import useMounted from 'hooks/useMounted'
+import { ComponentProps } from 'react'
 
 const Sell: NextPage = () => {
+  const { address, isConnected } = useAccount()
+  let collectionIds: undefined | string[] = undefined
+
+  const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
+    data
+  ) => toast.custom((t) => <Toast t={t} toast={toast} data={data} />)
+
   return (
     <Layout navbar={{}}>
-      {/* <Head></Head> */}
-      <div>
-        <h1>Sell your items</h1>
+      <div className="item-center col-span-full mx-auto flex w-screen flex-col px-4 py-8 sm:px-12 md:py-16">
+        {isConnected ? (
+          <>
+            <h1 className="mb-11 text-[32px] font-semibold">Sell your items</h1>
+            <SellTable
+              isOwner={false}
+              address={address}
+              modal={{
+                isInTheWrongNetwork: undefined,
+                setToast,
+              }}
+            />
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-y-6 py-16 text-center md:py-32">
+            <img
+              src="/icons/wallet-dark.svg"
+              alt="Wallet icon"
+              className="h-8 w-8"
+            />
+            <p>Connect wallet to sell your items</p>
+            <ConnectWalletButton>
+              <span className="w-40">Connect Wallet</span>
+            </ConnectWalletButton>
+          </div>
+        )}
       </div>
     </Layout>
   )

@@ -5,7 +5,7 @@ import { optimizeImage } from 'lib/optmizeImage'
 import Toast from 'components/Toast'
 import { useUserTopBids, AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import LoadingIcon from 'components/LoadingIcon'
 import { truncateAddress } from 'lib/truncateText'
 import useCoinConversion from 'hooks/useCoinConversion'
@@ -21,6 +21,7 @@ const API_BASE =
 
 type Props = {
   isOwner: boolean
+  address: string | undefined
   collectionIds?: string[]
   modal: {
     isInTheWrongNetwork: boolean | undefined
@@ -28,9 +29,9 @@ type Props = {
   }
 }
 
-const SellTable: FC<Props> = ({ modal, isOwner, collectionIds }) => {
-  const router = useRouter()
-  const { address } = router.query
+const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
+  // const router = useRouter()
+  // const { address } = router.query
   const params: Parameters<typeof useUserTopBids>[1] = {
     limit: 20,
   }
@@ -43,6 +44,8 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds }) => {
       params[`collection[${i}]`] = id
     })
   }
+
+  console.log(address)
 
   const data = useUserTopBids(address as string, params, {
     revalidateOnMount: false,
@@ -238,14 +241,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds }) => {
                 title: 'Floor Price',
                 tooltip: null,
               },
-              {
-                title: 'Expiration',
-                tooltip: null,
-              },
-              {
-                title: 'Marketplace',
-                tooltip: null,
-              },
             ].map((item, i) => (
               <th
                 key={i}
@@ -371,7 +366,16 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds }) => {
                     }
                   >
                     <div className="flex flex-col">
-                      <FormatWEth amount={price} maximumFractionDigits={8} />
+                      <div className="flex items-center">
+                        {source.icon && (
+                          <img
+                            className="mr-1 h-4 w-4"
+                            alt="Source Icon"
+                            src={source.icon}
+                          />
+                        )}
+                        <FormatWEth amount={price} maximumFractionDigits={8} />
+                      </div>
                       {usdConversion && (
                         <span className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
                           {formatDollar(usdConversion * (price || 0))}
@@ -397,62 +401,21 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds }) => {
                   </div>
                 </td>
 
-                {/* EXPIRATION */}
-                <td className="whitespace-nowrap px-6 py-4 font-light text-neutral-600 dark:text-neutral-300">
-                  {expiration}
-                </td>
-
-                {/* MARKETPLACE */}
-                <td className="whitespace-nowrap px-6 py-4">
-                  <a
-                    href={`/address/${maker}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
-                  >
-                    {truncateAddress(maker)}
-                  </a>
-                  <div className="mt-1 flex gap-1">
-                    <span className="font-light text-neutral-600 dark:text-neutral-300">
-                      via
-                    </span>
-                    <a
-                      href={source.link || '#'}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
-                    >
-                      {source.icon && (
-                        <img
-                          className="h-6 w-6"
-                          alt="Source Icon"
-                          src={source.icon}
-                        />
-                      )}
-                      <span className="max-w-[200px] overflow-hidden text-ellipsis">
-                        {source.name}
-                      </span>
-                    </a>
+                <td className="whitespace-nowrap dark:text-white">
+                  <div className="flex items-center">
+                    <AcceptBidModal
+                      trigger={
+                        <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                          Accept
+                        </button>
+                      }
+                      collectionId={contract}
+                      tokenId={tokenId}
+                      onClose={() => data.mutate()}
+                      onBidAcceptError={onBidAcceptError}
+                    />
                   </div>
                 </td>
-
-                {isOwner && (
-                  <td className="sticky top-0 right-0 whitespace-nowrap dark:text-white">
-                    <div className="flex items-center">
-                      <AcceptBidModal
-                        trigger={
-                          <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                            Accept
-                          </button>
-                        }
-                        collectionId={contract}
-                        tokenId={tokenId}
-                        onClose={() => data.mutate()}
-                        onBidAcceptError={onBidAcceptError}
-                      />
-                    </div>
-                  </td>
-                )}
               </tr>
             )
           })}
