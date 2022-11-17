@@ -100,7 +100,7 @@ const Navbar: FC = () => {
           )
           setHasCommunityDropdown(true)
         } else {
-          setShowLinks(false)
+          // setShowLinks(false)
           setHasCommunityDropdown(false)
           !showDesktopSearch
             ? setFilterComponent(
@@ -143,7 +143,7 @@ const Navbar: FC = () => {
         </div>
       )}
       {(hasCommunityDropdown || showDesktopSearch) && (
-        <div className="absolute top-0 left-0 right-0 flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center justify-center">
           {filterComponent && filterComponent}
         </div>
       )}
@@ -161,11 +161,6 @@ const Navbar: FC = () => {
             </div>
           )}
           <CartMenu />
-          {hasCommunityDropdown &&
-          themeSwitcherEnabled &&
-          !showDesktopSearch ? null : (
-            <ListItemButton />
-          )}
           <ConnectWallet />
           <ThemeSwitcher />
         </div>
