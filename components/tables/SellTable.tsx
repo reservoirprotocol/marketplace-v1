@@ -159,8 +159,17 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                     </div>
                   </a>
                 </Link>
-                <div className="flex flex-col">
-                  <FormatWEth amount={price} />
+                <div className="flex flex-col justify-end">
+                  <div className="flex items-center justify-end">
+                    {source.icon && (
+                      <img
+                        className="mr-1 h-4 w-4"
+                        alt="Source Icon"
+                        src={source.icon}
+                      />
+                    )}
+                    <FormatWEth amount={price} />
+                  </div>
                   {usdConversion && (
                     <span className="mt-1 text-right text-xs text-neutral-600 dark:text-neutral-300">
                       {formatDollar(usdConversion * (price || 0))}
@@ -171,39 +180,7 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-4">
-                <div>
-                  <div className="flex items-center gap-1 text-xs font-light text-neutral-600 dark:text-neutral-300">
-                    From{' '}
-                    <a
-                      href={`/address/${maker}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex gap-1 font-light text-primary-700 dark:text-primary-300"
-                    >
-                      {truncateAddress(maker)}
-                    </a>{' '}
-                    via{' '}
-                    <a
-                      href={source.link || '#'}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1 font-light text-primary-700 dark:text-primary-300"
-                    >
-                      {source.icon && (
-                        <img
-                          className="h-6 w-6"
-                          alt="Source Icon"
-                          src={source.icon}
-                        />
-                      )}
-                      <span className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                        {source.name}
-                      </span>
-                    </a>
-                  </div>
-                  <div className="text-xs font-light text-neutral-600 dark:text-neutral-300">{`Expires ${expiration}`}</div>
-                </div>
+              <div className="flex items-center justify-center pt-4">
                 <AcceptBidModal
                   trigger={
                     <button className="btn-primary-outline min-w-[120px] bg-white py-[3px] text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
@@ -295,7 +272,7 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                 className="group h-[80px] border-b-[1px] border-solid border-b-neutral-300 bg-white dark:border-b-neutral-600 dark:bg-black"
               >
                 {/* ITEM */}
-                <td className="whitespace-nowrap px-6 py-4">
+                <td className="whitespace-nowrap py-4 pr-6">
                   <Link href={href || '#'}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-16 w-16">
