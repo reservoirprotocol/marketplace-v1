@@ -96,7 +96,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
-      { name: 'Offers Received', id: 'received' },
       { name: 'Offers Made', id: 'buying' },
       { name: 'Listings', id: 'selling' },
     ]
@@ -151,16 +150,6 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
               <>
                 <Tabs.Content value="buying">
                   <UserOffersTable
-                    collectionIds={collectionIds}
-                    modal={{
-                      isInTheWrongNetwork,
-                      setToast,
-                    }}
-                  />
-                </Tabs.Content>
-                <Tabs.Content value="received">
-                  <UserOffersReceivedTable
-                    isOwner={isOwner}
                     collectionIds={collectionIds}
                     modal={{
                       isInTheWrongNetwork,

@@ -52,21 +52,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
           </Dialog.Close>
         </div>
 
-        {hasExternalLinks && (
-          <div className="grid">
-            {externalLinks.map(({ name, url }) => (
-              <a
-                key={url}
-                href={url}
-                rel="noopener noreferrer"
-                className="border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
-              >
-                {name}
-              </a>
-            ))}
-          </div>
-        )}
-        <div className="mt-2 px-4">
+        <div className="my-2 px-4">
           <ThemeSwitcher />
         </div>
         {accountData.isConnected ? (
@@ -89,6 +75,21 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
                 )}
               </span>
             </div>
+
+            {hasExternalLinks && (
+              <div className="grid">
+                {externalLinks.map(({ name, url }) => (
+                  <a
+                    key={url}
+                    href={url}
+                    rel="noopener noreferrer"
+                    className="border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                  >
+                    {name}
+                  </a>
+                ))}
+              </div>
+            )}
 
             <Link href={`/address/${accountData.address}`}>
               <a

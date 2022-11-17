@@ -10,7 +10,6 @@ import CartMenu from './CartMenu'
 import SearchMenu from './SearchMenu'
 import { useMediaQuery } from '@react-hookz/web'
 import useMounted from 'hooks/useMounted'
-import ListItemButton from './navbar/ListItemButton'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -63,7 +62,6 @@ const Navbar: FC = () => {
 
   const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
   const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
-  const themeSwitcherEnabled = THEME_SWITCHING_ENABLED
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -100,7 +98,6 @@ const Navbar: FC = () => {
           )
           setHasCommunityDropdown(true)
         } else {
-          setShowLinks(false)
           setHasCommunityDropdown(false)
           !showDesktopSearch
             ? setFilterComponent(
@@ -133,8 +130,6 @@ const Navbar: FC = () => {
             <a
               key={url}
               href={url}
-              rel="noopener noreferrer"
-              target="_blank"
               className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
             >
               {name}
@@ -143,7 +138,7 @@ const Navbar: FC = () => {
         </div>
       )}
       {(hasCommunityDropdown || showDesktopSearch) && (
-        <div className="absolute top-0 left-0 right-0 flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center justify-center">
           {filterComponent && filterComponent}
         </div>
       )}
@@ -161,11 +156,6 @@ const Navbar: FC = () => {
             </div>
           )}
           <CartMenu />
-          {hasCommunityDropdown &&
-          themeSwitcherEnabled &&
-          !showDesktopSearch ? null : (
-            <ListItemButton />
-          )}
           <ConnectWallet />
           <ThemeSwitcher />
         </div>
