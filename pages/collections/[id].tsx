@@ -85,13 +85,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
 
-  const attributes = useAttributes(id)
+  const attributes = fallback?.attributes?.attributes
 
   if (!CHAIN_ID) return null
-
-  if (tokens.error) {
-    return <div>There was an error</div>
-  }
 
   const tokenCount = stats?.data?.stats?.tokenCount ?? 0
 
@@ -156,7 +152,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           <Tabs.Content value="items" asChild>
             <div ref={scrollRef} className="relative flex flex-row">
               <Sidebar
-                attributes={attributes.data}
+                attributes={attributes}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
@@ -211,7 +207,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 />
               </div>
               <MobileTokensFilter
-                attributes={attributes.data}
+                attributes={attributes}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
@@ -297,6 +293,7 @@ export const getStaticProps: GetStaticProps<{
   fallback: {
     collection: paths['/collections/v5']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
+    attributes: paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']
   }
   id: string | undefined
 }> = async ({ params }) => {
@@ -342,8 +339,18 @@ export const getStaticProps: GetStaticProps<{
 
   const tokens = (await tokensRes.json()) as Props['fallback']['tokens']
 
+  // ATTRIBUTES
+  const attributesUrl = new URL(
+    `${RESERVOIR_API_BASE}/collections/${id}/attributes/all/v2`
+  )
+
+  const attributesRes = await fetch(attributesUrl.href, options)
+
+  const attributes =
+    (await attributesRes.json()) as Props['fallback']['attributes']
+
   return {
-    props: { fallback: { collection, tokens }, id },
+    props: { fallback: { collection, tokens, attributes }, id },
     revalidate: 20,
   }
 }
