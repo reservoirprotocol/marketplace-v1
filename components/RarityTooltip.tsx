@@ -26,9 +26,6 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
           onBlur={() => {
             setOpen(false)
           }}
-          onTouchStart={() => {
-            setOpen(!open)
-          }}
         >
           <div className="mr-4 flex h-6 min-w-max cursor-pointer items-center justify-between rounded-md border border-neutral-300 px-2 py-1.5 text-sm ">
             <img
