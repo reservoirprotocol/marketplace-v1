@@ -17,7 +17,7 @@ const Sell: NextPage = () => {
 
   return (
     <Layout navbar={{}}>
-      <div className="item-center col-span-full mx-auto flex w-screen flex-col px-4 py-8 sm:px-12 md:py-16">
+      <div className="item-center col-span-full mx-auto flex w-screen max-w-[1500px] flex-col px-4 py-8 sm:px-12 md:py-16">
         {isConnected ? (
           <>
             <h1 className="mb-11 text-[32px] font-semibold">Sell your items</h1>
