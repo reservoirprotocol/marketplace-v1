@@ -53,19 +53,26 @@ function setParams(url: string | URL, query: { [x: string]: any }) {
   if (typeof url === 'string') {
     const searchParams = new URLSearchParams(query)
     Object.keys(query).forEach((key) => {
-      const val = query[key];
+      const val = query[key]
       if (Array.isArray(val)) {
-        searchParams.delete(key);
+        searchParams.delete(key)
         val.forEach((el) => {
-          searchParams.append(key, el);
+          searchParams.append(key, el)
         })
       }
-    });
+    })
     return `${url}?${searchParams.toString()}`
   }
-  Object.keys(query).map((key) =>
-    url.searchParams.set(key, query[key]?.toString())
-  )
+  console.log('query', query)
+  Object.keys(query).map((key) => {
+    if (Array.isArray(query[key])) {
+      query[key].forEach((el: string) => {
+        url.searchParams.append(key, el)
+      })
+    } else {
+      url.searchParams.set(key, query[key]?.toString())
+    }
+  })
   return url.href
 }
 export default setParams
