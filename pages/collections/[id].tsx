@@ -12,7 +12,8 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import { setToast } from 'components/token/setToast'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-kit-client'
+import setParams from 'lib/params'
 import Hero from 'components/Hero'
 import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
@@ -65,11 +66,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
 
   const stats = useCollectionStats(router, id)
 
-  const { tokens, ref: refTokens } = useTokens(
-    id,
-    [fallback.tokens],
-    router,
-  )
+  const { tokens, ref: refTokens } = useTokens(id, [fallback.tokens], router)
 
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
@@ -198,7 +195,11 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           </Tabs.List>
           <Tabs.Content value="items" asChild>
             <>
-              <Sidebar attributes={attributes} openOnMobile={mobileFilterOpen} setTokensSize={tokens.setSize} />
+              <Sidebar
+                attributes={attributes}
+                openOnMobile={mobileFilterOpen}
+                setTokensSize={tokens.setSize}
+              />
               <div className="col-span-full mx-6 mt-4 sm:col-end-[-1] md:col-start-4">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6">
@@ -251,12 +252,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     <ExploreFlex />
                   </div>
                 </div>
-                <div className="flex items-center visible md:invisible justify-center mb-10 md:mb-0 md:h-0">
+                <div className="visible mb-10 flex items-center justify-center md:invisible md:mb-0 md:h-0">
                   <div
                     className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
                     onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
                   >
-                    {mobileFilterOpen ? "Close Filter Menu" : "Open Filter Menu"}
+                    {mobileFilterOpen
+                      ? 'Close Filter Menu'
+                      : 'Open Filter Menu'}
                   </div>
                 </div>
                 {router.query?.attribute_key ||
