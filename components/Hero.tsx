@@ -104,6 +104,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     floorChange: collection?.floorSaleChange?.['1day'],
   }
 
+
   const bannerImage = envBannerImage || collection?.banner
 
   //Split on commas outside of backticks (`)

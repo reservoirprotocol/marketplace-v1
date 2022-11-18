@@ -1,5 +1,6 @@
 import Layout from 'components/Layout'
 import setParams from 'lib/params'
+import { fetchFromContract } from 'lib/fetchFromContract'
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
@@ -93,8 +94,13 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     includeAttributes: true,
   })
 
+
   const tokens = tokenData.data
   const token = tokens?.[0] || { token: tokenDetails }
+  
+  if (token.token) {
+    token.token.image = tokenDetails?.image;
+  }
   const checkUserOwnership = token.token?.kind === 'erc1155'
   const { data: userTokens } = useUserTokens(
     checkUserOwnership ? account.address : undefined,
@@ -142,6 +148,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     ? metadata.description(META_DESCRIPTION)
     : metadata.description(`${collection?.description as string}`)
 
+  
   const image = META_OG_IMAGE
     ? metadata.image(META_OG_IMAGE)
     : token?.token?.image
@@ -155,6 +162,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     +userTokens[0].ownership.tokenCount > 0
       ? true
       : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
+  
 
   return (
     <Layout navbar={{}}>
@@ -248,6 +256,23 @@ export const getStaticProps: GetStaticProps<{
 
   const data =
     (await res.json()) as paths['/tokens/v5']['get']['responses']['200']['schema']
+  
+
+  const tokenDetails = data?.tokens?.[0]?.token;
+
+  if (!tokenDetails) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const tokenUri = await fetchFromContract(tokenDetails?.tokenId);
+
+  const uri = tokenUri.replace('ipfs://','https://cloudflare-ipfs.com/ipfs/')
+
+  const metadata = await (await fetch(await uri)).json();
+  tokenDetails.image = metadata.image;
+
 
   const collectionId = data.tokens?.[0]?.token?.collection?.id
 
@@ -258,6 +283,6 @@ export const getStaticProps: GetStaticProps<{
   }
 
   return {
-    props: { collectionId, tokenDetails: data?.tokens?.[0]?.token },
+    props: { collectionId, tokenDetails },
   }
 }
