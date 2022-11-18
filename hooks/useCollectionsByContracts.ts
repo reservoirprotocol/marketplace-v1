@@ -8,12 +8,14 @@ import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite'
 import { PROXY_API_BASE } from "./useCollections";
 import { ContractMethodDoesNotExistError } from '@wagmi/core'
 
+const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+
 type Collections = paths['/collections/v5']['get']['responses']['200']['schema']
 
 export default function useCollectionsByContracts(router: NextRouter, contracts: string[], fallback?: Collections) {
     const { ref, inView } = useInView()
 
-    const pathname = `${PROXY_API_BASE}/collections/v5`
+    const pathname = PROXY_API_BASE ? `${PROXY_API_BASE}/collections/v5` : new URL('/collections/v5', RESERVOIR_API_BASE)
 
     const sortBy = router.query['sort']?.toString()
 
@@ -42,12 +44,12 @@ export default function useCollectionsByContracts(router: NextRouter, contracts:
 }
 
 export const getKey: (
-    pathname: string,
+    pathname: URL | string,
     sortBy: string | undefined,
     contracts: string[],
     ...base: Parameters<SWRInfiniteKeyLoader>
   ) => ReturnType<SWRInfiniteKeyLoader> = (
-    pathname: string,
+    pathname: URL | string,
     sortBy: string | undefined,
     contracts: string[],
     index: number,
@@ -66,7 +68,7 @@ export const getKey: (
   
     if (sortBy === '30DayVolume' || sortBy === '7DayVolume') query.sortBy = sortBy
   
-    const href = setParams(pathname, query)
+    const href = setParams(String(pathname), query)
   
     return href
   }
