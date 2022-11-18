@@ -52,6 +52,15 @@ function setParams(url: URL, query: { [x: string]: any }): string
 function setParams(url: string | URL, query: { [x: string]: any }) {
   if (typeof url === 'string') {
     const searchParams = new URLSearchParams(query)
+    Object.keys(query).forEach((key) => {
+      const val = query[key];
+      if (Array.isArray(val)) {
+        searchParams.delete(key);
+        val.forEach((el) => {
+          searchParams.append(key, el);
+        })
+      }
+    });
     return `${url}?${searchParams.toString()}`
   }
   Object.keys(query).map((key) =>

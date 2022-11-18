@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from 'components/FormatEth'
 import useCollections from 'hooks/useCollections'
+import useCollectionsByContracts from 'hooks/useCollectionsByContracts';
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
@@ -17,23 +18,15 @@ type Props = {
 }
 
 // some that have just been created for testing
-const excludedCollections = [
-  '0x03c60045cba7a02e3b9a14c1a309a45ef8540725',
-  '0xc68c664cd312f47b11ed7372434f499c09e0b515',
-  '0xc738431286da1c78e5cf8e344845aff54e372916',
-  '0x446799ddde0235c362390cc6441dbde048e53187',
-  '0x1fb62a79569f355cbed2ece752bff3bb485748e5',
-  '0xbab235c346a65b4804b8b8ffab6d8c2055c347b3',
-  '0x1fb62a79569f355cbed2ece752bff3bb485748e5',
-  '0xe4c3f610673dc5a10a3e287212a73fd73aff5339',
-  '0x12471610a626ea84c248ddcd59f8104f33233e46',
-  '0x5c00077d04a8b12f2a32cacda979c2c2120f9f5c'
-];
+const whitelistedCollections = [
+  '0xfe7a68730499413a5819ab5f68191aac4b3ca7b5',
+  '0xc078e2264f06480380b1ddc31cbd573fb16ba01d'
+]
 
 const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
-  const { collections, ref } = useCollections(router, fallback.collections)
+  const { collections, ref } = useCollectionsByContracts(router, whitelistedCollections, fallback.collections)
 
   const { data } = collections
 
@@ -43,7 +36,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const mappedCollections = useMemo(() => {
     return (data
       ? data.flatMap(({ collections }) => collections)
-      : []).filter(collection => !excludedCollections.includes(collection?.id!))
+      : [])
   }, [data])
 
   const columns = isSmallDevice
