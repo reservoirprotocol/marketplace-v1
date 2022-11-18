@@ -27,6 +27,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     endpoint = slug.join('/')
   }
 
+  // special handling for contract array param
+  if (typeof query.contract === 'string' && query.contract.includes(',')) {
+    query.contract = query.contract.split(',').map((c) => c.trim())
+  }
+
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`
   const url = new URL(endpoint, RESERVOIR_API_BASE)
   setParams(url, query)
