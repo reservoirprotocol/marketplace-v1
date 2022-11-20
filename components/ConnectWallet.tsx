@@ -121,5 +121,6 @@ type Props = {
 
 export const Balance: FC<Props> = ({ address }) => {
   const { data: balance } = useBalance({ addressOrName: address })
+  console.log('balance = ', balance)
   return <FormatNativeCrypto amount={balance?.value} />
 }
