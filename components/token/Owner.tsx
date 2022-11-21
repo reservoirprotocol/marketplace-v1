@@ -6,6 +6,7 @@ import { FiAlertCircle } from 'react-icons/fi'
 import { useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
 import RarityTooltip from 'components/RarityTooltip'
+import { formatNumber } from 'lib/numbers'
 
 type Props = {
   details: ReturnType<typeof useTokens>['data'][0]
@@ -38,7 +39,8 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
                   Rarity Score
                 </span>
                 <span className="text-black dark:text-[#FFFFFF]">
-                  {token?.rarityRank} / {collection?.tokenCount}{' '}
+                  {formatNumber(token?.rarityRank)} /{' '}
+                  {formatNumber(parseInt(collection?.tokenCount))}{' '}
                   {`(${Math.floor(
                     (token?.rarityRank / parseInt(collection?.tokenCount)) * 100
                   )}%)`}

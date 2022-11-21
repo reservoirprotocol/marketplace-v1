@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { formatNumber } from 'lib/numbers'
 
 type Props = {
   rarityRank: number
@@ -19,7 +20,7 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
               className="mr-1 h-4 w-4"
               alt="Rarity icon"
             />
-            <span>{rarityRank}</span>
+            <span>{formatNumber(rarityRank)}</span>
           </div>
         </Tooltip.Trigger>
         <Tooltip.Portal>
@@ -29,7 +30,8 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
           >
             <span>Rarity Score</span>
             <span>
-              {rarityRank} / {collectionSize} {`(${rankPercentile}%)`}
+              {formatNumber(rarityRank)} / {formatNumber(collectionSize)}{' '}
+              {`(${rankPercentile}%)`}
             </span>
             <Tooltip.Arrow />
           </Tooltip.Content>
