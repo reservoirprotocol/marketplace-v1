@@ -32,12 +32,19 @@ const Sell: NextPage = () => {
           </>
         ) : (
           <div className="flex flex-col items-center gap-y-6 py-16 text-center md:py-32">
+            <h3 className="mb-2 text-2xl font-semibold dark:text-white sm:text-3xl">
+              Sell your NFTs instantly
+            </h3>
+            <img src="/sell_graphic.svg" alt="" className="dark:hidden" />
             <img
-              src="/icons/wallet-dark.svg"
-              alt="Wallet icon"
-              className="h-8 w-8"
+              src="/sell_graphic_dark.svg"
+              alt=""
+              className="hidden dark:block"
             />
-            <p>Connect wallet to sell your items</p>
+            <p className="max-w-[290px] dark:text-white">
+              Connect wallet to accept high quality offers from all major
+              marketplaces.
+            </p>
             <ConnectWalletButton>
               <span className="w-40">Connect Wallet</span>
             </ConnectWalletButton>
