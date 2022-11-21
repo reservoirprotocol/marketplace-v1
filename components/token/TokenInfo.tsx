@@ -72,30 +72,6 @@ const TokenInfo: FC<Props> = ({ details }) => {
           Token Info
         </div>
         <div className="flex items-center gap-2">
-          <a
-            className="reservoir-h6 font-headings"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://looksrare.org/collections/${token?.token?.contract}/${token?.token?.tokenId}`}
-          >
-            <img
-              src="/icons/LooksRare.svg"
-              alt="LooksRare Icon"
-              className="h-6 w-6"
-            />
-          </a>
-          <a
-            className="reservoir-h6 font-headings"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://opensea.io/assets/${token?.token?.contract}/${token?.token?.tokenId}`}
-          >
-            <img
-              src="/icons/OpenSea.svg"
-              alt="OpenSea Icon"
-              className="h-6 w-6"
-            />
-          </a>
         </div>
       </div>
       {token?.token?.contract && (
@@ -108,7 +84,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
               className="reservoir-h6 flex items-center gap-2 font-headings text-primary-700 dark:text-primary-100"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://etherscan.io/address/${token?.token?.contract}`}
+              href={`https://explorer.autobahn.network/address/${token?.token?.contract}`}
             >
               {truncateAddress(token?.token?.contract)}
               <FiExternalLink className="h-4 w-4" />
