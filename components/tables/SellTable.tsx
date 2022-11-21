@@ -18,6 +18,7 @@ import { useMediaQuery } from '@react-hookz/web'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import Tooltip from 'components/Tooltip'
 import { setToast } from 'components/token/setToast'
+import { FaBolt } from 'react-icons/fa'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -50,8 +51,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
       params[`collection[${i}]`] = id
     })
   }
-
-  console.log(address)
 
   const data = useUserTopBids(address as string, params, {
     revalidateOnMount: false,
@@ -187,8 +186,9 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
               <div className="flex items-center justify-center pt-4">
                 <AcceptBidModal
                   trigger={
-                    <button className="btn-primary-outline mr-3 min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                      Accept Offer
+                    <button className="btn-primary-fill mr-2 w-full min-w-[120px] py-2 text-sm focus:ring-0 sm:w-auto">
+                      <FaBolt />
+                      Sell
                     </button>
                   }
                   collectionId={contract}
@@ -198,7 +198,7 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                 />
                 <ListModal
                   trigger={
-                    <button className="btn-primary-outline min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
+                    <button className="btn-primary-outline w-full min-w-[120px] bg-white py-2 text-sm text-black focus:ring-0 dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 sm:w-auto">
                       List Item
                     </button>
                   }
@@ -412,8 +412,9 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
                   <div className="flex items-center">
                     <AcceptBidModal
                       trigger={
-                        <button className="btn-primary-outline mr-3 min-w-[120px] bg-white py-2 text-sm text-black dark:border-neutral-600 dark:bg-black dark:text-white dark:ring-primary-900 dark:focus:ring-4">
-                          Accept Offer
+                        <button className="btn-primary-fill mr-3 min-w-[120px] justify-center py-2 text-sm">
+                          <FaBolt />
+                          Sell
                         </button>
                       }
                       collectionId={contract}
