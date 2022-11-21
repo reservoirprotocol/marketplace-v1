@@ -27,6 +27,7 @@ const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
+  isOwner: boolean
   collectionIds?: string[]
   modal: {
     isInTheWrongNetwork: boolean | undefined
@@ -35,7 +36,12 @@ type Props = {
   showActive?: boolean
 }
 
-const UserListingsTable: FC<Props> = ({ modal, collectionIds, showActive }) => {
+const UserListingsTable: FC<Props> = ({
+  modal,
+  collectionIds,
+  showActive,
+  isOwner,
+}) => {
   const router = useRouter()
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
   const { address } = router.query
@@ -115,6 +121,7 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds, showActive }) => {
               listing={listing}
               modal={modal}
               mutate={mutate}
+              isOwner={isOwner}
             />
           ))
         : listings.length > 0 && (
@@ -145,6 +152,7 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds, showActive }) => {
                     listing={listing}
                     modal={modal}
                     mutate={mutate}
+                    isOwner={isOwner}
                   />
                 ))}
               </tbody>
@@ -155,6 +163,7 @@ const UserListingsTable: FC<Props> = ({ modal, collectionIds, showActive }) => {
 }
 
 type UserListingsRowProps = {
+  isOwner: boolean
   listing: ReturnType<typeof useListings>['data'][0]
   modal: Props['modal']
   mutate: ReturnType<typeof useListings>['mutate']
@@ -162,6 +171,7 @@ type UserListingsRowProps = {
 }
 
 const UserListingsTableRow = ({
+  isOwner,
   listing,
   modal,
   mutate,
@@ -271,7 +281,7 @@ const UserListingsTableRow = ({
               tokenId,
             }}
             signer={signer}
-            show={true}
+            show={isOwner}
             isInTheWrongNetwork={modal.isInTheWrongNetwork}
             setToast={modal.setToast}
             mutate={mutate}
@@ -288,6 +298,7 @@ const UserListingsTableRow = ({
 }
 
 const UserListingsMobileRow = ({
+  isOwner,
   listing,
   modal,
   mutate,
@@ -386,7 +397,7 @@ const UserListingsMobileRow = ({
             tokenId,
           }}
           signer={signer}
-          show={true}
+          show={isOwner}
           isInTheWrongNetwork={modal.isInTheWrongNetwork}
           setToast={modal.setToast}
           mutate={mutate}
