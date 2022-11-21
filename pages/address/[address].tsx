@@ -93,7 +93,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
 
   let tabs = [
     { name: 'Tokens', id: 'portfolio' },
-    { name: 'Active Listings', id: 'listings' },
+    { name: 'Listings', id: 'listings' },
   ]
 
   if (isOwner) {
@@ -176,6 +176,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             )}
             <Tabs.Content value="listings" className="col-span-full">
               <UserListingsTable
+                isOwner={isOwner}
                 collectionIds={collectionIds}
                 modal={{
                   isInTheWrongNetwork,
@@ -187,6 +188,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             {isOwner && (
               <Tabs.Content value="listings_inactive" className="col-span-full">
                 <UserListingsTable
+                  isOwner={isOwner}
                   collectionIds={collectionIds}
                   modal={{
                     isInTheWrongNetwork,
