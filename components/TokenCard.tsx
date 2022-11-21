@@ -19,6 +19,7 @@ import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
+import RarityTooltip from './RarityTooltip'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -38,6 +39,7 @@ if (CURRENCIES) {
 type Props = {
   token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   collectionImage: string | undefined
+  collectionSize?: number | undefined
   mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
@@ -46,6 +48,7 @@ type Props = {
 const TokenCard: FC<Props> = ({
   token,
   collectionImage,
+  collectionSize,
   mutate,
   setClearCartOpen,
   setCartToSwap,
@@ -134,11 +137,22 @@ const TokenCard: FC<Props> = ({
             : 'group-hover:bottom-[0px]'
         }`}
       >
-        <div
-          className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
-          title={token?.token?.name || token?.token?.tokenId}
-        >
-          {token?.token?.name || `#${token?.token?.tokenId}`}
+        <div className="flex items-center justify-between">
+          <div
+            className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
+            title={token?.token?.name || token?.token?.tokenId}
+          >
+            {token?.token?.name || `#${token?.token?.tokenId}`}
+          </div>
+          {collectionSize &&
+            collectionSize >= 2 &&
+            token.token?.rarityRank &&
+            token.token?.kind != 'erc1155' && (
+              <RarityTooltip
+                rarityRank={token.token?.rarityRank}
+                collectionSize={collectionSize}
+              />
+            )}
         </div>
         <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&

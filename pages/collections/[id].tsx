@@ -25,6 +25,7 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
+import SortTokens from 'components/SortTokens'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 
 // Environment variables
@@ -186,6 +187,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     )}
                   </div>
                   <div className="flex gap-4">
+                    <SortTokens />
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -194,7 +196,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className="z-20 mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
                   </div>
@@ -203,6 +205,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   tokens={tokens}
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
+                  collectionSize={stats.data?.stats?.tokenCount}
                   isLoading={isLoading}
                 />
               </div>
