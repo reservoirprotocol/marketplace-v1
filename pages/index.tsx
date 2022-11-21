@@ -95,7 +95,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
         </div>
         <TrendingCollectionTable fallback={fallback} />
       </div>
-      <Footer/>
+      <Footer />
     </Layout>
   )
 }
@@ -120,6 +120,7 @@ export const getStaticProps: GetStaticProps<{
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
     sortBy: '1DayVolume',
+    normalizeRoyalties: true,
   }
 
   if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
