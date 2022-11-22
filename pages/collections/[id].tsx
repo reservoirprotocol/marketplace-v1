@@ -206,6 +206,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
                   collectionSize={stats.data?.stats?.tokenCount}
+                  collectionAttributes={collection?.attributes}
                   isLoading={isLoading}
                 />
               </div>
