@@ -9,7 +9,6 @@ import Layout from 'components/Layout'
 import { useRef, useState } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
-import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import { setToast } from 'components/token/setToast'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import Hero from 'components/Hero'
@@ -82,9 +81,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     router,
     false
   )
-
-  const { collectionAttributes, ref: refCollectionAttributes } =
-    useCollectionAttributes(router, id)
 
   const attributes = fallback?.attributes?.attributes
 
@@ -206,6 +202,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
                   collectionSize={stats.data?.stats?.tokenCount}
+                  collectionAttributes={attributes}
                   isLoading={isLoading}
                 />
               </div>
