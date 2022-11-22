@@ -27,7 +27,6 @@ import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import SortTokens from 'components/SortTokens'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
-import SortTokens from 'components/SortTokens'
 
 // Environment variables
 // For more information about these variables
