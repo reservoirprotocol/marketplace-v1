@@ -20,6 +20,7 @@ import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
 import RarityTooltip from './RarityTooltip'
+import { Collection } from 'types/reservoir'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -40,6 +41,7 @@ type Props = {
   token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   collectionImage: string | undefined
   collectionSize?: number | undefined
+  collectionAttributes?: Collection['attributes']
   mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
@@ -49,6 +51,7 @@ const TokenCard: FC<Props> = ({
   token,
   collectionImage,
   collectionSize,
+  collectionAttributes,
   mutate,
   setClearCartOpen,
   setCartToSwap,
@@ -145,6 +148,8 @@ const TokenCard: FC<Props> = ({
             {token?.token?.name || `#${token?.token?.tokenId}`}
           </div>
           {collectionSize &&
+            collectionAttributes &&
+            collectionAttributes?.length >= 2 &&
             collectionSize >= 2 &&
             token.token?.rarityRank &&
             token.token?.kind != 'erc1155' && (
