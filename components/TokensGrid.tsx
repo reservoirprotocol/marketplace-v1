@@ -7,7 +7,6 @@ import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
 import { Token } from 'recoil/cart/atom'
 import { Collection } from 'types/reservoir'
-import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
