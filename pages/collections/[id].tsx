@@ -25,8 +25,8 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
-import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 import SortTokens from 'components/SortTokens'
+import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 
 // Environment variables
 // For more information about these variables
