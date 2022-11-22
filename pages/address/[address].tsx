@@ -91,14 +91,18 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
   const formattedAddress = truncateAddress(address as string)
 
-  let tabs = [{ name: 'Tokens', id: 'portfolio' }]
+  let tabs = [
+    { name: 'Tokens', id: 'portfolio' },
+    { name: 'Listings', id: 'listings' },
+  ]
 
   if (isOwner) {
     tabs = [
       { name: 'Tokens', id: 'portfolio' },
       { name: 'Offers Received', id: 'received' },
       { name: 'Offers Made', id: 'buying' },
-      { name: 'Listings', id: 'selling' },
+      { name: 'Active Listings', id: 'listings' },
+      { name: 'Inactive Listings', id: 'listings_inactive' },
     ]
   }
 
@@ -168,16 +172,30 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
                     }}
                   />
                 </Tabs.Content>
-                <Tabs.Content value="selling" className="col-span-full">
-                  <UserListingsTable
-                    collectionIds={collectionIds}
-                    modal={{
-                      isInTheWrongNetwork,
-                      setToast,
-                    }}
-                  />
-                </Tabs.Content>
               </>
+            )}
+            <Tabs.Content value="listings" className="col-span-full">
+              <UserListingsTable
+                isOwner={isOwner}
+                collectionIds={collectionIds}
+                modal={{
+                  isInTheWrongNetwork,
+                  setToast,
+                }}
+                showActive
+              />
+            </Tabs.Content>
+            {isOwner && (
+              <Tabs.Content value="listings_inactive" className="col-span-full">
+                <UserListingsTable
+                  isOwner={isOwner}
+                  collectionIds={collectionIds}
+                  modal={{
+                    isInTheWrongNetwork,
+                    setToast,
+                  }}
+                />
+              </Tabs.Content>
             )}
             <Tabs.Content value="activity" className="col-span-full">
               <UserActivityTab user={address} />
