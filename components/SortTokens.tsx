@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { FC } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { FiChevronDown } from 'react-icons/fi'
-import usePaginatedCollections from 'hooks/usePaginatedCollections'
 
 type Options =
   | 'Price low to high'
@@ -18,12 +17,11 @@ const options: { [x: string]: { sortBy: string; sortDirection: string } } = {
   'Common to Rare': { sortBy: 'rarity', sortDirection: 'asc' },
 }
 
-const SortTokens: FC = () => {
+const SortTokens: FC = ({}) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [sortSelection, setSortSelection] =
     useState<Options>('Price low to high')
-  const { collections } = usePaginatedCollections(router)
 
   useEffect(() => {
     const sortBy = router?.query['sortBy']?.toString()
@@ -66,7 +64,6 @@ const SortTokens: FC = () => {
           <DropdownMenu.Item
             key={key}
             onClick={() => {
-              collections.setSize(0)
               router.push(
                 {
                   query: {
