@@ -6,6 +6,8 @@ import useTokens from '../hooks/useTokens'
 import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
 import { Token } from 'recoil/cart/atom'
+import { Collection } from 'types/reservoir'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -13,6 +15,7 @@ type Props = {
   tokens: ReturnType<typeof useTokens>['tokens']
   collectionImage: string | undefined
   collectionSize?: number | undefined
+  collectionAttributes?: Collection['attributes']
   viewRef: ReturnType<typeof useInView>['ref']
   isLoading: boolean
 }
@@ -22,6 +25,7 @@ const TokensGrid: FC<Props> = ({
   viewRef,
   collectionImage,
   collectionSize,
+  collectionAttributes,
   isLoading,
 }) => {
   const { data, mutate } = tokens
@@ -64,6 +68,7 @@ const TokensGrid: FC<Props> = ({
                   token={token}
                   collectionImage={collectionImage}
                   collectionSize={collectionSize}
+                  collectionAttributes={collectionAttributes}
                   mutate={mutate}
                   setClearCartOpen={setClearCartOpen}
                   setCartToSwap={setCartToSwap}
