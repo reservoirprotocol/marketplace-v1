@@ -28,7 +28,7 @@ export default function usePaginatedCollections(
       getKey(pathname, sortBy, index, previousPageData),
     fetcher,
     {
-      revalidateFirstPage: false,
+      revalidateOnMount: true,
       fallbackData: [
         {
           collections: fallback?.collections,
@@ -63,7 +63,7 @@ const getKey: (
   let query: paths['/collections/v5']['get']['parameters']['query'] = {
     limit: 20,
     sortBy: '1DayVolume',
-    normalizeRoyalties: true
+    normalizeRoyalties: true,
   }
 
   if (COLLECTION && !COMMUNITY) query.contract = [COLLECTION]
