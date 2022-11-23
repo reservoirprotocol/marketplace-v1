@@ -195,19 +195,19 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     <>
       <HeroBackground banner={header.banner}>
         <div className="z-10 flex w-full flex-col items-center gap-6">
-          <img
+          {/* <img
             className={`h-20 w-20 rounded-full ${
               header.image ? 'visible' : 'hidden'
             }`}
             alt={`${header.name} Logo`}
             src={header.image}
-          />
-          <h1 className="reservoir-h4 text-center text-black dark:text-white">
+          /> */}
+          {/* <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
-          </h1>
+          </h1> */}
           <HeroSocialLinks collection={collection} refreshCollection={refreshCollection}/>
           <HeroStats stats={statsObj} />
-          {header.description && (
+          {/*header.description && (
             <>
               <div
                 className="relative overflow-hidden transition-[max-height] ease-in-out md:w-[423px]"
@@ -242,7 +242,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 </a>
               )}
             </>
-          )}
+          )*/}
           <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
             {isSupported && (
               <BidModal
