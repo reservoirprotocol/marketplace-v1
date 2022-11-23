@@ -9,7 +9,6 @@ import Layout from 'components/Layout'
 import { useRef, useState } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
-import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import { setToast } from 'components/token/setToast'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import Hero from 'components/Hero'
@@ -25,6 +24,7 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
+import SortTokens from 'components/SortTokens'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 
 // Environment variables
@@ -82,16 +82,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     false
   )
 
-  const { collectionAttributes, ref: refCollectionAttributes } =
-    useCollectionAttributes(router, id)
-
-  const attributes = useAttributes(id)
+  const attributes = fallback?.attributes?.attributes
 
   if (!CHAIN_ID) return null
-
-  if (tokens.error) {
-    return <div>There was an error</div>
-  }
 
   const tokenCount = stats?.data?.stats?.tokenCount ?? 0
 
@@ -156,7 +149,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           <Tabs.Content value="items" asChild>
             <div ref={scrollRef} className="relative flex flex-row">
               <Sidebar
-                attributes={attributes.data}
+                attributes={attributes}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
@@ -190,6 +183,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     )}
                   </div>
                   <div className="flex gap-4">
+                    <SortTokens />
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -198,7 +192,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className="z-20 mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
                   </div>
@@ -207,11 +201,13 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   tokens={tokens}
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
+                  collectionSize={stats.data?.stats?.tokenCount}
+                  collectionAttributes={attributes}
                   isLoading={isLoading}
                 />
               </div>
               <MobileTokensFilter
-                attributes={attributes.data}
+                attributes={attributes}
                 refreshData={() => {
                   tokens.setSize(1)
                 }}
@@ -297,6 +293,7 @@ export const getStaticProps: GetStaticProps<{
   fallback: {
     collection: paths['/collections/v5']['get']['responses']['200']['schema']
     tokens: paths['/tokens/v5']['get']['responses']['200']['schema']
+    attributes: paths['/collections/{collection}/attributes/all/v2']['get']['responses']['200']['schema']
   }
   id: string | undefined
 }> = async ({ params }) => {
@@ -342,8 +339,18 @@ export const getStaticProps: GetStaticProps<{
 
   const tokens = (await tokensRes.json()) as Props['fallback']['tokens']
 
+  // ATTRIBUTES
+  const attributesUrl = new URL(
+    `${RESERVOIR_API_BASE}/collections/${id}/attributes/all/v2`
+  )
+
+  const attributesRes = await fetch(attributesUrl.href, options)
+
+  const attributes =
+    (await attributesRes.json()) as Props['fallback']['attributes']
+
   return {
-    props: { fallback: { collection, tokens }, id },
+    props: { fallback: { collection, tokens, attributes }, id },
     revalidate: 20,
   }
 }
