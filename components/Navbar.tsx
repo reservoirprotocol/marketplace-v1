@@ -10,7 +10,6 @@ import CartMenu from './CartMenu'
 import SearchMenu from './SearchMenu'
 import { useMediaQuery } from '@react-hookz/web'
 import useMounted from 'hooks/useMounted'
-import ListItemButton from './navbar/ListItemButton'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -63,7 +62,6 @@ const Navbar: FC = () => {
 
   const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
   const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
-  const themeSwitcherEnabled = THEME_SWITCHING_ENABLED
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -100,7 +98,6 @@ const Navbar: FC = () => {
           )
           setHasCommunityDropdown(true)
         } else {
-          setShowLinks(false)
           setHasCommunityDropdown(false)
           !showDesktopSearch
             ? setFilterComponent(
@@ -128,13 +125,11 @@ const Navbar: FC = () => {
     <nav className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-4 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-6 md:px-16">
       <NavbarLogo className="z-10 max-w-[300px]" />
       {showLinks && (
-        <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
+        <div className="z-10 ml-12 mr-12 hidden items-center gap-11 md:flex">
           {externalLinks.map(({ name, url }) => (
             <a
               key={url}
               href={url}
-              rel="noopener noreferrer"
-              target="_blank"
               className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
             >
               {name}
@@ -143,7 +138,7 @@ const Navbar: FC = () => {
         </div>
       )}
       {(hasCommunityDropdown || showDesktopSearch) && (
-        <div className="absolute top-0 left-0 right-0 flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center">
           {filterComponent && filterComponent}
         </div>
       )}
@@ -161,11 +156,6 @@ const Navbar: FC = () => {
             </div>
           )}
           <CartMenu />
-          {hasCommunityDropdown &&
-          themeSwitcherEnabled &&
-          !showDesktopSearch ? null : (
-            <ListItemButton />
-          )}
           <ConnectWallet />
           <ThemeSwitcher />
         </div>
