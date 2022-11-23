@@ -171,10 +171,15 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
         {description}
         {image}
       </Head>
-      <div className="col-span-full content-start space-y-4 px-2 pt-4 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
-        <div className="mb-4">
-          <TokenMedia token={token.token} />
+      <div className="col-span-full">
+        {/* TODO: need the background color to come from the metadata */}
+        <div className="mb-4" style={{ background: "#dbfbfd", position: "relative"}}>
+          <div style={{ maxHeight: 600, maxWidth: 600, margin: "auto"}}>
+            <TokenMedia token={token.token} />
+          </div>
         </div>
+      </div>
+      <div className="col-span-full content-start space-y-4 px-2 pt-4 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
         <div className="hidden space-y-4 md:block">
           <CollectionInfo collection={collection} token={token.token} />
           <TokenInfo token={token.token} />
