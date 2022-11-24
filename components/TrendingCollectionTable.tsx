@@ -45,7 +45,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
     : ['Collection', 'Volume', 'Floor Price', 'Supply']
 
   return (
-    <div className="mb-11 overflow-x-auto">
+    <div className="mb-11 p-4 overflow-x-auto bg-white content-container">
       <table className="min-w-full table-auto">
         <thead>
           <tr>

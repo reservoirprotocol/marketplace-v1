@@ -133,6 +133,7 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
               >
                 {initialResults?.collections
                   .slice(0, 6)
+                  .filter((collection) => collection.name != 'Unknown')
                   .map((collection, index) => (
                     <Link
                       key={collection?.name}
