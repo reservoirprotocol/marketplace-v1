@@ -76,7 +76,9 @@ const TrendingCollectionTable: FC<Props> = () => {
               floorSaleChange30Days,
               floorPrice,
               supply,
-            } = processCollection(collection)
+            } = processCollection(
+              collection as paths['/collection/v3']['get']['responses']['200']['schema']['collection']
+            )
 
             return (
               <tr
