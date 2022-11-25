@@ -23,7 +23,6 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { publicProvider } from 'wagmi/providers/public'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider } from 'next-themes'
@@ -36,15 +35,6 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useEffect, useState } from 'react'
-
-// Select a custom ether.js interface for connecting to a network
-// Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
-// OPTIONAL
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
-
-// API key for Ethereum node
-// Two popular services are Alchemy (alchemy.com) and Infura (infura.io)
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
@@ -61,28 +51,32 @@ const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
 //extending allChains by Gnosis Chain
-const allChainsExtended = [...allChains, {
-  id: 45_000,
-  name: 'Autobahn Network',
-  network: 'autobahn',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'TXL',
-    symbol: 'TXL',
+const allChainsExtended = [
+  ...allChains,
+  {
+    id: 45_000,
+    name: 'Autobahn Network',
+    network: 'autobahn',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'TXL',
+      symbol: 'TXL',
+    },
+    rpcUrls: {
+      default: 'https://autobahn-rpc.com',
+    },
+    testnet: false,
+    blockExplorers: {
+      default: {
+        name: 'Autobahn Explorer',
+        url: 'https://autobahn-explorer.com',
+      },
+    },
   },
-  rpcUrls: {
-    default: 'https://autobahn-rpc.com',
-  },
-  testnet: false,
-  blockExplorers: {
-    default: { name: 'Autobahn Explorer', url: 'https://autobahn-explorer.com' },
-  },
-}];
-
+]
 
 // Set up chains
 const { chains, provider } = configureChains(allChainsExtended, [
-  alchemyProvider({ apiKey: alchemyId }),
   publicProvider(),
 ])
 
