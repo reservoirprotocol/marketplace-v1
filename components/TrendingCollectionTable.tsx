@@ -10,6 +10,7 @@ import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
+import { Collection } from 'types/reservoir'
 
 type Props = {}
 
@@ -175,17 +176,14 @@ function getFloorDelta(
 }
 
 function processCollection(
-  collection:
-    | NonNullable<
-        NonNullable<Props['fallback']['collections']>['collections']
-      >[0]
-    | undefined
+  collection: paths['/collection/v3']['get']['responses']['200']['schema']['collection']
 ) {
   const data = {
     contract: collection?.primaryContract,
     id: collection?.id,
     image:
-      collection?.image ||
+      // @todo - switch to v5 typing here
+      (collection as unknown as any)?.image ||
       'https://ik.imagekit.io/autobahn/showroom-default-image_cZvv3FPZ-.png',
     name: collection?.name,
     days1: collection?.volume?.['1day'],
@@ -200,7 +198,8 @@ function processCollection(
     floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
     floorSaleChange7Days: collection?.floorSaleChange?.['7day'],
     floorSaleChange30Days: collection?.floorSaleChange?.['30day'],
-    floorPrice: collection?.floorAskPrice,
+    // @todo - switch to v5 typing here
+    floorPrice: (collection as unknown as any)?.floorAskPrice,
     supply: collection?.tokenCount,
   }
 
