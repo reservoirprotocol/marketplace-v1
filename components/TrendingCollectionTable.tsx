@@ -1,21 +1,17 @@
 import { FC, useMemo } from 'react'
 import Link from 'next/link'
-import cn from 'classnames';
+import cn from 'classnames'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from 'components/FormatEth'
 import useCollections from 'hooks/useCollections'
-import useCollectionsByContracts from 'hooks/useCollectionsByContracts';
+import useCollectionsByContracts from 'hooks/useCollectionsByContracts'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
 
-type Props = {
-  fallback: {
-    collections: paths['/collections/v4']['get']['responses']['200']['schema']
-  }
-}
+type Props = {}
 
 // some that have just been created for testing
 const whitelistedCollections = [
@@ -24,10 +20,13 @@ const whitelistedCollections = [
   '0x67158b788968f78541847bce0bc9c495ed526831', // Autobahn Raffle Tickets
 ]
 
-const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
+const TrendingCollectionTable: FC<Props> = () => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
-  const { collections, ref } = useCollectionsByContracts(router, whitelistedCollections, fallback.collections)
+  const { collections, ref } = useCollectionsByContracts(
+    router,
+    whitelistedCollections
+  )
 
   const { data } = collections
 
@@ -35,9 +34,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
 
   // Reference: https://swr.vercel.app/examples/infinite-loading
   const mappedCollections = useMemo(() => {
-    return (data
-      ? data.flatMap(({ collections }) => collections)
-      : [])
+    return data ? data.flatMap(({ collections }) => collections) : []
   }, [data])
 
   const columns = isSmallDevice
@@ -45,7 +42,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
     : ['Collection', 'Volume', 'Floor Price', 'Supply']
 
   return (
-    <div className="mb-11 p-4 overflow-x-auto bg-white content-container">
+    <div className="content-container mb-11 overflow-x-auto bg-white p-4">
       <table className="min-w-full table-auto">
         <thead>
           <tr>
@@ -84,9 +81,12 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
               <tr
                 key={`${contract}-${index}`}
                 ref={index === arr.length - 5 ? ref : null}
-                className={cn("group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white", {
-                  "border-b": index !== arr.length - 1
-                })}
+                className={cn(
+                  'group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white',
+                  {
+                    'border-b': index !== arr.length - 1,
+                  }
+                )}
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
@@ -104,7 +104,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                           isSmallDevice ? 'max-w-[140px]' : ''
                         }`}
                       >
-                        {name}
+                        {name || 'Loading...'}
                       </div>
                     </a>
                   </Link>
@@ -184,7 +184,9 @@ function processCollection(
   const data = {
     contract: collection?.primaryContract,
     id: collection?.id,
-    image: collection?.image || 'https://ik.imagekit.io/autobahn/showroom-default-image_cZvv3FPZ-.png',
+    image:
+      collection?.image ||
+      'https://ik.imagekit.io/autobahn/showroom-default-image_cZvv3FPZ-.png',
     name: collection?.name,
     days1: collection?.volume?.['1day'],
     days7: collection?.volume?.['7day'],
