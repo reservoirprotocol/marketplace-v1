@@ -33,6 +33,10 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
+type UseEnsNameAddress = NonNullable<
+  Parameters<typeof useEnsName>['0']
+>['address']
+
 const metadata = {
   title: (title: string) => <title>{title}</title>,
 }
@@ -51,7 +55,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   })
 
   const { data: ensName } = useEnsName({
-    address,
+    address: address as UseEnsNameAddress,
     onSettled(data, error) {
       console.log('Settled', { data, error })
     },
