@@ -28,7 +28,7 @@ const RarityTooltip = ({ rarityRank, collectionSize }: Props) => {
             sideOffset={0}
             className="flex max-h-[322px] max-w-[320px] flex-col items-center overflow-y-auto rounded-[10px] bg-neutral-800 p-3 text-xs font-light text-white dark:bg-white dark:text-black"
           >
-            <span>Rarity Score</span>
+            <span>Rarity Rank</span>
             <span>
               {formatNumber(rarityRank)} / {formatNumber(collectionSize)}{' '}
               {`(${rankPercentile}%)`}
