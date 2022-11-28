@@ -174,7 +174,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                           <FormatNativeCrypto
                             amount={
                               stats?.data?.stats?.market?.floorAsk?.price
-                                ?.netAmount?.decimal
+                                ?.amount?.decimal
                             }
                           />{' '}
                           floor price
