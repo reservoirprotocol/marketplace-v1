@@ -6,10 +6,27 @@ import { useAccount } from 'wagmi'
 import Toast from 'components/Toast'
 import toast from 'react-hot-toast'
 import { ComponentProps } from 'react'
+import useSearchCommunity from 'hooks/useSearchCommunity'
+
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 const Sell: NextPage = () => {
   const { address, isConnected } = useAccount()
+  const collections = useSearchCommunity()
   let collectionIds: undefined | string[] = undefined
+
+  if (COLLECTION && !COMMUNITY && !COLLECTION_SET_ID) {
+    collectionIds = [COLLECTION]
+  }
+
+  if (COMMUNITY || COLLECTION_SET_ID) {
+    collectionIds =
+      (collections?.data?.collections
+        ?.map(({ contract }) => contract)
+        .filter((contract) => !!contract) as string[]) || []
+  }
 
   const setToast: (data: ComponentProps<typeof Toast>['data']) => any = (
     data
@@ -28,6 +45,7 @@ const Sell: NextPage = () => {
                 isInTheWrongNetwork: undefined,
                 setToast,
               }}
+              collectionIds={collectionIds}
             />
           </>
         ) : (
