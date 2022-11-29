@@ -83,17 +83,14 @@ const Home: NextPage<Props> = ({ fallback }) => {
         {description}
         {image}
       </Head>
-      <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
-        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
-      </header>
-      <div className="col-span-full px-6 md:px-16">
-        <div className="mb-9 flex w-full items-center justify-between">
-          <div className="reservoir-h4 dark:text-white">
-            Trending Collections
-          </div>
-          {!isSmallDevice && <SortTrendingCollections />}
-        </div>
-        <TrendingCollectionTable fallback={fallback} />
+      <div
+        style={isSmallDevice ? { marginTop: -64 } : { marginTop: -72 }}
+        className="col-span-full mb-12 lg:px-0"
+      >
+        <video loop autoPlay muted className="object-cover w-[100vw] h-[100vh]">
+          <source src={isSmallDevice ? 'HeroBannerMobile.mp4' : 'HeroBanner.mp4'} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
       <Footer/>
     </Layout>
