@@ -54,7 +54,11 @@ const metadata = {
     </>
   ),
   description: (description: string) => (
-    <meta name="description" content={description} />
+    <>
+      <meta name="description" content={description} />
+      <meta name="twitter:description" content={description} />
+      <meta property="og:description" content={description} />
+    </>
   ),
   image: (image: string) => (
     <>
@@ -136,11 +140,13 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
   const title = META_TITLE
     ? metadata.title(`${tokenName} - ${META_TITLE}`)
     : metadata.title(`${tokenName} - 
-    ${token.token?.collection?.name}`)
+    ${token?.token?.collection?.name}`)
 
   const description = META_DESCRIPTION
     ? metadata.description(META_DESCRIPTION)
-    : metadata.description(`${collection?.description as string}`)
+    : token?.token?.description
+    ? metadata.description(token?.token?.description)
+    : null
 
   const image = META_OG_IMAGE
     ? metadata.image(META_OG_IMAGE)
