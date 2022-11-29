@@ -13,6 +13,7 @@ import useMounted from 'hooks/useMounted'
 import ListItemButton from './navbar/ListItemButton'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -41,6 +42,7 @@ function getInitialSearchHref() {
 const Navbar: FC = () => {
   const isMounted = useMounted()
   const [showLinks, setShowLinks] = useState(true)
+  const account = useAccount()
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
@@ -146,6 +148,13 @@ const Navbar: FC = () => {
               Discover
             </a>
           </Link>
+          {account.isConnected &&
+            <Link href={`/address/${account.address}`}>
+              <a className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white">
+                My finis
+              </a>
+            </Link>
+          }
         </div>
       }
       {showLinks && (
