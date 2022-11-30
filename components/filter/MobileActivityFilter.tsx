@@ -75,7 +75,7 @@ const MobileActivityFilter: FC<Props> = ({
         <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
           <div className="flex items-center">
             <div className="mr-4 flex flex-row items-center">
-              <span className="mr-2 text-xl font-semibold">Filters</span>
+              <span className="mr-2 text-xl font-semibold">Properties</span>
               {hasEnabledFilters && (
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5F5F5] text-sm dark:bg-[#262626]">
                   {enabledFilters.length}
