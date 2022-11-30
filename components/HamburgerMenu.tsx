@@ -38,7 +38,11 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
   return (
     <Dialog.Root onOpenChange={setOpen} open={open} modal={false}>
       <Dialog.Trigger className="z-10 block p-1.5 md:hidden">
-        <FiMenu className="h-6 w-6" />
+        <img
+          src="/icons/List.svg"
+          alt="Menu Icon"
+          className="h-7 w-7"
+        />
       </Dialog.Trigger>
 
       <Dialog.Content
@@ -47,8 +51,8 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
           e.preventDefault()
         }}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
-          <NavbarLogo variant="desktop" />
+        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-2 dark:border-neutral-600">
+          <NavbarLogo variant="mobile" />
           <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
