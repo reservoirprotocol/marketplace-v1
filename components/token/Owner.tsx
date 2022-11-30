@@ -40,7 +40,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
                   className="mr-1 h-4 w-4"
                 />
                 <span className="mr-1 text-[#525252] dark:text-[#D4D4D4]">
-                  Rarity Score
+                  Rarity Rank
                 </span>
                 <span className="text-black dark:text-[#FFFFFF]">
                   {formatNumber(token?.rarityRank)} /{' '}
