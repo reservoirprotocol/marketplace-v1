@@ -117,7 +117,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   )
 
   const tabs = [
-    { name: 'Items', id: 'items' },
+    { name: 'Finis', id: 'items' },
     { name: 'Activity', id: 'activity' },
   ]
 
@@ -161,17 +161,16 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               <div className="mx-6 mt-4 w-full">
                 <div className="mb-4 hidden items-center justify-between md:flex">
                   <div className="flex items-center gap-6 font-semibold">
-                    <RefreshButton
+                    {/* <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
                       }}
                       isLoading={isLoading}
                       setIsLoading={setIsLoading}
-                    />
+                    /> */}
                     {tokenCount > 0 && (
                       <>
-                        <div>{formatNumber(tokenCount)} items</div>
-
+                        <div>{formatNumber(tokenCount)} finiliar</div>
                         <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
                         <div className="flex items-center gap-1">
                           <FormatNativeCrypto

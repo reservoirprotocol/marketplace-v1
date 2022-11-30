@@ -122,7 +122,11 @@ const CartMenu: FC = () => {
               {cartCount}
             </div>
           )}
-          <FaShoppingCart className="h-[18px] w-[18px]" />
+          <img
+            src="/icons/Cart.svg"
+            alt="Cart Icon"
+            className="h-6 w-6"
+          />
         </div>
       </Popover.Trigger>
       <StyledContent

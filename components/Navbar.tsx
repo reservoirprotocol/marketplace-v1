@@ -11,6 +11,9 @@ import SearchMenu from './SearchMenu'
 import { useMediaQuery } from '@react-hookz/web'
 import useMounted from 'hooks/useMounted'
 import ListItemButton from './navbar/ListItemButton'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 
 const SearchCollections = dynamic(() => import('./SearchCollections'))
 const CommunityDropdown = dynamic(() => import('./CommunityDropdown'))
@@ -39,6 +42,7 @@ function getInitialSearchHref() {
 const Navbar: FC = () => {
   const isMounted = useMounted()
   const [showLinks, setShowLinks] = useState(true)
+  const account = useAccount()
   const [filterComponent, setFilterComponent] = useState<ReactElement | null>(
     null
   )
@@ -120,13 +124,39 @@ const Navbar: FC = () => {
     }
   }, [filterableCollection, showDesktopSearch])
 
+  const router = useRouter()
+
   if (!isMounted) {
     return null
   }
 
   return (
-    <nav className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-4 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-6 md:px-16">
-      <NavbarLogo className="z-10 max-w-[300px]" />
+    <nav
+      style={router.pathname === '/' ? { background: 'none', border: 'none' } : {}}
+      className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-2 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-2 md:px-16"
+    >
+      {/* {router.pathname != '/' && */}
+        <NavbarLogo className="z-10 max-w-[300px]" />
+      {/* } */}
+      {!isMobile &&
+        <div
+          // style={router.pathname === '/' ? { marginLeft: '0' } : {}}
+          className="z-10 ml-12 hidden items-center gap-11 md:flex"
+        >
+          <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
+            <a className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white">
+              Discover
+            </a>
+          </Link>
+          {account.isConnected &&
+            <Link href={`/address/${account.address}`}>
+              <a className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white">
+                My finis
+              </a>
+            </Link>
+          }
+        </div>
+      }
       {showLinks && (
         <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
           {externalLinks.map(({ name, url }) => (
@@ -150,7 +180,9 @@ const Navbar: FC = () => {
       {isMobile ? (
         <div className="ml-auto flex gap-x-5">
           {!hasCommunityDropdown && filterComponent && filterComponent}
-          <CartMenu />
+          {router.pathname.includes('/collection') &&
+            <CartMenu />
+          }
           <HamburgerMenu externalLinks={externalLinks} />
         </div>
       ) : (
@@ -160,12 +192,14 @@ const Navbar: FC = () => {
               {filterComponent && filterComponent}
             </div>
           )}
-          <CartMenu />
-          {hasCommunityDropdown &&
+          {router.pathname.includes('/collection') &&
+            <CartMenu />
+          }
+          {/* {hasCommunityDropdown &&
           themeSwitcherEnabled &&
           !showDesktopSearch ? null : (
             <ListItemButton />
-          )}
+          )} */}
           <ConnectWallet />
           <ThemeSwitcher />
         </div>

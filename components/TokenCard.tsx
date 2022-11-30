@@ -76,7 +76,7 @@ const TokenCard: FC<Props> = ({
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
-      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#D4D4D4] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
+      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#e8e8e8] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
     >
       {isInCart ? (
         <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
@@ -88,7 +88,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a className="mb-[85px]">
+        <a>
           {token?.token?.image ? (
             <Image
               loader={({ src }) => src}
@@ -127,7 +127,7 @@ const TokenCard: FC<Props> = ({
           )}
         </a>
       </Link>
-      <div
+      {/* <div
         className={`absolute bottom-[0px] w-full bg-white transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
           !isOwner && !token?.market?.floorAsk?.price
             ? ''
@@ -275,7 +275,7 @@ const TokenCard: FC<Props> = ({
               )}
             </div>
           )}
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -8,7 +8,7 @@ type Props = {
 }
 
 const Avatar: FC<Props> = ({ address, avatar, size = 24 }) => {
-  return avatar ? (
+  return (
     <div
       className="overflow-hidden rounded-full"
       style={{
@@ -18,12 +18,10 @@ const Avatar: FC<Props> = ({ address, avatar, size = 24 }) => {
     >
       <img
         className="object-fit h-full w-full"
-        src={avatar}
+        src={avatar || "/happy.png"}
         alt={'ENS Avatar'}
       />
     </div>
-  ) : (
-    <Jazzicon diameter={size} seed={jsNumberForAddress(address || '')} />
   )
 }
 

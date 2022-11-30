@@ -16,6 +16,8 @@ import { Balance } from './ConnectWallet'
 import EthAccount from './EthAccount'
 import ThemeSwitcher from './ThemeSwitcher'
 
+const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
+
 type Props = {
   externalLinks: {
     name: string
@@ -36,7 +38,11 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
   return (
     <Dialog.Root onOpenChange={setOpen} open={open} modal={false}>
       <Dialog.Trigger className="z-10 block p-1.5 md:hidden">
-        <FiMenu className="h-6 w-6" />
+        <img
+          src="/icons/List.svg"
+          alt="Menu Icon"
+          className="h-7 w-7"
+        />
       </Dialog.Trigger>
 
       <Dialog.Content
@@ -45,13 +51,20 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
           e.preventDefault()
         }}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-4 dark:border-neutral-600">
-          <NavbarLogo variant="desktop" />
+        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-2 dark:border-neutral-600">
+          <NavbarLogo variant="mobile" />
           <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
-
+        <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
+          <a
+            className="group flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+            onClick={() => setOpen(false)}
+          >
+            Discover
+          </a>
+        </Link>
         {hasExternalLinks && (
           <div className="grid">
             {externalLinks.map(({ name, url }) => (
@@ -66,9 +79,11 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
             ))}
           </div>
         )}
-        <div className="mt-2 px-4">
-          <ThemeSwitcher />
-        </div>
+        {THEME_SWITCHING_ENABLED &&
+          <div className="mt-2 px-4">
+            <ThemeSwitcher />
+          </div>
+        }
         {accountData.isConnected ? (
           <>
             <div className="flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
@@ -81,21 +96,21 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
               />
             </div>
 
-            <div className="flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white">
+            {/* <div className="flex items-center justify-between border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white">
               <span>Balance </span>
               <span>
                 {accountData.address && (
                   <Balance address={accountData.address} />
                 )}
               </span>
-            </div>
+            </div> */}
 
             <Link href={`/address/${accountData.address}`}>
               <a
                 className="group flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
                 onClick={() => setOpen(false)}
               >
-                Portfolio
+                My finis
               </a>
             </Link>
 
@@ -105,7 +120,11 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
               className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
             >
               <span>Disconnect</span>
-              <HiOutlineLogout className="h-6 w-7" />
+              <img
+                src="/icons/MoonSleep.svg"
+                alt="Moon Sleep Icon"
+                className="h-5 w-5"
+              />
             </button>
           </>
         ) : (
