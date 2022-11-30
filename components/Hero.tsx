@@ -284,7 +284,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 }}
               />
             )}
-            {!isSmallDevice && (
+            {/* {!isSmallDevice && (
               <div className="">
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger className="btn-primary-outline rounded-lg border border-[#D4D4D4] bg-white p-2 dark:border-[#525252] dark:bg-black dark:ring-[#525252] dark:focus:ring-4">
@@ -309,7 +309,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </div>
-            )}
+            )} */}
             {isSmallDevice && (
               <Sweep
                 collection={collection}
