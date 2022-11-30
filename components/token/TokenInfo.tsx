@@ -74,7 +74,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
         <div className="reservoir-h5 font-headings dark:text-white">
           Token Info
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <a
             className="reservoir-h6 font-headings"
             target="_blank"
@@ -99,7 +99,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
               className="h-6 w-6"
             />
           </a>
-        </div>
+        </div> */}
       </div>
       {token?.contract && (
         <div className="mb-4 flex items-center justify-between">
@@ -125,13 +125,13 @@ const TokenInfo: FC<Props> = ({ token }) => {
           {token?.tokenId}
         </div>
       </div>
-      <div className="mb-4 flex items-center justify-between">
+      {/* <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token Standard</div>
         <div className="reservoir-h6 font-headings uppercase dark:text-white">
           {token?.kind}
         </div>
-      </div>
-      <div className="flex items-center justify-between">
+      </div> */}
+      {/* <div className="flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">
           Metadata Refresh
         </div>
@@ -148,7 +148,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
             }`}
           />
         </button>
-      </div>
+      </div> */}
     </article>
   )
 }
