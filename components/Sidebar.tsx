@@ -4,7 +4,6 @@ import AttributeSelector from './filter/AttributeSelector'
 import { FiChevronDown } from 'react-icons/fi'
 import { useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import { styled } from '@stitches/react'
-import { orderAttributes } from 'lib/orderAttributes'
 
 const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 
