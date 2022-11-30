@@ -47,8 +47,6 @@ const SellTable: FC<Props> = ({ modal, isOwner, address }) => {
   const usdConversion = useCoinConversion('usd')
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
-  address = '0x6d0267156f1c6CE44Caa4BF129B76009d3d41830'
-
   if (COMMUNITY) {
     params['community'] = COMMUNITY
   } else if (COLLECTION_SET_ID) {
