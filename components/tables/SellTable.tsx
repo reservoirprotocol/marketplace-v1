@@ -53,15 +53,8 @@ const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
   }
 
   const data = useUserTopBids(address as string, params, {
-    revalidateOnMount: false,
+    revalidateOnMount: true,
   })
-
-  useEffect(() => {
-    data.mutate()
-    return () => {
-      data.setSize(1)
-    }
-  }, [])
 
   const { ref, inView } = useInView()
   useEffect(() => {
