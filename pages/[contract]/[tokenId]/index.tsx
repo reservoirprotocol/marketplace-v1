@@ -185,15 +185,14 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
         <div className="hidden space-y-4 md:block">
           {/* <CollectionInfo collection={collection} token={token.token} /> */}
           <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
-          <TokenInfo token={token.token} />
+          <TokenAttributes
+            token={token?.token}
+            collection={collection}
+            isOwner={isOwner}
+          />
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
-        <TokenAttributes
-          token={token?.token}
-          collection={collection}
-          isOwner={isOwner}
-        />
         <PriceData
           details={tokenData}
           collection={collection}
@@ -204,6 +203,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
             token={`${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`}
           />
         )}
+        {/* <TokenInfo token={token.token} /> */}
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         {/* <CollectionInfo collection={collection} token={token.token} /> */}

@@ -139,7 +139,7 @@ const TokenCard: FC<Props> = ({
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
-        <div className="flex items-center justify-between px-4 p-3 lg:pb-3">
+        <div className="flex items-start justify-between px-4 p-3 lg:pb-3">
           {token?.token?.name || `#${token?.token?.tokenId}`}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (

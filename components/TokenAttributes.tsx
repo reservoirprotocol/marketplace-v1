@@ -38,7 +38,7 @@ const TokenAttributes: FC<Props> = ({ token, collection, isOwner }) => {
         <Accordion.Item value="attributes">
           <Accordion.Header>
             <Accordion.Trigger className="reservoir-h5 -my-6 flex w-full items-center justify-between p-6 dark:text-white">
-              <div>Attributes</div>
+              <div>DNA</div>
               <StyledChevron className="h-[9px] w-[9px] text-gray-600 dark:text-gray-300" />
             </Accordion.Trigger>
           </Accordion.Header>

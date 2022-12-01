@@ -379,8 +379,6 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   add to cart
                 </span>
               </div>
-
-              <FaShoppingCart className="ml-[10px] h-[18px] w-[18px] text-primary-700 dark:text-primary-100" />
             </div>
           </button>
         )}

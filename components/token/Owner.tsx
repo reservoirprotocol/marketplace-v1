@@ -42,7 +42,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
         </div>
 
         <div className="reservoir-h6 mb-2 font-headings dark:text-white">
-          Owner
+          Friend
         </div>
         {owner && (
           <Link href={`/address/${owner}`}>
