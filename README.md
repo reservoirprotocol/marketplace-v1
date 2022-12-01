@@ -97,7 +97,7 @@ If you'd like to contribute please follow the [guidelines](https://github.com/re
 ## Contact
 
 Twitter: [@reservoir0x](https://twitter.com/reservoir0x)
-Discord: [Reservoir Protocol](https://discord.gg/j5K9fESNwh)
-Project Link: [Reservoir Protocol](https://reservoirprotocol.github.io/)
+Discord: [Reservoir](https://discord.gg/j5K9fESNwh)
+Project Link: [Reservoir](https://reservoirprotocol.github.io/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
