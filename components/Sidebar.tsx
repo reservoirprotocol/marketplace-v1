@@ -47,7 +47,6 @@ const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
           value={`item-${attribute.key}`}
           key={attribute.key}
           className="overflow-hidden m-[10px]"
-          style={{ border: `1px solid ${PRIMARY_COLOR} ` }}
         >
           <Accordion.Header className="flex w-full justify-between border-gray-300 dark:border-neutral-600">
             <Accordion.Trigger className="rounded-xl flex w-full items-center justify-between p-3 transition hover:bg-primary-100 dark:hover:bg-primary-900">
