@@ -6,7 +6,7 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import Layout from 'components/Layout'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
@@ -26,6 +26,8 @@ import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
+import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
+import { string } from 'prop-types'
 
 // Environment variables
 // For more information about these variables
@@ -52,10 +54,16 @@ const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
+
+
+export type ImageMap = { [id: string]: string };
 const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [finiliarImageMap, updateMap] = useState({} as ImageMap)
+
+
 
   const scrollToTop = () => {
     let top = (scrollRef.current?.offsetTop || 0) - 91 //Offset from parent element minus height of navbar
@@ -81,6 +89,20 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     router,
     false
   )
+
+  const ids = tokens.data.map(t => t?.token?.tokenId!)
+
+  useEffect(() => {
+    ids.filter((id: string) => !!id && !finiliarImageMap[id]).map(tokenId => {
+      fetchMetaFromFiniliar(tokenId)
+      .then(meta => {
+        updateMap((finiliarImageMap) => { 
+          return { ...finiliarImageMap, ...{[meta.id]: meta.image }}
+        })
+      })
+    })
+
+  }, [JSON.stringify(ids)]);
 
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
@@ -199,6 +221,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   </div>
                 </div>
                 <TokensGrid
+                  imageMap={finiliarImageMap}
                   tokens={tokens}
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
@@ -240,7 +263,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const url = new URL(`${RESERVOIR_API_BASE}/search/collections/v1`)
 
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
-      { limit: 20 }
+      { limit: 10 }
 
     if (COLLECTION_SET_ID) {
       query.collectionsSetId = COLLECTION_SET_ID
@@ -329,7 +352,7 @@ export const getStaticProps: GetStaticProps<{
     collection: id,
     sortBy: 'floorAskPrice',
     includeTopBid: false,
-    limit: 20,
+    limit: 10,
   }
 
   setParams(tokensUrl, tokensQuery)
@@ -350,6 +373,6 @@ export const getStaticProps: GetStaticProps<{
 
   return {
     props: { fallback: { collection, tokens, attributes }, id },
-    revalidate: 20,
+    revalidate: 10,
   }
 }
