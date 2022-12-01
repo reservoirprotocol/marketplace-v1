@@ -193,8 +193,16 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   return (
     <>
+      <div className="col-span-full">
+        <img src="/ChaseScene.gif" className="object-cover w-[100vw] h-[300px]" alt="Chase Scene" />
+      </div>
       <HeroBackground banner={header.banner}>
         <div className="z-10 flex w-full flex-col items-center gap-6">
+        {/* <div
+          
+          className="col-span-full mb-12 lg:px-0"
+        > */}
+        {/* </div> */}
           {/* <img
             className={`h-20 w-20 rounded-full ${
               header.image ? 'visible' : 'hidden'
@@ -205,7 +213,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
           {/* <h1 className="reservoir-h4 text-center text-black dark:text-white">
             {header.name}
           </h1> */}
-          <HeroSocialLinks collection={collection} refreshCollection={refreshCollection}/>
+          {/* <HeroSocialLinks collection={collection} refreshCollection={refreshCollection}/> */}
           <HeroStats stats={statsObj} />
           {/*header.description && (
             <>
