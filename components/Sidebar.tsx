@@ -21,17 +21,18 @@ type Props = {
 const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
   if (attributes && attributes.length === 0) return null
 
-  // order the attributes
-  // NOTE: this seems to mutate state everywhere?
-  let oldAttributes = [ ...attributes! ]
+  if (attributes) {
+    let oldAttributes = [ ...attributes! ]
 
-  oldAttributes.forEach((item) => {
-    if (item.key === 'Family') attributes![0] = item
-    if (item.key === 'Frequency') attributes![1] = item
-    if (item.key === 'Clan') attributes![2] = item
-    if (item.key === 'Special') attributes![3] = item
-    if (item.key === 'Mythical') attributes![4] = item
-  })
+    oldAttributes.forEach((item) => {
+      if (item.key === 'Family') attributes![0] = item
+      if (item.key === 'Frequency') attributes![1] = item
+      if (item.key === 'Clan') attributes![2] = item
+      if (item.key === 'Special') attributes![3] = item
+      if (item.key === 'Mythical') attributes![4] = item
+    })
+
+  }
 
   return (
     <Accordion.Root

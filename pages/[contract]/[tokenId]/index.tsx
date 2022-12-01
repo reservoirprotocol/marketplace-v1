@@ -41,6 +41,8 @@ const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
+const FINILIAR_API = process.env.NEXT_PUBLIC_FINILIAR_API || "https://api.finiliar.com"
+
 type Props = {
   collectionId: string
   tokenDetails?: TokenDetails
@@ -271,11 +273,7 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const tokenUri = await fetchFromContract(tokenDetails?.tokenId);
-
-  const uri = tokenUri.replace('ipfs://','https://cloudflare-ipfs.com/ipfs/')
-
-  const metadata = await (await fetch(await uri)).json();
+  const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
   tokenDetails.image = metadata.image;
 
 
