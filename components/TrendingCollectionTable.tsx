@@ -3,14 +3,12 @@ import Link from 'next/link'
 import cn from 'classnames'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatEth from 'components/FormatEth'
-import useCollections from 'hooks/useCollections'
 import useCollectionsByContracts from 'hooks/useCollectionsByContracts'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
-import { Collection } from 'types/reservoir'
 
 type Props = {}
 

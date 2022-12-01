@@ -151,6 +151,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
 
   let saleDescription = 'Sale'
 
+  console.log('### sale', sale )
+
   switch (sale?.orderSide) {
     case 'ask': {
       saleDescription = 'Sale'
@@ -160,6 +162,8 @@ const CollectionActivityTableRow: FC<CollectionActivityTableRowProps> = ({
       saleDescription = 'Offer Accepted'
     }
   }
+
+  if (sale?.orderKind === 'mint') saleDescription = 'Mint'
 
   if (isMobile) {
     return (

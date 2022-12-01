@@ -46,17 +46,17 @@ const Steps: FC<Props> = ({ steps }) => {
           </div>
           <div>
             <div className="reservoir-h6 mb-1 mt-0.5 font-headings dark:text-white">
-              {action}
+              {action.replace('ETH', 'TXL')}
             </div>
             {error && (
               <div className="reservoir-h6 mb-2.5 font-headings text-red-800 dark:text-white">
-                {error}
+                {error.replace('ETH', 'TXL')}
               </div>
             )}
             {firstIncompleteStepIndex === index && (
               <>
                 <div className="reservoir-body mb-2.5 dark:text-white">
-                  {description}
+                  {description.replace('ETH', 'TXL')}
                 </div>
                 {firstIncompleteStep?.items &&
                   firstIncompleteStep.items.length > 1 && (
