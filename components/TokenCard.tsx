@@ -88,7 +88,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a>
+        <a className="mb-[52px]">
           {token?.token?.image ? (
             <Image
               loader={({ src }) => src}
@@ -127,20 +127,21 @@ const TokenCard: FC<Props> = ({
           )}
         </a>
       </Link>
-      {/* <div
+      <div
         className={`absolute bottom-[0px] w-full bg-white transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
           !isOwner && !token?.market?.floorAsk?.price
             ? ''
             : 'group-hover:bottom-[0px]'
         }`}
       >
-        <div
+        {/* <div
           className="reservoir-subtitle mb-3 overflow-hidden truncate px-4 pt-4 dark:text-white lg:pt-3"
           title={token?.token?.name || token?.token?.tokenId}
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
-        </div>
-        <div className="flex items-center justify-between px-4 pb-4 lg:pb-3">
+        </div> */}
+        <div className="flex items-center justify-between px-4 p-3 lg:pb-3">
+          {token?.token?.name || `#${token?.token?.tokenId}`}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
             <>
@@ -152,7 +153,7 @@ const TokenCard: FC<Props> = ({
                   maximumFractionDigits={4}
                 />
               </div>
-              <div className="text-right">
+              {/* <div className="text-right">
                 {token?.market?.floorAsk?.source && (
                   <img
                     className="h-6 w-6"
@@ -167,7 +168,7 @@ const TokenCard: FC<Props> = ({
                     alt=""
                   />
                 )}
-              </div>
+              </div> */}
             </>
           ) : !isOwner ? (
             <div className="h-[64px]"></div>
@@ -220,7 +221,7 @@ const TokenCard: FC<Props> = ({
                 mutate={mutate}
                 signer={signer}
                 isInTheWrongNetwork={isInTheWrongNetwork}
-                buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"
+                buttonClassName="bg-primary-700 reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap text-white focus:ring-0"
               />
               {isInCart ? (
                 <button
@@ -275,7 +276,7 @@ const TokenCard: FC<Props> = ({
               )}
             </div>
           )}
-      </div> */}
+      </div>
     </div>
   )
 }
