@@ -41,6 +41,7 @@ type Props = {
   mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
+  finiliarImage?: string,
 }
 
 const TokenCard: FC<Props> = ({
@@ -49,6 +50,7 @@ const TokenCard: FC<Props> = ({
   mutate,
   setClearCartOpen,
   setCartToSwap,
+  finiliarImage,
 }) => {
   const account = useAccount()
   const { data: signer } = useSigner()
@@ -89,10 +91,10 @@ const TokenCard: FC<Props> = ({
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
         <a>
-          {token?.token?.image ? (
+          {finiliarImage ? (
             <Image
               loader={({ src }) => src}
-              src={optimizeImage(token?.token?.image, imageSize)}
+              src={finiliarImage +"?width=300"}
               alt={`${token?.token?.name}`}
               className="w-full"
               width={imageSize}
@@ -111,9 +113,6 @@ const TokenCard: FC<Props> = ({
                     width="64"
                     height="64"
                   />
-                  <div className="reservoir-h6 text-white">
-                    No Content Available
-                  </div>
                 </div>
               </div>
               <img

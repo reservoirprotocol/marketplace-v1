@@ -6,6 +6,7 @@ import useTokens from '../hooks/useTokens'
 import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
 import { Token } from 'recoil/cart/atom'
+import { ImageMap } from 'pages/collections/[id]'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -13,10 +14,11 @@ type Props = {
   tokens: ReturnType<typeof useTokens>['tokens']
   collectionImage: string | undefined
   viewRef: ReturnType<typeof useInView>['ref']
-  isLoading: boolean
+  isLoading: boolean,
+  imageMap: ImageMap,
 }
 
-const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading }) => {
+const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading, imageMap }) => {
   const { data, mutate } = tokens
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | Token[]>()
@@ -52,8 +54,10 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading }) 
               .fill(null)
               .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
           : data?.map((token) => {
+            
               return (
                 <TokenCard
+                  finiliarImage={imageMap[token?.token?.tokenId!]}
                   token={token}
                   collectionImage={collectionImage}
                   mutate={mutate}
