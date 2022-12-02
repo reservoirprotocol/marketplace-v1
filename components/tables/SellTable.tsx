@@ -20,13 +20,15 @@ import Tooltip from 'components/Tooltip'
 import { setToast } from 'components/token/setToast'
 import { FaBolt } from 'react-icons/fa'
 
+const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
+const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
+const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
 
 type Props = {
   isOwner: boolean
   address: string | undefined
-  collectionIds?: string[]
   modal: {
     isInTheWrongNetwork: boolean | undefined
     setToast: (data: ComponentProps<typeof Toast>['data']) => any
@@ -38,30 +40,25 @@ type ListingCurrencies = ComponentPropsWithoutRef<
 >['currencies']
 let listingCurrencies: ListingCurrencies = undefined
 
-const SellTable: FC<Props> = ({ modal, isOwner, collectionIds, address }) => {
+const SellTable: FC<Props> = ({ modal, isOwner, address }) => {
   const params: Parameters<typeof useUserTopBids>[1] = {
     limit: 20,
   }
   const usdConversion = useCoinConversion('usd')
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
 
-  if (collectionIds) {
-    collectionIds.forEach((id, i) => {
-      //@ts-ignore
-      params[`collection[${i}]`] = id
-    })
+  if (COMMUNITY) {
+    params['community'] = COMMUNITY
+  } else if (COLLECTION_SET_ID) {
+    //@ts-ignore: This will be ignored for now until the backend supports passing in collectionsSetId
+    params['collectionsSetId'] = COLLECTION_SET_ID
+  } else if (COLLECTION) {
+    params['collection'] = COLLECTION
   }
 
   const data = useUserTopBids(address as string, params, {
-    revalidateOnMount: false,
+    revalidateOnMount: true,
   })
-
-  useEffect(() => {
-    data.mutate()
-    return () => {
-      data.setSize(1)
-    }
-  }, [])
 
   const { ref, inView } = useInView()
   useEffect(() => {
