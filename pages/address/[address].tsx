@@ -221,7 +221,9 @@ export const getStaticProps: GetStaticProps<{
     offset: 0,
   }
 
-  if (COLLECTION_SET_ID) {
+  if (COLLECTION) {
+    query.collection = COLLECTION
+  } else if (COLLECTION_SET_ID) {
     query.collectionsSetId = COLLECTION_SET_ID
   } else {
     if (COMMUNITY) query.community = COMMUNITY
