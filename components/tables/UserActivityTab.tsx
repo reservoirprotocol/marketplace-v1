@@ -2,6 +2,8 @@ import { useUsersActivity } from '@reservoir0x/reservoir-kit-ui'
 import ActivityTable from 'components/tables/ActivityTable'
 import { FC, useEffect, useState } from 'react'
 
+const collectionId = process.env.NEXT_PUBLIC_COLLECTION
+
 type Props = {
   user?: string
 }
@@ -14,6 +16,7 @@ const UserActivityTab: FC<Props> = ({ user }) => {
   const [activityTypes, setActivityTypes] = useState<ActivityQuery['types']>([])
   const query: ActivityQuery = {
     limit: 20,
+    collection: collectionId,
     types: activityTypes,
   }
   const data = useUsersActivity(user ? [user] : undefined, query, {

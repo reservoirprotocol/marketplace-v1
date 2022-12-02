@@ -50,7 +50,7 @@ const ActivityTable: FC<Props> = ({
 }) => {
   const headings = ['Event', 'Item', 'Amount', 'From', 'To', 'Time']
   const isMobile = useMediaQuery('only screen and (max-width : 730px)')
-  const filters = ['Sales', 'Listings', 'Offers', 'Transfer', 'Mints']
+  const filters = ['Sales', 'Listings', 'Offers', 'Transfer'] // note: removed 'Mints'
   const enabledFilters: typeof filters = []
 
   if (types?.includes('sale')) {
