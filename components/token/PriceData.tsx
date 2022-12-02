@@ -154,6 +154,8 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
+  const isSudoswapSource = token?.market?.floorAsk?.source?.name == 'sudoswap'
+
   const showAcceptOffer =
     token?.market?.topBid?.id !== null &&
     token?.market?.topBid?.id !== undefined &&
@@ -382,7 +384,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           </button>
         )}
 
-        {!isInCart && !isOwner && isListed && (
+        {!isInCart && !isOwner && isListed && !isSudoswapSource && (
           <button
             disabled={!token?.market?.floorAsk?.price}
             onClick={() => {
