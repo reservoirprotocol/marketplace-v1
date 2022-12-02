@@ -1,9 +1,11 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import LoadingCard from './LoadingCard'
 import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import TokenCard from './TokenCard'
 import { paths } from '@reservoir0x/reservoir-kit-client'
+import { ImageMap } from 'pages/collections/[id]'
+import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
@@ -17,6 +19,8 @@ type Props = {
 }
 
 const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
+  const [finiliarImageMap, updateMap] = useState({} as ImageMap)
+
   const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
     limit: 20,
     includeTopBid: true,
@@ -54,6 +58,20 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
   const isEmpty = tokens.length === 0
   const { ref, inView } = useInView()
 
+  const ids = tokens.map(t => t?.token?.tokenId!)
+
+  useEffect(() => {
+    ids.filter((id: string) => !!id && !finiliarImageMap[id]).map(tokenId => {
+      fetchMetaFromFiniliar(tokenId)
+      .then(meta => {
+        updateMap((finiliarImageMap) => {
+          return { ...finiliarImageMap, ...{[meta.id]: meta.image }}
+        })
+      })
+    })
+
+  }, [JSON.stringify(ids)]);
+
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage()
@@ -89,6 +107,7 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
               key={`${token?.token?.contract}${token?.token?.tokenId}`}
               mutate={mutate}
               collectionImage={token?.token?.collection?.imageUrl}
+              finiliarImage={finiliarImageMap[token?.token?.tokenId!]}
             />
           ))}
       {isFetchingPage ? (
