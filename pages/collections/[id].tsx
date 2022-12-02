@@ -139,7 +139,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   )
 
   const tabs = [
-    { name: 'Finis', id: 'items' },
+    { name: 'finis', id: 'items' },
     { name: 'Activity', id: 'activity' },
   ]
 

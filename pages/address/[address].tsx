@@ -91,7 +91,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   const isOwner = address?.toLowerCase() === accountData?.address?.toLowerCase()
   const formattedAddress = truncateAddress(address as string)
 
-  let tabs = [{ name: 'My finis', id: 'portfolio' }]
+  let tabs = [{ name: 'finis', id: 'portfolio' }]
 
   if (isOwner) {
     tabs = [
