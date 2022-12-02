@@ -199,8 +199,7 @@ function processCollection(
     floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
     floorSaleChange7Days: collection?.floorSaleChange?.['7day'],
     floorSaleChange30Days: collection?.floorSaleChange?.['30day'],
-    // @todo - switch to v5 typing here
-    floorPrice: (collection as unknown as any)?.floorAskPrice,
+    floorPrice: (collection as unknown as any)?.floorAsk?.price?.amount.raw,
     supply: collection?.tokenCount,
   }
 
