@@ -21,6 +21,8 @@ import {
   useUserTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useAccount } from 'wagmi'
+import getIconFromTokenDetails from 'lib/getIconFromAttributes'
+import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFromTokenDetails'
 
 // Environment variables
 // For more information about these variables
@@ -171,7 +173,9 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
     +userTokens[0].ownership.tokenCount > 0
       ? true
       : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
-  
+
+  const icon = getIconFromTokenDetails(tokenDetails!)
+  const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
   return (
     <Layout navbar={{}}>
@@ -185,11 +189,15 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         <div className="mb-4 relative" style={{ background: additionalMetadata?.background }}>
           <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px]">
             <div className="z-10 m-auto absolute inline-flex space-x-4 p-4">
-              <div className="rounded-lg bg-[#ffffffa8] p-1">
-                ${additionalMetadata?.latestPrice.toFixed(2)}
+              <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
+                <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                <span>${additionalMetadata?.latestPrice.toFixed(2)}</span>
               </div>
-              <div className="rounded-lg bg-[#ffffffa8] p-1">
-                {additionalMetadata?.latestDelta.toFixed(2)}%
+              <div
+                style={{ color: additionalMetadata?.latestDelta! < 0 ? 'red' : 'green'}}
+                className="rounded-lg bg-[#ffffffa8] p-1"
+              >
+                {additionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
             </div>
             <TokenMedia token={token.token} />
