@@ -79,6 +79,8 @@ const TokenCard: FC<Props> = ({
     token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
   const imageSize = singleColumnBreakpoint ? 533 : 250
 
+  const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
+
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
@@ -260,7 +262,7 @@ const TokenCard: FC<Props> = ({
                 </button>
               ) : (
                 <button
-                  disabled={isInTheWrongNetwork}
+                  disabled={isInTheWrongNetwork || isSudoswapSource}
                   onClick={() => {
                     if (token && token.token && token.market) {
                       if (
