@@ -43,9 +43,16 @@ const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 const FINILIAR_API = process.env.NEXT_PUBLIC_FINILIAR_API || "https://api.finiliar.com"
 
+interface AdditionalMetadata {
+  background: string,
+  latestDelta: number,
+  latestPrice: number
+}
+
 type Props = {
   collectionId: string
-  tokenDetails?: TokenDetails
+  tokenDetails?: TokenDetails,
+  additionalMetadata?: AdditionalMetadata
 }
 
 const metadata = {
@@ -70,7 +77,7 @@ const metadata = {
   ),
 }
 
-const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
+const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata }) => {  
   const [tokenOpenSea] = useState<any>({
     animation_url: null,
     extension: null,
@@ -175,8 +182,16 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       </Head>
       <div className="col-span-full">
         {/* TODO: need the background color to come from the metadata */}
-        <div className="mb-4 relative" style={{ background: "#dbfbfd" }}>
+        <div className="mb-4 relative" style={{ background: additionalMetadata?.background }}>
           <div className="max-h-[600px] max-w-[600px] m-auto">
+            <div className="z-10 m-auto absolute inline-flex space-x-4 p-4">
+              <div className="rounded-lg bg-[#ffffffa8] p-1">
+                ${additionalMetadata?.latestPrice.toFixed(2)}
+              </div>
+              <div className="rounded-lg bg-[#ffffffa8] p-1">
+                {additionalMetadata?.latestDelta.toFixed(2)}%
+              </div>
+            </div>
             <TokenMedia token={token.token} />
           </div>
         </div>
@@ -274,8 +289,14 @@ export const getStaticProps: GetStaticProps<{
   }
 
   const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
-  tokenDetails.image = metadata.image;
+  tokenDetails.image = metadata.image
 
+  // pass additional metadata we got from our own server
+  const additionalMetadata = {
+    background: metadata.background,
+    latestDelta: metadata.latestDelta,
+    latestPrice: metadata.latestPrice
+  }
 
   const collectionId = data.tokens?.[0]?.token?.collection?.id
 
@@ -286,6 +307,6 @@ export const getStaticProps: GetStaticProps<{
   }
 
   return {
-    props: { collectionId, tokenDetails },
+    props: { collectionId, tokenDetails, additionalMetadata },
   }
 }
