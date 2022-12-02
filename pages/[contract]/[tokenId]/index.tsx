@@ -183,7 +183,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
       <div className="col-span-full">
         {/* TODO: need the background color to come from the metadata */}
         <div className="mb-4 relative" style={{ background: additionalMetadata?.background }}>
-          <div className="max-h-[600px] max-w-[600px] m-auto">
+          <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px]">
             <div className="z-10 m-auto absolute inline-flex space-x-4 p-4">
               <div className="rounded-lg bg-[#ffffffa8] p-1">
                 ${additionalMetadata?.latestPrice.toFixed(2)}
