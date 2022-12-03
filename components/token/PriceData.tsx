@@ -335,7 +335,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }}
             className="mt-4 w-fit text-left outline-none disabled:cursor-not-allowed  dark:border-neutral-600 dark:focus:ring-4  dark:focus:ring-primary-900"
           >
-            <span>You can also</span>{' '}
+            <span>Or</span>{' '}
             <span className="text-[#FF3B3B] dark:text-[#FF9A9A]">
               remove from cart
             </span>
@@ -374,7 +374,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           >
             <div className="flex items-center dark:text-white">
               <div>
-                <span>You can also</span>{' '}
+                <span>Or</span>{' '}
                 <span className="text-primary-700 dark:text-primary-100">
                   add to cart
                 </span>
