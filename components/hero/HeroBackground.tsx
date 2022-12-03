@@ -9,9 +9,12 @@ type Props = {
 }
 
 const HeroBackground: FC<Props> = ({ banner, children }) => {
-  const bannerImage = envBannerImageDisabled
-    ? null
-    : optimizeImage(envBannerImage || banner, 1500)
+  // NOTE: don't know why this isn't working in prod but temporarily disabling
+  // const bannerImage = envBannerImageDisabled
+  //   ? null
+  //   : optimizeImage(envBannerImage || banner, 1500)
+  const bannerImage = null
+
   const baseClasses = `relative z-0 px-[25px] flex flex-col items-center col-span-full w-full pb-14`
 
   return bannerImage ? (
