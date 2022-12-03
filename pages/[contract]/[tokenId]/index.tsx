@@ -216,7 +216,10 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         <div className="mb-4 relative" style={{ background: freshAdditionalMetadata?.background }}>
           <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px]">
             <div className="z-10 m-auto absolute inline-flex space-x-4 p-4 items-center">
-              <div className="text-red-700 font-bold">LIVE</div>
+              <div className="bg-[#ffffffa8] p-1 px-2 rounded-lg">
+                Live FiniCam
+                <span className="live-icon" />
+              </div>
               <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
                 <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                 <span>${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
@@ -225,6 +228,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
                 style={{ color: freshAdditionalMetadata?.latestDelta! < 0 ? 'red' : 'green'}}
                 className="rounded-lg bg-[#ffffffa8] p-1"
               >
+                {freshAdditionalMetadata?.latestDelta! > 0 && <span>+</span>}
                 {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
             </div>
