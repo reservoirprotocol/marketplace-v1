@@ -21,6 +21,9 @@ import {
   useUserTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useAccount } from 'wagmi'
+import getIconFromTokenDetails from 'lib/getIconFromAttributes'
+import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFromTokenDetails'
+import useInterval from 'hooks/useInterval'
 
 // Environment variables
 // For more information about these variables
@@ -82,6 +85,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
     animation_url: null,
     extension: null,
   })
+  // these will be referenced throughout, will update on an interval via poll, and
+  // will be initialized with the values passed in
+  const [freshAdditionalMetadata, setFreshAdditionalMetadata] = useState(additionalMetadata)
+  const [freshTokenDetails, setFreshAdditionalTokenDetails] = useState(tokenDetails)
+  
   const account = useAccount()
   const router = useRouter()
   const bannedOnOpenSea = useTokenOpenseaBanned(
@@ -105,10 +113,10 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
 
 
   const tokens = tokenData.data
-  const token = tokens?.[0] || { token: tokenDetails }
+  const token = tokens?.[0] || { token: freshTokenDetails }
   
   if (token.token) {
-    token.token.image = tokenDetails?.image;
+    token.token.image = freshTokenDetails?.image;
   }
   const checkUserOwnership = token.token?.kind === 'erc1155'
   const { data: userTokens } = useUserTokens(
@@ -141,6 +149,27 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
     }
   }, [])
 
+  useInterval(async () => {
+    if (!tokenDetails?.image) return
+    const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
+    console.log('Fresh data:', metadata)
+    
+    // conditionally add an updated gif
+    if (tokenDetails.image !== metadata.image) {
+      tokenDetails.image = metadata.image
+      setFreshAdditionalTokenDetails(tokenDetails)
+    }
+    
+    // conditionall add updated additionalMetadata
+    const addMetadata = {
+      background: metadata.background,
+      latestDelta: metadata.latestDelta,
+      latestPrice: metadata.latestPrice
+    }
+    if (addMetadata !== additionalMetadata) setFreshAdditionalMetadata(addMetadata)
+    
+  }, 60000) // 60 seconds
+
   if (tokenData.error) {
     return <div>There was an error</div>
   }
@@ -171,7 +200,9 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
     +userTokens[0].ownership.tokenCount > 0
       ? true
       : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
-  
+
+  const icon = getIconFromTokenDetails(tokenDetails!)
+  const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
   return (
     <Layout navbar={{}}>
@@ -182,14 +213,19 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
       </Head>
       <div className="col-span-full">
         {/* TODO: need the background color to come from the metadata */}
-        <div className="mb-4 relative" style={{ background: additionalMetadata?.background }}>
+        <div className="mb-4 relative" style={{ background: freshAdditionalMetadata?.background }}>
           <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px]">
-            <div className="z-10 m-auto absolute inline-flex space-x-4 p-4">
-              <div className="rounded-lg bg-[#ffffffa8] p-1">
-                ${additionalMetadata?.latestPrice.toFixed(2)}
+            <div className="z-10 m-auto absolute inline-flex space-x-4 p-4 items-center">
+              <div className="text-red-700 font-bold">LIVE</div>
+              <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
+                <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                <span>${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
               </div>
-              <div className="rounded-lg bg-[#ffffffa8] p-1">
-                {additionalMetadata?.latestDelta.toFixed(2)}%
+              <div
+                style={{ color: freshAdditionalMetadata?.latestDelta! < 0 ? 'red' : 'green'}}
+                className="rounded-lg bg-[#ffffffa8] p-1"
+              >
+                {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
             </div>
             <TokenMedia token={token.token} />
