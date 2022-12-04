@@ -1,7 +1,7 @@
 import Layout from 'components/Layout'
 import setParams from 'lib/params'
 import { fetchFromContract } from 'lib/fetchFromContract'
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import { GetStaticPaths, GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
 import Head from 'next/head'
@@ -275,14 +275,9 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
 
 export default Index
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps<{
+// NOTE: we switched to using getServerSideProps so that the server rerenders this page
+// each time it's called. We do this bc we need the unfurled image links to be fresh.
+export const getServerSideProps: GetServerSideProps<{
   collectionId: string
   communityId?: string
 }> = async ({ params }) => {

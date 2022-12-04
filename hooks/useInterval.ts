@@ -18,8 +18,6 @@ export default function useInterval(callback, delay) {
     function tick() {
       savedCallback.current();
     }
-    // call it once immediately on setup
-    tick()
     if (delay !== null) {
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
