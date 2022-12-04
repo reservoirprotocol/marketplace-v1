@@ -19,6 +19,7 @@ import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
+import * as Tooltip from '@radix-ui/react-tooltip'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -140,11 +141,11 @@ const TokenCard: FC<Props> = ({
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
         <div className="flex items-start justify-between px-4 p-3 lg:pb-3">
-          {token?.token?.name || `#${token?.token?.tokenId}`}
+          {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
-            <>
-              <div className="reservoir-h6">
+            <div className="flex">
+              <div className="reservoir-h6 mr-[10px]">
                 <FormatCrypto
                   amount={token?.market?.floorAsk?.price?.amount?.decimal}
                   address={token?.market?.floorAsk?.price?.currency?.contract}
@@ -152,7 +153,7 @@ const TokenCard: FC<Props> = ({
                   maximumFractionDigits={4}
                 />
               </div>
-              {/* <div className="text-right">
+              <div className="text-right">
                 {token?.market?.floorAsk?.source && (
                   <img
                     className="h-6 w-6"
@@ -167,8 +168,8 @@ const TokenCard: FC<Props> = ({
                     alt=""
                   />
                 )}
-              </div> */}
-            </>
+              </div>
+            </div>
           ) : !isOwner ? (
             <div className="h-[64px]"></div>
           ) : (
@@ -240,38 +241,60 @@ const TokenCard: FC<Props> = ({
                   Remove
                 </button>
               ) : (
-                <button
-                  disabled={isInTheWrongNetwork}
-                  onClick={() => {
-                    if (token && token.token && token.market) {
-                      if (
-                        !cartCurrency ||
-                        token.market.floorAsk?.price?.currency?.contract ===
-                          cartCurrency?.contract
-                      ) {
-                        setCartTokens([
-                          ...cartTokens,
-                          {
-                            token: token.token,
-                            market: token.market,
-                          },
-                        ])
-                      } else {
-                        setCartToSwap &&
-                          setCartToSwap([
-                            {
-                              token: token.token,
-                              market: token.market,
-                            },
-                          ])
-                        setClearCartOpen && setClearCartOpen(true)
-                      }
-                    }
-                  }}
-                  className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
-                >
-                  Add to Cart
-                </button>
+                <>
+                  {token?.market?.floorAsk?.source?.name !== 'sudoswap' ? 
+                    (
+                      <button
+                        disabled={isInTheWrongNetwork}
+                        onClick={() => {
+                          if (token && token.token && token.market) {
+                            if (
+                              !cartCurrency ||
+                              token.market.floorAsk?.price?.currency?.contract ===
+                                cartCurrency?.contract
+                            ) {
+                              setCartTokens([
+                                ...cartTokens,
+                                {
+                                  token: token.token,
+                                  market: token.market,
+                                },
+                              ])
+                            } else {
+                              setCartToSwap &&
+                                setCartToSwap([
+                                  {
+                                    token: token.token,
+                                    market: token.market,
+                                  },
+                                ])
+                              setClearCartOpen && setClearCartOpen(true)
+                            }
+                          }
+                        }}
+                        className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
+                      >                
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <Tooltip.Provider delayDuration={0}>
+                        <Tooltip.Root>
+                          <Tooltip.Trigger>
+                            <div className="reservoir-subtitle text-gray-400 flex h-[40px] items-center justify-center border-t border-neutral-300 cursor-not-allowed dark:border-neutral-600">
+                              Add to Cart
+                            </div>
+                          </Tooltip.Trigger>
+                          <Tooltip.Content arrowPadding={10}>
+                            <div className="bg-white rounded-md p-4 reservoir-label-s max-w-[200px] shadow-lg">
+                              Add to Cart is not yet available for dynamically priced sudoswap NFTs.
+                            </div>
+                            {/* <Tooltip.Arrow /> */}
+                          </Tooltip.Content>
+                        </Tooltip.Root>
+                      </Tooltip.Provider>
+                    )  
+                  }
+                </>
               )}
             </div>
           )}

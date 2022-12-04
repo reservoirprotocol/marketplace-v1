@@ -276,6 +276,9 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       </Dialog.Close>
                     </div>
                     <AttributesFlex className="mb-4 flex flex-wrap gap-3" />
+                    <div className="reservoir-label-s text-gray-400 py-2">
+                      Heads up! Sweeping is not yet available for dynamically priced sudoswap NFTs. Please ensure they are not included in your sweep or you may get errors.
+                    </div>
                     <div className="mb-4 flex items-center gap-4">
                       <StyledSlider
                         defaultValue={[50]}

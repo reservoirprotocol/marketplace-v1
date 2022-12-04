@@ -344,7 +344,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
         {!isInCart && !isOwner && isListed && (
           <button
-            disabled={!token?.market?.floorAsk?.price}
+            disabled={!token?.market?.floorAsk?.price || sourceName === 'sudoswap'}
             onClick={() => {
               if (token?.token && token.market) {
                 if (
@@ -372,14 +372,21 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }}
             className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
           >
-            <div className="flex items-center dark:text-white">
-              <div>
-                <span>Or</span>{' '}
-                <span className="text-primary-700 dark:text-primary-100">
-                  add to cart
-                </span>
+            {sourceName !== 'sudoswap' &&
+              <div className="flex items-center dark:text-white">
+                <div>
+                  <span>Or</span>{' '}
+                  <span className="text-primary-700 dark:text-primary-100">
+                    add to cart
+                  </span>
+                </div>
               </div>
-            </div>
+            }
+            {sourceName === 'sudoswap' &&
+              <div className="text-gray-400 reservoir-label-s">
+                Add to Cart is not yet available for dynamically priced sudoswap NFTs.
+              </div>
+            }
           </button>
         )}
       </article>
