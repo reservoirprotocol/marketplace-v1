@@ -168,9 +168,9 @@ const CartMenu: FC = () => {
                       <div className="reservoir-subtitle">
                         {name || `#${tokenId}`}
                       </div>
-                      <div className="reservoir-label-s">
+                      {/* <div className="reservoir-label-s">
                         {collection?.name}
-                      </div>
+                      </div> */}
                       <div className="reservoir-h6">
                         <FormatCrypto
                           amount={market.floorAsk?.price?.amount?.decimal}

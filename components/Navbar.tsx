@@ -180,9 +180,9 @@ const Navbar: FC = () => {
       {isMobile ? (
         <div className="ml-auto flex gap-x-5">
           {!hasCommunityDropdown && filterComponent && filterComponent}
-          {router.pathname.includes('/collection') &&
-            <CartMenu />
-          }
+          {/* {router.pathname.includes('/collection') && */}
+          <CartMenu />
+          {/* } */}
           <HamburgerMenu externalLinks={externalLinks} />
         </div>
       ) : (
@@ -192,9 +192,9 @@ const Navbar: FC = () => {
               {filterComponent && filterComponent}
             </div>
           )}
-          {router.pathname.includes('/collection') &&
-            <CartMenu />
-          }
+          {/* {router.pathname.includes('/collection') && */}
+          <CartMenu />
+          {/* } */}
           {/* {hasCommunityDropdown &&
           themeSwitcherEnabled &&
           !showDesktopSearch ? null : (
