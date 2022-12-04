@@ -214,8 +214,8 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
       <div className="col-span-full">
         {/* TODO: need the background color to come from the metadata */}
         <div className="mb-4 relative" style={{ background: freshAdditionalMetadata?.background }}>
-          <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px]">
-            <div className="z-10 m-auto absolute inline-flex space-x-4 p-4 items-center">
+          <div className="max-h-[600px] max-w-[600px] m-auto min-h-[600px] flex items-center">
+            <div className="z-10 m-auto top-0 absolute inline-flex space-x-4 p-4 items-center">
               <div className="bg-[#ffffffa8] p-1 px-2 rounded-lg">
                 Live FiniCam
                 <span className="live-icon" />
@@ -262,6 +262,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         {/* <CollectionInfo collection={collection} token={token.token} /> */}
+        <TokenAttributes
+            token={token?.token}
+            collection={collection}
+            isOwner={isOwner}
+          />
         <TokenInfo token={token.token} />
       </div>
     </Layout>
