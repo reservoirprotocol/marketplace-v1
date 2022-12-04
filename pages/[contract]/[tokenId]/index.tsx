@@ -151,6 +151,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
 
   useInterval(async () => {
     if (!tokenDetails?.image) return
+    // TODO: this code repeats getServerSideProps, can we consolidate?
     const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
     console.log('Fresh data:', metadata)
     
