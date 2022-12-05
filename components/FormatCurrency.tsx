@@ -18,7 +18,7 @@ const FormatCurrency: FC<Props> = ({
   const value = formatBN(amount, maximumFractionDigits, decimals)
 
   return (
-    <div className="inline-flex flex-none items-center gap-1">
+    <div className="inline-flex flex-none items-center gap-1 text-primary-700">
       {value !== '-' ? children : null}
       <span className="flex-grow whitespace-nowrap font-semibold">{value}</span>
     </div>

@@ -165,7 +165,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 id={id}
                 value={id}
                 className={
-                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center text-primary-700 focus:z-10 radix-state-active:border-primary-900 radix-state-active:text-primary-900 dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
+                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center focus:z-10 radix-state-active:border-primary-900 radix-state-active:text-primary-900 dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >
