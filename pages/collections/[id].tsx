@@ -99,6 +99,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         updateMap((finiliarImageMap) => { 
           return { ...finiliarImageMap, ...{[meta.id]: meta.image }}
         })
+      }).catch((err) => {
+        console.log('Error fetching data:', err)
       })
     })
 
