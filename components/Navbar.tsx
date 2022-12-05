@@ -133,29 +133,10 @@ const Navbar: FC = () => {
   return (
     <nav
       style={router.pathname === '/' ? { background: 'none', border: 'none' } : {}}
-      className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 border-b border-[#D4D4D4] bg-white px-6 py-2 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-2 md:px-16"
+      className="sticky top-0 z-[1000] col-span-full flex items-center justify-between gap-2 px-6 py-2 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-2 md:px-16"
     >
-      {/* {router.pathname != '/' && */}
+      {router.pathname != '/' &&
         <NavbarLogo className="z-10 max-w-[300px]" />
-      {/* } */}
-      {!isMobile &&
-        <div
-          // style={router.pathname === '/' ? { marginLeft: '0' } : {}}
-          className="z-10 ml-12 hidden items-center gap-11 md:flex"
-        >
-          <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
-            <a className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white">
-              Discover
-            </a>
-          </Link>
-          {account.isConnected &&
-            <Link href={`/address/${account.address}`}>
-              <a className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white">
-                My finis
-              </a>
-            </Link>
-          }
-        </div>
       }
       {showLinks && (
         <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
@@ -180,21 +161,29 @@ const Navbar: FC = () => {
       {isMobile ? (
         <div className="ml-auto flex gap-x-5">
           {!hasCommunityDropdown && filterComponent && filterComponent}
-          {/* {router.pathname.includes('/collection') && */}
           <CartMenu />
-          {/* } */}
           <HamburgerMenu externalLinks={externalLinks} />
         </div>
       ) : (
-        <div className="z-10 ml-auto shrink-0 gap-2 md:flex xl:gap-4">
+        <div className="z-10 ml-auto shrink-0 gap-4 md:flex items-center">
           {!hasCommunityDropdown && !showDesktopSearch && (
             <div className="ml-auto flex">
               {filterComponent && filterComponent}
             </div>
           )}
-          {/* {router.pathname.includes('/collection') && */}
+          <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
+            <a className="text-primary-900 text-sm uppercase font-bold hover:text-[#1F2937] dark:text-white">
+              Discover
+            </a>
+          </Link>
+          {account.isConnected &&
+            <Link href={`/address/${account.address}`}>
+              <a className="text-primary-900 text-sm uppercase font-bold hover:text-[#1F2937] dark:text-white">
+                My finis
+              </a>
+            </Link>
+          }
           <CartMenu />
-          {/* } */}
           {/* {hasCommunityDropdown &&
           themeSwitcherEnabled &&
           !showDesktopSearch ? null : (

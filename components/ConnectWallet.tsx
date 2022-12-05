@@ -38,11 +38,11 @@ const ConnectWallet: FC = () => {
 
   if (!account.isConnected)
     return (
-      <ConnectWalletButton>
-        <div className="inline-flex align-center space-x-2">
-          <img src="/icons/FunnyFace.svg" alt="Funny Face Icon" />
-          <span >Connect</span>
-        </div>
+      <ConnectWalletButton className="rounded-full bg-primary-500 px-[5px] p-[5px] flex items-center space-x-2 border border-primary-900">
+        <>
+          <img src="/happy2.png" alt="Face Icon" className="rounded-full h-[30px]" />
+          <span className="text-primary-900 font-bold uppercase text-sm pr-1">Connect</span>
+        </>
       </ConnectWalletButton>
     )
 
@@ -88,11 +88,11 @@ const ConnectWallet: FC = () => {
               className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
             >
               <span>Disconnect</span>
-              <img
+              {/* <img
                 src="/icons/MoonSleep.svg"
                 alt="Moon Sleep Icon"
                 className="h-5 w-5"
-              />
+              /> */}
             </button>
           </DropdownMenu.Item>
         </div>
