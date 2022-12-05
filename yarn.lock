@@ -1796,10 +1796,10 @@
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.6.1.tgz#1ebe22146d44c86e8cd7fca9467c492093dafa9f"
-  integrity sha512-NlO1Fucx3tYkFMiOZCMK2H3igor1R9dHAizncGNaYYHAGpjENkqlME8law4D+cJW+YQ2lOCFEnYHgLL0G2ETiw==
+"@reservoir0x/reservoir-kit-ui@0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.6.3.tgz#f8492baf4cb10a972a4c152185136841a0bd2127"
+  integrity sha512-ZTj4/V9VFB4QjClmZtqAX2rI4vABTVqCcipIQHO0A3HWlhr4rkQSnp00vEJ1IVrSboPd27AAHd3S3d6wZsrhMQ==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
