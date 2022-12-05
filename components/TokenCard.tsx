@@ -79,7 +79,7 @@ const TokenCard: FC<Props> = ({
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
-      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#e8e8e8] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
+      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
     >
       {isInCart ? (
         <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
@@ -91,7 +91,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a className="mb-[52px]">
+        <a className="mb-[0]">
           {finiliarImage ? (
             <Image
               loader={({ src }) => src}
@@ -128,7 +128,7 @@ const TokenCard: FC<Props> = ({
         </a>
       </Link>
       <div
-        className={`absolute bottom-[0px] w-full bg-white transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
+        className={`absolute bottom-[0px] w-full transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
           !isOwner && !token?.market?.floorAsk?.price
             ? ''
             : 'group-hover:bottom-[0px]'
@@ -140,8 +140,8 @@ const TokenCard: FC<Props> = ({
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
-        <div className="flex items-start justify-between px-4 p-3 lg:pb-3">
-          {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`}
+        <div className="flex items-end px-4 p-3 lg:pb-3">
+          {/* {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`} */}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
             <div className="flex">

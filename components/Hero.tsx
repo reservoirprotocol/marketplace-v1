@@ -197,7 +197,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
         <img src="/ChaseScene.gif" className="object-cover w-[100vw] h-[300px]" alt="Chase Scene" />
       </div>
       <HeroBackground banner={header.banner}>
-        <div className="z-10 flex w-full flex-col items-center gap-6">
+        <div className="z-10 flex w-full items-center gap-6">
         {/* <div
           
           className="col-span-full mb-12 lg:px-0"
