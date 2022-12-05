@@ -99,6 +99,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         updateMap((finiliarImageMap) => { 
           return { ...finiliarImageMap, ...{[meta.id]: meta.image }}
         })
+      }).catch((err) => {
+        console.log('Error fetching data:', err)
       })
     })
 
@@ -156,14 +158,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           value={router.query?.tab?.toString() || 'items'}
           className="flex w-screen flex-col"
         >
-          <Tabs.List className="flex justify-center border-b border-[#D4D4D4] dark:border-[#525252]">
+          <Tabs.List className="flex justify-center bg-primary-300 dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
                 id={id}
                 value={id}
                 className={
-                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center text-[#525252] hover:text-black focus:z-10 radix-state-active:border-black radix-state-active:text-black dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
+                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center focus:z-10 radix-state-active:border-primary-900 radix-state-active:text-primary-900 dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >
@@ -182,7 +184,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
               />
               <div className="mx-6 mt-4 w-full">
                 <div className="mb-4 hidden items-center justify-between md:flex">
-                  <div className="flex items-center gap-6 font-semibold">
+                  <div className="flex items-center gap-6">
                     {/* <RefreshButton
                       refreshData={() => {
                         tokens.mutate()
@@ -193,8 +195,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     {tokenCount > 0 && (
                       <>
                         <div>{formatNumber(tokenCount)} finiliar</div>
-                        <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600"></div>
-                        <div className="flex items-center gap-1">
+                        <div className="h-9 w-px bg-gray-300 dark:bg-neutral-600 hidden"></div>
+                        <div className="flex items-center gap-1 hidden">
                           <FormatNativeCrypto
                             amount={
                               stats?.data?.stats?.market?.floorAsk?.price
@@ -206,7 +208,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       </>
                     )}
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 hidden">
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}

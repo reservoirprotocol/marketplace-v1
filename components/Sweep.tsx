@@ -237,7 +237,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           isInTheWrongNetwork ||
           sweepTokens?.length === 0
         }
-        className="btn-primary-fill gap-2 dark:ring-primary-900 dark:focus:ring-4"
+        className="btn-primary-fill text-sm gap-2 dark:ring-primary-900 dark:focus:ring-4"
       >
         <FaBroom className="text-white" />
         Sweep

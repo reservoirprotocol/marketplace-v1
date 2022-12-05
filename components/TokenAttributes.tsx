@@ -33,12 +33,12 @@ const TokenAttributes: FC<Props> = ({ token, collection, isOwner }) => {
         type="single"
         collapsible
         defaultValue={isOwner ? undefined : 'attributes'}
-        className="col-span-full rounded-2xl border-[1px] border-gray-300 bg-white py-6 dark:border-neutral-600 dark:bg-black"
+        className="col-span-full rounded-[25px] bg-primary-200 py-6 dark:border-neutral-600 dark:bg-black"
       >
         <Accordion.Item value="attributes">
           <Accordion.Header>
             <Accordion.Trigger className="reservoir-h5 -my-6 flex w-full items-center justify-between p-6 dark:text-white">
-              <div>Profile</div>
+              <div>Properties</div>
               <StyledChevron className="h-[9px] w-[9px] text-gray-600 dark:text-gray-300" />
             </Accordion.Trigger>
           </Accordion.Header>
@@ -87,13 +87,13 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
         `attributes[${attribute.key}]`
       )}=${formatUrl(`${attribute.value}`)}`}
     >
-      <a className="rounded-lg bg-neutral-100 px-4 py-3 ring-inset ring-blue-600 transition-colors	hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 dark:bg-neutral-800 dark:hover:bg-neutral-600">
-        <div className="text-sm text-primary-700 dark:text-primary-300">
+      <a className="rounded-xl bg-primary-400 px-4 py-3 ring-inset ring-blue-600 transition-colors	hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 dark:bg-neutral-800 dark:hover:bg-neutral-600">
+        <div className="text-xs text-primary-700 uppercase dark:text-primary-300">
           {attribute.key}
         </div>
         <div className="mb-1 mt-2 flex justify-between gap-1 text-sm text-black dark:text-white">
           <span
-            className="reservoir-h6 text-black dark:text-white"
+            className="reservoir-h6 dark:text-white"
             title={attribute.value}
           >
             {attribute.value}

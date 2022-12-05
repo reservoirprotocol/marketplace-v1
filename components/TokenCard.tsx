@@ -79,7 +79,7 @@ const TokenCard: FC<Props> = ({
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
-      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] border border-[#e8e8e8] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
+      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
     >
       {isInCart ? (
         <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
@@ -91,7 +91,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a className="mb-[52px]">
+        <a className="mb-[0]">
           {finiliarImage ? (
             <Image
               loader={({ src }) => src}
@@ -128,7 +128,7 @@ const TokenCard: FC<Props> = ({
         </a>
       </Link>
       <div
-        className={`absolute bottom-[0px] w-full bg-white transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
+        className={`absolute bottom-[0px] w-full transition-all  dark:bg-neutral-800 md:-bottom-[41px] ${
           !isOwner && !token?.market?.floorAsk?.price
             ? ''
             : 'group-hover:bottom-[0px]'
@@ -140,12 +140,12 @@ const TokenCard: FC<Props> = ({
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
-        <div className="flex items-start justify-between px-4 p-3 lg:pb-3">
-          {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`}
+        <div className="flex justify-end px-4 p-3 lg:pb-3">
+          {/* {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`} */}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
-            <div className="flex">
-              <div className="reservoir-h6 mr-[10px]">
+            <div className="flex items-center">
+              <div className="reservoir-h6 mr-[10px] flex items-center">
                 <FormatCrypto
                   amount={token?.market?.floorAsk?.price?.amount?.decimal}
                   address={token?.market?.floorAsk?.price?.currency?.contract}
@@ -156,7 +156,7 @@ const TokenCard: FC<Props> = ({
               <div className="text-right">
                 {token?.market?.floorAsk?.source && (
                   <img
-                    className="h-6 w-6"
+                    className="h-5 w-5"
                     src={
                       reservoirClient?.source &&
                       reservoirClient.source ===
@@ -221,7 +221,7 @@ const TokenCard: FC<Props> = ({
                 mutate={mutate}
                 signer={signer}
                 isInTheWrongNetwork={isInTheWrongNetwork}
-                buttonClassName="bg-primary-700 reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap text-white focus:ring-0"
+                buttonClassName="bg-primary-500 text-primary-900 reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap focus:ring-0"
               />
               {isInCart ? (
                 <button
@@ -236,7 +236,7 @@ const TokenCard: FC<Props> = ({
                     newCartTokens.splice(index, 1)
                     setCartTokens(newCartTokens)
                   }}
-                  className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600 dark:text-red-300"
+                  className="reservoir-subtitle flex h-[40px] items-center justify-center background-primary-100 text-[#FF3B3B] disabled:cursor-not-allowed dark:border-neutral-600 dark:text-red-300"
                 >
                   Remove
                 </button>
@@ -272,7 +272,7 @@ const TokenCard: FC<Props> = ({
                             }
                           }
                         }}
-                        className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
+                        className="reservoir-subtitle bg-primary-100 flex h-[40px] items-center justify-center disabled:cursor-not-allowed dark:border-neutral-600"
                       >                
                         Add to Cart
                       </button>
@@ -280,7 +280,7 @@ const TokenCard: FC<Props> = ({
                       <Tooltip.Provider delayDuration={0}>
                         <Tooltip.Root>
                           <Tooltip.Trigger>
-                            <div className="reservoir-subtitle text-gray-400 flex h-[40px] items-center justify-center border-t border-neutral-300 cursor-not-allowed dark:border-neutral-600">
+                            <div className="reservoir-subtitle bg-primary-100 text-gray-400 flex h-[40px] items-center justify-center cursor-not-allowed dark:border-neutral-600">
                               Add to Cart
                             </div>
                           </Tooltip.Trigger>

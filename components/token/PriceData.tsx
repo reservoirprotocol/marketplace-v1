@@ -144,7 +144,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
+      <article className="col-span-full rounded-[25px] bg-primary-200 p-6 dark:border-neutral-600 dark:bg-black">
         <div className="grid grid-cols-2 gap-6">
           <Price
             title="List Price"
@@ -154,7 +154,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   href={sourceRedirect}
-                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                  className="flex items-center gap-2 dark:text-white"
                 >
                   on {sourceName}
                   <img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />
@@ -414,7 +414,7 @@ const Price: FC<{
     </div>
     <div className="reservoir-h3 font-headings dark:text-white">
       {price}
-      <div className="text-sm text-neutral-600 dark:text-neutral-300">
+      <div className="text-sm dark:text-neutral-300">
         {formatDollar(usdPrice)}
       </div>
     </div>

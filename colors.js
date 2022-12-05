@@ -154,11 +154,13 @@ const primaryColors = {
     900: '#111827',
   },
   finiliar: {
-    100: '#fee5e5',
-    300: '#f8c9c9',
-    500: '#f6d6d7',
-    700: '#fe8686',
-    900: '#d04d4d',
+    100: '#FAFDFF',
+    200: '#F4F7FF',
+    300: '#ECFFEC',
+    400: '#FFEBFC',
+    500: '#FFD9D3',
+    700: '#FF9696',
+    900: '#FF595A',
   },
   default: {
     100: '#F1E5FF',

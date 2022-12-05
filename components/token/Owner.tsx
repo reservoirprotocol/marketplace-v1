@@ -20,8 +20,8 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
-        <div className="reservoir-h3 mb-6 flex items-center gap-4 overflow-hidden font-headings dark:text-white">
+      <article className="col-span-full rounded-[25px] bg-primary-200 p-6 dark:border-neutral-600 dark:bg-black">
+        <div className="reservoir-h3 mb-2 flex items-center gap-4 overflow-hidden font-headings dark:text-white">
           <div>{token?.name || `#${token?.tokenId}`}</div>
           {bannedOnOpenSea && (
             <Tooltip.Provider>
@@ -41,8 +41,8 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
           )}
         </div>
 
-        <div className="reservoir-h6 mb-2 font-headings dark:text-white">
-          Friend
+        <div className="text-primary-700 mb-2 font-headings dark:text-white">
+          This fini is a friend of the following human:
         </div>
         {owner && (
           <Link href={`/address/${owner}`}>
