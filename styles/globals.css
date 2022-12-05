@@ -6,8 +6,11 @@
   .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
     @apply font-headings dark:text-white text-primary-700;
   }
-  .reservoir-body, .reservoir-subtitle, .reservoir-label-s,.btn-primary-outline {
+  .reservoir-body, .reservoir-subtitle, .reservoir-label-s, .btn-primary-outline {
     @apply text-primary-700 dark:text-white;
+  }
+  .button-primary-fill {
+    @apply text-primary-900;
   }
 }
 

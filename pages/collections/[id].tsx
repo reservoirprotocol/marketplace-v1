@@ -208,7 +208,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       </>
                     )}
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 hidden">
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}

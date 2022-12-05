@@ -197,7 +197,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
         <img src="/ChaseScene.gif" className="object-cover w-[100vw] h-[300px]" alt="Chase Scene" />
       </div>
       <HeroBackground banner={header.banner}>
-        <div className="z-10 flex w-full items-center gap-6">
+        <div className="z-10 flex w-full items-center gap-6 flex-col md:flex-row">
         {/* <div
           
           className="col-span-full mb-12 lg:px-0"
@@ -251,18 +251,18 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
               )}
             </>
           )*/}
-          <div className="flex w-full flex-col justify-center gap-4 md:flex-row">
+          <div className="flex w-full flex-col justify-end gap-4 md:flex-row">
             {isSupported && (
               <BidModal
                 collectionId={collection?.id}
                 trigger={
                   <button
                     disabled={isInTheWrongNetwork}
-                    className="btn-primary-outline min-w-[222px] whitespace-nowrap border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    className="btn-primary-fill text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
                   >
                     {isAttributeModal
                       ? 'Make an Attribute Offer'
-                      : 'Make a Collection Offer'}
+                      : 'Collection Offer'}
                   </button>
                 }
                 attribute={attribute}
@@ -318,14 +318,14 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 </DropdownMenu.Root>
               </div>
             )} */}
-            {isSmallDevice && (
+            {/* {isSmallDevice && ( */}
               <Sweep
                 collection={collection}
                 tokens={tokens.data}
                 setToast={setToast}
                 mutate={tokens.mutate}
               />
-            )}
+            {/* )} */}
           </div>
         </div>
       </HeroBackground>
