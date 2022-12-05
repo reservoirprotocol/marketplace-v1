@@ -172,13 +172,13 @@ const Navbar: FC = () => {
             </div>
           )}
           <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
-            <a className="text-primary-900 text-sm uppercase font-bold hover:text-[#1F2937] dark:text-white">
+            <a className="text-sm uppercase font-bold hover:text-primary-900 dark:text-white">
               Discover
             </a>
           </Link>
           {account.isConnected &&
             <Link href={`/address/${account.address}`}>
-              <a className="text-primary-900 text-sm uppercase font-bold hover:text-[#1F2937] dark:text-white">
+              <a className="text-sm uppercase font-bold hover:text-primary-900 dark:text-white">
                 My finis
               </a>
             </Link>

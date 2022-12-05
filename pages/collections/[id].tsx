@@ -158,7 +158,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           value={router.query?.tab?.toString() || 'items'}
           className="flex w-screen flex-col"
         >
-          <Tabs.List className="flex justify-center bg-primary-300 dark:border-[#525252]">
+          <Tabs.List className="flex justify-center bg-primary-100 border-b border-primary-300 dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
