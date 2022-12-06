@@ -386,7 +386,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
         {!isInCart && !isOwner && isListed && !isSudoswapSource && (
           <button
-            disabled={!token?.market?.floorAsk?.price || sourceName === 'sudoswap'}
+            disabled={!token?.market?.floorAsk?.price || isSudoswapSource}
             onClick={() => {
               if (token?.token && token.market) {
                 if (
@@ -414,7 +414,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }}
             className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
           >
-            {sourceName !== 'sudoswap' &&
+            {!isSudoswapSource &&
               <div className="flex items-center dark:text-white">
                 <div>
                   <span>Or</span>{' '}
@@ -424,7 +424,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                 </div>
               </div>
             }
-            {sourceName === 'sudoswap' &&
+            {isSudoswapSource &&
               <div className="text-gray-400 reservoir-label-s">
                 Add to Cart is not yet available for dynamically priced sudoswap NFTs.
               </div>
