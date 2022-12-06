@@ -28,7 +28,7 @@ const Copy: FC<PropTwo> = ({ headline, body}) => {
 
 const Module: FC<PropThree> = ({ className, children }) => {
   return (
-    <div className={`flex max-w-[1600px] m-auto ${className}`}>
+    <div className={`flex max-w-[1300px] m-auto ${className}`}>
       {children}
     </div>
   )
