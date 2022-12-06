@@ -20,6 +20,8 @@ import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
 import * as Tooltip from '@radix-ui/react-tooltip'
+import RarityTooltip from './RarityTooltip'
+import { Collection } from 'types/reservoir'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -39,6 +41,8 @@ if (CURRENCIES) {
 type Props = {
   token?: ReturnType<typeof useTokens>['tokens']['data'][0]
   collectionImage: string | undefined
+  collectionSize?: number | undefined
+  collectionAttributes?: Collection['attributes']
   mutate: MutatorCallback
   setClearCartOpen?: Dispatch<SetStateAction<boolean>>
   setCartToSwap?: Dispatch<SetStateAction<any | undefined>>
@@ -48,6 +52,8 @@ type Props = {
 const TokenCard: FC<Props> = ({
   token,
   collectionImage,
+  collectionSize,
+  collectionAttributes,
   mutate,
   setClearCartOpen,
   setCartToSwap,
@@ -75,6 +81,8 @@ const TokenCard: FC<Props> = ({
   const isOwner =
     token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
   const imageSize = singleColumnBreakpoint ? 533 : 250
+
+  const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
 
   return (
     <div

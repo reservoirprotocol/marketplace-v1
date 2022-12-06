@@ -9,7 +9,6 @@ import Layout from 'components/Layout'
 import { useRef, useState, useEffect } from 'react'
 import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
-import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import { setToast } from 'components/token/setToast'
 import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
 import Hero from 'components/Hero'
@@ -25,6 +24,7 @@ import Sweep from 'components/Sweep'
 import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
+import SortTokens from 'components/SortTokens'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 import { string } from 'prop-types'
@@ -90,6 +90,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
     false
   )
 
+<<<<<<< HEAD
   const ids = tokens.data.map(t => t?.token?.tokenId!)
 
   useEffect(() => {
@@ -109,6 +110,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
 
+=======
+>>>>>>> b441193b5f4bad6029af4237dbf0c69aefbf9a8f
   const attributes = fallback?.attributes?.attributes
 
   if (!CHAIN_ID) return null
@@ -200,7 +203,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                           <FormatNativeCrypto
                             amount={
                               stats?.data?.stats?.market?.floorAsk?.price
-                                ?.netAmount?.decimal
+                                ?.amount?.decimal
                             }
                           />{' '}
                           floor price
@@ -208,7 +211,12 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       </>
                     )}
                   </div>
+<<<<<<< HEAD
                   <div className="flex gap-4 hidden">
+=======
+                  <div className="flex gap-4">
+                    <SortTokens />
+>>>>>>> b441193b5f4bad6029af4237dbf0c69aefbf9a8f
                     <Sweep
                       collection={collection}
                       tokens={tokens.data}
@@ -217,7 +225,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className="z-20 mb-10 flex items-center justify-between">
                   <div>
                     <AttributesFlex className="flex flex-wrap gap-3" />
                   </div>
@@ -227,6 +235,8 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   tokens={tokens}
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
+                  collectionSize={stats.data?.stats?.tokenCount}
+                  collectionAttributes={attributes}
                   isLoading={isLoading}
                 />
               </div>

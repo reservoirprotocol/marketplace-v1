@@ -10,7 +10,6 @@ import CartMenu from './CartMenu'
 import SearchMenu from './SearchMenu'
 import { useMediaQuery } from '@react-hookz/web'
 import useMounted from 'hooks/useMounted'
-import ListItemButton from './navbar/ListItemButton'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
@@ -22,7 +21,6 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 const DEFAULT_TO_SEARCH = process.env.NEXT_PUBLIC_DEFAULT_TO_SEARCH
-const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 
 function getInitialSearchHref() {
   const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
@@ -67,7 +65,6 @@ const Navbar: FC = () => {
 
   const isGlobal = !COMMUNITY && !COLLECTION && !COLLECTION_SET_ID
   const filterableCollection = isGlobal || COMMUNITY || COLLECTION_SET_ID
-  const themeSwitcherEnabled = THEME_SWITCHING_ENABLED
 
   useEffect(() => {
     setShowLinks(externalLinks.length > 0)
@@ -104,7 +101,6 @@ const Navbar: FC = () => {
           )
           setHasCommunityDropdown(true)
         } else {
-          setShowLinks(false)
           setHasCommunityDropdown(false)
           !showDesktopSearch
             ? setFilterComponent(
@@ -139,13 +135,11 @@ const Navbar: FC = () => {
         <NavbarLogo className="z-10 max-w-[300px]" />
       }
       {showLinks && (
-        <div className="z-10 ml-12 hidden items-center gap-11 lg:flex">
+        <div className="z-10 ml-12 mr-12 hidden items-center gap-11 md:flex">
           {externalLinks.map(({ name, url }) => (
             <a
               key={url}
               href={url}
-              rel="noopener noreferrer"
-              target="_blank"
               className="text-dark reservoir-h6 hover:text-[#1F2937] dark:text-white"
             >
               {name}
@@ -154,7 +148,7 @@ const Navbar: FC = () => {
         </div>
       )}
       {(hasCommunityDropdown || showDesktopSearch) && (
-        <div className="absolute top-0 left-0 right-0 flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center">
           {filterComponent && filterComponent}
         </div>
       )}
