@@ -7,7 +7,7 @@ const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const Footer = () => {
   if (FOOTER_ENABLED)
     return (
-      <footer className='col-span-full flex flex-col sm:flex-row justify-between items-center px-6 md:px-16 pb-12'>
+      <footer className='text-primary-900 col-span-full flex flex-col sm:flex-row justify-between items-center px-6 md:px-16 pb-12'>
         <div className='flex flex-row justify-between items-center gap-x-6 sm:gap-x-8 mb-6 sm:mb-0 text-xs sm:text-sm flex-wrap'>
           © 2022 finiliar studios, ltd.
         </div>
