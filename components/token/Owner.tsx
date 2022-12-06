@@ -48,7 +48,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
         </div>
 
         <div className="text-primary-700 mb-2 font-headings dark:text-white">
-          fini fren:
+          This fini is a friend of the following human:
         </div>
         {owner && (
           <Link href={`/address/${owner}`}>

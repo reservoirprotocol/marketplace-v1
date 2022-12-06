@@ -155,17 +155,19 @@ const primaryColors = {
   },
   finiliar: {
     100: '#FFFFFE',
-    200: '#F7F9FF',
+    200: '#F8FAFF',
     250: '#fafafa',
-    300: '#F4FFF7', 
+    300: '#F5FFF8',
     400: '#EFF2FF',
-    500: '#76DC6D',
+    500: '#76D490', // #76DC6D
     550: '#F4FFF7',
     600: '#FFEBFC',
     650: '#EFD9EC',
+    675: '#FFDCDC',
+    680: '#ffaea5',
     700: '#7D7EF3',
     800: '#FF5EBE',
-    900: '#FF4F4F', 
+    900: '#FF4F4F', //F8FAFF
   },
   default: {
     100: '#F1E5FF',

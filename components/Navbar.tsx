@@ -129,7 +129,7 @@ const Navbar: FC = () => {
   return (
     <nav
       style={router.pathname === '/' ? { background: 'none', border: 'none' } : {}}
-      className="sticky top-0 z-[1000] bg-primary-100 col-span-full flex items-center justify-between gap-2 px-6 py-2 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-2 md:px-16"
+      className="sticky top-0 z-[1000] bg-primary-200 col-span-full flex items-center justify-between gap-2 px-6 py-2 dark:border-neutral-600 dark:bg-black md:gap-3 md:py-2 md:px-16"
     >
       {router.pathname != '/' &&
         <NavbarLogo className="z-10 max-w-[300px]" />

@@ -238,7 +238,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           isInTheWrongNetwork ||
           sweepTokens?.length === 0
         }
-        className="pill rounded-full h-[50px] w-[50px] text-sm gap-2 dark:ring-primary-900 dark:focus:ring-4"
+        className="pill rounded-full h-[50px] w-[50px] text-sm gap-2 !border-primary-500/25 hover:bg-primary-500/50 dark:ring-primary-900 dark:focus:ring-4"
       >
         <img src="/icons/Sweep.svg" className="h-[20px] m-auto" alt="Sweep icon" />
       </Dialog.Trigger>

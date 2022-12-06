@@ -87,7 +87,7 @@ const TokenCard: FC<Props> = ({
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
-      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-white transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
+      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-primary-200 transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
     >
       {isInCart ? (
         <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
@@ -148,7 +148,7 @@ const TokenCard: FC<Props> = ({
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
-        <div className="flex justify-between px-4 p-3 lg:pb-3 bg-white">
+        <div className="flex justify-between px-4 p-3 lg:pb-3 bg-primary-200">
           {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
@@ -188,7 +188,7 @@ const TokenCard: FC<Props> = ({
           <div className="grid">
             <ListModal
               trigger={
-                <button className="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0">
+                <button className="btn-primary-fill !rounded-none reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0">
                   {token?.market?.floorAsk?.price?.amount?.decimal
                     ? 'Create New Listing'
                     : 'List for Sale'}

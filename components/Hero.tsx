@@ -197,7 +197,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
         <img src="/ChaseScene.gif" className="object-cover w-[100vw] h-[300px]" alt="Chase Scene" />
       </div>
       <HeroBackground banner={header.banner}>
-        <div className="z-10 flex w-full items-center gap-6 flex-col md:flex-row">
+        <div className="z-10 flex w-full items-end gap-6 flex-col md:flex-row">
         {/* <div
           
           className="col-span-full mb-12 lg:px-0"
@@ -258,11 +258,9 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 trigger={
                   <button
                     disabled={isInTheWrongNetwork}
-                    className="pill rounded-full h-[50px] w-[50px] items-center text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    className="pill rounded-full !border-primary-500/25 hover:bg-primary-500/50 h-[50px] w-[50px] items-center text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
                   >
-                    {isAttributeModal
-                      ? 'Make an Attribute Offer'
-                      : <img src="/icons/HandMoney.svg" className="h-[25px] m-auto" alt="Collection offer icon" />}
+                    <img src="/icons/HandMoney.svg" className="h-[25px] m-auto" alt="Collection offer icon" />
                   </button>
                 }
                 attribute={attribute}
