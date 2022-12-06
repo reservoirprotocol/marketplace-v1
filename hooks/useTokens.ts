@@ -24,7 +24,8 @@ export default function useTokens(
     collection: collectionId,
     includeTopBid: includeTopBid,
     sortBy: 'floorAskPrice',
-    sortDirection: 'asc'
+    sortDirection: 'asc',
+    includeDynamicPricing: true,
   }
 
   if (source) query.source = reservoirClient?.source
@@ -32,8 +33,8 @@ export default function useTokens(
   const sortDirection = router.query['sortDirection']?.toString()
   const sortBy = router.query['sortBy']?.toString()
 
-  if(sortBy === 'tokenId' || sortBy === 'rarity') query.sortBy = sortBy
-  if(sortDirection === 'desc') query.sortDirection = 'desc'
+  if (sortBy === 'tokenId' || sortBy === 'rarity') query.sortBy = sortBy
+  if (sortDirection === 'desc') query.sortDirection = 'desc'
 
   // Extract all queries of attribute type
   Object.keys(router.query)
