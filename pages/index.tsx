@@ -86,14 +86,14 @@ const Home: NextPage<Props> = ({ fallback }) => {
       </Head>
       <div
         style={isSmallDevice ? { marginTop: -64 } : { marginTop: -72 }}
-        className="col-span-full mb-12 lg:px-0"
+        className="col-span-full lg:px-0 z-[-2]"
       >
-        <video loop autoPlay muted className="block md:hidden object-cover w-[100vw] h-[100vh]">
-          <source src='HeroBannerMobile.mp4' type="video/mp4" />
+        <video loop autoPlay muted playsInline className="block md:hidden object-cover w-[100vw] h-[100vh]">
+          <source src='/HeroBannerMobile.mp4' type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <video loop autoPlay muted className="hidden md:block object-cover w-[100vw] h-[100vh]">
-          <source src='HeroBanner.mp4' type="video/mp4" />
+        <video loop autoPlay muted playsInline className="hidden md:block object-cover w-[100vw] h-[100vh]">
+          <source src='/HeroBanner.mp4' type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
