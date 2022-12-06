@@ -97,8 +97,8 @@ const ActivityTable: FC<Props> = ({
                 key={i}
                 className={`flex gap-3 rounded-full pill px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
                   isSelected
-                    ? 'border-[1px] border-transparent bg-primary-100 dark:bg-neutral-600'
-                    : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
+                    ? 'border-primary-700 dark:bg-neutral-600'
+                    : 'dark:bg-black'
                 }`}
                 onClick={() => {
                   let updatedTypes: Props['types'] = types?.slice() || []
