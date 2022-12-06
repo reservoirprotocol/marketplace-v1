@@ -98,7 +98,7 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
           >
             {attribute.value}
           </span>
-          <span>
+          <span className="text-primary-800">
             <FormatNativeCrypto amount={attribute.floorAskPrice} />
           </span>
         </div>

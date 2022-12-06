@@ -213,7 +213,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
   const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
   return (
-    <Layout navbar={{}}>
+    <Layout navbar={{}} className="bg-primary-300">
       <Head>
         {title}
         {description}

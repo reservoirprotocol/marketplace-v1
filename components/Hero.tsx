@@ -258,7 +258,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                 trigger={
                   <button
                     disabled={isInTheWrongNetwork}
-                    className="pill rounded-full h-[50px] w-[50px] items-center text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    className="pill rounded-full !border-primary-500/25 hover:bg-primary-500/50 h-[50px] w-[50px] items-center text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
                   >
                     <img src="/icons/HandMoney.svg" className="h-[25px] m-auto" alt="Collection offer icon" />
                   </button>
