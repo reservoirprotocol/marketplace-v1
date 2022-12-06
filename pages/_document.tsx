@@ -91,7 +91,7 @@ const MyDocument = function () {
           ))
         : null}
 
-      <body className="bg-primary-100 text-primary-700 dark:bg-black dark:text-white">
+      <body className="bg-primary-200 text-primary-700 dark:bg-black dark:text-white">
         <Main />
         <NextScript />
       </body>

@@ -95,7 +95,7 @@ const ActivityTable: FC<Props> = ({
               <button
                 disabled={data.isFetchingPage || data.isValidating}
                 key={i}
-                className={`flex gap-3 rounded-full px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
+                className={`flex gap-3 rounded-full pill px-4 py-3 md:hover:bg-primary-100 dark:md:hover:bg-neutral-600 ${
                   isSelected
                     ? 'border-[1px] border-transparent bg-primary-100 dark:bg-neutral-600'
                     : 'border-[1px] border-neutral-300 bg-white dark:bg-black'
@@ -152,7 +152,7 @@ const ActivityTable: FC<Props> = ({
                 {headings.map((name, i) => (
                   <th
                     key={i}
-                    className="px-6 py-3 text-left text-sm font-medium text-neutral-600 dark:text-white"
+                    className="px-6 py-3 text-left text-sm font-medium dark:text-white"
                   >
                     {name}
                   </th>
@@ -304,7 +304,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
     return (
       <tr
         key={activity.txHash}
-        className="h-24 border-b border-gray-300 dark:border-[#525252]"
+        className="h-24 border-b border-primary-300 dark:border-[#525252]"
       >
         <td className="flex flex-col gap-3">
           <div className="mt-6 flex items-center">
@@ -318,7 +318,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
                 alt={`${activity.order?.source?.name} Source`}
               />
             )}
-            <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
+            <span className="text-sm capitalize text-primary-700 dark:text-neutral-300">
               {activityDescription}
             </span>
           </div>
@@ -352,7 +352,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
 
           <div className="flex items-center justify-between">
             <div className="reservoir-small">
-              <span className="mr-1 font-light text-neutral-600 dark:text-neutral-300">
+              <span className="mr-1 font-light text-primary-700 dark:text-neutral-300">
                 From
               </span>
               {activity.fromAddress &&
@@ -365,7 +365,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               ) : (
                 <span className="font-light">-</span>
               )}
-              <span className="mx-1 font-light text-neutral-600 dark:text-neutral-300">
+              <span className="mx-1 font-light text-primary-700 dark:text-neutral-300">
                 to
               </span>
               {activity.toAddress &&
@@ -378,7 +378,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               ) : (
                 <span className="font-light">-</span>
               )}
-              <div className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start">
+              <div className="mb-4 flex items-center justify-between gap-2 font-light text-primary-700 dark:text-neutral-300 md:justify-start">
                 {timeAgo}
               </div>
             </div>
@@ -387,7 +387,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mb-4 flex items-center justify-between gap-2 font-light text-neutral-600 dark:text-neutral-300 md:justify-start"
+                  className="mb-4 flex items-center justify-between gap-2 font-light text-primary-700 dark:text-neutral-300 md:justify-start"
                 >
                   <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
                 </a>
@@ -416,7 +416,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               alt={`${activity.order?.source?.name} Source`}
             />
           )}
-          <span className="text-sm capitalize text-neutral-600 dark:text-neutral-300">
+          <span className="text-sm capitalize text-primary-700 dark:text-neutral-300">
             {activityDescription}
           </span>
         </div>
@@ -474,7 +474,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
         )}
       </td>
       <td className="px-6 py-4">
-        <div className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
+        <div className="flex items-center gap-2 whitespace-nowrap font-light text-primary-700 dark:text-neutral-300">
           {timeAgo}
           {activity.txHash && (
             <Link href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`}>

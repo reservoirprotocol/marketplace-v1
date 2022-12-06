@@ -24,6 +24,7 @@ import { useAccount } from 'wagmi'
 import getIconFromTokenDetails from 'lib/getIconFromAttributes'
 import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFromTokenDetails'
 import useInterval from 'hooks/useInterval'
+import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
 
 // Environment variables
 // For more information about these variables
@@ -219,13 +220,8 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         {image}
       </Head>
       <div className="col-span-full">
-        {/* TODO: need the background color to come from the metadata */}
         <div className="mb-4 relative" style={{ background: freshAdditionalMetadata?.background }}>
-          <div className="z-10 m-auto top-0 absolute inline-flex space-x-4 p-4 items-center px-6 md:px-16">
-              <div className="bg-[#ffffffa8] p-1 px-3 rounded-full">
-                Live
-                <span className="live-icon" />
-              </div>
+          {/* <div className="z-10 m-auto top-0 absolute inline-flex space-x-4 p-4 items-center px-6 md:px-16">
               <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
                 <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                 <span>${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
@@ -237,7 +233,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
                 {freshAdditionalMetadata?.latestDelta! > 0 && <span>+</span>}
                 {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
-          </div>
+          </div> */}
           <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
             <TokenMedia token={token.token} />
           </div>
@@ -255,6 +251,19 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
+        <div className="col-span-full rounded-[25px] bg-primary-100 pill p-6">
+          <div className="reservoir-h4">Live data</div>
+          <div className="bg-primary-600 flex flex-col text-primary-800 rounded-xl p-5 mt-3 max-w-[300px]">
+            <span className="text-sm mb-2">{getAttributeFromTokenDetails(tokenDetails!, 'Family')}</span>
+            <span className="reservoir-h4 text-primary-800">${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
+            <div
+              className={"mt-2 text-xs " + (freshAdditionalMetadata?.latestDelta! < 0 ? 'text-primary-900' : 'text-primary-500')}
+            >
+              {freshAdditionalMetadata?.latestDelta! > 0 && <span>+</span>}
+              {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
+            </div>
+          </div>
+        </div>
         <PriceData
           details={tokenData}
           collection={collection}

@@ -165,7 +165,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      <article className="col-span-full rounded-[25px] bg-primary-200 p-6 dark:border-neutral-600 dark:bg-black">
+      <article className="col-span-full rounded-[25px] bg-primary-100 pill p-6 dark:border-neutral-600 dark:bg-black">
         <div className="grid grid-cols-2 gap-6">
           <Price
             title="List Price"
@@ -175,11 +175,11 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   href={listSourceRedirect}
-                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                  className="reservoir-body flex items-center gap-2 dark:text-white text-xs"
                 >
                   on {listSourceName}
                   <img
-                    className="h-6 w-6"
+                    className="h-6 w-6 hidden"
                     src={listSourceLogo}
                     alt="Source Logo"
                   />
@@ -205,11 +205,11 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   href={offerSourceRedirect}
-                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                  className="reservoir-body flex items-center gap-2 dark:text-white text-xs"
                 >
                   on {offerSourceName}
                   <img
-                    className="h-6 w-6"
+                    className="h-6 w-6 hidden"
                     src={offerSourceLogo}
                     alt="Source Logo"
                   />
@@ -269,7 +269,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               )}
               {!isOwner && (
                 <BuyNow
-                  buttonClassName="btn-primary-fill col-span-1"
+                  buttonClassName="rounded-full border-2 border-primary-500 bg-primary-550 text-primary-500 col-span-1"
                   data={{
                     details: details,
                   }}
@@ -283,7 +283,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   showAcceptOffer ? (
                     <button
                       disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline w-full dark:text-white"
+                      className="btn-primary-outline border-2 w-full dark:text-white"
                     >
                       Accept Offer
                     </button>
@@ -331,7 +331,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   trigger={
                     <button
                       disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                      className="btn-primary-outline  border-2 w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                     >
                       Make Offer
                     </button>
@@ -418,7 +418,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               <div className="flex items-center dark:text-white">
                 <div>
                   <span>Or</span>{' '}
-                  <span className="text-primary-700 dark:text-primary-100">
+                  <span className="text-primary-500 dark:text-primary-100">
                     add to cart
                   </span>
                 </div>

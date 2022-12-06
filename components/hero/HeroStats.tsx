@@ -28,7 +28,7 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
   const offerSourceLogo = `${API_BASE}/redirect/sources/${stats.topOfferSource}/logo/v2`
 
   return (
-    <div className="grid min-w-full grid-cols-2 items-center bg-primary-100 gap-[1px] overflow-hidden rounded-xl dark:border-[#525252] dark:bg-[#525252] md:m-0 md:min-w-[547px] md:grid-cols-4 md:gap-2 dark:md:bg-black">
+    <div className="grid min-w-full grid-cols-2 pill items-center bg-primary-100 gap-[1px] overflow-hidden rounded-[25px] dark:border-[#525252] dark:bg-[#525252] md:m-0 md:min-w-[547px] md:grid-cols-4 md:gap-2 dark:md:bg-black">
       <Stat name="items">
         <h3 className="font-bold dark:text-white">
           {formatNumber(stats.count)}

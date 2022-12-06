@@ -251,18 +251,18 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
               )}
             </>
           )*/}
-          <div className="flex w-full flex-col justify-end gap-4 md:flex-row">
+          <div className="flex w-full justify-center md:justify-end gap-4">
             {isSupported && (
               <BidModal
                 collectionId={collection?.id}
                 trigger={
                   <button
                     disabled={isInTheWrongNetwork}
-                    className="btn-primary-fill text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+                    className="pill rounded-full h-[50px] w-[50px] items-center text-sm whitespace-nowrap dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
                   >
                     {isAttributeModal
                       ? 'Make an Attribute Offer'
-                      : 'Collection Offer'}
+                      : <img src="/icons/HandMoney.svg" className="h-[25px] m-auto" alt="Collection offer icon" />}
                   </button>
                 }
                 attribute={attribute}

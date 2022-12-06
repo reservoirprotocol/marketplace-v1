@@ -28,6 +28,7 @@ import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 import { string } from 'prop-types'
+// import SortTokens from 'components/SortTokens'
 
 // Environment variables
 // For more information about these variables
@@ -158,14 +159,14 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           value={router.query?.tab?.toString() || 'items'}
           className="flex w-screen flex-col"
         >
-          <Tabs.List className="flex justify-center bg-primary-100 border-b border-primary-300 dark:border-[#525252]">
+          <Tabs.List className="flex justify-center bg-primary-300 border-b border-3 border-primary-00 dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}
                 id={id}
                 value={id}
                 className={
-                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent py-4 px-8 text-center focus:z-10 radix-state-active:border-primary-900 radix-state-active:text-primary-900 dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
+                  'group reservoir-h6 relative min-w-0 whitespace-nowrap border-b-2 border-transparent font-normal py-4 px-8 text-center focus:z-10 radix-state-active:border-primary-700 radix-state-active:font-bold dark:text-white dark:radix-state-active:border-white dark:radix-state-active:text-white'
                 }
                 onClick={() => toggleOnItem(router, 'tab', id)}
               >
@@ -208,6 +209,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       </>
                     )}
                   </div>
+                  {/* <div className="flex gap-4">
+                    <SortTokens />
+                  </div> */}
                   <div className="flex gap-4 hidden">
                     <Sweep
                       collection={collection}
