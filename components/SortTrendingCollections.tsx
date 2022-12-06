@@ -51,12 +51,8 @@ const SortTrendingCollections: FC = () => {
           <DropdownMenu.Item
             key={key}
             onClick={() => {
-              collections.setSize(0)
-              if (key === 'lowest_price') {
-                toggleOffItem(router, 'sort')
-              } else {
-                toggleOnItem(router, 'sort', key)
-              }
+              collections.setSize(1)
+              toggleOnItem(router, 'sort', key)
             }}
             disabled={sortSelection === options[key]}
             className={`reservoir-label-l reservoir-gray-dropdown-item rounded-none hover:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800`}

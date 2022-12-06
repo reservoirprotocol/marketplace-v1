@@ -55,7 +55,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
   const { chain: activeChain } = useNetwork()
 
   const dropdownItemClasses =
-      'reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800'
+    'reservoir-gray-dropdown-item flex gap-2 rounded-none border-b text-black last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800'
 
   useEffect(() => {
     const keys = Object.keys(router.query)
@@ -98,6 +98,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
     count: Number(collection?.tokenCount ?? 0),
     topOffer: collection?.topBid?.price?.amount?.decimal,
     topOfferCurrency: collection?.topBid?.price?.currency,
+    topOfferSource: collection?.topBid?.sourceDomain,
     floor: collection?.floorAsk?.price?.amount?.native,
     allTime: collection?.volume?.allTime,
     volumeChange: collection?.volumeChange?.['1day'],
@@ -189,7 +190,6 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
       return
     }
   }
-
 
   return (
     <>
@@ -308,9 +308,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
                         className={dropdownItemClasses}
                         onClick={() => refreshCollection(collectionId)}
                       >
-                        <FiRefreshCcw
-                          className='h-4 w-4'
-                        />
+                        <FiRefreshCcw className="h-4 w-4" />
                         Refresh Metadata
                       </button>
                     </DropdownMenu.Item>

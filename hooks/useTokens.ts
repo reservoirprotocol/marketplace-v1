@@ -24,9 +24,16 @@ export default function useTokens(
     collection: collectionId,
     includeTopBid: includeTopBid,
     sortBy: 'floorAskPrice',
+    sortDirection: 'asc'
   }
 
   if (source) query.source = reservoirClient?.source
+
+  const sortDirection = router.query['sortDirection']?.toString()
+  const sortBy = router.query['sortBy']?.toString()
+
+  if(sortBy === 'tokenId' || sortBy === 'rarity') query.sortBy = sortBy
+  if(sortDirection === 'desc') query.sortDirection = 'desc'
 
   // Extract all queries of attribute type
   Object.keys(router.query)

@@ -123,7 +123,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         token?.market?.floorAsk?.price?.amount?.native !== null &&
         token?.market?.floorAsk?.price?.currency?.symbol === 'ETH' &&
         token?.token?.owner?.toLowerCase() !==
-          accountData?.address?.toLowerCase()
+          accountData?.address?.toLowerCase() &&
+        token?.market?.floorAsk?.source?.name != 'sudoswap'
     )
     setMaxInput(availableTokens.length)
     const sweepTokens = availableTokens.slice(0, sweepAmount)

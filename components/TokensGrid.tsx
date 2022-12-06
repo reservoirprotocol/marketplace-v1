@@ -7,18 +7,21 @@ import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
 import { Token } from 'recoil/cart/atom'
 import { ImageMap } from 'pages/collections/[id]'
+import { Collection } from 'types/reservoir'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 type Props = {
   tokens: ReturnType<typeof useTokens>['tokens']
   collectionImage: string | undefined
+  collectionSize?: number | undefined
+  collectionAttributes?: Collection['attributes']
   viewRef: ReturnType<typeof useInView>['ref']
   isLoading: boolean,
   imageMap: ImageMap,
 }
 
-const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading, imageMap }) => {
+const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading, imageMap, collectionSize, collectionAttributes }) => {
   const { data, mutate } = tokens
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | Token[]>()
@@ -51,22 +54,24 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading, im
       >
         {tokens.isFetchingInitialData || isLoading
           ? Array(20)
-              .fill(null)
-              .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
+            .fill(null)
+            .map((_, index) => <LoadingCard key={`loading-card-${index}`} />)
           : data?.map((token) => {
-            
-              return (
-                <TokenCard
-                  finiliarImage={imageMap[token?.token?.tokenId!]}
-                  token={token}
-                  collectionImage={collectionImage}
-                  mutate={mutate}
-                  setClearCartOpen={setClearCartOpen}
-                  setCartToSwap={setCartToSwap}
-                  key={`${token?.token?.contract}:${token?.token?.tokenId}`}
-                />
-              )
-            })}
+
+            return (
+              <TokenCard
+                finiliarImage={imageMap[token?.token?.tokenId!]}
+                token={token}
+                collectionImage={collectionImage}
+                collectionSize={collectionSize}
+                collectionAttributes={collectionAttributes}
+                mutate={mutate}
+                setClearCartOpen={setClearCartOpen}
+                setCartToSwap={setCartToSwap}
+                key={`${token?.token?.contract}:${token?.token?.tokenId}`}
+              />
+            )
+          })}
         {!didReachEnd &&
           Array(10)
             .fill(null)
