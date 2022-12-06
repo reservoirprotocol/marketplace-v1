@@ -38,11 +38,13 @@ const Module: FC<PropThree> = ({ className, children }) => {
 const HomeContent: FC<Props> = () => {
   const featured = [
     'https://cdn.finiliar.com/neutral_short_hungry_stomach/MjQ4OARx84.gif',
-    'https://cdn.finiliar.com/neutral_short_walk/MTc2MARx07.gif',
-    'https://cdn.finiliar.com/neutral_short_yawn/MTkzOARx89.gif',
+    
+    'https://cdn.finiliar.com/happy_short_huge_surprise/MTkzOARx89.gif',
+    'https://cdn.finiliar.com/sad_short_angry/MTc2MARx07.gif',
+    
+    'https://cdn.finiliar.com/neutral_short_dance/OTI5MgRx22.gif',
     'https://cdn.finiliar.com/neutral_short_scratching_head/OTU1MwRx35.gif',
     'https://cdn.finiliar.com/neutral_short_idle/NzcxNgRx67.gif',
-    'https://cdn.finiliar.com/neutral_short_hungry_stomach/OTI5MgRx22.gif',
     'https://cdn.finiliar.com/happy_short_dancing_with_stars/MDIzNQRx52.gif',
     'https://cdn.finiliar.com/neutral_short_eating/MjM1MARx03.gif',
     'https://cdn.finiliar.com/neutral_short_bored/NDU0MwRx35.gif',
@@ -50,7 +52,7 @@ const HomeContent: FC<Props> = () => {
     'https://cdn.finiliar.com/neutral_short_eating/ODc2OQRx97.gif'
   ]
   return (
-    <div className="pb-11 mb-11 overflow-x-hidden w-[100vw] max-w-[100%] col-span-full">
+    <div className="pb-11 mb-11 overflow-x-hidden w-[100vw] max-w-[100%] col-span-full bg-[#fff5f3]">
       <div className="bg-[#F8E6D0] pt-4">
         <Module
           className="justify-center text-center m-auto relative"> 
@@ -100,7 +102,7 @@ const HomeContent: FC<Props> = () => {
       </div>
       <div className="left-0 mb-[150px] mt-[100px]">
         <Module className="z-9 justify-around">
-          <Copy className="text-[#B980A5]" headline='Coming soon' body='Use your iPhone and Apple Watch to save your friends to track your crypto portfolio.' />
+          <Copy className="text-[#B980A5]" headline='Coming soon' body='Use your iPhone and Apple Watch to save your friends and track your crypto portfolio.' />
           <img
             className="max-w-[300px] mt-[50px] md:mr-[50px] md:w-[50%]" 
             src="/watch.png" alt="Fini watch app" />

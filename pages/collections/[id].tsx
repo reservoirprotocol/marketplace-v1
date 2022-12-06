@@ -142,7 +142,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   )
 
   const tabs = [
-    { name: 'finis', id: 'items' },
+    { name: 'Finis', id: 'items' },
     { name: 'Activity', id: 'activity' },
   ]
 
@@ -159,7 +159,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
           value={router.query?.tab?.toString() || 'items'}
           className="flex w-screen flex-col"
         >
-          <Tabs.List className="flex justify-center bg-primary-300 border-b border-3 border-primary-00 dark:border-[#525252]">
+          <Tabs.List className="flex justify-center border-b-[3px] border-primary-400 dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
               <Tabs.Trigger
                 key={id}

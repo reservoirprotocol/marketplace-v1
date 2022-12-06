@@ -257,7 +257,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
             <span className="text-sm mb-2">{getAttributeFromTokenDetails(tokenDetails!, 'Family')}</span>
             <span className="reservoir-h4 text-primary-800">${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
             <div
-              className={"mt-2 text-xs " + (freshAdditionalMetadata?.latestDelta! < 0 ? 'text-primary-900' : 'text-primary-500')}
+              className={"mt-2 text-md " + (freshAdditionalMetadata?.latestDelta! < 0 ? 'text-primary-900' : 'text-primary-500')}
             >
               {freshAdditionalMetadata?.latestDelta! > 0 && <span>+</span>}
               {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}

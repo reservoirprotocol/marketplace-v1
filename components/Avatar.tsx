@@ -10,7 +10,7 @@ type Props = {
 const Avatar: FC<Props> = ({ address, avatar, size = 24 }) => {
   return (
     <div
-      className="overflow-hidden rounded-full"
+      className="overflow-hidden rounded-full border-2 border-primary-680"
       style={{
         height: size,
         width: size,
@@ -18,7 +18,7 @@ const Avatar: FC<Props> = ({ address, avatar, size = 24 }) => {
     >
       <img
         className="object-fit h-full w-full"
-        src={avatar || "/happy2.png"}
+        src={avatar || "/fini-face.png"}
         alt={'ENS Avatar'}
       />
     </div>

@@ -331,7 +331,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   trigger={
                     <button
                       disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline  border-2 w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                      className="btn-primary-outline border-2 border-primary-700 w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                     >
                       Make Offer
                     </button>

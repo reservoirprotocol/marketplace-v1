@@ -49,7 +49,7 @@ const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
           className="overflow-hidden m-[10px]"
         >
           <Accordion.Header className="flex w-full justify-between border-gray-300 dark:border-neutral-600">
-            <Accordion.Trigger className="rounded-full bg-primary-400 flex w-full items-center justify-between p-3 px-5 transition hover:bg-[#dde2f6] dark:hover:bg-primary-900">
+            <Accordion.Trigger className="rounded-full pill flex w-full items-center justify-between p-3 px-5 transition hover:bg-[#dde2f6] dark:hover:bg-primary-900">
               {attribute.key}
               <StyledChevron className="h-5 w-5" aria-hidden />
             </Accordion.Trigger>
