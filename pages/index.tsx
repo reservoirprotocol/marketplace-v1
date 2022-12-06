@@ -9,6 +9,7 @@ import Footer from 'components/Footer'
 import { useMediaQuery } from '@react-hookz/web'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import HomeContent from 'components/HomeContent'
 
 // Environment variables
 // For more information about these variables
@@ -87,11 +88,16 @@ const Home: NextPage<Props> = ({ fallback }) => {
         style={isSmallDevice ? { marginTop: -64 } : { marginTop: -72 }}
         className="col-span-full mb-12 lg:px-0"
       >
-        <video loop autoPlay muted className="object-cover w-[100vw] h-[100vh]">
-          <source src={isSmallDevice ? 'HeroBannerMobile.mp4' : 'HeroBanner.mp4'} type="video/mp4" />
+        <video loop autoPlay muted className="block md:hidden object-cover w-[100vw] h-[100vh]">
+          <source src='HeroBannerMobile.mp4' type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <video loop autoPlay muted className="hidden md:block object-cover w-[100vw] h-[100vh]">
+          <source src='HeroBanner.mp4' type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
+      <HomeContent />
       <Footer/>
     </Layout>
   )

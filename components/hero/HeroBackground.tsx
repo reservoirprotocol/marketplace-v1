@@ -15,7 +15,7 @@ const HeroBackground: FC<Props> = ({ banner, children }) => {
   //   : optimizeImage(envBannerImage || banner, 1500)
   const bannerImage = null
 
-  const baseClasses = `relative z-0 px-[25px] flex flex-col items-center col-span-full w-full pb-2`
+  const baseClasses = `relative z-0 px-[25px] flex flex-col items-center col-span-full w-full pb-3`
 
   return bannerImage ? (
     <div className={baseClasses}>

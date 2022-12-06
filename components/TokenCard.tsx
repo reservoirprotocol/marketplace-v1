@@ -91,7 +91,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a className="mb-[0]">
+        <a className="mb-[45px]">
           {finiliarImage ? (
             <Image
               loader={({ src }) => src}
@@ -140,8 +140,8 @@ const TokenCard: FC<Props> = ({
         >
           {token?.token?.name || `#${token?.token?.tokenId}`}
         </div> */}
-        <div className="flex justify-end px-4 p-3 lg:pb-3">
-          {/* {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`} */}
+        <div className="flex justify-between px-4 p-3 lg:pb-3 bg-white">
+          {token?.token?.name ? token?.token?.name.replace('finiliar', 'fini') : `#${token?.token?.tokenId}`}
           {token?.market?.floorAsk?.price?.amount?.decimal != null &&
           token?.market?.floorAsk?.price?.amount?.decimal != undefined ? (
             <div className="flex items-center">
@@ -284,12 +284,14 @@ const TokenCard: FC<Props> = ({
                               Add to Cart
                             </div>
                           </Tooltip.Trigger>
-                          <Tooltip.Content arrowPadding={10}>
-                            <div className="bg-white rounded-md p-4 reservoir-label-s max-w-[200px] shadow-lg">
-                              Add to Cart is not yet available for dynamically priced sudoswap NFTs.
-                            </div>
-                            {/* <Tooltip.Arrow /> */}
-                          </Tooltip.Content>
+                          <Tooltip.Portal>
+                            <Tooltip.Content arrowPadding={10}>
+                              <div className="bg-white rounded-md p-4 reservoir-label-s max-w-[175px] shadow-lg">
+                                Add to Cart is not yet available for dynamically priced sudoswap NFTs.
+                              </div>
+                              {/* <Tooltip.Arrow /> */}
+                            </Tooltip.Content>
+                          </Tooltip.Portal>
                         </Tooltip.Root>
                       </Tooltip.Provider>
                     )  
