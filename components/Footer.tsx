@@ -5,7 +5,6 @@ const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED == 'true'
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 
 const Footer = () => {
-
   if (FOOTER_ENABLED)
     return (
       <footer className='col-span-full flex flex-col sm:flex-row justify-between items-center px-6 md:px-16 pb-12'>

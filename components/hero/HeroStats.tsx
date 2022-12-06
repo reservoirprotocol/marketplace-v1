@@ -4,6 +4,9 @@ import { formatNumber } from 'lib/numbers'
 import FormatCrypto from 'components/FormatCrypto'
 import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
+
 type Currency = NonNullable<
   NonNullable<
     NonNullable<ReturnType<typeof useCollections>['data']>[0]['topBid']
@@ -14,6 +17,7 @@ type Props = {
   count: number
   topOffer: number | undefined
   topOfferCurrency: Currency
+  topOfferSource: string | undefined
   floor: number | undefined
   allTime: number | undefined
   volumeChange: number | undefined
@@ -21,6 +25,8 @@ type Props = {
 }
 
 const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
+  const offerSourceLogo = `${API_BASE}/redirect/sources/${stats.topOfferSource}/logo/v2`
+
   return (
     <div className="grid min-w-full grid-cols-2 items-center bg-primary-100 gap-[1px] overflow-hidden rounded-xl dark:border-[#525252] dark:bg-[#525252] md:m-0 md:min-w-[547px] md:grid-cols-4 md:gap-2 dark:md:bg-black">
       <Stat name="items">

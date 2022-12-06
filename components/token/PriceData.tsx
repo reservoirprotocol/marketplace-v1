@@ -92,8 +92,17 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
       ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
       : null
 
-  const sourceName = token?.market?.floorAsk?.source?.name as string | undefined
-  const sourceDomain = token?.market?.floorAsk?.source?.domain as
+  const listSourceName = token?.market?.floorAsk?.source?.name as
+    | string
+    | undefined
+  const listSourceDomain = token?.market?.floorAsk?.source?.domain as
+    | string
+    | undefined
+
+  const offerSourceName = token?.market?.topBid?.source?.name as
+    | string
+    | undefined
+  const offerSourceDomain = token?.market?.topBid?.source?.domain as
     | string
     | undefined
 
@@ -101,21 +110,31 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   if (
     reservoirClient?.source &&
-    sourceDomain &&
-    reservoirClient.source === sourceDomain
+    listSourceDomain &&
+    reservoirClient.source === listSourceDomain
   ) {
     isLocalListed = true
-  } else if (SOURCE_ID && sourceName && SOURCE_ID === sourceName) {
+  } else if (SOURCE_ID && listSourceName && SOURCE_ID === listSourceName) {
     isLocalListed = true
   }
 
-  const sourceLogo =
+  const listSourceLogo =
     isLocalListed && SOURCE_ICON
       ? SOURCE_ICON
-      : `${API_BASE}/redirect/sources/${sourceDomain || sourceName}/logo/v2`
+      : `${API_BASE}/redirect/sources/${
+          listSourceDomain || listSourceName
+        }/logo/v2`
 
-  const sourceRedirect = `${API_BASE}/redirect/sources/${
-    sourceDomain || sourceName
+  const offerSourceLogo = `${API_BASE}/redirect/sources/${
+    offerSourceDomain || offerSourceName
+  }/logo/v2`
+
+  const listSourceRedirect = `${API_BASE}/redirect/sources/${
+    listSourceDomain || listSourceName
+  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
+
+  const offerSourceRedirect = `${API_BASE}/redirect/sources/${
+    offerSourceDomain || offerSourceName
   }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
 
   if (!CHAIN_ID) return null
@@ -135,6 +154,8 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
+  const isSudoswapSource = token?.market?.floorAsk?.source?.name == 'sudoswap'
+
   const showAcceptOffer =
     token?.market?.topBid?.id !== null &&
     token?.market?.topBid?.id !== undefined &&
@@ -149,15 +170,19 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           <Price
             title="List Price"
             source={
-              sourceName && (
+              listSourceName && (
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={sourceRedirect}
-                  className="flex items-center gap-2 dark:text-white"
+                  href={listSourceRedirect}
+                  className="reservoir-body flex items-center gap-2 dark:text-white"
                 >
-                  on {sourceName}
-                  <img className="h-6 w-6" src={sourceLogo} alt="Source Logo" />
+                  on {listSourceName}
+                  <img
+                    className="h-6 w-6"
+                    src={listSourceLogo}
+                    alt="Source Logo"
+                  />
                 </a>
               )
             }
@@ -174,6 +199,23 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           />
           <Price
             title="Top Offer"
+            source={
+              offerSourceName && (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={offerSourceRedirect}
+                  className="reservoir-body flex items-center gap-2 dark:text-white"
+                >
+                  on {offerSourceName}
+                  <img
+                    className="h-6 w-6"
+                    src={offerSourceLogo}
+                    alt="Source Logo"
+                  />
+                </a>
+              )
+            }
             price={
               <FormatCrypto
                 amount={token?.market?.topBid?.price?.amount?.decimal}
@@ -342,9 +384,9 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           </button>
         )}
 
-        {!isInCart && !isOwner && isListed && (
+        {!isInCart && !isOwner && isListed && !isSudoswapSource && (
           <button
-            disabled={!token?.market?.floorAsk?.price || sourceName === 'sudoswap'}
+            disabled={!token?.market?.floorAsk?.price || isSudoswapSource}
             onClick={() => {
               if (token?.token && token.market) {
                 if (
@@ -372,7 +414,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }}
             className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
           >
-            {sourceName !== 'sudoswap' &&
+            {!isSudoswapSource &&
               <div className="flex items-center dark:text-white">
                 <div>
                   <span>Or</span>{' '}
@@ -382,7 +424,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                 </div>
               </div>
             }
-            {sourceName === 'sudoswap' &&
+            {isSudoswapSource &&
               <div className="text-gray-400 reservoir-label-s">
                 Add to Cart is not yet available for dynamically priced sudoswap NFTs.
               </div>

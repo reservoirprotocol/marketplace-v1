@@ -4,19 +4,25 @@ import { FC } from 'react'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { FiAlertCircle } from 'react-icons/fi'
 import { useTokens } from '@reservoir0x/reservoir-kit-ui'
+import { Collection } from 'types/reservoir'
+import RarityTooltip from 'components/RarityTooltip'
+import { formatNumber } from 'lib/numbers'
 
 type Props = {
   details: ReturnType<typeof useTokens>['data'][0]
   bannedOnOpenSea: boolean
+  collection?: Collection
 }
 
-const Owner: FC<Props> = ({ details, bannedOnOpenSea }) => {
+const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
   const token = details?.token
 
   const owner =
     token?.kind === 'erc1155' && details?.market?.floorAsk?.maker
       ? details?.market?.floorAsk?.maker
       : token?.owner
+
+  console.log(collection)
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
