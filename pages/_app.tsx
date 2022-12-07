@@ -50,7 +50,7 @@ const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
 
-//extending allChains by Gnosis Chain
+//extending allChains by Autobahn Network Chain
 const allChainsExtended = [
   ...allChains,
   {
@@ -155,8 +155,8 @@ function MyApp({
   if (FEE_BPS && FEE_RECIPIENT) {
     options = {
       ...options,
-      fee: `${FEE_BPS}`,
-      feeRecipient: `${FEE_RECIPIENT}`,
+      marketplaceFee: Number(FEE_BPS),
+      marketplaceFeeRecipient: `${FEE_RECIPIENT}`,
     }
   }
 

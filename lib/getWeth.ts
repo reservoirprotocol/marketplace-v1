@@ -21,7 +21,6 @@ if (chainId && usdc && wrappedNative && router && seaportConduitController && se
   });
 }
 
-
 /**
  * Get a wETH contract instance and the signers wETH balance
  * @param chainId The Ethereum chain ID (eg: 1 - Ethereum Mainnet,

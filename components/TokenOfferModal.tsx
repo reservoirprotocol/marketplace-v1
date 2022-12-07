@@ -209,8 +209,6 @@ const TokenOfferModal: FC<Props> = ({ env, royalties, data, setToast }) => {
 
     if (!ORDER_KIND) bid.orderKind = 'seaport'
     if (ORDER_KIND) bid.orderKind = ORDER_KIND as typeof bid.orderKind
-    if (FEE_BPS) bid.fee = FEE_BPS
-    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
 
     await reservoirClient.actions
       .placeBid({

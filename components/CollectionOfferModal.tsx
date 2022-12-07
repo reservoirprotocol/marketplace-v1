@@ -192,9 +192,6 @@ const CollectionOfferModal: FC<Props> = ({
       bid.orderKind = 'zeroex-v4'
     }
 
-    if (FEE_BPS) bid.fee = FEE_BPS
-    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
-
     await reservoirClient.actions
       .placeBid({
         bids: [bid],

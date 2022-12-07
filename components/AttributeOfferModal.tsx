@@ -186,9 +186,6 @@ const AttributeOfferModal: FC<Props> = ({
         weiPrice: calculations.total.toString(),
       }
 
-    if (FEE_BPS) bid.fee = FEE_BPS
-    if (FEE_RECIPIENT) bid.feeRecipient = FEE_RECIPIENT
-
     reservoirClient.actions
       .placeBid({
         bids: [bid],
