@@ -240,9 +240,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         </div>
       </div>
       <div className="col-span-full content-start space-y-4 px-2 pt-4 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
+        <div className="pb-4 md:pb-0">
+          <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
+        </div>
         <div className="hidden space-y-4 md:block">
           {/* <CollectionInfo collection={collection} token={token.token} /> */}
-          <Owner details={token} bannedOnOpenSea={bannedOnOpenSea} />
           <TokenAttributes
             token={token?.token}
             collection={collection}
@@ -283,7 +285,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
             collection={collection}
             isOwner={isOwner}
           />
-        <TokenInfo token={token.token} />
+        {/* <TokenInfo token={token.token} /> */}
       </div>
     </Layout>
   )
