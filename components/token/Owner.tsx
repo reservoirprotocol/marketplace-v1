@@ -22,8 +22,6 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
       ? details?.market?.floorAsk?.maker
       : token?.owner
 
-  console.log(collection)
-
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <article className="col-span-full pill rounded-[25px] bg-primary-100 p-6 dark:border-neutral-600 dark:bg-black">
