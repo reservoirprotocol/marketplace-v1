@@ -10,6 +10,7 @@ import { useMediaQuery } from '@react-hookz/web'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import HomeContent from 'components/HomeContent'
+import Script from 'next/script'
 
 // Environment variables
 // For more information about these variables
@@ -84,6 +85,21 @@ const Home: NextPage<Props> = ({ fallback }) => {
         {description}
         {image}
       </Head>
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-TRM105Y3D5"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-TRM105Y3D5', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
       <div
         style={isSmallDevice ? { marginTop: -64 } : { marginTop: -72 }}
         className="col-span-full lg:px-0 z-[-2] bg-[#F8E6D0]"
