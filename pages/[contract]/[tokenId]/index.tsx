@@ -38,7 +38,9 @@ const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 // OPTIONAL
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
 const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
-const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
+// NOTE: this feels like a bug in the reservoir code. why would we want the
+// site-wide image to overwrite the specific image from the token page? setting to null
+const META_OG_IMAGE = null
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
@@ -194,7 +196,6 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
     ? metadata.description(token?.token?.description)
     : null
 
-  
   const image = META_OG_IMAGE
     ? metadata.image(META_OG_IMAGE)
     : token?.token?.image
