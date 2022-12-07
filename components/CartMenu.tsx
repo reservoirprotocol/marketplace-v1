@@ -123,7 +123,7 @@ const CartMenu: FC = () => {
       <Popover.Trigger>
         <div className="relative z-10 grid h-8 w-8 items-center justify-center rounded-full">
           {cartCount > 0 && (
-            <div className="reservoir-subtitle absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-700 text-white">
+            <div className="reservoir-subtitle absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-white">
               {cartCount}
             </div>
           )}
@@ -141,14 +141,14 @@ const CartMenu: FC = () => {
         <div className="mb-4 flex justify-between">
           <div className="flex items-center">
             <div className="reservoir-h6 mr-3">My Cart</div>
-            <div className="reservoir-subtitle flex h-5 w-5 items-center justify-center rounded-full bg-primary-700 text-white">
+            <div className="reservoir-subtitle flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-white">
               {cartCount}
             </div>
           </div>
           {cartCount > 0 && (
             <button
               onClick={() => setCartTokens([])}
-              className="text-primary-700 dark:text-white"
+              className="text-primary-900 dark:text-white"
             >
               Clear
             </button>
@@ -229,7 +229,7 @@ const CartMenu: FC = () => {
             waitingTx ||
             Boolean(balance?.formatted && +balance.formatted < cartTotal)
           }
-          className="btn-primary-fill w-full"
+          className="btn-primary-fill bg-primary-500 w-full hover:!bg-primary-500/75"
         >
           {waitingTx ? 'Waiting' : 'Purchase'}
         </button>
