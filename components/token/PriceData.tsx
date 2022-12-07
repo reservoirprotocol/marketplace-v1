@@ -12,7 +12,11 @@ import React, { ComponentPropsWithoutRef, FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
-import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
+import recoilCartTokens, {
+  getCartCurrency,
+  getPricingPools,
+  getTokensMap,
+} from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { Collection } from 'types/reservoir'
 import { formatDollar } from 'lib/numbers'
@@ -51,6 +55,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
   const cartCurrency = useRecoilValue(getCartCurrency)
+  const cartPools = useRecoilValue(getPricingPools)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
@@ -64,18 +69,37 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const deeplinkToAcceptBid = router.query.acceptBid === 'true'
 
   const token = details.data ? details.data[0] : undefined
+  const tokenId = token?.token?.tokenId
+  const contract = token?.token?.contract
 
+  let floorAskPrice = token?.market?.floorAsk?.price
+  let canAddToCart = true
+  const pool = (token?.market?.floorAsk?.dynamicPricing?.data?.pool as string)
+    ? cartPools[token?.market?.floorAsk?.dynamicPricing?.data?.pool as string]
+    : null
+
+  if (pool) {
+    if (pool.tokenPrices[`${contract}:${tokenId}`]) {
+      floorAskPrice = pool.tokenPrices[`${contract}:${tokenId}`]
+    } else if (pool.prices[pool.tokenOrder.length]) {
+      floorAskPrice = pool.prices[pool.tokenOrder.length]
+    } else {
+      canAddToCart = false
+    }
+  }
+
+  // Disabling the rules of hooks here due to erroneous error message,
+  //  the linter is likely confused due to two custom hook calls of the same name
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const topBidUsdConversion = useCoinConversion(
     token?.market?.topBid?.price?.currency?.symbol ? 'usd' : undefined,
     token?.market?.topBid?.price?.currency?.symbol
   )
 
-  // Disabling the rules of hooks here due to erroneous error message,
-  //  the linter is likely confused due to two custom hook calls of the same name
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const floorAskUsdConversion = useCoinConversion(
-    token?.market?.floorAsk?.price?.currency?.symbol ? 'usd' : undefined,
-    token?.market?.floorAsk?.price?.currency?.symbol
+    floorAskPrice?.currency?.symbol ? 'usd' : undefined,
+    floorAskPrice?.currency?.symbol
   )
 
   if (!isMounted) {
@@ -88,8 +112,8 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
       : null
 
   const floorAskUsdPrice =
-    floorAskUsdConversion && token?.market?.floorAsk?.price?.amount?.decimal
-      ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
+    floorAskUsdConversion && floorAskPrice?.amount?.decimal
+      ? floorAskUsdConversion * floorAskPrice?.amount?.decimal
       : null
 
   const listSourceName = token?.market?.floorAsk?.source?.name as
@@ -125,18 +149,6 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           listSourceDomain || listSourceName
         }/logo/v2`
 
-  const offerSourceLogo = `${API_BASE}/redirect/sources/${
-    offerSourceDomain || offerSourceName
-  }/logo/v2`
-
-  const listSourceRedirect = `${API_BASE}/redirect/sources/${
-    listSourceDomain || listSourceName
-  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
-
-  const offerSourceRedirect = `${API_BASE}/redirect/sources/${
-    offerSourceDomain || offerSourceName
-  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
-
   if (!CHAIN_ID) return null
 
   const isTopBidder =
@@ -144,17 +156,23 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
     token?.market?.topBid?.maker?.toLowerCase() ===
       accountData?.address?.toLowerCase()
   const isListed = token
-    ? token?.market?.floorAsk?.price !== null &&
-      token?.token?.kind !== 'erc1155'
+    ? floorAskPrice !== null && token?.token?.kind !== 'erc1155'
     : false
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
-  const tokenId = token?.token?.tokenId
-  const contract = token?.token?.contract
+  const offerSourceLogo = `${API_BASE}/redirect/sources/${
+    offerSourceDomain || offerSourceName
+  }/logo/v2`
+
+  const listSourceRedirect = `${API_BASE}/redirect/sources/${
+    listSourceDomain || listSourceName
+  }/tokens/${contract}:${tokenId}/link/v2`
+
+  const offerSourceRedirect = `${API_BASE}/redirect/sources/${
+    offerSourceDomain || offerSourceName
+  }/tokens/${contract}:${tokenId}/link/v2`
 
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
-
-  const isSudoswapSource = token?.market?.floorAsk?.source?.name == 'sudoswap'
 
   const showAcceptOffer =
     token?.market?.topBid?.id !== null &&
@@ -188,9 +206,9 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }
             price={
               <FormatCrypto
-                amount={token?.market?.floorAsk?.price?.amount?.decimal}
-                address={token?.market?.floorAsk?.price?.currency?.contract}
-                decimals={token?.market?.floorAsk?.price?.currency?.decimals}
+                amount={floorAskPrice?.amount?.decimal}
+                address={floorAskPrice?.currency?.contract}
+                decimals={floorAskPrice?.currency?.decimals}
                 logoWidth={30}
                 maximumFractionDigits={8}
               />
@@ -239,7 +257,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                 <ListModal
                   trigger={
                     <button className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
-                      {token?.market?.floorAsk?.price?.amount?.decimal
+                      {floorAskPrice?.amount?.decimal
                         ? 'Create New Listing'
                         : 'List for Sale'}
                     </button>
@@ -384,15 +402,14 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           </button>
         )}
 
-        {!isInCart && !isOwner && isListed && !isSudoswapSource && (
+        {!isInCart && !isOwner && isListed && canAddToCart && (
           <button
-            disabled={!token?.market?.floorAsk?.price}
+            disabled={!floorAskPrice}
             onClick={() => {
               if (token?.token && token.market) {
                 if (
                   !cartCurrency ||
-                  token.market.floorAsk?.price?.currency?.contract ===
-                    cartCurrency?.contract
+                  floorAskPrice?.currency?.contract === cartCurrency?.contract
                 ) {
                   setCartTokens([
                     ...cartTokens,

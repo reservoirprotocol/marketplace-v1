@@ -95,6 +95,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     ],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   })
 
   const tokens = tokenData.data
