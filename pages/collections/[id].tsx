@@ -331,6 +331,7 @@ export const getStaticProps: GetStaticProps<{
     sortBy: 'floorAskPrice',
     includeTopBid: false,
     limit: 20,
+    includeDynamicPricing: true,
   }
 
   setParams(tokensUrl, tokensQuery)
