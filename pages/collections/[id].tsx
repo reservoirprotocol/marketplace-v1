@@ -221,9 +221,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                     />
                   </div>
                 </div>
-                <div className="mb-10 flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <div>
-                    <AttributesFlex className="flex flex-wrap gap-3" />
+                    <AttributesFlex className="flex flex-wrap gap-3 mb-6" />
                   </div>
                 </div>
                 <TokensGrid

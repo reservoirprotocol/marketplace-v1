@@ -280,7 +280,7 @@ const TokenCard: FC<Props> = ({
                             }
                           }
                         }}
-                        className="reservoir-subtitle bg-primary-100 border-t-2 border-primary-400 flex h-[40px] items-center justify-center disabled:cursor-not-allowed dark:border-neutral-600"
+                        className="reservoir-subtitle bg-primary-200 border-t-2 border-primary-400 flex h-[40px] items-center justify-center disabled:cursor-not-allowed dark:border-neutral-600"
                       >                
                         Add to Cart
                       </button>
@@ -288,7 +288,7 @@ const TokenCard: FC<Props> = ({
                       <Tooltip.Provider delayDuration={0}>
                         <Tooltip.Root>
                           <Tooltip.Trigger>
-                            <div className="reservoir-subtitle bg-primary-100 text-gray-400 flex h-[40px] items-center justify-center cursor-not-allowed dark:border-neutral-600">
+                            <div className="reservoir-subtitle bg-primary-200 text-gray-400 flex h-[40px] items-center justify-center cursor-not-allowed dark:border-neutral-600">
                               Add to Cart
                             </div>
                           </Tooltip.Trigger>
