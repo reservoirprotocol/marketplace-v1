@@ -51,15 +51,15 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
           e.preventDefault()
         }}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-neutral-300 px-6 py-2 dark:border-neutral-600">
+        <div className="flex items-center justify-between gap-3 border-b-2 border-primary-400 px-6 py-2 dark:border-neutral-600">
           <NavbarLogo variant="mobile" />
-          <Dialog.Close className="btn-primary-outline py-1.5 px-[5px] dark:text-white">
+          <Dialog.Close className="btn-primary-outline text-primary-900 border-2 border-primary-400 py-1.5 px-[5px] dark:text-white">
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
         <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
           <a
-            className="group flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+            className="group flex w-full cursor-pointer items-center justify-between rounded border-b-2 border-primary-400 p-4 hover:bg-primary-200 outline-none transition focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
             onClick={() => setOpen(false)}
           >
             Discover
@@ -72,7 +72,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
                 key={url}
                 href={url}
                 rel="noopener noreferrer"
-                className="border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                className="border-b-2 border-primary-400 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
               >
                 {name}
               </a>
@@ -86,7 +86,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
         }
         {accountData.isConnected ? (
           <>
-            <div className="flex items-center justify-center border-b border-neutral-300 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
+            <div className="flex items-center justify-center border-b-2 border-primary-400 bg-neutral-100 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:bg-black dark:text-white dark:hover:bg-neutral-600">
               <EthAccount
                 address={accountData.address}
                 ens={{
@@ -112,7 +112,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
                     key={url}
                     href={url}
                     rel="noopener noreferrer"
-                    className="border-b border-neutral-300 p-4 text-[#4B5563] hover:text-[#1F2937] dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                    className="border-b-2 border-primary-400 p-4 hover:bg-primary-200 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
                   >
                     {name}
                   </a>
@@ -122,7 +122,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
 
             <Link href={`/address/${accountData.address}`}>
               <a
-                className="group flex w-full cursor-pointer items-center justify-between rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+                className="group flex w-full cursor-pointer items-center justify-between rounded border-b-2 border-primary-400 p-4 outline-none transition hover:bg-primary-200 focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
                 onClick={() => setOpen(false)}
               >
                 My finis
@@ -132,7 +132,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
             <button
               key={wallet.id}
               onClick={() => disconnect()}
-              className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b border-neutral-300 p-4 text-[#4B5563] outline-none transition hover:bg-neutral-100 hover:text-[#1F2937] focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
+              className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded border-b-2 border-primary-400 p-4 outline-none transition hover:bg-primary-200 focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
             >
               <span>Disconnect</span>
               {/* <img
