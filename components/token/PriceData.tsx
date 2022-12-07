@@ -238,7 +238,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               {isOwner && (
                 <ListModal
                   trigger={
-                    <button className="btn-primary-fill w-full dark:ring-primary-900 dark:focus:ring-4">
+                    <button className="btn-primary-fill border-2 border-primary-500 hover:border-primary-500/50 bg-primary-550 hover:!bg-primary-550 text-primary-500 w-full dark:ring-primary-900 dark:focus:ring-4">
                       {token?.market?.floorAsk?.price?.amount?.decimal
                         ? 'Create New Listing'
                         : 'List for Sale'}
@@ -269,7 +269,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               )}
               {!isOwner && (
                 <BuyNow
-                  buttonClassName="rounded-full border-2 border-primary-500 bg-primary-550 text-primary-500 col-span-1"
+                  buttonClassName="rounded-full border-2 border-primary-500 hover:border-primary-500/50 bg-primary-550 text-primary-500 col-span-1"
                   data={{
                     details: details,
                   }}
@@ -283,7 +283,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   showAcceptOffer ? (
                     <button
                       disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline border-2 w-full dark:text-white"
+                      className="btn-primary-outline border-2 border-primary-700 hover:!border-primary-700/50 w-full dark:text-white"
                     >
                       Accept Offer
                     </button>
@@ -331,7 +331,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                   trigger={
                     <button
                       disabled={isInTheWrongNetwork}
-                      className="btn-primary-outline border-2 border-primary-700 w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+                      className="btn-primary-outline border-2 border-primary-700 hover:!border-primary-700/50 w-full dark:border-neutral-600 dark:text-white dark:ring-primary-900 dark:focus:ring-4"
                     >
                       Make Offer
                     </button>
@@ -418,7 +418,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               <div className="flex items-center dark:text-white">
                 <div>
                   <span>Or</span>{' '}
-                  <span className="text-primary-500 dark:text-primary-100">
+                  <span className="text-primary-500 hover:text-primary-500/75 dark:text-primary-100">
                     add to cart
                   </span>
                 </div>

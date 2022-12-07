@@ -188,7 +188,7 @@ const TokenCard: FC<Props> = ({
           <div className="grid">
             <ListModal
               trigger={
-                <button className="btn-primary-fill !rounded-none reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0">
+                <button className="btn-primary-fill bg-primary-500 !rounded-none reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0">
                   {token?.market?.floorAsk?.price?.amount?.decimal
                     ? 'Create New Listing'
                     : 'List for Sale'}
