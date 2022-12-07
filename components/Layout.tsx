@@ -16,7 +16,7 @@ const Layout: FC<Props> = ({ children, navbar, className }) => {
         containerStyle={{ zIndex: 100000000000 }}
       />
       <NetworkWarning />
-      <main className={className + " mx-auto grid max-w-[2560px] grid-cols-4 gap-x-4 pb-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21"}>
+      <main className={className + " mx-auto overflow-x-hidden grid max-w-[2560px] grid-cols-4 gap-x-4 pb-4 md:grid-cols-8 lg:grid-cols-12 3xl:grid-cols-16 4xl:grid-cols-21"}>
         <Navbar {...navbar} />
         {children}
       </main>
