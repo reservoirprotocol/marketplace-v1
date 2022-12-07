@@ -157,7 +157,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
         <Hero collectionId={id} fallback={fallback} />
         <Tabs.Root
           value={router.query?.tab?.toString() || 'items'}
-          className="flex w-screen flex-col"
+          className="flex w-screen flex-col max-w-[2560px]"
         >
           <Tabs.List className="flex justify-center border-b-[3px] border-primary-400 dark:border-[#525252]">
             {tabs.map(({ name, id }) => (
