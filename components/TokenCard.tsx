@@ -245,7 +245,11 @@ const TokenCard: FC<Props> = ({
         {price?.amount?.decimal != null &&
           price?.amount?.decimal != undefined &&
           !isOwner && (
-            <div className={`grid ${canAddToCart ? 'grid-cols-2' : ''}`}>
+            <div
+              className={`grid ${
+                isInCart || canAddToCart ? 'grid-cols-2' : ''
+              }`}
+            >
               <BuyNow
                 data={{
                   token,
@@ -255,7 +259,7 @@ const TokenCard: FC<Props> = ({
                 isInTheWrongNetwork={isInTheWrongNetwork}
                 buttonClassName="btn-primary-fill reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap rounded-none text-white focus:ring-0"
               />
-              {isInCart && canAddToCart && (
+              {isInCart && (
                 <button
                   onClick={() => {
                     const newCartTokens = [...cartTokens]
