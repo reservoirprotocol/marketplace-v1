@@ -99,7 +99,7 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
       >
-        <a className="mb-[45px]">
+        <a className="mb-[88px] md:mb-[48px]">
           {finiliarImage ? (
             <Image
               loader={({ src }) => src}
