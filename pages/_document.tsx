@@ -6,6 +6,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
+import Script from 'next/script'
 
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
@@ -76,6 +77,22 @@ const MyDocument = function () {
         <meta property="reservoir:icon" content={SOURCE_ICON || FAVICON} />
       ) : null}
 
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-TRM105Y3D5"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-TRM105Y3D5', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
+
       {chain && chain.network ? (
         <meta
           property={`reservoir:token-url-${
@@ -90,7 +107,7 @@ const MyDocument = function () {
             <link key={i} href={link} rel="stylesheet" />
           ))
         : null}
-
+      
       <body className="bg-primary-100 text-primary-700 dark:bg-black dark:text-white">
         <Main />
         <NextScript />
