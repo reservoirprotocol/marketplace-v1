@@ -2,7 +2,6 @@ import { styled, keyframes } from '@stitches/react'
 import * as Popover from '@radix-ui/react-popover'
 import { FC, useState } from 'react'
 import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
-import FormatNativeCrypto from './FormatNativeCrypto'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { Signer } from 'ethers'
@@ -13,6 +12,7 @@ import cartTokensAtom, {
   getCartCount,
   getCartCurrency,
   getCartTotalPrice,
+  getPricingPools,
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 
@@ -40,6 +40,7 @@ const CartMenu: FC = () => {
   const cartCount = useRecoilValue(getCartCount)
   const cartTotal = useRecoilValue(getCartTotalPrice)
   const cartCurrency = useRecoilValue(getCartCurrency)
+  const pricingPools = useRecoilValue(getPricingPools)
   const [cartTokens, setCartTokens] = useRecoilState(cartTokensAtom)
   const [_open, setOpen] = useState(false)
   const [_steps, setSteps] = useState<Execute['steps']>()
@@ -156,6 +157,15 @@ const CartMenu: FC = () => {
               { token: { collection, contract, name, image, tokenId }, market },
               index
             ) => {
+              let price = market.floorAsk?.price
+
+              const poolId = market.floorAsk?.dynamicPricing?.data
+                ?.pool as string
+              if (poolId && pricingPools[poolId]) {
+                const pool = pricingPools[poolId]
+                price = pool.tokenPrices[`${contract}:${tokenId}`]
+              }
+
               return (
                 <div
                   key={`${contract}:${tokenId}`}
@@ -174,9 +184,9 @@ const CartMenu: FC = () => {
                       </div>
                       <div className="reservoir-h6">
                         <FormatCrypto
-                          amount={market.floorAsk?.price?.amount?.decimal}
-                          address={market.floorAsk?.price?.currency?.contract}
-                          decimals={market.floorAsk?.price?.currency?.decimals}
+                          amount={price?.amount?.decimal}
+                          address={price?.currency?.contract}
+                          decimals={price?.currency?.decimals}
                         />
                       </div>
                     </div>

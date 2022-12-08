@@ -95,6 +95,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     ],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   })
 
   const tokens = tokenData.data
@@ -250,6 +251,7 @@ export const getStaticProps: GetStaticProps<{
     tokens: [`${contract}:${tokenId}`],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   }
 
   const href = setParams(url, query)
