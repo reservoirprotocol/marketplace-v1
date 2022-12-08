@@ -62,10 +62,10 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
         )}
         <div className="mt-2 flex flex-col md:flex-row md:space-x-5">
           <DownloadButton gifLink={token?.image!} filename={'fini ' + token?.tokenId! + ' animated.gif'}>
-            <div className="text-primary-500 inline-flex text-sm">Download current gif</div>
+            <div className="inline-flex">Download current gif</div>
           </DownloadButton>
           <DownloadButton gifLink={idleLink} filename={'fini ' + token?.tokenId! + ' idle.gif'}>
-            <div className="text-primary-500 inline-flex text-sm">Download idle gif</div>
+            <div className="inline-flex">Download idle gif</div>
           </DownloadButton>
         </div>
       </article>

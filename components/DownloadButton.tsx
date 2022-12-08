@@ -12,12 +12,9 @@ export const DownloadButton: FC<Props> = ({ gifLink, children, filename }) => {
   const [gifData, setGifData] = useState(null);
   const [gifUrl, setGifUrl] = useState(null);
 
-  console.log(gifLink)
-
   // Make a request to the server where the GIF is hosted to retrieve the GIF data
   useEffect(() => {
     if (!gifLink) return
-    console.log('running')
     fetch(gifLink)
     .then((response) => response.arrayBuffer())
     .then((data) => {
@@ -28,11 +25,16 @@ export const DownloadButton: FC<Props> = ({ gifLink, children, filename }) => {
     });
   }, [gifLink])
 
-  if (!gifData || !gifUrl) return null
+  // if (!gifData || !gifUrl) return null
+  const disabled = !gifData || ! gifUrl 
 
   return (
     <div>
-      <a href={gifUrl} download={filename} className="inline-flex mt-2 items-center hover:opacity-75">
+      <a
+        style={{ pointerEvents: disabled ? 'none' : 'auto' }}
+        href={gifUrl!} download={filename} 
+        className={`text-sm inline-flex mt-2 items-center hover:opacity-75 ${disabled ? ' text-primary-400' : 'text-primary-500'}`}
+      >
         <img src="/icons/FileSmile.svg" className="h-[16px] mr-[5px]" alt="File icon" />
         {children}
       </a>
