@@ -151,7 +151,7 @@ function processListing(
     contract,
     tokenId,
     image: listing?.metadata?.data?.image,
-    name: `${contract} #${tokenId}`, // listing?.metadata?.data?.tokenName,
+    name: listing?.metadata?.data?.tokenName,
     expiration:
       listing?.expiration === 0
         ? 'Never'
