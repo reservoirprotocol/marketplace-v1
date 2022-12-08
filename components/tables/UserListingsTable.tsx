@@ -24,8 +24,6 @@ type Props = {
 const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
   const { data: listings, ref } = data
 
-  console.log('### data', data)
-
   if (listings.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center dark:text-white">
