@@ -37,7 +37,7 @@ const Sidebar: FC<Props> = ({ attributes, refreshData, scrollToTop }) => {
   return (
     <Accordion.Root
       type="multiple"
-      className="bg-primary-250 sticky top-[91px] mr-4 hidden max-h-[calc(100vh-+91px)] w-min min-w-[300px] max-w-[175px] overflow-auto pb-12 dark:border-neutral-600 md:block md:w-1/3 "
+      className="bg-primary-250 sticky top-[64px] mr-4 hidden max-h-[calc(100vh-+64px)] w-min min-w-[300px] max-w-[175px] overflow-auto pb-12 dark:border-neutral-600 md:block md:w-1/3 "
     >
       <div className="hidden px-5 pt-5 text-left text-lg font-semibold transition dark:border-neutral-600 dark:text-white">
         Properties
