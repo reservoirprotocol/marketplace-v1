@@ -17,6 +17,11 @@ const Footer = () => {
               [ Discover ]
             </a>
           </Link>
+          <Link href='https://dollarmonopoly.mirror.xyz/'>
+            <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
+              [ Blog ]
+            </a>
+          </Link>
           <Link href='https://etherscan.io/address/0x5a0121a0a21232ec0d024dab9017314509026480'>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
               {/* <img src='/icons/etherscan-logo-circle.svg' alt="Etherscan Icon" className="h-[22px]" /> */}
