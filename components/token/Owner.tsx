@@ -7,6 +7,8 @@ import { useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
 import RarityTooltip from 'components/RarityTooltip'
 import { formatNumber } from 'lib/numbers'
+import { DownloadButton } from 'components/DownloadButton'
+import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
 
 type Props = {
   details: ReturnType<typeof useTokens>['data'][0]
@@ -16,6 +18,9 @@ type Props = {
 
 const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
   const token = details?.token
+
+  const tokenFamily = token && getAttributeFromTokenDetails(token, 'Family')
+  const idleLink = token && token?.image!.replace(token?.image!.split('/')[3], tokenFamily + '2')
 
   const owner =
     token?.kind === 'erc1155' && details?.market?.floorAsk?.maker
@@ -55,6 +60,14 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
             </a>
           </Link>
         )}
+        <div className="mt-2 flex flex-col md:flex-row md:space-x-5">
+          <DownloadButton gifLink={token?.image!} filename={'fini ' + token?.tokenId! + ' animated.gif'}>
+            <div className="text-primary-500 inline-flex text-sm">Download current gif</div>
+          </DownloadButton>
+          <DownloadButton gifLink={idleLink} filename={'fini ' + token?.tokenId! + ' idle.gif'}>
+            <div className="text-primary-500 inline-flex text-sm">Download idle gif</div>
+          </DownloadButton>
+        </div>
       </article>
     </div>
   )
