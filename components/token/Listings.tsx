@@ -52,7 +52,7 @@ const Listings: FC<Props> = ({ token }) => {
                   >
                     {/* UNIT PRICE */}
                     <td className="reservoir-h6 whitespace-nowrap px-6 py-4 font-headings dark:text-white">
-                      <FormatEth amount={unitPrice} />
+                      <FormatEth amount={unitPrice?.amount?.decimal} />
                     </td>
 
                     {/* TIME */}

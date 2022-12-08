@@ -24,6 +24,8 @@ type Props = {
 const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
   const { data: listings, ref } = data
 
+  console.log('### data', data)
+
   if (listings.length === 0) {
     return (
       <div className="reservoir-body mt-14 grid justify-center dark:text-white">
@@ -77,6 +79,7 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
+                      {/*
                       <div className="relative h-10 w-10">
                         {image && (
                           <div className="aspect-w-1 aspect-h-1 relative">
@@ -90,6 +93,7 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
                           </div>
                         )}
                       </div>
+                      */}
                       <span className="whitespace-nowrap">
                         <div className="reservoir-body dark:text-white ">
                           {collectionName}
@@ -104,7 +108,7 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
 
                 {/* PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={price} />
+                  <FormatEth amount={price?.amount?.decimal} />
                 </td>
 
                 {/* EXPIRATION */}
@@ -149,7 +153,7 @@ function processListing(
     contract,
     tokenId,
     image: listing?.metadata?.data?.image,
-    name: listing?.metadata?.data?.tokenName,
+    name: `${contract} #${tokenId}`, // listing?.metadata?.data?.tokenName,
     expiration:
       listing?.expiration === 0
         ? 'Never'
