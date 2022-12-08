@@ -26,7 +26,7 @@ const TokenAttributes: FC<Props> = ({ token, collection, isOwner }) => {
   }
 
   if (!token?.attributes || token?.attributes?.length === 0) return null
-  console.log(token.attributes)
+
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <Accordion.Root
