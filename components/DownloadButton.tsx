@@ -33,7 +33,7 @@ export const DownloadButton: FC<Props> = ({ gifLink, children, filename }) => {
       <a
         style={{ pointerEvents: disabled ? 'none' : 'auto' }}
         href={gifUrl!} download={filename} 
-        className={`text-sm inline-flex mt-2 items-center hover:opacity-75 ${disabled ? ' text-primary-400' : 'text-primary-500'}`}
+        className={`text-primary-500 text-sm inline-flex mt-2 items-center hover:opacity-75 ${disabled ? ' opacity-25' : 'opacity-100'}`}
       >
         <img src="/icons/FileSmile.svg" className="h-[16px] mr-[5px]" alt="File icon" />
         {children}
