@@ -21,6 +21,7 @@ import { MutatorCallback } from 'swr'
 import { useMediaQuery } from '@react-hookz/web'
 import RarityTooltip from './RarityTooltip'
 import { Collection } from 'types/reservoir'
+import { getPricing } from 'lib/token/pricing'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -79,20 +80,11 @@ const TokenCard: FC<Props> = ({
     token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
   const imageSize = singleColumnBreakpoint ? 533 : 250
 
-  let price = token?.market?.floorAsk?.price
+  let price = getPricing(cartPools, token)
   let canAddToCart = true
-  const pool = token.market?.floorAsk?.dynamicPricing?.data?.pool
-    ? cartPools[token.market.floorAsk.dynamicPricing.data.pool as string]
-    : null
 
-  if (pool) {
-    if (pool.tokenPrices[tokenId]) {
-      price = pool.tokenPrices[tokenId]
-    } else if (pool.prices[pool.tokenOrder.length]) {
-      price = pool.prices[pool.tokenOrder.length]
-    } else {
-      canAddToCart = false
-    }
+  if (!price && token.market?.floorAsk?.dynamicPricing?.data?.pool) {
+    canAddToCart = false
   }
 
   return (
