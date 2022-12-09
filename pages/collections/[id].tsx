@@ -28,7 +28,7 @@ import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
 import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 import { string } from 'prop-types'
-// import SortTokens from 'components/SortTokens'
+import SortTokens from 'components/SortTokens'
 
 // Environment variables
 // For more information about these variables
@@ -184,7 +184,7 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                 scrollToTop={scrollToTop}
               />
               <div className="mx-6 mt-4 w-full">
-                <div className="mb-4 hidden items-center justify-between md:flex">
+                <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-6">
                     {/* <RefreshButton
                       refreshData={() => {
@@ -209,9 +209,9 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                       </>
                     )}
                   </div>
-                  {/* <div className="flex gap-4">
+                  <div className="flex gap-4">
                     <SortTokens />
-                  </div> */}
+                  </div>
                   <div className="flex gap-4 hidden">
                     <Sweep
                       collection={collection}

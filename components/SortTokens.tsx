@@ -13,8 +13,8 @@ type Options =
 const options: { [x: string]: { sortBy: string; sortDirection: string } } = {
   'Price low to high': { sortBy: 'floorAskPrice', sortDirection: 'asc' },
   'Price high to low': { sortBy: 'floorAskPrice', sortDirection: 'desc' },
-  'Rare to Common': { sortBy: 'rarity', sortDirection: 'desc' },
-  'Common to Rare': { sortBy: 'rarity', sortDirection: 'asc' },
+  // 'Rare to Common': { sortBy: 'rarity', sortDirection: 'desc' },
+  // 'Common to Rare': { sortBy: 'rarity', sortDirection: 'asc' },
 }
 
 const SortTokens: FC = ({}) => {
@@ -44,12 +44,12 @@ const SortTokens: FC = ({}) => {
 
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
-      <DropdownMenu.Trigger className="btn-primary-outline hidden w-[200px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
+      <DropdownMenu.Trigger className="btn-primary-outline pill hover:!bg-[#dde2f6] hover:!border-primary-400 w-[200px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
         <span className="reservoir-label-l dark:text-gray-100">
           {sortSelection}
         </span>
         <FiChevronDown
-          className={`h-5 w-5 text-[#9CA3AF] transition-transform ${
+          className={`h-5 w-5 transition-transform ${
             open ? 'rotate-180' : ''
           }`}
         />
@@ -58,7 +58,7 @@ const SortTokens: FC = ({}) => {
       <DropdownMenu.Content
         align="end"
         sideOffset={12}
-        className="z-20 w-[200px] divide-y-[1px] divide-[#D1D5DB] overflow-hidden rounded-[8px] border-[1px] border-[#D1D5DB] bg-white shadow-md radix-side-bottom:animate-slide-down dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-800"
+        className="z-20 w-[200px] divide-y-[1px] divide-primary-400 overflow-hidden rounded-[8px] border-[2px] border-primary-400 bg-primary-100 shadow-md radix-side-bottom:animate-slide-down dark:divide-neutral-600 dark:border-neutral-600 dark:bg-neutral-800"
       >
         {Object.keys(options).map((key) => (
           <DropdownMenu.Item
