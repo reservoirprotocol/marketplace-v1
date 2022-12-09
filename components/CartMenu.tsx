@@ -15,6 +15,7 @@ import cartTokensAtom, {
   getPricingPools,
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
+import { getPricing } from 'lib/token/pricing'
 
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
@@ -152,58 +153,46 @@ const CartMenu: FC = () => {
           )}
         </div>
         <div className="mb-6 grid max-h-[300px] gap-2 overflow-auto">
-          {cartTokens.map(
-            (
-              { token: { collection, contract, name, image, tokenId }, market },
-              index
-            ) => {
-              let price = market.floorAsk?.price
+          {cartTokens.map((tokenData, index) => {
+            const { token } = tokenData
+            const { collection, contract, name, image, tokenId } = token
+            const price = getPricing(pricingPools, tokenData)
 
-              const poolId = market.floorAsk?.dynamicPricing?.data
-                ?.pool as string
-              if (poolId && pricingPools[poolId]) {
-                const pool = pricingPools[poolId]
-                price = pool.tokenPrices[`${contract}:${tokenId}`]
-              }
-
-              return (
-                <div
-                  key={`${contract}:${tokenId}`}
-                  className="flex justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="h-14 w-14 overflow-hidden rounded-[4px]">
-                      <img src={image || collection?.image} alt="" />
+            return (
+              <div
+                key={`${contract}:${tokenId}`}
+                className="flex justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-14 w-14 overflow-hidden rounded-[4px]">
+                    <img src={image || collection?.image} alt="" />
+                  </div>
+                  <div>
+                    <div className="reservoir-subtitle">
+                      {name || `#${tokenId}`}
                     </div>
-                    <div>
-                      <div className="reservoir-subtitle">
-                        {name || `#${tokenId}`}
-                      </div>
-                      <div className="reservoir-label-s">
-                        {collection?.name}
-                      </div>
-                      <div className="reservoir-h6">
-                        <FormatCrypto
-                          amount={price?.amount?.decimal}
-                          address={price?.currency?.contract}
-                          decimals={price?.currency?.decimals}
-                        />
-                      </div>
+                    <div className="reservoir-label-s">{collection?.name}</div>
+                    <div className="reservoir-h6">
+                      <FormatCrypto
+                        amount={price?.amount?.decimal}
+                        address={price?.currency?.contract}
+                        decimals={price?.currency?.decimals}
+                      />
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      const newCartTokens = [...cartTokens]
-                      newCartTokens.splice(index, 1)
-                      setCartTokens(newCartTokens)
-                    }}
-                  >
-                    <FaTrashAlt />
-                  </button>
                 </div>
-              )
-            }
-          )}
+                <button
+                  onClick={() => {
+                    const newCartTokens = [...cartTokens]
+                    newCartTokens.splice(index, 1)
+                    setCartTokens(newCartTokens)
+                  }}
+                >
+                  <FaTrashAlt />
+                </button>
+              </div>
+            )
+          })}
         </div>
 
         <div className="mb-4 flex justify-between">

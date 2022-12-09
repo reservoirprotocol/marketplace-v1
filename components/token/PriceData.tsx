@@ -26,6 +26,7 @@ import { FaShoppingCart } from 'react-icons/fa'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
 import { useRouter } from 'next/router'
+import { getPricing } from 'lib/token/pricing'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -72,20 +73,11 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const tokenId = token?.token?.tokenId
   const contract = token?.token?.contract
 
-  let floorAskPrice = token?.market?.floorAsk?.price
+  let floorAskPrice = getPricing(cartPools, token)
   let canAddToCart = true
-  const pool = (token?.market?.floorAsk?.dynamicPricing?.data?.pool as string)
-    ? cartPools[token?.market?.floorAsk?.dynamicPricing?.data?.pool as string]
-    : null
 
-  if (pool) {
-    if (pool.tokenPrices[`${contract}:${tokenId}`]) {
-      floorAskPrice = pool.tokenPrices[`${contract}:${tokenId}`]
-    } else if (pool.prices[pool.tokenOrder.length]) {
-      floorAskPrice = pool.prices[pool.tokenOrder.length]
-    } else {
-      canAddToCart = false
-    }
+  if (!floorAskPrice && token?.market?.floorAsk?.dynamicPricing?.data?.pool) {
+    canAddToCart = false
   }
 
   // Disabling the rules of hooks here due to erroneous error message,
