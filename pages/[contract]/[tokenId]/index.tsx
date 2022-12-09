@@ -20,7 +20,7 @@ import {
   useUserTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useAccount } from 'wagmi'
-import getIconFromTokenDetails from 'lib/getIconFromAttributes'
+// import getIconFromTokenDetails from 'lib/getIconFromAttributes'
 import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFromTokenDetails'
 import useInterval from 'hooks/useInterval'
 import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
@@ -202,7 +202,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
       ? true
       : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
 
-  const icon = getIconFromTokenDetails(tokenDetails!)
+  // const icon = getIconFromTokenDetails(tokenDetails!)
   const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
   return (

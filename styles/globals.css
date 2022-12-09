@@ -121,3 +121,11 @@ span.live-icon:before{
 /* .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {
   color: 
 } */
+
+.hoverTrigger .hoverTarget {
+  display: none;
+}
+
+.hoverTrigger:hover .hoverTarget {
+  display: inline-flex;
+}

@@ -5,7 +5,11 @@ export interface FiniliarMetadata {
   background: string,
   image: string,
   latestPrice: number,
-  latestDelta: number
+  latestDelta: number,
+  attributes?: {
+    trait_type: string,
+    value: string
+  }[]
 }
 
 export async function fetchMetaFromFiniliar(tokenId: string): Promise<FiniliarMetadata> {
