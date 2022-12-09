@@ -44,7 +44,7 @@ const SortTokens: FC = ({}) => {
 
   return (
     <DropdownMenu.Root onOpenChange={setOpen}>
-      <DropdownMenu.Trigger className="btn-primary-outline pill hover:!bg-[#dde2f6] hover:!border-primary-400 w-[200px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
+      <DropdownMenu.Trigger className="btn-primary-outline pill hover:!bg-[#dde2f6] hover:!border-primary-400 focus:!border-primary-400 w-[200px] justify-between px-4 py-3 dark:border-neutral-600 dark:ring-primary-900 dark:focus:ring-4 xl:flex">
         <span className="reservoir-label-l dark:text-gray-100">
           {sortSelection}
         </span>
