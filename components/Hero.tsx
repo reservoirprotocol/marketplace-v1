@@ -193,7 +193,7 @@ const Hero: FC<Props> = ({ fallback, collectionId }) => {
 
   return (
     <>
-      <div className="col-span-full">
+      <div className="col-span-full bg-[#ffd9d3]">
         <img src="/ChaseScene.gif" className="object-cover w-[100vw] h-[300px]" alt="Chase Scene" />
       </div>
       <HeroBackground banner={header.banner}>

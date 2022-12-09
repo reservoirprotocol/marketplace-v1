@@ -269,7 +269,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
               )}
               {!isOwner && (
                 <BuyNow
-                  buttonClassName="btn-primary-fill rounded-full border-2 border-primary-500 hover:border-primary-500/50 bg-primary-550 text-primary-500 col-span-1"
+                  buttonClassName="btn-primary-fill rounded-full border-2 border-primary-500 hover:border-primary-500/50 bg-primary-550 hover:!bg-primary-550 text-primary-500 col-span-1"
                   data={{
                     details: details,
                   }}

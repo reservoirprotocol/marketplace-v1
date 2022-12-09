@@ -43,7 +43,7 @@ const AttributesFlex: FC<Props> = ({ className }) => {
       {filters.map(({ key, value }) => (
         <div
           key={key}
-          className="hidden rounded-full border-2 border-primary-400 bg-primary-100 px-4 py-3 dark:border-neutral-600 dark:bg-primary-900 dark:text-white md:flex"
+          className="hidden rounded-full border-[3px] border-primary-400 bg-primary-100 px-4 py-3 dark:border-neutral-600 dark:bg-primary-900 dark:text-white md:flex"
         >
           <div className="reservoir-label-l text-primary-700 flex items-center justify-between gap-1.5 dark:text-white ">
             <p className="capitalize">{key}:</p>

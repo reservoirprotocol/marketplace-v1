@@ -103,7 +103,7 @@ const TokenCard: FC<Props> = ({
           {finiliarImage ? (
             <Image
               loader={({ src }) => src}
-              src={finiliarImage}
+              src={'https://res.cloudinary.com/dyduarwmj/image/fetch/w_400,c_fill/' + finiliarImage}
               alt={`${token?.token?.name}`}
               className="w-full"
               width={imageSize}
