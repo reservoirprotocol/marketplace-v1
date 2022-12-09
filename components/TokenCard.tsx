@@ -122,7 +122,7 @@ const TokenCard: FC<Props> = ({
         <a className="mb-[88px] md:mb-[48px] hoverTrigger">
           {freshData?.latestDelta &&
             <div
-              className={`hoverTarget absolute hidden top-[5px] left-[5px] z-[9] text-sm rounded-full bg-primary-100/25 p-1 space-x-2 ${
+              className={`hoverTarget absolute md:hidden inline-flex top-[5px] left-[5px] z-[9] text-sm rounded-full bg-primary-100/25 p-1 space-x-2 ${
                 freshData?.latestDelta! < 0 ? '!text-primary-900/75' : '!text-primary-500'
               }`}
             >

@@ -122,10 +122,6 @@ span.live-icon:before{
   color: 
 } */
 
-.hoverTrigger .hoverTarget {
-  display: none;
-}
-
 .hoverTrigger:hover .hoverTarget {
   display: inline-flex;
 }
