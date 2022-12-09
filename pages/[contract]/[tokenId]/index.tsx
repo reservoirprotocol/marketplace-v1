@@ -251,6 +251,7 @@ export const getStaticProps: GetStaticProps<{
     tokens: [`${contract}:${tokenId}`],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   }
 
   const href = setParams(url, query)
