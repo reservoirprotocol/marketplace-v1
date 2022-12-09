@@ -106,7 +106,7 @@ const Media: FC<{
     return (
       <img
         alt="Token Image"
-        className="w-full rounded-2xl"
+        className="w-full"
         src={optimizeImage(media, 533)}
       />
     )

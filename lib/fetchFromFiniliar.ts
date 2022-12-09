@@ -1,9 +1,11 @@
 
 const FINILIAR_API = process.env.NEXT_PUBLIC_FINILIAR_API || "https://api.finiliar.com"
 
-interface FiniliarMetadata {
-  id: string,
+export interface FiniliarMetadata {
+  background: string,
   image: string,
+  latestPrice: number,
+  latestDelta: number
 }
 
 export async function fetchMetaFromFiniliar(tokenId: string): Promise<FiniliarMetadata> {

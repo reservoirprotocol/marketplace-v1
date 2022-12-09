@@ -7,6 +7,8 @@ import React, {
   Dispatch,
   FC,
   SetStateAction,
+  useEffect,
+  useState,
 } from 'react'
 import FormatCrypto from 'components/FormatCrypto'
 import BuyNow from 'components/BuyNow'
@@ -22,6 +24,7 @@ import { useMediaQuery } from '@react-hookz/web'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import RarityTooltip from './RarityTooltip'
 import { Collection } from 'types/reservoir'
+import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -57,11 +60,11 @@ const TokenCard: FC<Props> = ({
   mutate,
   setClearCartOpen,
   setCartToSwap,
-  finiliarImage,
 }) => {
   const account = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
+  const [ freshData, updateFreshData ] = useState<FiniliarMetadata>()
 
   const tokensMap = useRecoilValue(getTokensMap)
   const cartCurrency = useRecoilValue(getCartCurrency)
@@ -71,6 +74,19 @@ const TokenCard: FC<Props> = ({
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
   if (!token) return null
+
+  useEffect(() => {
+    fetchMetaFromFiniliar(token?.token?.tokenId!).then((res) => {
+      updateFreshData({
+        latestPrice: res.latestPrice,
+        latestDelta: res.latestDelta,
+        image: res.image,
+        background: res.background
+      })
+    }).catch((err) => {
+      console.log(`Error fetching data for token id ${token?.token?.tokenId}:`, err)
+    })
+  }, [token?.token?.tokenId])
 
   if (!CHAIN_ID) return null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
@@ -100,10 +116,10 @@ const TokenCard: FC<Props> = ({
         href={`/discover/${token?.token?.tokenId}`}
       >
         <a className="mb-[88px] md:mb-[48px]">
-          {finiliarImage ? (
+          {freshData?.image ? (
             <Image
               loader={({ src }) => src}
-              src={finiliarImage}
+              src={freshData?.image}
               alt={`${token?.token?.name}`}
               className="w-full"
               width={imageSize}

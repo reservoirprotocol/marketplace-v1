@@ -26,7 +26,6 @@ import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
-import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 import { string } from 'prop-types'
 import SortTokens from 'components/SortTokens'
 
@@ -62,9 +61,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const [finiliarImageMap, updateMap] = useState({} as ImageMap)
-
-
 
   const scrollToTop = () => {
     let top = (scrollRef.current?.offsetTop || 0) - 91 //Offset from parent element minus height of navbar
@@ -92,20 +88,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
   )
 
   const ids = tokens.data.map(t => t?.token?.tokenId!)
-
-  useEffect(() => {
-    ids.filter((id: string) => !!id && !finiliarImageMap[id]).map(tokenId => {
-      fetchMetaFromFiniliar(tokenId)
-      .then(meta => {
-        updateMap((finiliarImageMap) => { 
-          return { ...finiliarImageMap, ...{[meta.id]: meta.image }}
-        })
-      }).catch((err) => {
-        console.log('Error fetching data:', err)
-      })
-    })
-
-  }, [JSON.stringify(ids)]);
 
   const { collectionAttributes, ref: refCollectionAttributes } =
     useCollectionAttributes(router, id)
@@ -227,7 +209,6 @@ const Home: NextPage<Props> = ({ fallback, id }) => {
                   </div>
                 </div>
                 <TokensGrid
-                  imageMap={finiliarImageMap}
                   tokens={tokens}
                   viewRef={refTokens}
                   collectionImage={collection?.image as string}
