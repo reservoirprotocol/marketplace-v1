@@ -13,9 +13,7 @@ const Footer = () => {
         </div>
         <div className='flex flex-row items-center gap-x-6'>
           <Link href='/discover'>
-            <a className='min-w-max' target="_blank" rel="noreferrer">
-              [ Discover ]
-            </a>
+            [ Discover ]
           </Link>
           <Link href='https://dollarmonopoly.mirror.xyz/'>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
