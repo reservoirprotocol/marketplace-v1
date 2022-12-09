@@ -120,23 +120,25 @@ const TokenCard: FC<Props> = ({
         href={`/discover/${token?.token?.tokenId}`}
       >
         <a className="mb-[88px] md:mb-[48px] hoverTrigger">
-          <div
-            className={`hoverTarget absolute hidden top-[5px] left-[5px] z-[9] text-sm rounded-full bg-primary-100/25 p-1 space-x-2 ${
-              freshData?.latestDelta! < 0 ? '!text-primary-900/75' : '!text-primary-500'
-            }`}
-          >
-              {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
-                <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
-                <span>${freshData?.latestPrice.toFixed(2)}</span>
-              </div> */}
+          {freshData?.latestDelta &&
+            <div
+              className={`hoverTarget absolute hidden top-[5px] left-[5px] z-[9] text-sm rounded-full bg-primary-100/25 p-1 space-x-2 ${
+                freshData?.latestDelta! < 0 ? '!text-primary-900/75' : '!text-primary-500'
+              }`}
+            >
+                {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
+                  <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                  <span>${freshData?.latestPrice.toFixed(2)}</span>
+                </div> */}
+                <div>
+                  {freshData?.latestDelta! > 0 && <span>+</span>}
+                  {freshData?.latestDelta.toFixed(2)}%
+                </div>
               <div>
-                {freshData?.latestDelta! > 0 && <span>+</span>}
-                {freshData?.latestDelta.toFixed(2)}%
+                {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div>
-            <div>
-              {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
             </div>
-          </div>
+          }
           {freshData?.image ? (
             <Image
               loader={({ src }) => src}
