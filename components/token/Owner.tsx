@@ -60,7 +60,8 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
             </a>
           </Link>
         )}
-        <div className="mt-2 flex flex-col md:flex-row md:space-x-5">
+        {/* Hiding these for mobile bc they don't seem to work on phones */}
+        <div className="mt-2 hidden md:flex md:flex-row md:space-x-5">
           <DownloadButton gifLink={token?.image!} filename={'fini ' + token?.tokenId! + ' animated.gif'}>
             <div className="inline-flex">Download current gif</div>
           </DownloadButton>
