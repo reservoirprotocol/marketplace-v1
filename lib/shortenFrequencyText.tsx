@@ -11,6 +11,6 @@ export default function shortenFrequencyText(freq: string | undefined) {
     case 'Weekly':
       return '1w'
     case 'Monthly':
-      return '1m'
+      return '1mo'
   }
 }
