@@ -12,7 +12,7 @@ const Footer = () => {
           © 2022 finiliar studios, ltd.
         </div>
         <div className='flex flex-row items-center gap-x-6'>
-          <Link href={'/collections/' + COLLECTION}>
+          <Link href='/discover'>
             <a className='min-w-max' target="_blank" rel="noreferrer">
               [ Discover ]
             </a>

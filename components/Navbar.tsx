@@ -165,7 +165,7 @@ const Navbar: FC = () => {
               {filterComponent && filterComponent}
             </div>
           )}
-          <Link href="/collections/0x5a0121a0a21232ec0d024dab9017314509026480">
+          <Link href="/discover">
             <a className="text-sm uppercase font-bold text-primary-900 dark:text-white">
               Discover
             </a>

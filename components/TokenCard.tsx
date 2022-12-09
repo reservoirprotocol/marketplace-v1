@@ -97,7 +97,7 @@ const TokenCard: FC<Props> = ({
 
       <Link
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
-        href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
+        href={`/discover/${token?.token?.tokenId}`}
       >
         <a className="mb-[88px] md:mb-[48px]">
           {finiliarImage ? (
