@@ -28,8 +28,9 @@ import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
 import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
 import getShorthandFrequencyFromFreq from 'lib/getShorthandFrequencyFromTokenDetails'
 import shortenFrequencyText from 'lib/shortenFrequencyText'
-// import { getTextColorFromBg, pSBC } from 'lib/getTextColorFromBg'
 import tinycolor from 'tinycolor2'
+import { DownArrow, UpArrow } from './Arrows'
+import { finiliar } from 'colors'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -107,10 +108,10 @@ const TokenCard: FC<Props> = ({
   const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
 
   const textColor = tinycolor(freshData?.background).isLight()
-    ? tinycolor(freshData?.background).darken(15)
-    : tinycolor(freshData?.background).lighten(25)
+    ? tinycolor(freshData?.background).darken(15).toString()
+    : tinycolor(freshData?.background).lighten(25).toString()
 
-  const deltaColor = freshData?.latestDelta! < 0 ? ' red' : ' green'
+  const deltaColor = freshData?.latestDelta! < 0 ? finiliar[900] : finiliar[500]
 
   return (
     <div
@@ -140,11 +141,16 @@ const TokenCard: FC<Props> = ({
                   <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                   <span>${freshData?.latestPrice.toFixed(2)}</span>
                 </div> */}
-              <div style={{ color: deltaColor }} className={"inline-flex font-bold items-center rounded-full py-[2px] px-1"}>
-                {freshData?.latestDelta! > 0 && <span><img className="mr-1 h-[12px]" src="/Up.svg" alt="Up icon" /></span>}
+              <div style={{ color: deltaColor }} className={"inline-flex font-bold items-center rounded-full py-[2px] px-1 space-x-1"}>
+                {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
+                  <UpArrow color={deltaColor} />
+                }
+                {parseFloat(freshData?.latestDelta!.toFixed(2)) < 0 &&
+                  <DownArrow color={deltaColor} />
+                }
                 {freshData?.latestDelta.toFixed(2)}%
               </div>
-              <div className="rounded-full font-bold py-[2px] px-1" style={{ color: deltaColor }}>
+              <div className="rounded-full font-bold py-[2px] px-1" style={{ color: textColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div>
             </div>
