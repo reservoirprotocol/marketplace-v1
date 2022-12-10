@@ -40,7 +40,7 @@ const ConnectWallet: FC = () => {
     return (
       <ConnectWalletButton className="rounded-full bg-primary-675 px-[5px] p-[5px] flex items-center space-x-2 border border-primary-900">
         <>
-          <img src="/fini-face.png" alt="Face Icon" className="rounded-full h-[30px] border border-primary-680" />
+          <img src="https://cdn.finiliar.com/website/fini-face.png" alt="Face Icon" className="rounded-full h-[30px] border border-primary-680" />
           <span className="text-primary-900 font-bold uppercase text-sm pr-1">Connect</span>
         </>
       </ConnectWalletButton>
