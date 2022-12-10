@@ -141,7 +141,7 @@ const TokenCard: FC<Props> = ({
                   <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                   <span>${freshData?.latestPrice.toFixed(2)}</span>
                 </div> */}
-              <div style={{ color: deltaColor }} className={"inline-flex font-bold items-center rounded-full py-[2px] px-1 space-x-1"}>
+              <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/75 rounded-full items-center rounded-full py-[2px] px-1 space-x-1"}>
                 {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
                   <UpArrow color={deltaColor} />
                 }
@@ -150,7 +150,7 @@ const TokenCard: FC<Props> = ({
                 }
                 {freshData?.latestDelta.toFixed(2)}%
               </div>
-              <div className="rounded-full font-bold py-[2px] px-1" style={{ color: textColor }}>
+              <div className="rounded-full py-[2px] px-1" style={{ color: textColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div>
             </div>
