@@ -110,6 +110,8 @@ const TokenCard: FC<Props> = ({
     ? tinycolor(freshData?.background).darken(15)
     : tinycolor(freshData?.background).lighten(25)
 
+  const deltaColor = freshData?.latestDelta! < 0 ? ' red' : ' green'
+
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
@@ -138,11 +140,11 @@ const TokenCard: FC<Props> = ({
                   <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                   <span>${freshData?.latestPrice.toFixed(2)}</span>
                 </div> */}
-              <div className={"inline-flex items-center" + (freshData?.latestDelta! < 0 ? ' !text-primary-900/75' : ' !text-primary-500')}>
+              <div style={{ color: deltaColor }} className={"inline-flex font-bold items-center rounded-full py-[2px] px-1"}>
                 {freshData?.latestDelta! > 0 && <span><img className="mr-1 h-[12px]" src="/Up.svg" alt="Up icon" /></span>}
                 {freshData?.latestDelta.toFixed(2)}%
               </div>
-              <div style={{ color: textColor.toString() }}>
+              <div className="rounded-full font-bold py-[2px] px-1" style={{ color: deltaColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div>
             </div>
