@@ -106,6 +106,10 @@ const TokenCard: FC<Props> = ({
 
   const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
 
+  const textColor = tinycolor(freshData?.background).isLight()
+    ? tinycolor(freshData?.background).darken(15)
+    : tinycolor(freshData?.background).lighten(25)
+
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
@@ -138,7 +142,7 @@ const TokenCard: FC<Props> = ({
                 {freshData?.latestDelta! > 0 && <span><img className="mr-1 h-[12px]" src="/Up.svg" alt="Up icon" /></span>}
                 {freshData?.latestDelta.toFixed(2)}%
               </div>
-              <div style={{ color: tinycolor(freshData?.background).isLight() ? tinycolor(freshData?.background).darken(15) : tinycolor(freshData?.background).lighten(25)}}>
+              <div style={{ color: textColor.toString() }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div>
             </div>
