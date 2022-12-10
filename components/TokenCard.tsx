@@ -7,6 +7,8 @@ import React, {
   Dispatch,
   FC,
   SetStateAction,
+  useEffect,
+  useState,
 } from 'react'
 import FormatCrypto from 'components/FormatCrypto'
 import BuyNow from 'components/BuyNow'
@@ -22,6 +24,13 @@ import { useMediaQuery } from '@react-hookz/web'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import RarityTooltip from './RarityTooltip'
 import { Collection } from 'types/reservoir'
+import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
+import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
+import getShorthandFrequencyFromFreq from 'lib/getShorthandFrequencyFromTokenDetails'
+import shortenFrequencyText from 'lib/shortenFrequencyText'
+import tinycolor from 'tinycolor2'
+import { DownArrow, UpArrow } from './Arrows'
+import { finiliar } from 'colors'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -57,11 +66,11 @@ const TokenCard: FC<Props> = ({
   mutate,
   setClearCartOpen,
   setCartToSwap,
-  finiliarImage,
 }) => {
   const account = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
+  const [ freshData, updateFreshData ] = useState<FiniliarMetadata>()
 
   const tokensMap = useRecoilValue(getTokensMap)
   const cartCurrency = useRecoilValue(getCartCurrency)
@@ -71,6 +80,20 @@ const TokenCard: FC<Props> = ({
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
   if (!token) return null
+
+  useEffect(() => {
+    fetchMetaFromFiniliar(token?.token?.tokenId!).then((res) => {
+      updateFreshData({
+        latestPrice: res.latestPrice,
+        latestDelta: res.latestDelta,
+        image: res.image,
+        background: res.background,
+        attributes: res.attributes
+      })
+    }).catch((err) => {
+      console.log(`Error fetching data for token id ${token?.token?.tokenId}:`, err)
+    })
+  }, [token?.token?.tokenId])
 
   if (!CHAIN_ID) return null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
@@ -84,10 +107,16 @@ const TokenCard: FC<Props> = ({
 
   const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
 
+  const textColor = tinycolor(freshData?.background).isLight()
+    ? tinycolor(freshData?.background).darken(15).toString()
+    : tinycolor(freshData?.background).lighten(25).toString()
+
+  const deltaColor = freshData?.latestDelta! < 0 ? finiliar[900] : finiliar[500]
+
   return (
     <div
       key={`${token?.token?.contract}${token?.token?.tokenId}`}
-      className="group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-primary-200 transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
+      className="hoverTrigger group relative mb-6 grid transform-gpu self-start overflow-hidden rounded-[16px] bg-primary-200 transition ease-in hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-lg hover:ease-out dark:border-0 dark:bg-neutral-800 dark:ring-1 dark:ring-neutral-600"
     >
       {isInCart ? (
         <div className="absolute top-4 right-4 z-10 flex h-[34px] w-[34px] animate-slide-down items-center justify-center overflow-hidden rounded-full bg-primary-700">
@@ -99,11 +128,38 @@ const TokenCard: FC<Props> = ({
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/discover/${token?.token?.tokenId}`}
       >
-        <a className="mb-[88px] md:mb-[48px]">
-          {finiliarImage ? (
+        <a className="mb-[88px] md:mb-[48px] hoverTrigger">
+          {freshData?.latestDelta &&
+            <div
+              
+              // className={`hoverTarget absolute  inline-flex justify-space-between top-[5px] left-[5px] z-[9] text-sm rounded-[16px] bg-primary-100/75 p-1 space-x-2 ${
+              //   freshData?.latestDelta! < 0 ? '!text-primary-900/75' : '!text-primary-500'
+              // }`}
+              className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]"
+            >
+                {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
+                  <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                  <span>${freshData?.latestPrice.toFixed(2)}</span>
+                </div> */}
+              <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/75 rounded-full items-center rounded-full py-[2px] px-1 space-x-1"}>
+                {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
+                  <UpArrow color={deltaColor} />
+                }
+                {parseFloat(freshData?.latestDelta!.toFixed(2)) < 0 &&
+                  <DownArrow color={deltaColor} />
+                }
+                {freshData?.latestDelta.toFixed(2)}%
+              </div>
+              <div className="rounded-full py-[2px] px-1" style={{ color: textColor }}>
+                {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
+              </div>
+            </div>
+          }
+          {freshData?.image ? (
             <Image
               loader={({ src }) => src}
-              src={finiliarImage}
+              // src={'https://d3bein9793f2sh.cloudfront.net/fit-in/300x300/' + freshData?.image}
+              src={freshData?.image}
               alt={`${token?.token?.name}`}
               className="w-full"
               width={imageSize}

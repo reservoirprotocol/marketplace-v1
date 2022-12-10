@@ -18,7 +18,7 @@ const Avatar: FC<Props> = ({ address, avatar, size = 24 }) => {
     >
       <img
         className="object-fit h-full w-full"
-        src={avatar || "/fini-face.png"}
+        src={avatar || "https://cdn.finiliar.com/website/fini-face.png"}
         alt={'ENS Avatar'}
       />
     </div>

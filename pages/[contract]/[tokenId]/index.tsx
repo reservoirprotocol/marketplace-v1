@@ -1,6 +1,5 @@
 import Layout from 'components/Layout'
 import setParams from 'lib/params'
-import { fetchFromContract } from 'lib/fetchFromContract'
 import { GetStaticPaths, GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
@@ -21,10 +20,11 @@ import {
   useUserTokens,
 } from '@reservoir0x/reservoir-kit-ui'
 import { useAccount } from 'wagmi'
-import getIconFromTokenDetails from 'lib/getIconFromAttributes'
+// import getIconFromTokenDetails from 'lib/getIconFromAttributes'
 import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFromTokenDetails'
 import useInterval from 'hooks/useInterval'
 import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
+import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
 
 // Environment variables
 // For more information about these variables
@@ -49,16 +49,10 @@ const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 const FINILIAR_API = process.env.NEXT_PUBLIC_FINILIAR_API || "https://api.finiliar.com"
 
-interface AdditionalMetadata {
-  background: string,
-  latestDelta: number,
-  latestPrice: number
-}
-
 type Props = {
   collectionId: string
   tokenDetails?: TokenDetails,
-  additionalMetadata?: AdditionalMetadata
+  freshMetadata?: FiniliarMetadata
 }
 
 const metadata = {
@@ -87,15 +81,14 @@ const metadata = {
   ),
 }
 
-const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata }) => {  
+const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) => {  
   const [tokenOpenSea] = useState<any>({
     animation_url: null,
     extension: null,
   })
   // these will be referenced throughout, will update on an interval via poll, and
   // will be initialized with the values passed in
-  const [freshAdditionalMetadata, setFreshAdditionalMetadata] = useState(additionalMetadata)
-  const [freshTokenDetails, setFreshAdditionalTokenDetails] = useState(tokenDetails)
+  const [ freshData, setFreshData ] = useState(freshMetadata)
   
   const account = useAccount()
   const router = useRouter()
@@ -120,10 +113,11 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
 
 
   const tokens = tokenData.data
-  const token = tokens?.[0] || { token: freshTokenDetails }
+  const token = tokens?.[0] || { token: tokenDetails }
   
   if (token.token) {
-    token.token.image = freshTokenDetails?.image;
+    // set the image reference to come from our freshData
+    token.token.image = freshData?.image;
   }
   const checkUserOwnership = token.token?.kind === 'erc1155'
   const { data: userTokens } = useUserTokens(
@@ -159,24 +153,22 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
   useInterval(async () => {
     if (!tokenDetails?.image) return
     // TODO: this code repeats getServerSideProps, can we consolidate?
-    const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
+    const metadata = await fetchMetaFromFiniliar(tokenDetails.tokenId)
     console.log('Fresh data:', metadata)
-    
-    // conditionally add an updated gif
-    if (tokenDetails.image !== metadata.image) {
-      tokenDetails.image = metadata.image
-      setFreshAdditionalTokenDetails(tokenDetails)
+
+    if (metadata !== freshData) {
+      // NOTE: don't know why this mutation works, we should probably pass this
+      // as state into the <TokenMedia /> component
+      token!.token!.image = metadata.image
+      setFreshData({
+        background: metadata.background,
+        latestDelta: metadata.latestDelta,
+        latestPrice: metadata.latestPrice,
+        image: metadata.image
+      })
     }
     
-    // conditionall add updated additionalMetadata
-    const addMetadata = {
-      background: metadata.background,
-      latestDelta: metadata.latestDelta,
-      latestPrice: metadata.latestPrice
-    }
-    if (addMetadata !== additionalMetadata) setFreshAdditionalMetadata(addMetadata)
-    
-  }, 60000) // 60 seconds
+  }, 10000) // 60 seconds
 
   if (tokenData.error) {
     return <div>There was an error</div>
@@ -210,7 +202,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
       ? true
       : token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
 
-  const icon = getIconFromTokenDetails(tokenDetails!)
+  // const icon = getIconFromTokenDetails(tokenDetails!)
   const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
   return (
@@ -221,7 +213,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
         {image}
       </Head>
       <div className="col-span-full">
-        <div className="mb-4 relative" style={{ background: freshAdditionalMetadata?.background }}>
+        <div className="mb-4 relative" style={{ background: freshData?.background }}>
           {/* <div className="z-10 m-auto top-0 absolute inline-flex space-x-4 p-4 items-center px-6 md:px-16">
               <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
                 <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
@@ -258,12 +250,12 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, additionalMetadata
           <div className="reservoir-h4">Live data</div>
           <div className="bg-primary-600 flex flex-col text-primary-800 rounded-xl p-5 mt-3 max-w-[300px]">
             <span className="text-sm mb-2">{getAttributeFromTokenDetails(tokenDetails!, 'Family')}</span>
-            <span className="reservoir-h4 text-primary-800">${freshAdditionalMetadata?.latestPrice.toFixed(2)}</span>
+            <span className="reservoir-h4 text-primary-800">${freshData?.latestPrice.toFixed(2)}</span>
             <div
-              className={"mt-2 text-md " + (freshAdditionalMetadata?.latestDelta! < 0 ? 'text-primary-900' : 'text-primary-500')}
+              className={"mt-2 text-md " + (freshData?.latestDelta! < 0 ? 'text-primary-900' : 'text-primary-500')}
             >
-              {freshAdditionalMetadata?.latestDelta! > 0 && <span>+</span>}
-              {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
+              {freshData?.latestDelta! > 0 && <span>+</span>}
+              {freshData?.latestDelta.toFixed(2)}% past {freqShorthand}
             </div>
           </div>
         </div>
@@ -347,14 +339,14 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const metadata = await (await fetch(FINILIAR_API + "/metadata/" + tokenDetails.tokenId)).json()
-  tokenDetails.image = metadata.image
+  const metadata = await fetchMetaFromFiniliar(tokenDetails.tokenId)
 
   // pass additional metadata we got from our own server
-  const additionalMetadata = {
+  const freshMetadata: FiniliarMetadata = {
     background: metadata.background,
     latestDelta: metadata.latestDelta,
-    latestPrice: metadata.latestPrice
+    latestPrice: metadata.latestPrice,
+    image: metadata.image
   }
 
   const collectionId = data.tokens?.[0]?.token?.collection?.id
@@ -366,6 +358,6 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   return {
-    props: { collectionId, tokenDetails, additionalMetadata },
+    props: { collectionId, tokenDetails, freshMetadata },
   }
 }
