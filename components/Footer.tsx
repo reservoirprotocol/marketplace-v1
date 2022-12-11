@@ -11,7 +11,7 @@ const Footer = () => {
         <div className='flex flex-row justify-between items-center gap-x-6 sm:gap-x-8 mb-6 sm:mb-0 text-xs sm:text-sm flex-wrap'>
           © 2022 finiliar studios, ltd.
         </div>
-        <div className='flex flex-row items-center gap-x-6'>
+        <div className='flex flex-row flex-wrap items-center gap-6'>
           <Link href='/discover'>
             [ Discover ]
           </Link>
