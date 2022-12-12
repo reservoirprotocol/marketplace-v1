@@ -21,7 +21,6 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
   const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
     limit: 20,
     includeTopBid: true,
-    sortBy: 'acquiredAt',
   }
   if (COLLECTION_SET_ID) {
     userTokensParams.collectionsSetId = COLLECTION_SET_ID

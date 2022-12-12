@@ -1813,17 +1813,17 @@
   dependencies:
     "@react-hookz/deep-equal" "^1.0.3"
 
-"@reservoir0x/reservoir-kit-client@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.2.1.tgz#d7464f811e5d24006b21e27e7ed2c400e2f99e45"
-  integrity sha512-iycoAe7ouUr58Y20oyMK11P652VfbMAvHENAjgOkT+wT9c+eV6afC1FtesY15rBNZFfuQNGTN6pha70lTiQ5TQ==
+"@reservoir0x/reservoir-kit-client@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-client/-/reservoir-kit-client-0.2.3.tgz#aba7947ed8d3af86171c0ad0dfa27f59a6909985"
+  integrity sha512-1OqRNhPklCodg8HPnKgWVULTl/B3mp7cgQvlBjQlz53R31qQAstxBKaVfLRb7tAZgBgI/ZdQ6uyARAL6PCQAvQ==
   dependencies:
     axios "^0.27.2"
 
-"@reservoir0x/reservoir-kit-ui@0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.6.3.tgz#f8492baf4cb10a972a4c152185136841a0bd2127"
-  integrity sha512-ZTj4/V9VFB4QjClmZtqAX2rI4vABTVqCcipIQHO0A3HWlhr4rkQSnp00vEJ1IVrSboPd27AAHd3S3d6wZsrhMQ==
+"@reservoir0x/reservoir-kit-ui@0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@reservoir0x/reservoir-kit-ui/-/reservoir-kit-ui-0.6.5.tgz#e60dd1f6fb22a48a5c492e511fca9b8b1a1d9b8c"
+  integrity sha512-Q/IAbgZ3eo/2GCZhjJuix878YMEC7QrepquLYQFHDX5OSWj626fsxl+1MSjKTH1Pc06zbJjwU4YK2G5UqamQAw==
   dependencies:
     "@fortawesome/fontawesome-svg-core" "^6.1.1"
     "@fortawesome/free-solid-svg-icons" "^6.1.1"
@@ -1836,7 +1836,7 @@
     "@radix-ui/react-switch" "1.0.0"
     "@radix-ui/react-toggle-group" "^1.0.0"
     "@react-hookz/web" "^19.2.0"
-    "@reservoir0x/reservoir-kit-client" "0.2.1"
+    "@reservoir0x/reservoir-kit-client" "0.2.3"
     "@stitches/react" "^1.2.8"
     dayjs "^1.11.4"
     flatpickr "^4.6.13"
@@ -2098,6 +2098,11 @@
   integrity sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==
   dependencies:
     "@types/node" "*"
+
+"@types/tinycolor2@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@types/tinycolor2/-/tinycolor2-1.4.3.tgz#ed4a0901f954b126e6a914b4839c77462d56e706"
+  integrity sha512-Kf1w9NE5HEgGxCRyIcRXR/ZYtDv0V8FVPtYHwLxl0O+maGX0erE77pQlD0gpP+/KByMZ87mOA79SjifhSB3PjQ==
 
 "@types/unist@*", "@types/unist@^2.0.0":
   version "2.0.6"
@@ -7478,6 +7483,11 @@ timed-out@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
   integrity sha512-G7r3AhovYtr5YKOWQkta8RKAPb+J9IsO4uVmzjl8AZwfhs8UcUwTiD6gcJYSgOtzyjvQKrKYn41syHbUWMkafA==
+
+tinycolor2@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.2.tgz#3f6a4d1071ad07676d7fa472e1fac40a719d8803"
+  integrity sha512-vJhccZPs965sV/L2sU4oRQVAos0pQXwsvTLkWYdqJ+a8Q5kPFzJTuOFwy7UniPli44NKQGAglksjvOcpo95aZA==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"

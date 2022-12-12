@@ -12,7 +12,11 @@ import React, { ComponentPropsWithoutRef, FC, ReactNode, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { setToast } from './setToast'
-import recoilCartTokens, { getCartCurrency, getTokensMap } from 'recoil/cart'
+import recoilCartTokens, {
+  getCartCurrency,
+  getPricingPools,
+  getTokensMap,
+} from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { Collection } from 'types/reservoir'
 import { formatDollar } from 'lib/numbers'
@@ -22,6 +26,7 @@ import { FaShoppingCart } from 'react-icons/fa'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
 import { useRouter } from 'next/router'
+import { getPricing } from 'lib/token/pricing'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
@@ -51,6 +56,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
   const tokensMap = useRecoilValue(getTokensMap)
   const cartCurrency = useRecoilValue(getCartCurrency)
+  const cartPools = useRecoilValue(getPricingPools)
   const accountData = useAccount()
   const { data: signer } = useSigner()
   const { chain: activeChain } = useNetwork()
@@ -64,18 +70,28 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const deeplinkToAcceptBid = router.query.acceptBid === 'true'
 
   const token = details.data ? details.data[0] : undefined
+  const tokenId = token?.token?.tokenId
+  const contract = token?.token?.contract
 
+  let floorAskPrice = getPricing(cartPools, token)
+  let canAddToCart = true
+
+  if (!floorAskPrice && token?.market?.floorAsk?.dynamicPricing?.data?.pool) {
+    canAddToCart = false
+  }
+
+  // Disabling the rules of hooks here due to erroneous error message,
+  //  the linter is likely confused due to two custom hook calls of the same name
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const topBidUsdConversion = useCoinConversion(
     token?.market?.topBid?.price?.currency?.symbol ? 'usd' : undefined,
     token?.market?.topBid?.price?.currency?.symbol
   )
 
-  // Disabling the rules of hooks here due to erroneous error message,
-  //  the linter is likely confused due to two custom hook calls of the same name
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const floorAskUsdConversion = useCoinConversion(
-    token?.market?.floorAsk?.price?.currency?.symbol ? 'usd' : undefined,
-    token?.market?.floorAsk?.price?.currency?.symbol
+    floorAskPrice?.currency?.symbol ? 'usd' : undefined,
+    floorAskPrice?.currency?.symbol
   )
 
   if (!isMounted) {
@@ -88,8 +104,8 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
       : null
 
   const floorAskUsdPrice =
-    floorAskUsdConversion && token?.market?.floorAsk?.price?.amount?.decimal
-      ? floorAskUsdConversion * token?.market?.floorAsk?.price?.amount?.decimal
+    floorAskUsdConversion && floorAskPrice?.amount?.decimal
+      ? floorAskUsdConversion * floorAskPrice?.amount?.decimal
       : null
 
   const listSourceName = token?.market?.floorAsk?.source?.name as
@@ -121,45 +137,35 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
   const listSourceLogo =
     isLocalListed && SOURCE_ICON
       ? SOURCE_ICON
-      : `${API_BASE}/redirect/sources/${
-          listSourceDomain || listSourceName
-        }/logo/v2`
-
-  const offerSourceLogo = `${API_BASE}/redirect/sources/${
-    offerSourceDomain || offerSourceName
-  }/logo/v2`
-
-  const listSourceRedirect = `${API_BASE}/redirect/sources/${
-    listSourceDomain || listSourceName
-  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
-
-  const offerSourceRedirect = `${API_BASE}/redirect/sources/${
-    offerSourceDomain || offerSourceName
-  }/tokens/${token?.token?.contract}:${token?.token?.tokenId}/link/v2`
+      : `${API_BASE}/redirect/sources/${listSourceDomain || listSourceName
+      }/logo/v2`
 
   if (!CHAIN_ID) return null
 
   const isTopBidder =
     accountData.isConnected &&
     token?.market?.topBid?.maker?.toLowerCase() ===
-      accountData?.address?.toLowerCase()
+    accountData?.address?.toLowerCase()
   const isListed = token
-    ? token?.market?.floorAsk?.price !== null &&
-      token?.token?.kind !== 'erc1155'
+    ? floorAskPrice !== null && token?.token?.kind !== 'erc1155'
     : false
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
 
-  const tokenId = token?.token?.tokenId
-  const contract = token?.token?.contract
+  const offerSourceLogo = `${API_BASE}/redirect/sources/${offerSourceDomain || offerSourceName
+    }/logo/v2`
+
+  const listSourceRedirect = `${API_BASE}/redirect/sources/${listSourceDomain || listSourceName
+    }/tokens/${contract}:${tokenId}/link/v2`
+
+  const offerSourceRedirect = `${API_BASE}/redirect/sources/${offerSourceDomain || offerSourceName
+    }/tokens/${contract}:${tokenId}/link/v2`
 
   const isInCart = Boolean(tokensMap[`${contract}:${tokenId}`])
 
-  const isSudoswapSource = token?.market?.floorAsk?.source?.name == 'sudoswap'
-
   const showAcceptOffer =
     token?.market?.topBid?.id !== null &&
-    token?.market?.topBid?.id !== undefined &&
-    isOwner
+      token?.market?.topBid?.id !== undefined &&
+      isOwner
       ? true
       : false
 
@@ -188,9 +194,9 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }
             price={
               <FormatCrypto
-                amount={token?.market?.floorAsk?.price?.amount?.decimal}
-                address={token?.market?.floorAsk?.price?.currency?.contract}
-                decimals={token?.market?.floorAsk?.price?.currency?.decimals}
+                amount={floorAskPrice?.amount?.decimal}
+                address={floorAskPrice?.currency?.contract}
+                decimals={floorAskPrice?.currency?.decimals}
                 logoWidth={30}
                 maximumFractionDigits={8}
               />
@@ -384,15 +390,14 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
           </button>
         )}
 
-        {!isInCart && !isOwner && isListed && !isSudoswapSource && (
+        {!isInCart && !isOwner && isListed && canAddToCart && (
           <button
-            disabled={!token?.market?.floorAsk?.price || isSudoswapSource}
+            disabled={!floorAskPrice}
             onClick={() => {
               if (token?.token && token.market) {
                 if (
                   !cartCurrency ||
-                  token.market.floorAsk?.price?.currency?.contract ===
-                    cartCurrency?.contract
+                  floorAskPrice?.currency?.contract === cartCurrency?.contract
                 ) {
                   setCartTokens([
                     ...cartTokens,
@@ -414,21 +419,17 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
             }}
             className="mt-4 w-fit outline-none dark:focus:ring-4 dark:focus:ring-primary-900"
           >
-            {!isSudoswapSource &&
-              <div className="flex items-center dark:text-white">
-                <div>
-                  <span>Or</span>{' '}
-                  <span className="text-primary-500 hover:text-primary-500/75 dark:text-primary-100">
-                    add to cart
-                  </span>
-                </div>
+            <div className="flex items-center dark:text-white">
+              <div>
+                <span>Or</span>{' '}
+                <span className="text-primary-500 hover:text-primary-500/75 dark:text-primary-100">
+                  add to cart
+                </span>
               </div>
-            }
-            {isSudoswapSource &&
-              <div className="text-gray-400 reservoir-label-s">
-                Add to Cart is not yet available for dynamically priced sudoswap NFTs.
-              </div>
-            }
+            </div>
+            <div className="text-gray-400 reservoir-label-s">
+              Add to Cart is not yet available for dynamically priced sudoswap NFTs.
+            </div>
           </button>
         )}
       </article>

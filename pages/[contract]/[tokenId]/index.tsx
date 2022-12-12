@@ -109,6 +109,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
     ],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   })
 
 
@@ -321,6 +322,7 @@ export const getServerSideProps: GetServerSideProps<{
     tokens: [`${contract}:${tokenId}`],
     includeTopBid: true,
     includeAttributes: true,
+    includeDynamicPricing: true,
   }
 
   const href = setParams(url, query)
