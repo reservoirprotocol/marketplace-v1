@@ -166,7 +166,7 @@ const TokenCard: FC<Props> = ({
             //   objectFit="cover"
             //   layout="responsive"
             // />
-            <video loop autoPlay muted playsInline className={`object-cover w-full w-[${imageSize}px] h-[${imageSize}px]`}>
+            <video loop autoPlay muted playsInline className={`object-cover w-full`}>
               <source src={freshData?.image + '?format=mp4'} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
