@@ -77,7 +77,6 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
                   <Link href={tokenHref}>
                     <a className="flex items-center gap-2">
-                      {/*
                       <div className="relative h-10 w-10">
                         {image && (
                           <div className="aspect-w-1 aspect-h-1 relative">
@@ -91,7 +90,6 @@ const UserListingsTable: FC<Props> = ({ modal, mutate, isOwner, data }) => {
                           </div>
                         )}
                       </div>
-                      */}
                       <span className="whitespace-nowrap">
                         <div className="reservoir-body dark:text-white ">
                           {collectionName}
