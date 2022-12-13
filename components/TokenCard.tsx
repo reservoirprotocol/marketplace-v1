@@ -16,7 +16,7 @@ import useTokens from 'hooks/useTokens'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { getCartCurrency, getTokensMap } from 'recoil/cart'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
-import recoilCartTokens from 'recoil/cart/atom'
+import recoilCartTokens, { getPricingPools } from 'recoil/cart'
 import { ListModal, useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { setToast } from './token/setToast'
 import { MutatorCallback } from 'swr'
@@ -31,6 +31,7 @@ import shortenFrequencyText from 'lib/shortenFrequencyText'
 import tinycolor from 'tinycolor2'
 import { DownArrow, UpArrow } from './Arrows'
 import { finiliar } from 'colors'
+import { getPricing } from 'lib/token/pricing'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -75,6 +76,7 @@ const TokenCard: FC<Props> = ({
   const tokensMap = useRecoilValue(getTokensMap)
   const cartCurrency = useRecoilValue(getCartCurrency)
   const [cartTokens, setCartTokens] = useRecoilState(recoilCartTokens)
+  const cartPools = useRecoilValue(getPricingPools)
 
   const reservoirClient = useReservoirClient()
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
@@ -97,15 +99,19 @@ const TokenCard: FC<Props> = ({
 
   if (!CHAIN_ID) return null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
+  const tokenId = `${token?.token?.contract}:${token?.token?.tokenId}`
 
-  const isInCart = Boolean(
-    tokensMap[`${token?.token?.contract}:${token?.token?.tokenId}`]
-  )
+  const isInCart = Boolean(tokensMap[tokenId])
   const isOwner =
     token?.token?.owner?.toLowerCase() === account?.address?.toLowerCase()
   const imageSize = singleColumnBreakpoint ? 533 : 250
 
-  const isSudoswapSource = token.market?.floorAsk?.source?.name == 'sudoswap'
+  let price = getPricing(cartPools, token)
+  let canAddToCart = true
+
+  if (!price && token.market?.floorAsk?.dynamicPricing?.data?.pool) {
+    canAddToCart = false
+  }
 
   const textColor = tinycolor(freshData?.background).isLight()
     ? tinycolor(freshData?.background).darken(15).toString()
@@ -211,9 +217,9 @@ const TokenCard: FC<Props> = ({
             <div className="flex items-center">
               <div className="reservoir-h6 mr-[10px] flex items-center">
                 <FormatCrypto
-                  amount={token?.market?.floorAsk?.price?.amount?.decimal}
-                  address={token?.market?.floorAsk?.price?.currency?.contract}
-                  decimals={token.market?.floorAsk?.price?.currency?.decimals}
+                  amount={price?.amount?.decimal}
+                  address={price?.currency?.contract}
+                  decimals={price?.currency?.decimals}
                   maximumFractionDigits={4}
                 />
               </div>
@@ -274,10 +280,14 @@ const TokenCard: FC<Props> = ({
             />
           </div>
         )}
-        {token?.market?.floorAsk?.price?.amount?.decimal != null &&
-          token?.market?.floorAsk?.price?.amount?.decimal != undefined &&
+        {price?.amount?.decimal != null &&
+          price?.amount?.decimal != undefined &&
           !isOwner && (
-            <div className="grid grid-cols-2">
+            <div
+              className={`grid ${
+                isInCart || canAddToCart ? 'grid-cols-2' : ''
+              }`}
+            >
               <BuyNow
                 data={{
                   token,
@@ -287,7 +297,7 @@ const TokenCard: FC<Props> = ({
                 isInTheWrongNetwork={isInTheWrongNetwork}
                 buttonClassName="bg-primary-500 text-primary-100 reservoir-subtitle flex h-[40px] items-center justify-center whitespace-nowrap focus:ring-0"
               />
-              {isInCart ? (
+              {isInCart && (
                 <button
                   onClick={() => {
                     const newCartTokens = [...cartTokens]
@@ -304,63 +314,39 @@ const TokenCard: FC<Props> = ({
                 >
                   Remove
                 </button>
-              ) : (
-                <>
-                  {token?.market?.floorAsk?.source?.name !== 'sudoswap' ? 
-                    (
-                      <button
-                        disabled={isInTheWrongNetwork}
-                        onClick={() => {
-                          if (token && token.token && token.market) {
-                            if (
-                              !cartCurrency ||
-                              token.market.floorAsk?.price?.currency?.contract ===
-                                cartCurrency?.contract
-                            ) {
-                              setCartTokens([
-                                ...cartTokens,
-                                {
-                                  token: token.token,
-                                  market: token.market,
-                                },
-                              ])
-                            } else {
-                              setCartToSwap &&
-                                setCartToSwap([
-                                  {
-                                    token: token.token,
-                                    market: token.market,
-                                  },
-                                ])
-                              setClearCartOpen && setClearCartOpen(true)
-                            }
-                          }
-                        }}
-                        className="reservoir-subtitle bg-primary-200 border-t-2 border-primary-400 flex h-[40px] items-center justify-center disabled:cursor-not-allowed dark:border-neutral-600"
-                      >                
-                        Add to Cart
-                      </button>
-                    ) : (
-                      <Tooltip.Provider delayDuration={0}>
-                        <Tooltip.Root>
-                          <Tooltip.Trigger>
-                            <div className="reservoir-subtitle bg-primary-200 text-gray-400 flex h-[40px] items-center justify-center cursor-not-allowed dark:border-neutral-600">
-                              Add to Cart
-                            </div>
-                          </Tooltip.Trigger>
-                          <Tooltip.Portal>
-                            <Tooltip.Content arrowPadding={10}>
-                              <div className="bg-white rounded-md p-4 reservoir-label-s max-w-[175px] shadow-lg">
-                                Add to Cart is not yet available for dynamically priced sudoswap NFTs.
-                              </div>
-                              {/* <Tooltip.Arrow /> */}
-                            </Tooltip.Content>
-                          </Tooltip.Portal>
-                        </Tooltip.Root>
-                      </Tooltip.Provider>
-                    )  
-                  }
-                </>
+              )}
+              {!isInCart && canAddToCart && (
+                <button
+                  disabled={isInTheWrongNetwork}
+                  onClick={() => {
+                    if (token && token.token && token.market) {
+                      if (
+                        !cartCurrency ||
+                        price?.currency?.contract === cartCurrency?.contract
+                      ) {
+                        setCartTokens([
+                          ...cartTokens,
+                          {
+                            token: token.token,
+                            market: token.market,
+                          },
+                        ])
+                      } else {
+                        setCartToSwap &&
+                          setCartToSwap([
+                            {
+                              token: token.token,
+                              market: token.market,
+                            },
+                          ])
+                        setClearCartOpen && setClearCartOpen(true)
+                      }
+                    }
+                  }}
+                  className="reservoir-subtitle flex h-[40px] items-center justify-center border-t border-neutral-300 disabled:cursor-not-allowed dark:border-neutral-600"
+                >
+                  Add to Cart
+                </button>
               )}
             </div>
           )}

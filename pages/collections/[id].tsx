@@ -22,7 +22,7 @@ import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import Sweep from 'components/Sweep'
-import { useCollections, useAttributes } from '@reservoir0x/reservoir-kit-ui'
+import { useCollections } from '@reservoir0x/reservoir-kit-ui'
 import CollectionActivityTab from 'components/tables/CollectionActivityTab'
 import RefreshButton from 'components/RefreshButton'
 import MobileTokensFilter from 'components/filter/MobileTokensFilter'
@@ -340,6 +340,7 @@ export const getStaticProps: GetStaticProps<{
     sortBy: 'floorAskPrice',
     includeTopBid: false,
     limit: 10,
+    includeDynamicPricing: true,
   }
 
   setParams(tokensUrl, tokensQuery)

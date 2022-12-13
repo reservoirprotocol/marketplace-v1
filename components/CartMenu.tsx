@@ -2,7 +2,6 @@ import { styled, keyframes } from '@stitches/react'
 import * as Popover from '@radix-ui/react-popover'
 import { FC, useState } from 'react'
 import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
-import FormatNativeCrypto from './FormatNativeCrypto'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Execute } from '@reservoir0x/reservoir-kit-client'
 import { Signer } from 'ethers'
@@ -13,8 +12,10 @@ import cartTokensAtom, {
   getCartCount,
   getCartCurrency,
   getCartTotalPrice,
+  getPricingPools,
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
+import { getPricing } from 'lib/token/pricing'
 
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
@@ -40,6 +41,7 @@ const CartMenu: FC = () => {
   const cartCount = useRecoilValue(getCartCount)
   const cartTotal = useRecoilValue(getCartTotalPrice)
   const cartCurrency = useRecoilValue(getCartCurrency)
+  const pricingPools = useRecoilValue(getPricingPools)
   const [cartTokens, setCartTokens] = useRecoilState(cartTokensAtom)
   const [_open, setOpen] = useState(false)
   const [_steps, setSteps] = useState<Execute['steps']>()
@@ -155,19 +157,23 @@ const CartMenu: FC = () => {
           )}
         </div>
         <div className="mb-6 grid max-h-[300px] gap-2 overflow-auto">
-          {cartTokens.map(
-            (
-              { token: { collection, contract, name, image, tokenId }, market },
-              index
-            ) => {
-              return (
-                <div
-                  key={`${contract}:${tokenId}`}
-                  className="flex justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="h-14 w-14 overflow-hidden rounded-[4px]">
-                      <img src={image || collection?.image} alt="" />
+          {cartTokens.map((tokenData, index) => {
+            const { token, market } = tokenData
+            const { collection, contract, name, image, tokenId } = token
+            const price = getPricing(pricingPools, tokenData)
+
+            return (
+              <div
+                key={`${contract}:${tokenId}`}
+                className="flex justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-14 w-14 overflow-hidden rounded-[4px]">
+                    <img src={image || collection?.image} alt="" />
+                  </div>
+                  <div>
+                    <div className="reservoir-subtitle">
+                      {name || `#${tokenId}`}
                     </div>
                     <div>
                       <div className="reservoir-subtitle">
@@ -185,19 +191,19 @@ const CartMenu: FC = () => {
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      const newCartTokens = [...cartTokens]
-                      newCartTokens.splice(index, 1)
-                      setCartTokens(newCartTokens)
-                    }}
-                  >
-                    <FaTrashAlt />
-                  </button>
                 </div>
-              )
-            }
-          )}
+                <button
+                  onClick={() => {
+                    const newCartTokens = [...cartTokens]
+                    newCartTokens.splice(index, 1)
+                    setCartTokens(newCartTokens)
+                  }}
+                >
+                  <FaTrashAlt />
+                </button>
+              </div>
+            )
+          })}
         </div>
 
         <div className="mb-4 flex justify-between">

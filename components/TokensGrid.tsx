@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import LoadingCard from './LoadingCard'
 import { useInView } from 'react-intersection-observer'
 import Masonry from 'react-masonry-css'
@@ -6,7 +6,11 @@ import useTokens from '../hooks/useTokens'
 import SwapCartModal from 'components/SwapCartModal'
 import TokenCard from './TokenCard'
 import { Token } from 'recoil/cart/atom'
+import { getPricingPools } from 'recoil/cart'
 import { Collection } from 'types/reservoir'
+import { useRouter } from 'next/router'
+import { useRecoilValue } from 'recoil'
+import { getPricing } from 'lib/token/pricing'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -23,8 +27,36 @@ const TokensGrid: FC<Props> = ({ tokens, viewRef, collectionImage, isLoading, co
   const { data, mutate } = tokens
   const [clearCartOpen, setClearCartOpen] = useState(false)
   const [cartToSwap, setCartToSwap] = useState<undefined | Token[]>()
-
+  const router = useRouter()
+  const [sortedTokens, setSortedTokens] = useState<Props['tokens']['data']>([])
   const didReachEnd = tokens.isFetchingInitialData || !tokens.hasNextPage
+  const sortBy = router.query['sortBy']?.toString()
+  const sortDirection = router.query['sortDirection']?.toString()
+  const cartPools = useRecoilValue(getPricingPools)
+
+  useEffect(() => {
+    const cartHasPool = Object.values(cartPools).length > 0
+    if (cartHasPool && (sortBy === 'floorAskPrice' || !sortBy)) {
+      setSortedTokens(
+        data.slice().sort((a, b) => {
+          const aPrice = getPricing(cartPools, a)
+          const bPrice = getPricing(cartPools, b)
+
+          if (sortDirection === 'asc' || !sortDirection) {
+            return (
+              (aPrice?.amount?.decimal || 0) - (bPrice?.amount?.decimal || 0)
+            )
+          } else {
+            return (
+              (aPrice?.amount?.decimal || 0) + (bPrice?.amount?.decimal || 0)
+            )
+          }
+        })
+      )
+    } else {
+      setSortedTokens(data)
+    }
+  }, [data, sortBy, sortDirection, cartPools])
 
   if (!CHAIN_ID) return null
 
