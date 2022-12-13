@@ -130,18 +130,12 @@ const TokenCard: FC<Props> = ({
       >
         <a className="mb-[88px] md:mb-[48px] hoverTrigger">
           {freshData?.latestDelta &&
-            <div
-              
-              // className={`hoverTarget absolute  inline-flex justify-space-between top-[5px] left-[5px] z-[9] text-sm rounded-[16px] bg-primary-100/75 p-1 space-x-2 ${
-              //   freshData?.latestDelta! < 0 ? '!text-primary-900/75' : '!text-primary-500'
-              // }`}
-              className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]"
-            >
+            <div className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]">
                 {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
                   <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                   <span>${freshData?.latestPrice.toFixed(2)}</span>
                 </div> */}
-              {/* <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/75 rounded-full items-center rounded-full py-[2px] px-1 space-x-1"}>
+              <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/[.35] rounded-full items-center rounded-full py-[2px] px-2 space-x-1"}>
                 {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
                   <UpArrow color={deltaColor} />
                 }
@@ -150,9 +144,9 @@ const TokenCard: FC<Props> = ({
                 }
                 {freshData?.latestDelta.toFixed(2)}%
               </div>
-              <div className="rounded-full py-[2px] px-1" style={{ color: textColor }}>
+              <div className="rounded-full bg-primary-100/[.35] py-[2px] px-2" style={{ color: textColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
-              </div> */}
+              </div>
             </div>
           }
           {freshData?.image ? (
