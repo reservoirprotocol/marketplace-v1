@@ -427,9 +427,6 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
                 </span>
               </div>
             </div>
-            <div className="text-gray-400 reservoir-label-s">
-              Add to Cart is not yet available for dynamically priced sudoswap NFTs.
-            </div>
           </button>
         )}
       </article>
