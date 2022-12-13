@@ -156,20 +156,13 @@ const TokenCard: FC<Props> = ({
             </div>
           }
           {freshData?.image ? (
-            // <Image
-            //   loader={({ src }) => src}
-            //   src={freshData?.image + '?format=mp4&width=600&quality=50'}
-            //   alt={`${token?.token?.name}`}
-            //   className="w-full"
-            //   width={imageSize}
-            //   height={imageSize}
-            //   objectFit="cover"
-            //   layout="responsive"
-            // />
-            <video loop autoPlay muted playsInline className={`object-cover w-full`}>
-              <source src={freshData?.image + '?format=mp4'} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            <div>
+              <span className="block pb-[100%]" />
+              <video loop autoPlay muted playsInline className="object-cover w-full absolute top-0">
+                <source src={freshData?.image + '?format=mp4'} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           ) : (
             <div className="relative w-full">
               <div className="absolute inset-0 grid place-items-center backdrop-blur-lg">

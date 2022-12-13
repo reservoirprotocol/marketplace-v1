@@ -37,17 +37,17 @@ const Module: FC<PropThree> = ({ className, children }) => {
 
 const HomeContent: FC<Props> = () => {
   const featured = [
-    'https://cdn.finiliar.com/neutral_short_hungry_stomach/MjQ4OARx84.gif',
-    'https://cdn.finiliar.com/happy_short_huge_surprise/MTkzOARx89.gif',
-    'https://cdn.finiliar.com/sad_short_angry/MTc2MARx07.gif',
-    'https://cdn.finiliar.com/neutral_short_dance/OTI5MgRx22.gif',
-    'https://cdn.finiliar.com/neutral_short_scratching_head/OTU1MwRx35.gif',
-    'https://cdn.finiliar.com/neutral_short_idle/NzcxNgRx67.gif',
-    'https://cdn.finiliar.com/happy_short_dancing_with_stars/MDIzNQRx52.gif',
-    'https://cdn.finiliar.com/neutral_short_eating/MjM1MARx03.gif',
-    'https://cdn.finiliar.com/neutral_short_bored/NDU0MwRx35.gif',
-    'https://cdn.finiliar.com/neutral_short_walk/NDA3NARx40.gif',
-    'https://cdn.finiliar.com/neutral_short_eating/ODc2OQRx97.gif'
+    'https://cdn.finiliar.com/neutral_short_hungry_stomach/MjQ4OARx84.gif?format=mp4',
+    'https://cdn.finiliar.com/happy_short_huge_surprise/MTkzOARx89.gif?format=mp4',
+    'https://cdn.finiliar.com/sad_short_angry/MTc2MARx07.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_dance/OTI5MgRx22.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_scratching_head/OTU1MwRx35.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_idle/NzcxNgRx67.gif?format=mp4',
+    'https://cdn.finiliar.com/happy_short_dancing_with_stars/MDIzNQRx52.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_eating/MjM1MARx03.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_bored/NDU0MwRx35.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_walk/NDA3NARx40.gif?format=mp4',
+    'https://cdn.finiliar.com/neutral_short_eating/ODc2OQRx97.gif?format=mp4'
   ]
   return (
     <div className="pb-11 mb-11 overflow-x-hidden w-[100vw] max-w-[100%] col-span-full bg-[#fff5f3]">
@@ -60,7 +60,10 @@ const HomeContent: FC<Props> = () => {
           {featured.map(item => {
             return (
               <div key={item}>
-                <img src={item} alt="Example fini" className="rounded-xl max-w-[200px] mx-2" />
+                <video loop autoPlay muted playsInline className="rounded-xl max-w-[200px] mx-2">
+                  <source src={item} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             )
           })}
