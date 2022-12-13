@@ -18,14 +18,8 @@ import 'styles/rodger.css'
 import 'styles/ingrammono.css'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
-import {
-  WagmiConfig,
-  createClient,
-  chain,
-  configureChains,
-  allChains,
-  chainId,
-} from 'wagmi'
+import { WagmiConfig, createClient, configureChains } from 'wagmi'
+import * as allChains from 'wagmi/chains'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider, useTheme } from 'next-themes'
@@ -56,7 +50,7 @@ const infuraId = process.env.NEXT_PUBLIC_INFURA_ID
 
 // API key for Ethereum node
 // Two popular services are Alchemy (alchemy.com) and Infura (infura.io)
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID || ''
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
@@ -76,12 +70,12 @@ const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
-const envChain = allChains.find(
-  (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
+const envChain = Object.values(allChains).find(
+  (chain) => chain.id === +(CHAIN_ID || allChains.mainnet)
 )
 
 const { chains, provider } = configureChains(
-  envChain ? [envChain] : [chain.mainnet],
+  envChain ? [envChain] : [allChains.mainnet],
   [alchemyProvider({ apiKey: alchemyId }), publicProvider()]
 )
 

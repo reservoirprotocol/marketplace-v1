@@ -50,7 +50,7 @@ const CartMenu: FC = () => {
   const { address } = useAccount()
   const reservoirClient = useReservoirClient()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     token:
       cartCurrency?.symbol !== 'ETH'
         ? (cartCurrency?.contract as UseBalanceToken)

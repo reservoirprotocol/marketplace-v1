@@ -6,8 +6,8 @@ import {
   useDisconnect,
   useEnsAvatar,
   useEnsName,
+  Address,
 } from 'wagmi'
-import EthAccount from './EthAccount'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
@@ -24,7 +24,7 @@ const DISABLE_POWERED_BY_RESERVOIR =
 
 const ConnectWallet: FC = () => {
   const account = useAccount()
-  const { data: ensAvatar } = useEnsAvatar({ addressOrName: account?.address })
+  const { data: ensAvatar } = useEnsAvatar({ address: account?.address })
   const { data: ensName } = useEnsName({ address: account?.address })
   const { connectors } = useConnect()
   const { disconnect } = useDisconnect()
@@ -120,6 +120,6 @@ type Props = {
 }
 
 export const Balance: FC<Props> = ({ address }) => {
-  const { data: balance } = useBalance({ addressOrName: address })
+  const { data: balance } = useBalance({ address: address as Address })
   return <FormatNativeCrypto amount={balance?.value} />
 }

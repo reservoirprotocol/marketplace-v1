@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { allChains, Chain } from 'wagmi'
+import { Chain } from 'wagmi'
+import * as allChains from 'wagmi/chains'
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID
 
 export function findChain(id?: string) {
   if (id) {
-    return allChains.find((x) => x.id === +id)
+    return Object.values(allChains).find((chain) => chain.id === +id)
   }
   return undefined
 }
