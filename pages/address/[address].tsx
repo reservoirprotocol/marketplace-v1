@@ -10,7 +10,6 @@ import { useAccount, useNetwork, useEnsName, useEnsAvatar } from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import UserOffersTable from 'components/tables/UserOffersTable'
-import UserOffersReceivedTable from 'components/tables/UserOffersReceivedTable'
 import UserListingsTable from 'components/tables/UserListingsTable'
 import UserTokensGrid from 'components/UserTokensGrid'
 import Avatar from 'components/Avatar'
@@ -222,7 +221,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
   fallback: {
-    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
@@ -235,11 +234,11 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v5`)
+  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v6`)
 
-  let query: paths['/users/{user}/tokens/v5']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v6']['get']['parameters']['query'] = {
     limit: 20,
-    offset: 0,
+    normalizeRoyalties: true,
   }
 
   if (COLLECTION_SET_ID) {
