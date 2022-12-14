@@ -46,7 +46,7 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
       <Stat name="floor">
         <h3 className="flex items-center justify-center gap-1 dark:text-white">
           <FormatNativeCrypto amount={stats.floor} maximumFractionDigits={2} />
-          <PercentageChange value={stats.floorChange} />
+          {/* <PercentageChange value={stats.floorChange} /> */}
         </h3>
       </Stat>
       <Stat name="total volume">
