@@ -16,7 +16,7 @@ import cartTokensAtom, {
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { getPricing } from 'lib/token/pricing'
-
+import { formatEther } from 'ethers/lib/utils'
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
 const slideDown = keyframes({
