@@ -234,6 +234,7 @@ export const getStaticProps: GetStaticProps<{
   ) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 
@@ -266,6 +267,7 @@ export const getStaticProps: GetStaticProps<{
   if (!collectionId) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 
