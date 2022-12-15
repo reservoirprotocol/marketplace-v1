@@ -13,10 +13,11 @@ export default function useCollectionStats(
   function getUrl() {
     if (!collectionId) return undefined
 
-    const pathname = `${PROXY_API_BASE}/stats/v1`
+    const pathname = `${PROXY_API_BASE}/stats/v2`
 
-    const query: paths['/stats/v1']['get']['parameters']['query'] = {
+    const query: paths['/stats/v2']['get']['parameters']['query'] = {
       collection: collectionId,
+      normalizeRoyalties: true
     }
 
     // Extract all queries of attribute type
@@ -46,7 +47,7 @@ export default function useCollectionStats(
 
   const href = getUrl()
 
-  const stats = useSWR<paths['/stats/v1']['get']['responses']['200']['schema']>(
+  const stats = useSWR<paths['/stats/v2']['get']['responses']['200']['schema']>(
     href,
     fetcher
   )

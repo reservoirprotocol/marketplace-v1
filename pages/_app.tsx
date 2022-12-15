@@ -17,15 +17,18 @@ import 'styles/roobert.css'
 import 'styles/rodger.css'
 import 'styles/ingrammono.css'
 import type { AppContext, AppProps } from 'next/app'
-import App from 'next/app'
-import { WagmiConfig, createClient, allChains, configureChains } from 'wagmi'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { publicProvider } from 'wagmi/providers/public'
+import { default as NextApp } from 'next/app'
+import {
+  WagmiConfig,
+  createClient,
+  chain,
+  configureChains,
+  allChains,
+  chainId,
+} from 'wagmi'
 import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider, useTheme } from 'next-themes'
 import { RecoilRoot } from 'recoil'
 import {
   darkTheme,
@@ -34,7 +37,17 @@ import {
   ReservoirKitProviderProps,
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import '@rainbow-me/rainbowkit/styles.css'
+
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme as rainbowKitDarkTheme,
+  lightTheme as rainbowKitLightTheme,
+} from '@rainbow-me/rainbowkit'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
 
 const THEME_SWITCHING_ENABLED = process.env.NEXT_PUBLIC_THEME_SWITCHING_ENABLED
 const DARK_MODE_ENABLED = process.env.NEXT_PUBLIC_DARK_MODE
@@ -46,9 +59,17 @@ const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
 import presetColors from '../colors'
+
 const FEE_BPS = process.env.NEXT_PUBLIC_FEE_BPS
 const FEE_RECIPIENT = process.env.NEXT_PUBLIC_FEE_RECIPIENT
 const SOURCE_DOMAIN = process.env.NEXT_PUBLIC_SOURCE_DOMAIN
+const API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+
+const envChain = allChains.find(
+  (chain) => chain.id === +(CHAIN_ID || chainId.mainnet)
+)
 
 //extending allChains by Autobahn Network Chain
 const allChainsExtended = [
@@ -80,52 +101,66 @@ const { chains, provider } = configureChains(allChainsExtended, [
   publicProvider(),
 ])
 
-// Set up connectors
-const client = createClient({
-  autoConnect: true,
-  provider,
-  connectors: [
-    new InjectedConnector({
-      chains,
-      options: { name: 'Injected' },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'reservoir.market',
-      },
-    }),
-  ],
+const { connectors } = getDefaultWallets({
+  appName: SOURCE_NAME || 'Reservoir Market',
+  chains,
 })
 
-function MyApp({
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
+
+function AppWrapper(props: AppProps & { baseUrl: string }) {
+  const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
+
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme={defaultTheme}
+      forcedTheme={!THEME_SWITCHING_ENABLED ? defaultTheme : undefined}
+    >
+      <App {...props} />
+    </ThemeProvider>
+  )
+}
+
+const App: FC<AppProps & { baseUrl: string }> = ({
   Component,
   pageProps,
   baseUrl,
-}: AppProps & { baseUrl: string }) {
+}) => {
+  const { theme } = useTheme()
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
   const [reservoirKitTheme, setReservoirKitTheme] = useState<
     ReservoirKitTheme | undefined
   >()
+  const [rainbowKitTheme, setRainbowKitTheme] = useState<
+    | ReturnType<typeof rainbowKitDarkTheme>
+    | ReturnType<typeof rainbowKitLightTheme>
+    | undefined
+  >()
+  const marketplaceTheme = THEME_SWITCHING_ENABLED ? theme : defaultTheme
 
   useEffect(() => {
     const primaryColor = (PRIMARY_COLOR as string) || 'default'
     const primaryColorPalette = (
       presetColors as Record<string, Record<string, string>>
     )[primaryColor]
-    if (defaultTheme == 'dark') {
+
+    if (marketplaceTheme == 'dark') {
       setReservoirKitTheme(
         darkTheme({
           headlineFont: FONT_FAMILY,
           font: BODY_FONT_FAMILY,
           primaryColor: primaryColorPalette['700'],
           primaryHoverColor: primaryColorPalette['900'],
+        })
+      )
+      setRainbowKitTheme(
+        rainbowKitDarkTheme({
+          borderRadius: 'small',
         })
       )
     } else {
@@ -137,8 +172,13 @@ function MyApp({
           primaryHoverColor: primaryColorPalette['900'],
         })
       )
+      setRainbowKitTheme(
+        rainbowKitLightTheme({
+          borderRadius: 'small',
+        })
+      )
     }
-  }, [defaultTheme])
+  }, [defaultTheme, theme])
 
   let options: ReservoirKitProviderProps['options'] = {
     apiKey: RESERVOIR_API_KEY,
@@ -150,13 +190,14 @@ function MyApp({
       DISABLE_POWERED_BY_RESERVOIR != undefined &&
       DISABLE_POWERED_BY_RESERVOIR != null,
     source: SOURCE_DOMAIN,
+    normalizeRoyalties: true,
   }
 
   if (FEE_BPS && FEE_RECIPIENT) {
     options = {
       ...options,
-      marketplaceFee: Number(FEE_BPS),
-      marketplaceFeeRecipient: `${FEE_RECIPIENT}`,
+      marketplaceFee: +FEE_BPS,
+      marketplaceFeeRecipient: FEE_RECIPIENT,
     }
   }
 
@@ -164,18 +205,16 @@ function MyApp({
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
       <GlobalProvider>
         <RecoilRoot>
-          <WagmiConfig client={client}>
-            <AnalyticsProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme={defaultTheme}
-                forcedTheme={
-                  !THEME_SWITCHING_ENABLED ? defaultTheme : undefined
-                }
-              >
+          <WagmiConfig client={wagmiClient}>
+            <RainbowKitProvider
+              chains={chains}
+              theme={rainbowKitTheme}
+              modalSize="compact"
+            >
+              <AnalyticsProvider>
                 <Component {...pageProps} />
-              </ThemeProvider>
-            </AnalyticsProvider>
+              </AnalyticsProvider>
+            </RainbowKitProvider>
           </WagmiConfig>
         </RecoilRoot>
       </GlobalProvider>
@@ -183,16 +222,18 @@ function MyApp({
   )
 }
 
-MyApp.getInitialProps = async (appContext: AppContext) => {
+AppWrapper.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await App.getInitialProps(appContext)
+  const appProps = await NextApp.getInitialProps(appContext)
   let baseUrl = ''
 
   if (appContext.ctx.req?.headers.host) {
     baseUrl = `http://${appContext.ctx.req?.headers.host}`
+  } else if (API_BASE) {
+    baseUrl = API_BASE
   }
 
   return { ...appProps, baseUrl }
 }
 
-export default MyApp
+export default AppWrapper

@@ -1,19 +1,14 @@
-import useDetails from 'hooks/useDetails'
+import { useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { optimizeImage } from 'lib/optmizeImage'
 import Script from 'next/script'
 import { FC } from 'react'
+import { TokenDetails } from 'types/reservoir'
 
 type Props = {
-  details: ReturnType<typeof useDetails>
-  tokenOpenSea: {
-    animation_url: string | null
-    extension: string | null
-  }
+  token?: TokenDetails
 }
 
-const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
-  const token = details.data?.tokens?.[0]
-
+const TokenMedia: FC<Props> = ({ token }) => {
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
       <Script
@@ -24,15 +19,16 @@ const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
         noModule
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"
       ></Script>
-      {tokenOpenSea?.extension === null ? (
+      {token?.media === null ? (
         <img
+          alt="Token Image"
           className="w-full rounded-2xl"
-          src={optimizeImage(token?.token?.image, 533)}
+          src={optimizeImage(token?.image, 533)}
         />
       ) : (
         <Media
-          tokenOpenSea={tokenOpenSea}
-          tokenImage={optimizeImage(token?.token?.image, 533)}
+          media={token?.media as string}
+          tokenImage={optimizeImage(token?.image, 533)}
         />
       )}
     </div>
@@ -42,19 +38,25 @@ const TokenMedia: FC<Props> = ({ details, tokenOpenSea }) => {
 export default TokenMedia
 
 const Media: FC<{
-  tokenOpenSea: {
-    animation_url: any
-    extension: any
-  }
+  media: string
   tokenImage: string
-}> = ({ tokenOpenSea, tokenImage }) => {
-  const { animation_url, extension } = tokenOpenSea
+}> = ({ media, tokenImage }) => {
+  const matches = media.match('(\\.[^.]+)$')
+  const extension = matches ? matches[0].replace('.', '') : null
 
   // VIDEO
   if (extension === 'mp4') {
     return (
-      <video className="mb-4 w-[533px]" controls>
-        <source src={animation_url} type="video/mp4" />
+      <video
+        className="mb-4 w-full rounded"
+        poster={tokenImage}
+        controls
+        autoPlay
+        loop
+        playsInline
+        muted
+      >
+        <source src={media} type="video/mp4" />
         Your browser does not support the
         <code>video</code> element.
       </video>
@@ -65,8 +67,12 @@ const Media: FC<{
   if (extension === 'wav' || extension === 'mp3') {
     return (
       <div>
-        <img className="mb-4 w-[533px] rounded-2xl" src={tokenImage} />
-        <audio className="mb-4 w-full" controls src={animation_url}>
+        <img
+          alt="Token Audio"
+          className="mb-4 w-[533px] rounded-2xl"
+          src={tokenImage}
+        />
+        <audio className="mb-4 w-full" controls src={media}>
           Your browser does not support the
           <code>audio</code> element.
         </audio>
@@ -78,16 +84,31 @@ const Media: FC<{
   if (extension === 'gltf' || extension === 'glb') {
     return (
       <model-viewer
-        src={animation_url}
+        src={media}
         ar
         ar-modes="webxr scene-viewer quick-look"
-        // environment-image="https://modelviewer.dev/shared-assets/environments/moon_1k.hdr"
         poster={tokenImage}
         seamless-poster
         shadow-intensity="1"
         camera-controls
         enable-pan
       ></model-viewer>
+    )
+  }
+
+  //Image
+  if (
+    extension === 'png' ||
+    extension === 'jpeg' ||
+    extension === 'jpg' ||
+    extension === 'gif'
+  ) {
+    return (
+      <img
+        alt="Token Image"
+        className="w-full rounded-2xl"
+        src={optimizeImage(media, 533)}
+      />
     )
   }
 
@@ -99,14 +120,20 @@ const Media: FC<{
   ) {
     return (
       <iframe
-        className="mb-6 aspect-square w-full"
+        className="mb-6 aspect-square h-full w-full rounded-2xl"
         height="533"
         width="533"
-        src={animation_url}
+        src={media}
         sandbox="allow-scripts"
       ></iframe>
     )
   }
 
-  return null
+  return (
+    <img
+      alt="Token Image"
+      className="w-full rounded-2xl"
+      src={optimizeImage(tokenImage, 533)}
+    />
+  )
 }

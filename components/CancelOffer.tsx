@@ -1,8 +1,10 @@
 import { Signer } from 'ethers'
-import { Execute, paths } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-kit-client'
 import React, {
+  cloneElement,
   ComponentProps,
   FC,
+  ReactElement,
   useContext,
   useEffect,
   useState,
@@ -16,19 +18,16 @@ import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
 import { GlobalContext } from 'context/GlobalState'
-import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
+import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 
-type Details = paths['/tokens/details/v4']['get']['responses']['200']['schema']
-type Collection = paths['/collection/v3']['get']['responses']['200']['schema']
+type UseTokensReturnType = ReturnType<typeof useTokens>
 
 type Props = {
   data:
     | {
-        details: SWRResponse<Details, any>
-        collection: Collection | undefined
+        details: UseTokensReturnType
       }
     | {
-        collectionId: string | undefined
         contract?: string | undefined
         tokenId?: string | undefined
         id?: string | undefined
@@ -38,6 +37,7 @@ type Props = {
   setToast: (data: ComponentProps<typeof Toast>['data']) => any
   show: boolean
   signer: ReturnType<typeof useSigner>['data']
+  trigger?: ReactElement<typeof Dialog.Trigger>
 }
 
 const CancelOffer: FC<Props> = ({
@@ -47,13 +47,16 @@ const CancelOffer: FC<Props> = ({
   setToast,
   show,
   signer,
+  trigger,
 }) => {
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
 
   // Data from props
-  const [details, setDetails] = useState<SWRResponse<Details, any> | Details>()
+  const [details, setDetails] = useState<
+    UseTokensReturnType | UseTokensReturnType['data']
+  >()
   const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
 
@@ -63,7 +66,9 @@ const CancelOffer: FC<Props> = ({
       if ('tokenId' in data) {
         const { contract, tokenId } = data
 
-        getDetails(contract, tokenId, setDetails)
+        getDetails(contract, tokenId, (data) => {
+          setDetails(data.tokens)
+        })
       }
       // Load data if provided
       if ('details' in data) {
@@ -73,19 +78,6 @@ const CancelOffer: FC<Props> = ({
       }
     }
   }, [data, open])
-
-  // Set the token either from SWR or fetch
-  let token: NonNullable<Details['tokens']>[0] = { token: undefined }
-
-  // From fetch
-  if (details && 'tokens' in details && details.tokens?.[0]) {
-    token = details.tokens?.[0]
-  }
-
-  // From SWR
-  if (details && 'data' in details && details?.data?.tokens?.[0]) {
-    token = details.data?.tokens?.[0]
-  }
 
   const handleError = (err: any) => {
     setWaitingTx(false)
@@ -116,7 +108,7 @@ const CancelOffer: FC<Props> = ({
   let id: string | undefined = undefined
 
   if ('details' in data) {
-    id = data.details.data?.tokens?.[0]?.market?.topBid?.id
+    id = data.details.data[0]?.market?.topBid?.id
   }
 
   if ('id' in data) {
@@ -142,27 +134,37 @@ const CancelOffer: FC<Props> = ({
     setWaitingTx(false)
   }
 
+  const onTriggerClick = () => {
+    if (!id || !signer) {
+      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      return
+    }
+    execute(id, signer)
+  }
+
+  const triggerDisabled = waitingTx || isInTheWrongNetwork
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      {show && (
-        <Dialog.Trigger
-          disabled={waitingTx || isInTheWrongNetwork}
-          onClick={() => {
-            if (!id || !signer) {
-              dispatch({ type: 'CONNECT_WALLET', payload: true })
-              return
-            }
-            execute(id, signer)
-          }}
-          className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
-        >
-          {waitingTx ? (
-            <CgSpinner className="h-4 w-4 animate-spin" />
-          ) : (
-            'Cancel Your Offer'
-          )}
-        </Dialog.Trigger>
-      )}
+      {show &&
+        (trigger ? (
+          cloneElement(trigger as React.ReactElement<any>, {
+            disabled: triggerDisabled,
+            onClick: onTriggerClick,
+          })
+        ) : (
+          <Dialog.Trigger
+            disabled={triggerDisabled}
+            onClick={onTriggerClick}
+            className="btn-primary-outline dark:border-neutral-600  dark:text-white dark:ring-primary-900 dark:focus:ring-4"
+          >
+            {waitingTx ? (
+              <CgSpinner className="h-4 w-4 animate-spin" />
+            ) : (
+              'Cancel Your Offer'
+            )}
+          </Dialog.Trigger>
+        ))}
       {steps && (
         <Dialog.Portal>
           <Dialog.Overlay>

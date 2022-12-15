@@ -1,19 +1,22 @@
-import useDetails from 'hooks/useDetails'
+import useEnvChain from 'hooks/useEnvChain'
 import { truncateAddress } from 'lib/truncateText'
 import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
+import { TokenDetails } from 'types/reservoir'
 import { setToast } from './setToast'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 type Props = {
-  details: ReturnType<typeof useDetails>
+  token?: TokenDetails
 }
 
-const TokenInfo: FC<Props> = ({ details }) => {
+const TokenInfo: FC<Props> = ({ token }) => {
   const [refreshLoading, setRefreshLoading] = useState(false)
+  const envChain = useEnvChain()
 
-  const token = details.data?.tokens?.[0]
+  const blockExplorerBaseUrl =
+    envChain?.blockExplorers?.default?.url || 'https://etherscan.io'
 
   async function refreshToken(token: string | undefined) {
     function handleError(message?: string) {
@@ -74,7 +77,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
         <div className="flex items-center gap-2">
         </div>
       </div>
-      {token?.token?.contract && (
+      {token?.contract && (
         <div className="mb-4 flex items-center justify-between">
           <div className="reservoir-subtitle dark:text-white">
             Contract Address
@@ -84,9 +87,9 @@ const TokenInfo: FC<Props> = ({ details }) => {
               className="reservoir-h6 flex items-center gap-2 font-headings text-primary-700 dark:text-primary-100"
               target="_blank"
               rel="noopener noreferrer"
-              href={`https://explorer.autobahn.network/address/${token?.token?.contract}`}
+              href={`${blockExplorerBaseUrl}/address/${token?.contract}`}
             >
-              {truncateAddress(token?.token?.contract)}
+              {truncateAddress(token?.contract)}
               <FiExternalLink className="h-4 w-4" />
             </a>
           </div>
@@ -95,13 +98,13 @@ const TokenInfo: FC<Props> = ({ details }) => {
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token ID</div>
         <div className="reservoir-h6 max-w-[80px] truncate font-headings dark:text-white">
-          {token?.token?.tokenId}
+          {token?.tokenId}
         </div>
       </div>
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token Standard</div>
         <div className="reservoir-h6 font-headings uppercase dark:text-white">
-          {token?.token?.kind}
+          {token?.kind}
         </div>
       </div>
       <div className="flex items-center justify-between">
@@ -112,9 +115,7 @@ const TokenInfo: FC<Props> = ({ details }) => {
           className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
           title="Refresh token"
           disabled={refreshLoading}
-          onClick={() =>
-            refreshToken(`${token?.token?.contract}:${token?.token?.tokenId}`)
-          }
+          onClick={() => refreshToken(`${token?.contract}:${token?.tokenId}`)}
         >
           Refresh{' '}
           <FiRefreshCcw

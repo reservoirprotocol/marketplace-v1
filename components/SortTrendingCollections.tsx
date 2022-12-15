@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { FC } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { FiChevronDown } from 'react-icons/fi'
-import useCollections from 'hooks/useCollections'
+import usePaginatedCollections from 'hooks/usePaginatedCollections'
 
 type Options = 'Last 24 Hours' | 'Last 7 Days' | 'Last 30 Days'
 
@@ -18,7 +18,7 @@ const SortTrendingCollections: FC = () => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [sortSelection, setSortSelection] = useState<Options>('Last 24 Hours')
-  const { collections } = useCollections(router)
+  const { collections } = usePaginatedCollections(router)
 
   useEffect(() => {
     const sort = router?.query['sort']?.toString()
@@ -51,12 +51,8 @@ const SortTrendingCollections: FC = () => {
           <DropdownMenu.Item
             key={key}
             onClick={() => {
-              collections.setSize(0)
-              if (key === 'lowest_price') {
-                toggleOffItem(router, 'sort')
-              } else {
-                toggleOnItem(router, 'sort', key)
-              }
+              collections.setSize(1)
+              toggleOnItem(router, 'sort', key)
             }}
             disabled={sortSelection === options[key]}
             className={`reservoir-label-l reservoir-gray-dropdown-item rounded-none hover:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800`}

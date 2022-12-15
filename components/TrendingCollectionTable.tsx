@@ -2,15 +2,24 @@ import { FC, useMemo } from 'react'
 import Link from 'next/link'
 import cn from 'classnames'
 import { optimizeImage } from 'lib/optmizeImage'
-import FormatEth from 'components/FormatEth'
+import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import useCollectionsByContracts from 'hooks/useCollectionsByContracts'
+import usePaginatedCollections from 'hooks/usePaginatedCollections'
 import { paths } from '@reservoir0x/reservoir-kit-client'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
 import { useMediaQuery } from '@react-hookz/web'
+import { useState } from 'react'
+import { CgSpinner } from 'react-icons/cg'
 
-type Props = {}
+const FOOTER_ENABLED = process.env.NEXT_PUBLIC_FOOTER_ENABLED == 'true'
+
+type Props = {
+  fallback: {
+    collections: paths['/collections/v5']['get']['responses']['200']['schema']
+  }
+}
 
 // some that have just been created for testing
 const whitelistedCollections = [
@@ -20,13 +29,18 @@ const whitelistedCollections = [
   '0x2445c2468fbc777629e92c09f4a6f1973a6eb038', // Advent Calendar Raffle Tickets
 ]
 
-const TrendingCollectionTable: FC<Props> = () => {
+const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const isSmallDevice = useMediaQuery('only screen and (max-width : 600px)')
   const router = useRouter()
-  const { collections, ref } = useCollectionsByContracts(
+  const [expanded, setExpanded] = useState<boolean>(false)
+
+  const { collections, ref } = usePaginatedCollections(
     router,
-    whitelistedCollections
+    fallback.collections
   )
+
+  const shouldInfiniteLoad =
+    !FOOTER_ENABLED || (FOOTER_ENABLED && expanded && collections.size < 5)
 
   const { data } = collections
 
@@ -42,8 +56,8 @@ const TrendingCollectionTable: FC<Props> = () => {
     : ['Collection', 'Volume', 'Floor Price', 'Supply']
 
   return (
-    <div className="content-container mb-11 overflow-x-auto bg-white p-4">
-      <table className="min-w-full table-auto">
+    <div className="content-container mb-11 overflow-x-auto overflow-y-hidden">
+      <table className="mb-2 min-w-full table-auto">
         <thead>
           <tr>
             {columns.map((item) => (
@@ -79,16 +93,22 @@ const TrendingCollectionTable: FC<Props> = () => {
               collection as paths['/collection/v3']['get']['responses']['200']['schema']['collection']
             )
 
+            if (FOOTER_ENABLED && !expanded && index > 9) {
+              return
+            }
+
             return (
               <tr
                 key={`${contract}-${index}`}
-                ref={index === arr.length - 5 ? ref : null}
-                className={cn(
-                  'group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white',
-                  {
-                    'border-b': index !== arr.length - 1,
-                  }
-                )}
+                ref={
+                  index === arr.length - 5 && shouldInfiniteLoad ? ref : null
+                }
+                className={`${
+                  index === arr.length - 1 ||
+                  (FOOTER_ENABLED && !expanded && index == 9)
+                    ? ''
+                    : 'border-b'
+                } group h-[88px] border-neutral-300 dark:border-neutral-600 dark:text-white`}
               >
                 {/* COLLECTION */}
                 <td className="reservoir-body flex items-center gap-4 whitespace-nowrap px-6 py-4 dark:text-white">
@@ -115,7 +135,7 @@ const TrendingCollectionTable: FC<Props> = () => {
                 {/* VOLUME */}
                 {!isSmallDevice && (
                   <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                    <FormatEth
+                    <FormatNativeCrypto
                       amount={
                         sort === '7DayVolume'
                           ? days7
@@ -138,7 +158,7 @@ const TrendingCollectionTable: FC<Props> = () => {
 
                 {/* FLOOR PRICE */}
                 <td className="reservoir-body whitespace-nowrap px-6 py-4 dark:text-white">
-                  <FormatEth amount={floorPrice} />
+                  <FormatNativeCrypto amount={floorPrice} />
                   <PercentageChange
                     value={
                       sort === '7DayVolume'
@@ -161,20 +181,26 @@ const TrendingCollectionTable: FC<Props> = () => {
           })}
         </tbody>
       </table>
+
+      {FOOTER_ENABLED && expanded && collections.isValidating && (
+        <CgSpinner className="mx-auto h-6 w-6 animate-spin" />
+      )}
+
+      {FOOTER_ENABLED && !expanded && (
+        <button
+          className="btn-primary-outline mx-auto my-3 border border-[#D4D4D4] bg-white text-black dark:border-[#525252] dark:bg-black dark:text-white dark:ring-[#525252] dark:focus:ring-4"
+          onClick={() => {
+            setExpanded(true)
+          }}
+        >
+          Load More
+        </button>
+      )}
     </div>
   )
 }
 
 export default TrendingCollectionTable
-
-function getFloorDelta(
-  currentFloor: number | undefined,
-  previousFloor: number | undefined
-) {
-  if (!currentFloor || !previousFloor) return 0
-
-  return (currentFloor - previousFloor) / previousFloor
-}
 
 function processCollection(
   collection: paths['/collection/v3']['get']['responses']['200']['schema']['collection']
@@ -199,7 +225,7 @@ function processCollection(
     floorSaleChange1Days: collection?.floorSaleChange?.['1day'],
     floorSaleChange7Days: collection?.floorSaleChange?.['7day'],
     floorSaleChange30Days: collection?.floorSaleChange?.['30day'],
-    floorPrice: (collection as unknown as any)?.floorAsk?.price?.amount.raw,
+    floorPrice: (collection as unknown as any)?.floorAsk?.price?.amount?.native,
     supply: collection?.tokenCount,
   }
 

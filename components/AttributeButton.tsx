@@ -1,21 +1,23 @@
 import { toggleOffAttribute, toggleOnAttribute, updateAttribute } from 'lib/url'
 import { useRouter } from 'next/router'
 import { toggleOffItem } from 'lib/router'
-import { FC } from 'react'
+import { FC, MutableRefObject } from 'react'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 
 type Props = {
   children: React.ReactNode
   attribute: string
   value: string
-  setTokensSize: SWRInfiniteResponse['setSize']
+  refreshData: () => void
+  scrollToTop: () => void
 }
 
 const AttributeButton: FC<Props> = ({
   children,
   attribute,
   value,
-  setTokensSize,
+  refreshData,
+  scrollToTop,
 }) => {
   const router = useRouter()
 
@@ -34,7 +36,8 @@ const AttributeButton: FC<Props> = ({
             updateAttribute(router, attribute, value)
           }
         }
-        setTokensSize(0)
+        refreshData()
+        scrollToTop()
       }}
       className={`flex w-full items-center justify-between gap-3 px-3 py-1 text-left ${
         router.query[`attributes[${attribute}]`] &&

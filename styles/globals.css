@@ -37,6 +37,41 @@ model-viewer {
   -webkit-box-orient: vertical;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.markdown-support h1, .markdown-support h2, .markdown-support h3, .markdown-support h4, .markdown-support h5 {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.markdown-support p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.markdown-support hr {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.markdown-support strong {
+  font-weight: 500;
+}
+
+.markdown-support a {
+  text-decoration: underline;
+}
+
 footer, .main-container {
   background-color: #fbfafc;
 }
