@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC } from 'react'
 import {
   useAccount,
   useBalance,
@@ -12,7 +12,6 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
 import FormatNativeCrypto from './FormatNativeCrypto'
-import { GlobalContext } from 'context/GlobalState'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
 import Avatar from './Avatar'
@@ -29,7 +28,6 @@ const ConnectWallet: FC = () => {
   const { connectors } = useConnect()
   const { disconnect } = useDisconnect()
   const wallet = connectors[0]
-  const { dispatch } = useContext(GlobalContext)
   const isMounted = useMounted()
 
   if (!isMounted) {
@@ -79,7 +77,6 @@ const ConnectWallet: FC = () => {
             <button
               key={wallet.id}
               onClick={() => {
-                dispatch({ type: 'CONNECT_WALLET', payload: false })
                 disconnect()
               }}
               className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"

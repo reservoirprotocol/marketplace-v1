@@ -20,7 +20,6 @@ import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import * as allChains from 'wagmi/chains'
-import { GlobalProvider } from 'context/GlobalState'
 import AnalyticsProvider from 'components/AnalyticsProvider'
 import { ThemeProvider, useTheme } from 'next-themes'
 import { RecoilRoot } from 'recoil'
@@ -181,21 +180,19 @@ const App: FC<AppProps & { baseUrl: string }> = ({
 
   return (
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
-      <GlobalProvider>
-        <RecoilRoot>
-          <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider
-              chains={chains}
-              theme={rainbowKitTheme}
-              modalSize="compact"
-            >
-              <AnalyticsProvider>
-                <Component {...pageProps} />
-              </AnalyticsProvider>
-            </RainbowKitProvider>
-          </WagmiConfig>
-        </RecoilRoot>
-      </GlobalProvider>
+      <RecoilRoot>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider
+            chains={chains}
+            theme={rainbowKitTheme}
+            modalSize="compact"
+          >
+            <AnalyticsProvider>
+              <Component {...pageProps} />
+            </AnalyticsProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </RecoilRoot>
     </ReservoirKitProvider>
   )
 }

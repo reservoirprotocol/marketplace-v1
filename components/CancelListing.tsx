@@ -4,7 +4,6 @@ import React, {
   ComponentProps,
   FC,
   ReactElement,
-  useContext,
   useEffect,
   useState,
 } from 'react'
@@ -16,8 +15,8 @@ import Toast from './Toast'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
 import { getDetails } from 'lib/fetch/fetch'
 import { CgSpinner } from 'react-icons/cg'
-import { GlobalContext } from 'context/GlobalState'
 import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 type UseTokensReturnType = ReturnType<typeof useTokens>
 
@@ -52,12 +51,12 @@ const CancelListing: FC<Props> = ({
   const [waitingTx, setWaitingTx] = useState<boolean>(false)
   const [steps, setSteps] = useState<Execute['steps']>()
   const [open, setOpen] = useState(false)
+  const { openConnectModal } = useConnectModal()
 
   // Data from props
   const [details, setDetails] = useState<
     UseTokensReturnType | UseTokensReturnType['data']
   >()
-  const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
 
   useEffect(() => {
@@ -137,7 +136,9 @@ const CancelListing: FC<Props> = ({
 
   const onTriggerClick = () => {
     if (!id || !signer) {
-      dispatch({ type: 'CONNECT_WALLET', payload: true })
+      if (openConnectModal) {
+        openConnectModal()
+      }
       return
     }
     execute(id)
