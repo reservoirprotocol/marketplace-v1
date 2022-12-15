@@ -16,7 +16,7 @@ import cartTokensAtom, {
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { getPricing } from 'lib/token/pricing'
-
+import { formatEther } from 'ethers/lib/utils'
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
 const slideDown = keyframes({
@@ -50,7 +50,7 @@ const CartMenu: FC = () => {
   const { address } = useAccount()
   const reservoirClient = useReservoirClient()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     token:
       cartCurrency?.symbol !== 'ETH'
         ? (cartCurrency?.contract as UseBalanceToken)
