@@ -3,17 +3,20 @@ import { truncateAddress } from 'lib/truncateText'
 import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { setToast } from './setToast'
+import useCollectionInteractions from '../../hooks/useCollectionInteractions'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 type Props = {
   details: ReturnType<typeof useDetails>
+  tokenInfoButtons: any
 }
 
-const TokenInfo: FC<Props> = ({ details }) => {
+const TokenInfo: FC<Props> = ({ details, tokenInfoButtons }) => {
   const [refreshLoading, setRefreshLoading] = useState(false)
 
   const token = details.data?.tokens?.[0]
+  const collectionInteractions = tokenInfoButtons?.map((button: any) => useCollectionInteractions(button.addressOrName, token?.token?.tokenId!, button.functionName, button.contractInterface, [token?.token?.tokenId!]))
 
   async function refreshToken(token: string | undefined) {
     function handleError(message?: string) {
@@ -72,6 +75,26 @@ const TokenInfo: FC<Props> = ({ details }) => {
           Token Info
         </div>
         <div className="flex items-center gap-2">
+          {tokenInfoButtons?.map((button: any, index: number) => (
+              <button
+                  className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
+                  title="Wash this car"
+                  onClick={() => {
+                    if (!!collectionInteractions?.[index].prepareError) {
+                      const errorString = JSON.stringify(collectionInteractions?.[index].prepareError)
+                      const errorParsed = JSON.parse(errorString) || {}
+                      const errorReason = errorParsed?.reason?.replace('execution reverted: ', '')
+                      setToast({
+                        kind: 'error',
+                        message: errorReason || 'Interaction not possible at the moment.',
+                        title: `${button.label} failed`,
+                      })
+                    } else {
+                      collectionInteractions?.[index].execCollectionInteraction()
+                    }
+                  }}
+              >{button.label}</button>
+          ))}
         </div>
       </div>
       {token?.token?.contract && (

@@ -13,7 +13,7 @@ import CollectionInfo from 'components/token/CollectionInfo'
 import Owner from 'components/token/Owner'
 import PriceData from 'components/token/PriceData'
 import TokenMedia from 'components/token/TokenMedia'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { TokenDetails } from 'types/reservoir'
 import { useTokenOpenseaBanned } from '@reservoir0x/reservoir-kit-ui'
 
@@ -33,6 +33,8 @@ const META_OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || 45000
 
 type Props = {
   collectionId: string
@@ -66,6 +68,27 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     animation_url: null,
     extension: null,
   })
+  const [tokenInfoButtons, setTokenInfoButtons] = useState<object[]>()
+  const [tokenInfoButtonsLoaded, setTokenInfoButtonsLoaded] = useState<boolean>(false)
+
+  useEffect(() => {
+    const effect = async () => {
+      if (collectionId) {
+        try {
+          const res = await fetch(`https://raw.githubusercontent.com/create3labs/nft-metadata/main/metadata/${CHAIN_ID}/${collectionId}/tokenInfoButtons.json`)
+          const buttonList = await res.json()
+          if (buttonList) {
+            setTokenInfoButtons(buttonList)
+          }
+          setTokenInfoButtonsLoaded(true)
+        } catch (error) {
+          setTokenInfoButtonsLoaded(true)
+        }
+      }
+    }
+    effect()
+  }, [collectionId])
+
   const router = useRouter()
   const bannedOnOpenSea = useTokenOpenseaBanned(
     collectionId,
@@ -74,12 +97,17 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
 
   const collection = useCollection(undefined, collectionId)
 
+
   const details = useDetails({
     tokens: [
       `${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`,
     ],
     includeTopBid: true,
   })
+
+  if (!tokenInfoButtonsLoaded) {
+    return <div/>
+  }
 
   if (details.error) {
     return <div>There was an error</div>
@@ -118,7 +146,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
         </div>
         <div className="hidden space-y-4 md:block">
           <CollectionInfo collection={collection} details={details} />
-          <TokenInfo details={details} />
+          <TokenInfo details={details} tokenInfoButtons={tokenInfoButtons} />
         </div>
       </div>
       <div className="mt-16 col-span-full mb-4 space-y-4 px-2 md:col-span-4 md:col-start-5 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
@@ -136,7 +164,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         <CollectionInfo collection={collection} details={details} />
-        <TokenInfo details={details} />
+        <TokenInfo details={details} tokenInfoButtons={tokenInfoButtons} />
       </div>
     </Layout>
   )
