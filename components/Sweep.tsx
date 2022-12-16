@@ -27,6 +27,7 @@ import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
+import { constants } from 'ethers'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -121,7 +122,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         token?.token !== undefined &&
         token?.market?.floorAsk?.price?.amount?.native !== undefined &&
         token?.market?.floorAsk?.price?.amount?.native !== null &&
-        token?.market?.floorAsk?.price?.currency?.symbol === 'ETH' &&
+        token?.market?.floorAsk?.price?.currency?.contract ===
+          constants.AddressZero &&
         token?.token?.owner?.toLowerCase() !==
           accountData?.address?.toLowerCase() &&
         token?.market?.floorAsk?.source?.name != 'sudoswap'
