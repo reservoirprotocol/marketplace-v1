@@ -168,6 +168,7 @@ const SearchCollections: FC<Props> = ({
                     <Link
                       key={collection?.name}
                       href={`/collections/${collection?.collectionId}`}
+                      legacyBehavior={true}
                     >
                       <a
                         {...getItemProps({
@@ -227,6 +228,7 @@ const SearchCollections: FC<Props> = ({
                 <Link
                   key={collection?.name}
                   href={`/collections/${collection?.collectionId}`}
+                  legacyBehavior={true}
                 >
                   <a
                     {...getItemProps({

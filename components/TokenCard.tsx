@@ -101,6 +101,7 @@ const TokenCard: FC<Props> = ({
       <Link
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
+        legacyBehavior={true}
       >
         <a className="mb-[85px]">
           {token?.token?.image ? (

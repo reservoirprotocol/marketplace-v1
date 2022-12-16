@@ -208,7 +208,7 @@ const UserListingsTableRow = ({
     >
       {/* ITEM */}
       <td className="whitespace-nowrap px-6 py-4 dark:text-white">
-        <Link href={tokenHref}>
+        <Link href={tokenHref} legacyBehavior={true}>
           <a className="flex items-center gap-2">
             <div className="relative h-16 w-16">
               {image && (
@@ -334,7 +334,7 @@ const UserListingsMobileRow = ({
       ref={ref}
     >
       <div className="flex items-center justify-between">
-        <Link href={tokenHref || '#'}>
+        <Link href={tokenHref || '#'} legacyBehavior={true}>
           <a className="flex items-center gap-2">
             <div className="relative h-14 w-14">
               {image && (

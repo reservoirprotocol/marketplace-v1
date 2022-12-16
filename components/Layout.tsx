@@ -1,10 +1,11 @@
-import { ComponentProps, FC } from 'react'
+import { ComponentProps, FC, ReactNode } from 'react'
 import { Toaster } from 'react-hot-toast'
 import Navbar from './Navbar'
 import NetworkWarning from './NetworkWarning'
 
 type Props = {
   navbar: ComponentProps<typeof Navbar>
+  children: ReactNode
 }
 
 const Layout: FC<Props> = ({ children, navbar }) => {
