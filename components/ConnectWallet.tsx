@@ -66,7 +66,7 @@ const ConnectWallet: FC = () => {
               {account.address && <Balance address={account.address} />}
             </span>
           </div>
-          <Link href={`/address/${account.address}`}>
+          <Link href={`/address/${account.address}`} legacyBehavior={true}>
             <DropdownMenu.Item asChild>
               <a className="group flex w-full cursor-pointer items-center justify-between rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
                 Portfolio
@@ -88,7 +88,7 @@ const ConnectWallet: FC = () => {
         </div>
         {!DISABLE_POWERED_BY_RESERVOIR && (
           <div className="group mx-auto flex w-full cursor-pointer items-center justify-center gap-3 rounded-b-2xl bg-neutral-100  py-4 px-4 outline-none  transition dark:bg-neutral-800 ">
-            <Link href="https://reservoirprotocol.github.io/">
+            <Link href="https://reservoirprotocol.github.io/" legacyBehavior={true}>
               <a
                 className="reservoir-tiny flex gap-2 dark:text-white"
                 target="_blank"

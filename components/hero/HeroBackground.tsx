@@ -1,11 +1,12 @@
 import { optimizeImage } from 'lib/optmizeImage'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE
 const envBannerImageDisabled = process.env.NEXT_PUBLIC_DISABLE_COLLECTION_BG
 
 type Props = {
   banner: string | undefined
+  children: ReactNode
 }
 
 const HeroBackground: FC<Props> = ({ banner, children }) => {

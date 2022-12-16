@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import { formatNumber } from 'lib/numbers'
 import FormatCrypto from 'components/FormatCrypto'
@@ -68,7 +68,10 @@ const HeroStats: FC<{ stats: Props }> = ({ stats }) => {
   )
 }
 
-const Stat: FC<{ name: string }> = ({ name, children }) => (
+const Stat: FC<{ name: string; children: ReactNode }> = ({
+  name,
+  children,
+}) => (
   <div className="flex h-20 flex-col items-center justify-center bg-white dark:bg-black md:h-auto">
     {children}
     <p className="mt-1 text-[#A3A3A3]">{name}</p>

@@ -85,6 +85,7 @@ const TokenAttribute: FC<TokenAttributeProps> = ({
       href={`/collections/${collectionId}?${formatUrl(
         `attributes[${attribute.key}]`
       )}=${formatUrl(`${attribute.value}`)}`}
+      legacyBehavior={true}
     >
       <a className="rounded-lg bg-neutral-100 px-4 py-3 ring-inset ring-blue-600 transition-colors	hover:bg-neutral-300 focus-visible:outline-none focus-visible:ring-2 dark:bg-neutral-800 dark:hover:bg-neutral-600">
         <div className="text-sm text-primary-700 dark:text-primary-300">

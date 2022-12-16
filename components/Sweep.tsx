@@ -394,7 +394,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                   </div>
                   {!DISABLE_POWERED_BY_RESERVOIR && (
                     <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[639px]">
-                      <Link href="https://reservoirprotocol.github.io/">
+                      <Link href="https://reservoirprotocol.github.io/" legacyBehavior={true}>
                         <a
                           className="reservoir-tiny flex gap-2 dark:text-white"
                           target="_blank"

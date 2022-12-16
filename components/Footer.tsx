@@ -8,29 +8,29 @@ const Footer = () => {
     return (
       <footer className="col-span-full flex flex-col items-center justify-between px-6 pb-12 sm:flex-row md:px-16">
         <div className="mb-6 flex flex-row flex-wrap items-center justify-between gap-x-6 text-xs sm:mb-0 sm:gap-x-8 sm:text-sm">
-          <Link href="https://reservoir.tools/">
+          <Link href="https://reservoir.tools/" legacyBehavior={true}>
             <a className="" target="_blank" rel="noreferrer">
               About
             </a>
           </Link>
-          <Link href="https://reservoir.tools/privacy">
+          <Link href="https://reservoir.tools/privacy" legacyBehavior={true}>
             <a className="min-w-max" target="_blank" rel="noreferrer">
               Privacy Policy
             </a>
           </Link>
-          <Link href="https://reservoir.tools/terms">
+          <Link href="https://reservoir.tools/terms" legacyBehavior={true}>
             <a className="min-w-max" target="_blank" rel="noreferrer">
               Terms of Use
             </a>
           </Link>
         </div>
         <div className="flex flex-row items-center gap-x-6">
-          <Link href="https://twitter.com/reservoir0x">
+          <Link href="https://twitter.com/reservoir0x" legacyBehavior={true}>
             <a className="" target="_blank" rel="noreferrer">
               <FaTwitter className="h-[20px] w-[25px]" />
             </a>
           </Link>
-          <Link href="https://discord.gg/j5K9fESNwh" className="ml-5">
+          <Link href="https://discord.gg/j5K9fESNwh" className="ml-5" legacyBehavior={true}>
             <a className="" target="_blank" rel="noreferrer">
               <FaDiscord className="h-[19px] w-[25px]" />
             </a>
