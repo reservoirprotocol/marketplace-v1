@@ -253,6 +253,7 @@ export const getStaticProps: GetStaticProps<{
     includeTopBid: true,
     includeAttributes: true,
     includeDynamicPricing: true,
+    normalizeRoyalties: true,
   }
 
   const href = setParams(url, query)

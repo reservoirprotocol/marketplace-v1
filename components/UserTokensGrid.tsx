@@ -11,7 +11,7 @@ const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = {
   fallback: {
-    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
   }
   owner: string
 }
