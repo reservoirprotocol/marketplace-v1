@@ -80,7 +80,7 @@ const Listings: FC<Props> = ({ token }) => {
                             {/* @ts-ignore */}
                             <img src={source?.logo} alt="" />
                           </a>
-                          <Link href={from.href}>
+                          <Link href={from.href} legacyBehavior={true}>
                             <a className="reservoir-subtitle text-primary-700 dark:text-primary-100">
                               {truncateAddress(from.address)}
                             </a>

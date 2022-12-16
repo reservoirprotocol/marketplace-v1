@@ -52,6 +52,7 @@ const ExploreTable = ({
                         `attributes[${attribute?.key}]`
                       )}=${formatUrl(`${attribute?.value}`)}`
                 }
+                legacyBehavior={true}
               >
                 <a className="grid h-full items-center p-2 align-middle font-bold tracking-wide">
                   {attribute?.value}
@@ -75,6 +76,7 @@ const ExploreTable = ({
 
             <td className="w-[230px] pr-3">
               <Link
+              legacyBehavior={true}
                 href={
                   router.query.id
                     ? `/collections/${router.query.id}?${formatUrl(
