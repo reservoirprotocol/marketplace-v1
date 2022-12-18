@@ -8,12 +8,12 @@ type Props = {
 }
 
 const TokenInteractionButton: FC<Props> = ({ button, tokenId }) => {
-  const collectionInteractions = useCollectionInteractions(button.addressOrName, tokenId, button.functionName, button.contractInterface, [tokenId])
+  const collectionInteractions = useCollectionInteractions(button.addressOrName, tokenId, button.functionName, button.contractInterface, [tokenId], button.overrides)
 
   return (
     <button
         className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
-        title="Wash this car"
+        title={`${button.label} this item`}
         onClick={() => {
           if (!!collectionInteractions?.prepareError) {
             const errorString = JSON.stringify(collectionInteractions?.prepareError)

@@ -10,7 +10,7 @@ type CollectionInteractionResponse = {
 }
 
 
-export default function useCollectionInteractions(addressOrName: string, tokenId: string, functionName: string, contractInterface: ContractInterface, args: any) {
+export default function useCollectionInteractions(addressOrName: string, tokenId: string, functionName: string, contractInterface: ContractInterface, args: any, overrides?: any) {
   const [func, setFunc] = useState<CollectionInteractionResponse | undefined>()
 
   const { config, error } = usePrepareContractWrite({
@@ -18,6 +18,7 @@ export default function useCollectionInteractions(addressOrName: string, tokenId
     contractInterface,
     functionName,
     args,
+    overrides,
   })
 
   const { data: callResponse, write } = useContractWrite(config)
