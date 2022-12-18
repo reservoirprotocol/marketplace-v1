@@ -73,7 +73,9 @@ const TokenInfo: FC<Props> = ({ details, tokenInfoButtons }) => {
         <div className="reservoir-h5 font-headings dark:text-white">
           Token Info
         </div>
-        <div className="flex items-center gap-2">
+      </div>
+      <div className="mb-4 flex items-center">
+        <div className="flex flex-wrap items-center gap-2">
           {tokenInfoButtons?.map((button: any, index: number) => (<TokenInteractionButton key={`TokenInteractionButton${index}`} button={button} tokenId={token?.token?.tokenId!} />))}
         </div>
       </div>
