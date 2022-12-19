@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {
   ComponentPropsWithoutRef,

@@ -3,7 +3,7 @@ import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { FC, ReactElement, useEffect, useState } from 'react'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { useMediaQuery } from '@react-hookz/web'
 import LoadingIcon from 'components/LoadingIcon'
 import { FiExternalLink, FiRepeat, FiTrash2, FiXSquare } from 'react-icons/fi'
@@ -357,7 +357,10 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               </span>
               {activity.fromAddress &&
               activity.fromAddress !== constants.AddressZero ? (
-                <Link href={`/address/${activity.fromAddress}`} legacyBehavior={true}>
+                <Link
+                  href={`/address/${activity.fromAddress}`}
+                  legacyBehavior={true}
+                >
                   <a className="font-light text-primary-700 dark:text-primary-300">
                     {fromShortAddress}
                   </a>
@@ -370,7 +373,10 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               </span>
               {activity.toAddress &&
               activity.toAddress !== constants.AddressZero ? (
-                <Link href={`/address/${activity.toAddress}`} legacyBehavior={true}>
+                <Link
+                  href={`/address/${activity.toAddress}`}
+                  legacyBehavior={true}
+                >
                   <a className="font-light text-primary-700 dark:text-primary-300">
                     {toShortAddress}
                   </a>
@@ -383,7 +389,10 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
               </div>
             </div>
             {activity.txHash && (
-              <Link href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`} legacyBehavior={true}>
+              <Link
+                href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`}
+                legacyBehavior={true}
+              >
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -477,7 +486,10 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
         <div className="flex items-center gap-2 whitespace-nowrap font-light text-neutral-600 dark:text-neutral-300">
           {timeAgo}
           {activity.txHash && (
-            <Link href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`} legacyBehavior={true}>
+            <Link
+              href={`${blockExplorerBaseUrl}/tx/${activity.txHash}`}
+              legacyBehavior={true}
+            >
               <a target="_blank" rel="noopener noreferrer">
                 <FiExternalLink className="h-4 w-4 text-primary-700 dark:text-primary-300" />
               </a>
