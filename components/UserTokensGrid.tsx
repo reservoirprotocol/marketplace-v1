@@ -57,7 +57,10 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
   const ids = tokens.map(t => t?.token?.tokenId!)
 
   useEffect(() => {
+    console.log("inView", inView)
+    console.log("hasNextPage", hasNextPage)
     if (inView && hasNextPage) {
+      console.log('fetching next page')
       fetchNextPage()
     }
   }, [inView])
