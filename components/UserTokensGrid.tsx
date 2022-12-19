@@ -36,6 +36,8 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
     revalidateOnMount: false,
   })
 
+  console.log(userTokens)
+
   useEffect(() => {
     userTokens.mutate()
     return () => {
