@@ -4,14 +4,16 @@ import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { TokenDetails } from 'types/reservoir'
 import { setToast } from './setToast'
+import TokenInteractionButton from './TokenInteractionButton'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
 type Props = {
   token?: TokenDetails
+  tokenInfoButtons: any
 }
 
-const TokenInfo: FC<Props> = ({ token }) => {
+const TokenInfo: FC<Props> = ({ token, tokenInfoButtons }) => {
   const [refreshLoading, setRefreshLoading] = useState(false)
   const envChain = useEnvChain()
 
@@ -74,7 +76,10 @@ const TokenInfo: FC<Props> = ({ token }) => {
         <div className="reservoir-h5 font-headings dark:text-white">
           Token Info
         </div>
-        <div className="flex items-center gap-2">
+      </div>
+      <div className="mb-4 flex items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          {tokenInfoButtons?.map((button: any, index: number) => (<TokenInteractionButton key={`TokenInteractionButton${index}`} button={button} tokenId={token?.tokenId!} />))}
         </div>
       </div>
       {token?.contract && (

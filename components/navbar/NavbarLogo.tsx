@@ -63,7 +63,7 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
           )}
         </a>
       </Link>
-      <div className="text-xs items-center inline-flex font-bold leading-sm uppercase px-3 py-1 bg-purple-200 text-purple-700 rounded-full">Beta</div>
+      <div className="text-xs items-center inline-flex font-bold leading-sm uppercase px-3 py-1 bg-purple-200 text-purple-700 rounded-full" style={{ marginTop: '-56px', marginLeft: '-24px', marginRight: '20px' }}>Beta</div>
     </div>
   )
 }

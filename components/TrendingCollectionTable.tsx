@@ -34,10 +34,14 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
   const router = useRouter()
   const [expanded, setExpanded] = useState<boolean>(false)
 
-  const { collections, ref } = usePaginatedCollections(
+  const { collections: paginatedCollections, ref } = usePaginatedCollections(
     router,
     fallback.collections
   )
+
+  console.log('paginatedCollections', paginatedCollections)
+
+  const collections = paginatedCollections //.filter(collection => collection)
 
   const shouldInfiniteLoad =
     !FOOTER_ENABLED || (FOOTER_ENABLED && expanded && collections.size < 5)
@@ -72,7 +76,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
           </tr>
         </thead>
         <tbody>
-          {mappedCollections?.map((collection, index, arr) => {
+          {mappedCollections?.filter(collection => whitelistedCollections.indexOf(collection?.id!) > -1).map((collection, index, arr) => {
             const {
               contract,
               tokenHref,

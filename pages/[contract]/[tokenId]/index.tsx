@@ -28,7 +28,7 @@ import { useAccount } from 'wagmi'
 // REQUIRED
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
-const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || 45000
 
 // OPTIONAL
 const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
@@ -77,6 +77,27 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     extension: null,
   })
   const account = useAccount()
+  const [tokenInfoButtons, setTokenInfoButtons] = useState<object[]>()
+  const [tokenInfoButtonsLoaded, setTokenInfoButtonsLoaded] = useState<boolean>(false)
+
+  useEffect(() => {
+    const effect = async () => {
+      if (collectionId) {
+        try {
+          const res = await fetch(`https://raw.githubusercontent.com/create3labs/nft-metadata/main/metadata/${CHAIN_ID}/${collectionId}/tokenInfoButtons.json`)
+          const buttonList = await res.json()
+          if (buttonList) {
+            setTokenInfoButtons(buttonList)
+          }
+          setTokenInfoButtonsLoaded(true)
+        } catch (error) {
+          setTokenInfoButtonsLoaded(true)
+        }
+      }
+    }
+    effect()
+  }, [collectionId])
+
   const router = useRouter()
   const bannedOnOpenSea = useTokenOpenseaBanned(
     collectionId,
@@ -131,6 +152,10 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
     }
   }, [])
 
+  if (!tokenInfoButtonsLoaded) {
+    return <div/>
+  }
+
   if (tokenData.error) {
     return <div>There was an error</div>
   }
@@ -176,7 +201,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
         </div>
         <div className="hidden space-y-4 md:block">
           <CollectionInfo collection={collection} token={token.token} />
-          <TokenInfo token={token.token} />
+          <TokenInfo token={token.token} tokenInfoButtons={tokenInfoButtons} />
         </div>
       </div>
       <div className="mt-16 col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
@@ -203,7 +228,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails }) => {
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         <CollectionInfo collection={collection} token={token.token} />
-        <TokenInfo token={token.token} />
+        <TokenInfo token={token.token} tokenInfoButtons={tokenInfoButtons} />
       </div>
     </Layout>
   )

@@ -95,7 +95,6 @@ const Home: NextPage<Props> = ({ fallback }) => {
         </div>
         <TrendingCollectionTable fallback={fallback} />
       </div>
-      <Footer />
     </Layout>
   )
 }
