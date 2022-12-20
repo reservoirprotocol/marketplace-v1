@@ -105,7 +105,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                   <div className="reservoir-h6 mr-6 dark:text-white">
                     {index + 1}
                   </div>
-                  <Link href={tokenHref}>
+                  <Link href={tokenHref} legacyBehavior={true}>
                     <a className="flex items-center gap-2">
                       <img
                         src={optimizeImage(image, 140)}

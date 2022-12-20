@@ -11,7 +11,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import Toast from './Toast'
 import { useAccount, useNetwork, useSigner } from 'wagmi'
 import { SWRInfiniteResponse } from 'swr/infinite/dist/infinite'
-import { GlobalContext } from 'context/GlobalState'
 import { HiX } from 'react-icons/hi'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatNativeCrypto from './FormatNativeCrypto'
@@ -27,6 +26,7 @@ import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { constants } from 'ethers'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -106,8 +106,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const [details, _setDetails] = useState<
     SWRResponse<UseTokensReturnType, any> | UseTokensReturnType['data']
   >()
-  const { dispatch } = useContext(GlobalContext)
   const reservoirClient = useReservoirClient()
+  const { openConnectModal } = useConnectModal()
 
   const isInTheWrongNetwork = Boolean(
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
@@ -229,6 +229,22 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           title: 'Could not buy token',
         })
       })
+  }
+
+  if (!signer) {
+    return (
+      <button
+        className="btn-primary-fill gap-2 dark:ring-primary-900 dark:focus:ring-4"
+        onClick={() => {
+          if (openConnectModal) {
+            openConnectModal()
+          }
+        }}
+      >
+        <FaBroom className="text-white" />
+        Sweep
+      </button>
+    )
   }
 
   return (
@@ -368,8 +384,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                       }
                       onClick={async () => {
                         if (!signer) {
-                          dispatch({ type: 'CONNECT_WALLET', payload: true })
-                          return
+                          throw 'Signer not available when sweeping'
                         }
 
                         await execute(signer)
@@ -381,7 +396,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                   </div>
                   {!DISABLE_POWERED_BY_RESERVOIR && (
                     <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[639px]">
-                      <Link href="https://reservoirprotocol.github.io/">
+                      <Link href="https://reservoirprotocol.github.io/" legacyBehavior={true}>
                         <a
                           className="reservoir-tiny flex gap-2 dark:text-white"
                           target="_blank"

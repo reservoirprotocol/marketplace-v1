@@ -80,7 +80,7 @@ const Owner: FC<Props> = ({ details, bannedOnOpenSea, collection }) => {
           Owner
         </div>
         {owner && (
-          <Link href={`/address/${owner}`}>
+          <Link href={`/address/${owner}`} legacyBehavior={true}>
             <a className="inline-block">
               <EthAccount address={owner} side="left" />
             </a>

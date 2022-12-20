@@ -6,7 +6,13 @@ import {
   NextPage,
 } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount, useNetwork, useEnsName, useEnsAvatar } from 'wagmi'
+import {
+  useAccount,
+  useNetwork,
+  useEnsName,
+  useEnsAvatar,
+  Address,
+} from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import UserOffersTable from 'components/tables/UserOffersTable'
@@ -32,10 +38,6 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
-type UseEnsNameAddress = NonNullable<
-  Parameters<typeof useEnsName>['0']
->['address']
-
 const metadata = {
   title: (title: string) => <title>{title}</title>,
 }
@@ -50,11 +52,11 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   }
 
   const { data: ensAvatar } = useEnsAvatar({
-    addressOrName: address,
+    address: address as Address,
   })
 
   const { data: ensName } = useEnsName({
-    address: address as UseEnsNameAddress,
+    address: address as Address,
     onSettled(data, error) {
       console.log('Settled', { data, error })
     },

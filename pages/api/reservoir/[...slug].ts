@@ -24,7 +24,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   if (typeof slug === 'string') {
     endpoint = slug
   } else {
-    endpoint = slug.join('/')
+    endpoint = (slug || ['']).join('/')
   }
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`

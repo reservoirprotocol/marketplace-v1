@@ -104,7 +104,7 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
               className="border-b-[1px] border-solid border-b-neutral-300	py-[16px]"
             >
               <div className="flex items-center justify-between">
-                <Link href={href || '#'}>
+                <Link href={href || '#'} legacyBehavior={true}>
                   <a className="flex items-center gap-2">
                     <div className="relative h-14 w-14">
                       {image && (
@@ -247,7 +247,7 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
               >
                 {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4 ">
-                  <Link href={href || '#'}>
+                  <Link href={href || '#'} legacyBehavior={true}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-16 w-16">
                         {image && (

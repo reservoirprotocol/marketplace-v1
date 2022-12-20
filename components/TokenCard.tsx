@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {
   ComponentPropsWithoutRef,
@@ -101,6 +101,7 @@ const TokenCard: FC<Props> = ({
       <Link
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/${token?.token?.contract}/${token?.token?.tokenId}`}
+        legacyBehavior={true}
       >
         <a className="mb-[85px]">
           {token?.token?.image ? (

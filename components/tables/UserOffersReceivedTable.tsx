@@ -133,7 +133,7 @@ const UserOffersReceivedTable: FC<Props> = ({
               ref={index === arr.length - 5 ? ref : null}
             >
               <div className="flex items-center justify-between">
-                <Link href={href || '#'}>
+                <Link href={href || '#'} legacyBehavior={true}>
                   <a className="flex items-center gap-2">
                     <div className="relative h-14 w-14">
                       {image && (
@@ -305,7 +305,7 @@ const UserOffersReceivedTable: FC<Props> = ({
               >
                 {/* ITEM */}
                 <td className="whitespace-nowrap px-6 py-4">
-                  <Link href={href || '#'}>
+                  <Link href={href || '#'} legacyBehavior={true}>
                     <a className="flex items-center gap-2">
                       <div className="relative h-16 w-16">
                         {image && (
