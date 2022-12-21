@@ -69,12 +69,15 @@ const TokenInfo: FC<Props> = ({ token }) => {
   }
 
   return (
-    <article className="col-span-full rounded-2xl border border-gray-300 bg-white p-6 dark:border-neutral-600 dark:bg-black">
+    <article className="col-span-full rounded-[25px] bg-primary-100 pill p-6 dark:border-neutral-600 dark:bg-black">
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-h5 font-headings dark:text-white">
+          Refresh Listing & Offers
+        </div>
+        {/*<div className="reservoir-h5 font-headings dark:text-white">
           Token Info
         </div>
-        {/* <div className="flex items-center gap-2">
+         <div className="flex items-center gap-2">
           <a
             className="reservoir-h6 font-headings"
             target="_blank"
@@ -101,7 +104,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
           </a>
         </div> */}
       </div>
-      {token?.contract && (
+      {/* {token?.contract && (
         <div className="mb-4 flex items-center justify-between">
           <div className="reservoir-subtitle dark:text-white">
             Contract Address
@@ -118,25 +121,26 @@ const TokenInfo: FC<Props> = ({ token }) => {
             </a>
           </div>
         </div>
-      )}
-      <div className="mb-4 flex items-center justify-between">
+      )} */}
+      {/* <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token ID</div>
         <div className="reservoir-h6 max-w-[80px] truncate font-headings dark:text-white">
           {token?.tokenId}
         </div>
-      </div>
+      </div> */}
       {/* <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-subtitle dark:text-white">Token Standard</div>
         <div className="reservoir-h6 font-headings uppercase dark:text-white">
           {token?.kind}
         </div>
       </div> */}
-      {/* <div className="flex items-center justify-between">
-        <div className="reservoir-subtitle dark:text-white">
-          Metadata Refresh
-        </div>
+      <div className="text-sm pb-4">Animations and chart data are always live, but refreshing ensures recent listing data.</div>
+      <div className="flex">
+        {/* <div className="reservoir-subtitle dark:text-white">
+          Refresh
+        </div> */}
         <button
-          className="btn-primary-outline reservoir-h6 ml-auto flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
+          className="btn-primary-outline pill reservoir-h6 flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
           title="Refresh token"
           disabled={refreshLoading}
           onClick={() => refreshToken(`${token?.contract}:${token?.tokenId}`)}
@@ -148,7 +152,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
             }`}
           />
         </button>
-      </div> */}
+      </div>
     </article>
   )
 }

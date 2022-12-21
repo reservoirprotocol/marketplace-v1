@@ -270,7 +270,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
             token={`${router.query?.contract?.toString()}:${router.query?.tokenId?.toString()}`}
           />
         )}
-        {/* <TokenInfo token={token.token} /> */}
+        <TokenInfo token={token.token} />
       </div>
       <div className="col-span-full block space-y-4 px-2 md:hidden lg:px-0">
         {/* <CollectionInfo collection={collection} token={token.token} /> */}
