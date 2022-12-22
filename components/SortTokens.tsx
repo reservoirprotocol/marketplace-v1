@@ -13,8 +13,8 @@ type Options =
 const options: { [x: string]: { sortBy: string; sortDirection: string } } = {
   'Price low to high': { sortBy: 'floorAskPrice', sortDirection: 'asc' },
   'Price high to low': { sortBy: 'floorAskPrice', sortDirection: 'desc' },
-  'Rare to Common': { sortBy: 'rarity', sortDirection: 'desc' },
-  'Common to Rare': { sortBy: 'rarity', sortDirection: 'asc' },
+  'Rare to Common': { sortBy: 'rarity', sortDirection: 'asc' },
+  'Common to Rare': { sortBy: 'rarity', sortDirection: 'desc' },
 }
 
 const SortTokens: FC = ({}) => {
@@ -27,11 +27,11 @@ const SortTokens: FC = ({}) => {
     const sortBy = router?.query['sortBy']?.toString()
     const sortDirection = router?.query['sortDirection']?.toString()
 
-    if (sortBy === 'rarity' && sortDirection === 'asc') {
+    if (sortBy === 'rarity' && sortDirection === 'desc') {
       setSortSelection('Common to Rare')
       return
     }
-    if (sortBy === 'rarity' && sortDirection === 'desc') {
+    if (sortBy === 'rarity' && sortDirection === 'asc') {
       setSortSelection('Rare to Common')
       return
     }
