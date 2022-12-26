@@ -26,6 +26,7 @@
     "@react-hookz/web": "^14.2.2",
     "@reservoir0x/reservoir-kit-ui": "0.7.0",
     "@reservoir0x/sdk": "^0.0.123",
+    "@sharemint/sdk": "^0.4.0",
     "@stitches/react": "^1.2.8",
     "downshift": "^6.1.7",
     "ethers": "^5.7.1",

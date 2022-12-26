@@ -20,6 +20,9 @@ import { truncateAddress, truncateEns } from 'lib/truncateText'
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
 const DISABLE_POWERED_BY_RESERVOIR =
   process.env.NEXT_PUBLIC_DISABLE_POWERED_BY_RESERVOIR
+const REFERRAL_SIGN_UP_URL =
+  process.env.NEXT_PUBLIC_REFERRAL_SIGN_UP_URL ||
+  'https://sharemint.xyz/marketplace/sharer'
 
 const ConnectWallet: FC = () => {
   const account = useAccount()
@@ -73,6 +76,16 @@ const ConnectWallet: FC = () => {
               </a>
             </DropdownMenu.Item>
           </Link>
+          <DropdownMenu.Item asChild>
+            <a
+              href={REFERRAL_SIGN_UP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex w-full cursor-pointer items-center justify-between rounded px-4 py-3 outline-none transition hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+            >
+              Refer a friend
+            </a>
+          </DropdownMenu.Item>
           <DropdownMenu.Item asChild>
             <button
               key={wallet.id}

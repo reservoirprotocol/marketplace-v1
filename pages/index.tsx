@@ -28,6 +28,9 @@ const TAGLINE = process.env.NEXT_PUBLIC_TAGLINE
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
 const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
+const REFERRAL_SIGN_UP_URL =
+  process.env.NEXT_PUBLIC_REFERRAL_SIGN_UP_URL ||
+  'https://sharemint.xyz/marketplace/sharer'
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
 
@@ -83,8 +86,24 @@ const Home: NextPage<Props> = ({ fallback }) => {
         {description}
         {image}
       </Head>
-      <header className="col-span-full mb-12 mt-[66px] px-4 md:mt-40 lg:px-0">
-        <h1 className="reservoir-h1 text-center dark:text-white">{tagline}</h1>
+      <header className="col-span-full mx-auto mb-12 mt-[66px] max-w-2xl px-4 md:mt-28 lg:px-0">
+        <h1 className="reservoir-h1 text-center dark:text-white">
+          The community owned NFT marketplace
+        </h1>
+        <p className="mt-6 text-center text-2xl dark:text-gray-100">
+          Earn 100% of the marketplace fees paid by members you refer. Get your
+          invite link:
+        </p>
+        <div className="mt-6 flex w-full justify-center">
+          <a
+            className="btn-primary-fill mr-2 w-full min-w-[120px] cursor-pointer px-7 py-4 text-xl focus:ring-0 sm:w-auto"
+            href={REFERRAL_SIGN_UP_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Claim invite link
+          </a>
+        </div>
       </header>
       <div className="col-span-full px-6 md:px-16">
         <div className="mb-9 flex w-full items-center justify-between">
