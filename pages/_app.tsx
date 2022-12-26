@@ -31,6 +31,7 @@ import {
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
 import { FC, useEffect, useState } from 'react'
+import { storeReferrer } from "@sharemint/sdk";
 import '@rainbow-me/rainbowkit/styles.css'
 
 import {
@@ -177,6 +178,11 @@ const App: FC<AppProps & { baseUrl: string }> = ({
       marketplaceFeeRecipient: FEE_RECIPIENT,
     }
   }
+
+  // Store ShareMint referrer in local storage
+  useEffect(() => {
+    storeReferrer();
+  }, [])
 
   return (
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>

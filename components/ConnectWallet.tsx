@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import {
   useAccount,
   useBalance,
@@ -11,6 +11,7 @@ import {
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
 import { HiOutlineLogout } from 'react-icons/hi'
+import { saveAddress } from '@sharemint/sdk'
 import FormatNativeCrypto from './FormatNativeCrypto'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import useMounted from 'hooks/useMounted'
@@ -32,6 +33,15 @@ const ConnectWallet: FC = () => {
   const { disconnect } = useDisconnect()
   const wallet = connectors[0]
   const isMounted = useMounted()
+
+  useEffect(() => {
+    if (account.address && process.env.NEXT_PUBLIC_SHAREMINT_SLUG) {
+      saveAddress({
+        slug: process.env.NEXT_PUBLIC_SHAREMINT_SLUG,
+        address: account.address,
+      })
+    }
+  }, [])
 
   if (!isMounted) {
     return null
