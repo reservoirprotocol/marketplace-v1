@@ -14,6 +14,7 @@ import LoadingIcon from 'components/LoadingIcon'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
 import { useMediaQuery } from '@react-hookz/web'
+import useEnvChain from 'hooks/useEnvChain'
 
 const API_BASE =
   process.env.NEXT_PUBLIC_RESERVOIR_API_BASE || 'https://api.reservoir.tools'
@@ -27,7 +28,11 @@ type Props = {
 }
 
 const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
-  const usdConversion = useCoinConversion('usd')
+  const chain = useEnvChain()
+  const usdConversion = useCoinConversion(
+    'usd',
+    chain?.nativeCurrency.symbol || 'ETH'
+  )
   const { data: signer } = useSigner()
   const router = useRouter()
   const { address } = router.query
