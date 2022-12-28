@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { HiX } from 'react-icons/hi'
 import Steps from 'components/Steps'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import Link from 'next/link'
 
@@ -81,7 +81,10 @@ const ModalCard: FC<Props> = ({
           </div>
           {!DISABLE_POWERED_BY_RESERVOIR && (
             <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[510px]">
-              <Link href="https://reservoirprotocol.github.io/" legacyBehavior={true}>
+              <Link
+                href="https://reservoirprotocol.github.io/"
+                legacyBehavior={true}
+              >
                 <a
                   className="reservoir-tiny flex gap-2 dark:text-white"
                   target="_blank"

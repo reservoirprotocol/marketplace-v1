@@ -1,4 +1,4 @@
-import { setParams } from '@reservoir0x/reservoir-kit-client'
+import { setParams } from '@reservoir0x/reservoir-sdk'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY

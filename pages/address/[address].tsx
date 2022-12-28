@@ -25,7 +25,7 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import UserActivityTab from 'components/tables/UserActivityTab'
 import useMounted from 'hooks/useMounted'
 
