@@ -28,6 +28,7 @@ import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { constants } from 'ethers'
+import useEnvChain from 'hooks/useEnvChain'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -112,8 +113,11 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
   const isInTheWrongNetwork = Boolean(
     signer && CHAIN_ID && activeChain?.id !== +CHAIN_ID
   )
-
-  const usdConversion = useCoinConversion('usd', 'ETH')
+  const chain = useEnvChain()
+  const usdConversion = useCoinConversion(
+    'usd',
+    chain?.nativeCurrency.symbol || 'ETH'
+  )
 
   useEffect(() => {
     const availableTokens = tokens.filter(
@@ -396,7 +400,10 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
                   </div>
                   {!DISABLE_POWERED_BY_RESERVOIR && (
                     <div className="mx-auto flex items-center justify-center rounded-b-2xl bg-neutral-100 py-4 dark:bg-neutral-800 md:w-[639px]">
-                      <Link href="https://reservoirprotocol.github.io/" legacyBehavior={true}>
+                      <Link
+                        href="https://reservoirprotocol.github.io/"
+                        legacyBehavior={true}
+                      >
                         <a
                           className="reservoir-tiny flex gap-2 dark:text-white"
                           target="_blank"
