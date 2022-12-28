@@ -28,7 +28,6 @@ import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { constants } from 'ethers'
-import wrappedContractNames from 'lib/wrappedContractNames'
 import useEnvChain from 'hooks/useEnvChain'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
