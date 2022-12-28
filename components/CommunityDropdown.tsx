@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import { FiChevronDown } from 'react-icons/fi'
 import Link from 'next/link'
 
@@ -49,7 +49,10 @@ const CommunityDropdown: FC<Props> = ({ collections, defaultCollectionId }) => {
                 key={collection.collectionId}
                 className="reservoir-gray-dropdown-item overflow-hidden rounded-none border-b p-0 outline-none first:rounded-t-2xl last:rounded-b-2xl last:border-b-0 dark:border-[#525252] dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
               >
-                <Link href={`/collections/${collection.collectionId}`} legacyBehavior={true}>
+                <Link
+                  href={`/collections/${collection.collectionId}`}
+                  legacyBehavior={true}
+                >
                   <a
                     onClick={() => {
                       setOpen(false)

@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
 import { optimizeImage } from 'lib/optmizeImage'
@@ -76,7 +76,7 @@ const ExploreTable = ({
 
             <td className="w-[230px] pr-3">
               <Link
-              legacyBehavior={true}
+                legacyBehavior={true}
                 href={
                   router.query.id
                     ? `/collections/${router.query.id}?${formatUrl(
