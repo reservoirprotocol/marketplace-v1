@@ -4,6 +4,7 @@ import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { TokenDetails } from 'types/reservoir'
 import { setToast } from './setToast'
+import { mainnet } from 'wagmi/chains'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
@@ -111,7 +112,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
               className="reservoir-h6 flex items-center gap-2 font-headings text-primary-700 dark:text-primary-100"
               target="_blank"
               rel="noopener noreferrer"
-              href={`${blockExplorerBaseUrl}/address/${token?.contract}`}
+              href={`${blockExplorerBaseUrl}/token/${token?.contract}?a=${token?.tokenId}`}
             >
               {truncateAddress(token?.contract)}
               <FiExternalLink className="h-4 w-4" />
