@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { HiCheckCircle, HiXCircle } from 'react-icons/hi'
 import { CgSpinner } from 'react-icons/cg'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 
 type Props = {
   steps: Execute['steps']

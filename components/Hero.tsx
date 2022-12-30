@@ -1,6 +1,6 @@
 import { FC, useEffect, useState, ComponentProps, useRef } from 'react'
 import { FiChevronDown, FiMoreVertical, FiRefreshCcw } from 'react-icons/fi'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import { BidModal, Trait } from '@reservoir0x/reservoir-kit-ui'
 import { useNetwork, useSigner } from 'wagmi'
 import Toast from 'components/Toast'

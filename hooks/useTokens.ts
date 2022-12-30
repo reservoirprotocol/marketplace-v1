@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import { useReservoirClient } from '@reservoir0x/reservoir-kit-ui'
 import { NextRouter } from 'next/router'
 import { useEffect } from 'react'

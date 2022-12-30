@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 import setParams from 'lib/params'
 import debounce from 'lodash.debounce'
 import { FiSearch, FiXCircle } from 'react-icons/fi'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 
 export type SearchCollectionsAPISuccessResponse =
   paths['/search/collections/v1']['get']['responses']['200']['schema']

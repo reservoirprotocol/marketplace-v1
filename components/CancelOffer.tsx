@@ -1,5 +1,5 @@
 import { Signer } from 'ethers'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import React, {
   cloneElement,
   ComponentProps,
