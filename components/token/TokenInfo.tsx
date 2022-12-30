@@ -4,7 +4,6 @@ import React, { FC, useState } from 'react'
 import { FiExternalLink, FiRefreshCcw } from 'react-icons/fi'
 import { TokenDetails } from 'types/reservoir'
 import { setToast } from './setToast'
-import { mainnet } from 'wagmi/chains'
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
