@@ -24,7 +24,7 @@
     "@ramosdiego/reservoir": "^0.0.15",
     "@ramosdiego/ui": "^0.0.10",
     "@react-hookz/web": "^14.2.2",
-    "@reservoir0x/reservoir-kit-ui": "0.7.5",
+    "@reservoir0x/reservoir-kit-ui": "0.8.2",
     "@reservoir0x/sdk": "^0.0.123",
     "@stitches/react": "^1.2.8",
     "downshift": "^6.1.7",

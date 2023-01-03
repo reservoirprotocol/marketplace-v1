@@ -17,12 +17,16 @@ type ActivityResponse = CollectionActivityResponse | UsersActivityResponse
 export type UserActivityTypes = NonNullable<
   Exclude<Parameters<typeof useUsersActivity>['1'], boolean>
 >['types']
+type ActivityTypes = Exclude<
+  CollectionActivityTypes | UserActivityTypes,
+  string
+>
 
 type Props = {
   filters: string[]
   enabledFilters: string[]
   data: ActivityResponse
-  onTypesChange: (types: CollectionActivityTypes | UserActivityTypes) => void
+  onTypesChange: (types: ActivityTypes) => void
   types:
     | (
         | 'sale'
