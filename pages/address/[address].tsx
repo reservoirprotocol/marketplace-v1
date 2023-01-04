@@ -154,6 +154,16 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
             </Tabs.Content>
             {isOwner && (
               <>
+                <Tabs.Content value="received">
+                  <UserOffersReceivedTable
+                    collectionIds={collectionIds}
+                    modal={{
+                      isInTheWrongNetwork,
+                      setToast,
+                    }}
+                    isOwner={isOwner}
+                  />
+                </Tabs.Content>
                 <Tabs.Content value="buying">
                   <UserOffersTable
                     collectionIds={collectionIds}
