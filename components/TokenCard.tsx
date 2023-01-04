@@ -113,9 +113,12 @@ const TokenCard: FC<Props> = ({
     canAddToCart = false
   }
 
-  const textColor = tinycolor(freshData?.background).getBrightness() > 50
-    ? tinycolor(freshData?.background).darken(15).toString()
-    : tinycolor(freshData?.background).lighten(75).toString()
+  const brightness = tinycolor(freshData?.background).getBrightness()
+  let textColor 
+  
+  if (brightness > 50 && brightness < 200) textColor = tinycolor(freshData?.background).darken(15).toString()
+  if (brightness >= 200) textColor = tinycolor(freshData?.background).darken(45).toString()
+  if (brightness <= 50) textColor = tinycolor(freshData?.background).lighten(75).toString()
 
   const deltaColor = freshData?.latestDelta! < 0 ? finiliar[900] : finiliar[500]
 
