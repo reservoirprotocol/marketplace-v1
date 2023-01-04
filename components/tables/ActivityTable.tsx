@@ -34,11 +34,15 @@ export type UserActivityTypes = NonNullable<
 >['types']
 
 type Activity = CollectionActivity | UsersActivity
+type ActivityTypes = Exclude<
+  CollectionActivityTypes | UserActivityTypes,
+  string
+>
 
 type Props = {
   data: ActivityResponse
-  types: CollectionActivityTypes | UserActivityTypes
-  onTypesChange: (types: CollectionActivityTypes | UserActivityTypes) => void
+  types: ActivityTypes
+  onTypesChange: (types: ActivityTypes) => void
   emptyPlaceholder: ReactElement
 }
 

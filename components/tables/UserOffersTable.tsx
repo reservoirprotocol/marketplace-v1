@@ -40,7 +40,7 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
     status: 'active',
     maker: address as string,
     limit: 20,
-    includeMetadata: true,
+    includeCriteriaMetadata: true,
   }
 
   if (collectionIds) {
@@ -366,11 +366,11 @@ const UserOffersTable: FC<Props> = ({ modal, collectionIds }) => {
 export default UserOffersTable
 
 function processBid(bid: ReturnType<typeof useBids>['data']['0']) {
-  const kind = bid?.metadata?.kind
+  const kind = bid?.criteria?.kind
   // @ts-ignore
-  const key = bid?.metadata?.data?.attributes?.[0]?.key
+  const key = bid?.criteria?.data?.attributes?.[0]?.key
   // @ts-ignore
-  const value = bid?.metadata?.data?.attributes?.[0]?.value
+  const value = bid?.criteria?.data?.attributes?.[0]?.value
   let tokenId
   let contract = bid?.tokenSetId?.split(':')[1]
   let href
@@ -402,16 +402,16 @@ function processBid(bid: ReturnType<typeof useBids>['data']['0']) {
     kind,
     contract,
     tokenId,
-    image: bid?.metadata?.data?.image || collectionRedirectUrl,
+    image: bid?.criteria?.data?.token?.image || collectionRedirectUrl,
     tokenName: tokenId
-      ? bid?.metadata?.data?.tokenName || `#${tokenId}`
+      ? bid?.criteria?.data?.token?.name || `#${tokenId}`
       : undefined,
     expiration:
       bid?.expiration === 0
         ? 'Never'
         : DateTime.fromMillis(+`${bid?.expiration}000`).toRelative(),
     id: bid?.id,
-    collectionName: bid?.metadata?.data?.collectionName,
+    collectionName: bid?.criteria?.data?.collection?.name,
     price: bid?.price,
     source: {
       icon: (bid?.source?.icon as string) || null,

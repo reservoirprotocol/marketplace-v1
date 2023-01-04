@@ -9,11 +9,10 @@ type Props = {
 type ActivityQuery = NonNullable<
   Exclude<Parameters<typeof useCollectionActivity>['0'], boolean>
 >
+type ActivityTypes = Exclude<ActivityQuery['types'], string>
 
 const CollectionActivityTab: FC<Props> = ({ collectionId }) => {
-  const [activityTypes, setActivityTypes] = useState<ActivityQuery['types']>([
-    'sale',
-  ])
+  const [activityTypes, setActivityTypes] = useState<ActivityTypes>(['sale'])
 
   const query: ActivityQuery = {
     limit: 20,
