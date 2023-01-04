@@ -346,7 +346,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
             activity.price !== 0 &&
             activity.type &&
             !['transfer', 'mint'].includes(activity.type) ? (
-              <FormatNativeCrypto amount={activity.price} />
+              <FormatNativeCrypto amount={activity.price} orderType={activity.order?.side}/>
             ) : null}
           </div>
 
@@ -447,7 +447,7 @@ const ActivityTableRow: FC<ActivityTableRowProps> = ({ activity }) => {
         activity.price !== 0 &&
         activity.type &&
         !['transfer', 'mint'].includes(activity.type) ? (
-          <FormatNativeCrypto amount={activity.price} />
+          <FormatNativeCrypto amount={activity.price} orderType={activity.order?.side} />
         ) : null}
       </td>
       <td className="px-6 py-4">

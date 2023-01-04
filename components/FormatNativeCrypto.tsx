@@ -8,8 +8,10 @@ const FormatNativeCrypto: FC<Props> = ({
   amount,
   maximumFractionDigits,
   logoWidth,
+  orderType
 }) => {
-  const address = constants.AddressZero
+  // use WETH logo if this was an offer accepted, otherwise fall back to ETH logo
+  const address = orderType === 'bid' ? '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' : constants.AddressZero
   const decimals = 18
 
   return (

@@ -3,7 +3,8 @@ import { FC, ComponentProps } from 'react'
 
 type FormatCryptoProps = {
   address?: string
-  logoWidth?: number
+  logoWidth?: number,
+  orderType?: string
 }
 
 const API_BASE =
