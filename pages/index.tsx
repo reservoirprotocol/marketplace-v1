@@ -86,7 +86,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
         {image}
       </Head>
       {/* Google Analytics */}
-      <Script
+      {/* <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-TRM105Y3D5"
         strategy="afterInteractive"
       />
@@ -100,7 +100,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
             send_page_view: false // we're tracking this ourselves
           });
         `}
-      </Script>
+      </Script> */}
       <div
         style={isSmallDevice ? { marginTop: -64 } : { marginTop: -72 }}
         className="col-span-full lg:px-0 z-[-2] bg-[#F8E6D0]"

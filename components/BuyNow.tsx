@@ -5,6 +5,8 @@ import { useSigner } from 'wagmi'
 import { GlobalContext } from 'context/GlobalState'
 import { BuyModal, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useSwitchNetwork } from 'wagmi'
+import { useRouter } from 'next/router'
+import ReactGA from 'react-ga'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -52,6 +54,8 @@ const BuyNow: FC<Props> = ({
 
   const trigger = <button className={buttonClassName}>Buy Now</button>
 
+  const router = useRouter()
+
   if (!forSale) {
     return null
   }
@@ -82,6 +86,16 @@ const BuyNow: FC<Props> = ({
       trigger={trigger}
       tokenId={tokenId}
       collectionId={collectionId}
+      onPurchaseComplete={(purchaseData) => {
+        ReactGA.ga('event', 'purchase', {
+          'path': window.location.pathname,
+          'title': document.title,
+          'route': router.pathname,
+          'tokenId': purchaseData.tokenId,
+          'maker': purchaseData.maker,
+          'type': 'buyNow'
+        });
+      }}
       onClose={() => {
         if (mutate) {
           mutate()

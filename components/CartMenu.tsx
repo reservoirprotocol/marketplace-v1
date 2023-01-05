@@ -16,6 +16,7 @@ import cartTokensAtom, {
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { getPricing } from 'lib/token/pricing'
+import ReactGA from 'react-ga'
 
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
@@ -80,7 +81,17 @@ const CartMenu: FC = () => {
           partial: true,
         },
       })
-      .then(() => setCartTokens([]))
+      .then(() => {
+        // tracking
+        ReactGA.ga('event', 'purchase', {
+          'path': window.location.pathname,
+          'title': document.title,
+          'tokens': cartTokens.map((token) => token.token.tokenId),
+          'type': 'cart'
+        });
+        // clear cart
+        setCartTokens([])
+      })
       .catch((err: any) => {
         if (err?.type === 'price mismatch') {
           setToast({
