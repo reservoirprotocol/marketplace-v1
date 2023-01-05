@@ -97,6 +97,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
           gtag('js', new Date());
           gtag('config', 'G-TRM105Y3D5', {
             page_path: window.location.pathname,
+            send_page_view: false // we're tracking this ourselves
           });
         `}
       </Script>
