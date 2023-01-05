@@ -193,7 +193,8 @@ const App: FC<AppProps & { baseUrl: string }> = ({
     if (window.gtag && env != 'development') {
       window.gtag('event', 'page_view', {
         'path': window.location.pathname,
-        'title': document.title
+        'title': document.title,
+        'route': router.pathname
       });
     }
   }, [router.pathname]);
