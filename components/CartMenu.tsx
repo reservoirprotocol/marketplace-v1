@@ -87,7 +87,8 @@ const CartMenu: FC = () => {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': cartTokens.map((token) => token.token.tokenId),
-          'type': 'cart'
+          'type': 'cart',
+          'total': cartTotal
         });
         // clear cart
         setCartTokens([])

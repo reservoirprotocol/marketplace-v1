@@ -93,7 +93,8 @@ const BuyNow: FC<Props> = ({
           'route': router.pathname,
           'tokenId': purchaseData.tokenId,
           'maker': purchaseData.maker,
-          'type': 'buyNow'
+          'type': 'buyNow',
+          'total': data.token?.market?.floorAsk?.price?.amount?.decimal
         });
       }}
       onClose={() => {

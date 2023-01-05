@@ -193,7 +193,8 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': tokens.map((token) => token.tokenId),
-          'type': 'sweep'
+          'type': 'sweep',
+          'total': sweepTotal
         });
         setWaitingTx(false)
         details && 'mutate' in details && details.mutate()
