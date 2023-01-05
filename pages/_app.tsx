@@ -48,6 +48,7 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
+import { useRouter } from 'next/router'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -184,6 +185,16 @@ const App: FC<AppProps & { baseUrl: string }> = ({
       marketplaceFeeRecipient: FEE_RECIPIENT,
     }
   }
+
+  const router = useRouter()
+  useEffect(() => {
+    // Track route changes/pageviews
+    const env = process.env.NODE_ENV
+    if (window.gtag && env != 'development') {
+      window.gtag('set', 'page', window.location.pathname);
+      window.gtag('send', 'pageview');
+    }
+  }, [router.pathname]);
 
   return (
     <ReservoirKitProvider options={options} theme={reservoirKitTheme}>
