@@ -191,8 +191,10 @@ const App: FC<AppProps & { baseUrl: string }> = ({
     // Track route changes/pageviews
     const env = process.env.NODE_ENV
     if (window.gtag && env != 'development') {
-      window.gtag('set', 'page', window.location.pathname);
-      window.gtag('send', 'pageview');
+      window.gtag('event', 'page_view', {
+        'path': window.location.pathname,
+        'title': document.title
+      });
     }
   }, [router.pathname]);
 
