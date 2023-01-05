@@ -49,7 +49,7 @@ import {
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { useRouter } from 'next/router'
-import ReactGA from 'react-ga'
+import { gtag, install } from 'ga-gtag'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -188,8 +188,8 @@ const App: FC<AppProps & { baseUrl: string }> = ({
   }
 
   useEffect(() => {
-    ReactGA.initialize('G-TRM105Y3D5', {
-      debug: process.env.NODE_ENV == 'development'
+    install('G-TRM105Y3D5', {
+      send_page_view: false
     })
   }, [])
 
@@ -197,7 +197,7 @@ const App: FC<AppProps & { baseUrl: string }> = ({
   useEffect(() => {
     // Track route changes/pageviews
     if (process.env.NODE_ENV != 'development') {
-      ReactGA.ga('event', 'pageView', {
+    gtag('event', 'pageView', {
         'path': window.location.pathname,
         'title': document.title,
         'route': router.pathname

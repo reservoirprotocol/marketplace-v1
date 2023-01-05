@@ -16,7 +16,7 @@ import cartTokensAtom, {
 } from 'recoil/cart'
 import FormatCrypto from 'components/FormatCrypto'
 import { getPricing } from 'lib/token/pricing'
-import ReactGA from 'react-ga'
+import { gtag } from 'ga-gtag'
 
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
@@ -83,7 +83,7 @@ const CartMenu: FC = () => {
       })
       .then(() => {
         // tracking
-        ReactGA.ga('event', 'purchase', {
+        gtag('event', 'purchase', {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': cartTokens.map((token) => token.token.tokenId),

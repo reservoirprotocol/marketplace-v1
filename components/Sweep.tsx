@@ -27,7 +27,7 @@ import { useReservoirClient, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { Collection } from 'types/reservoir'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
-import ReactGA from 'react-ga'
+import { gtag } from 'ga-gtag'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -189,7 +189,7 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         },
       })
       .then(() => {
-        ReactGA.ga('event', 'purchase', {
+        gtag('event', 'purchase', {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': tokens.map((token) => token.tokenId),

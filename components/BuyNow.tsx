@@ -6,7 +6,7 @@ import { GlobalContext } from 'context/GlobalState'
 import { BuyModal, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useSwitchNetwork } from 'wagmi'
 import { useRouter } from 'next/router'
-import ReactGA from 'react-ga'
+import { gtag } from 'ga-gtag'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -87,7 +87,7 @@ const BuyNow: FC<Props> = ({
       tokenId={tokenId}
       collectionId={collectionId}
       onPurchaseComplete={(purchaseData) => {
-        ReactGA.ga('event', 'purchase', {
+        gtag('event', 'purchase', {
           'path': window.location.pathname,
           'title': document.title,
           'route': router.pathname,
