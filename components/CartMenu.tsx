@@ -17,6 +17,7 @@ import cartTokensAtom, {
 import FormatCrypto from 'components/FormatCrypto'
 import { getPricing } from 'lib/token/pricing'
 import { gtag } from 'ga-gtag'
+import * as amplitude from '@amplitude/analytics-browser'
 
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
@@ -82,14 +83,16 @@ const CartMenu: FC = () => {
         },
       })
       .then(() => {
-        // tracking
-        gtag('event', 'purchase', {
+        const params = {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': cartTokens.map((token) => token.token.tokenId),
           'type': 'cart',
           'total': cartTotal
-        });
+        }
+        // tracking
+        gtag('event', 'purchase', params);
+        amplitude.track('purchase', params)
         // clear cart
         setCartTokens([])
       })

@@ -28,6 +28,7 @@ import { Collection } from 'types/reservoir'
 import useCoinConversion from 'hooks/useCoinConversion'
 import { formatDollar } from 'lib/numbers'
 import { gtag } from 'ga-gtag'
+import * as amplitude from '@amplitude/analytics-browser'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
@@ -189,13 +190,15 @@ const Sweep: FC<Props> = ({ tokens, collection, mutate, setToast }) => {
         },
       })
       .then(() => {
-        gtag('event', 'purchase', {
+        const params = {
           'path': window.location.pathname,
           'title': document.title,
           'tokens': tokens.map((token) => token.tokenId),
           'type': 'sweep',
           'total': sweepTotal
-        });
+        }
+        gtag('event', 'purchase', params);
+        amplitude.track('purchase', params)
         setWaitingTx(false)
         details && 'mutate' in details && details.mutate()
         mutate && mutate()

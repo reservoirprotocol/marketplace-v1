@@ -50,6 +50,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { useRouter } from 'next/router'
 import { gtag, install } from 'ga-gtag'
+import * as amplitude from '@amplitude/analytics-browser'
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -188,20 +189,25 @@ const App: FC<AppProps & { baseUrl: string }> = ({
   }
 
   useEffect(() => {
+    // GA
     install('G-TRM105Y3D5', {
       send_page_view: false
     })
+    // Amplitude
+    amplitude.init('a1a0cd54d39c3f1ccb8c40e1640c38c7');
   }, [])
 
   const router = useRouter()
   useEffect(() => {
     // Track route changes/pageviews
     if (process.env.NODE_ENV != 'development') {
-    gtag('event', 'pageView', {
+      let params = {
         'path': window.location.pathname,
         'title': document.title,
         'route': router.pathname
-      });
+      }
+      gtag('event', 'pageView', params)
+      amplitude.track('pageView', params)
     }
   }, [router.pathname]);
 

@@ -7,6 +7,7 @@ import { BuyModal, useTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useSwitchNetwork } from 'wagmi'
 import { useRouter } from 'next/router'
 import { gtag } from 'ga-gtag'
+import * as amplitude from '@amplitude/analytics-browser'
 
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
@@ -87,7 +88,7 @@ const BuyNow: FC<Props> = ({
       tokenId={tokenId}
       collectionId={collectionId}
       onPurchaseComplete={(purchaseData) => {
-        gtag('event', 'purchase', {
+        const params = {
           'path': window.location.pathname,
           'title': document.title,
           'route': router.pathname,
@@ -95,7 +96,9 @@ const BuyNow: FC<Props> = ({
           'maker': purchaseData.maker,
           'type': 'buyNow',
           'total': data.token?.market?.floorAsk?.price?.amount?.decimal
-        });
+        }
+        gtag('event', 'purchase', params)
+        amplitude.track('purchase', params)
       }}
       onClose={() => {
         if (mutate) {
