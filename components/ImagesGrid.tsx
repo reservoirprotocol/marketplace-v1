@@ -1,5 +1,5 @@
 import { paths } from '@reservoir0x/reservoir-sdk'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import React, { FC } from 'react'
 
 type Props = {

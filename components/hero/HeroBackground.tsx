@@ -1,4 +1,4 @@
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import { FC, ReactNode } from 'react'
 
 const envBannerImage = process.env.NEXT_PUBLIC_BANNER_IMAGE

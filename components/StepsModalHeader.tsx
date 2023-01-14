@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import FormatNativeCrypto from './FormatNativeCrypto'
 
 type Props = {

@@ -1,4 +1,4 @@
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import Link from 'next/link'
 import React, { FC } from 'react'
 import { Collection, TokenDetails } from 'types/reservoir'

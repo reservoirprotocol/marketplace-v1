@@ -1,4 +1,4 @@
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import { truncateAddress } from 'lib/truncateText'
 import { DateTime } from 'luxon'
 import Link from 'next/link'

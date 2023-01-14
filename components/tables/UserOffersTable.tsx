@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useEffect } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import CancelOffer from 'components/CancelOffer'
 import { useSigner } from 'wagmi'
 import Toast from 'components/Toast'
