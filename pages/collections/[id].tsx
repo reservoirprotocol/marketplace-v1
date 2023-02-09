@@ -11,7 +11,7 @@ import useCollectionStats from 'hooks/useCollectionStats'
 import useTokens from 'hooks/useTokens'
 import useCollectionAttributes from 'hooks/useCollectionAttributes'
 import { setToast } from 'components/token/setToast'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import Hero from 'components/Hero'
 import { formatNumber } from 'lib/numbers'
 import Sidebar from 'components/Sidebar'
@@ -323,6 +323,7 @@ export const getStaticProps: GetStaticProps<{
     {
       id,
       includeTopBid: true,
+      normalizeRoyalties: true,
     }
 
   setParams(collectionUrl, collectionQuery)
@@ -341,6 +342,7 @@ export const getStaticProps: GetStaticProps<{
     includeTopBid: false,
     limit: 10,
     includeDynamicPricing: true,
+    normalizeRoyalties: true,
   }
 
   setParams(tokensUrl, tokensQuery)

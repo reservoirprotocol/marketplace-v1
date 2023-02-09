@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
 import FormatNativeCrypto from 'components/FormatNativeCrypto'
 import usePaginatedCollections from 'hooks/usePaginatedCollections'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import { formatNumber } from 'lib/numbers'
 import { useRouter } from 'next/router'
 import { PercentageChange } from './hero/HeroStats'
@@ -105,7 +105,7 @@ const TrendingCollectionTable: FC<Props> = ({ fallback }) => {
                   <div className="reservoir-h6 mr-6 dark:text-white">
                     {index + 1}
                   </div>
-                  <Link href={tokenHref}>
+                  <Link href={tokenHref} legacyBehavior={true}>
                     <a className="flex items-center gap-2">
                       <img
                         src={optimizeImage(image, 140)}

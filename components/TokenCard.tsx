@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {
   ComponentPropsWithoutRef,
@@ -81,22 +81,25 @@ const TokenCard: FC<Props> = ({
   const reservoirClient = useReservoirClient()
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
-  if (!token) return null
 
   useEffect(() => {
-    fetchMetaFromFiniliar(token?.token?.tokenId!).then((res) => {
-      updateFreshData({
-        latestPrice: res.latestPrice,
-        latestDelta: res.latestDelta,
-        image: res.image,
-        background: res.background,
-        attributes: res.attributes
+    if (token) {
+      fetchMetaFromFiniliar(token?.token?.tokenId!).then((res) => {
+        updateFreshData({
+          latestPrice: res.latestPrice,
+          latestDelta: res.latestDelta,
+          image: res.image,
+          background: res.background,
+          attributes: res.attributes
+        })
+      }).catch((err) => {
+        console.log(`Error fetching data for token id ${token?.token?.tokenId}:`, err)
       })
-    }).catch((err) => {
-      console.log(`Error fetching data for token id ${token?.token?.tokenId}:`, err)
-    })
+
+    }
   }, [token?.token?.tokenId])
 
+  if (!token) return null
   if (!CHAIN_ID) return null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
   const tokenId = `${token?.token?.contract}:${token?.token?.tokenId}`
@@ -134,6 +137,7 @@ const TokenCard: FC<Props> = ({
       ) : null}
 
       <Link
+        legacyBehavior={true}
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/discover/${token?.token?.tokenId}`}
       >

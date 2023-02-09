@@ -3,7 +3,7 @@ import * as Popover from '@radix-ui/react-popover'
 import { FC, useState } from 'react'
 import { FaShoppingCart, FaTrashAlt } from 'react-icons/fa'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { Execute } from '@reservoir0x/reservoir-kit-client'
+import { Execute } from '@reservoir0x/reservoir-sdk'
 import { Signer } from 'ethers'
 import { setToast } from './token/setToast'
 import { useAccount, useBalance, useSigner } from 'wagmi'
@@ -19,6 +19,7 @@ import { getPricing } from 'lib/token/pricing'
 import { gtag } from 'ga-gtag'
 import * as amplitude from '@amplitude/analytics-browser'
 
+import { formatEther } from 'ethers/lib/utils'
 type UseBalanceToken = NonNullable<Parameters<typeof useBalance>['0']>['token']
 
 const slideDown = keyframes({
@@ -52,7 +53,7 @@ const CartMenu: FC = () => {
   const { address } = useAccount()
   const reservoirClient = useReservoirClient()
   const { data: balance } = useBalance({
-    addressOrName: address,
+    address: address,
     token:
       cartCurrency?.symbol !== 'ETH'
         ? (cartCurrency?.contract as UseBalanceToken)

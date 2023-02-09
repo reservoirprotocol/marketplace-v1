@@ -4,7 +4,7 @@ import { GetStaticPaths, GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
 import Head from 'next/head'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import Listings from 'components/token/Listings'
 import TokenInfo from 'components/token/TokenInfo'
 import CollectionInfo from 'components/token/CollectionInfo'
@@ -305,6 +305,7 @@ export const getServerSideProps: GetServerSideProps<{
   ) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 
@@ -323,6 +324,7 @@ export const getServerSideProps: GetServerSideProps<{
     includeTopBid: true,
     includeAttributes: true,
     includeDynamicPricing: true,
+    normalizeRoyalties: true,
   }
 
   const href = setParams(url, query)
@@ -356,6 +358,7 @@ export const getServerSideProps: GetServerSideProps<{
   if (!collectionId) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 

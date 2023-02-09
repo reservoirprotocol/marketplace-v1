@@ -7,20 +7,32 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 
-const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE
-const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE
-const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION
-const OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE
-const META_URL = process.env.NEXT_PUBLIC_META_URL
-const FAVICON = process.env.NEXT_PUBLIC_FAVICON
-const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID
-const META_TWITTER_USERNAME = process.env.NEXT_PUBLIC_META_TWITTER_USERNAME
-const FONT_URLS = process.env.NEXT_PUBLIC_FONT_URLS
-const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
-const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME
+const DARK_MODE = process.env.NEXT_PUBLIC_DARK_MODE || false
+const META_TITLE = process.env.NEXT_PUBLIC_META_TITLE || ''
+const META_DESCRIPTION = process.env.NEXT_PUBLIC_META_DESCRIPTION || ''
+const OG_IMAGE = process.env.NEXT_PUBLIC_META_OG_IMAGE || ''
+const META_URL = process.env.NEXT_PUBLIC_META_URL || ''
+const FAVICON = process.env.NEXT_PUBLIC_FAVICON || ''
+const SOURCE_ID = process.env.NEXT_PUBLIC_SOURCE_ID || 'Finiliar'
+const META_TWITTER_USERNAME = process.env.NEXT_PUBLIC_META_TWITTER_USERNAME || ''
+const FONT_URLS = process.env.NEXT_PUBLIC_FONT_URLS || ''
+const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON || ''
+const SOURCE_NAME = process.env.NEXT_PUBLIC_SOURCE_NAME || ''
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
 
 const MyDocument = function () {
+  console.log({
+    CHAIN_ID,
+    DARK_MODE,
+    OG_IMAGE,
+    META_TITLE,
+    META_DESCRIPTION,
+    META_URL,
+    META_TWITTER_USERNAME,
+    FONT_URLS,
+    SOURCE_ICON,
+    FAVICON
+  })
   const chain = findChain(CHAIN_ID)
 
   return (
@@ -71,10 +83,14 @@ const MyDocument = function () {
       {/* Reservoir Meta Tags */}
       {SOURCE_NAME ? (
         <meta property="reservoir:title" content={SOURCE_NAME} />
-      ) : null}
+      ) : (
+        <meta />
+      )}
       {SOURCE_ICON || FAVICON ? (
         <meta property="reservoir:icon" content={SOURCE_ICON || FAVICON} />
-      ) : null}
+      ) : (
+        <meta />
+      )}
 
       {chain && chain.network ? (
         <meta
@@ -83,7 +99,9 @@ const MyDocument = function () {
           }`}
           content="/${contract}/${tokenId}"
         />
-      ) : null}
+      ) : (
+        <meta />
+      )}
 
       {FONT_URLS
         ? FONT_URLS.split(',').map((link, i) => (

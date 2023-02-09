@@ -6,7 +6,13 @@ import {
   NextPage,
 } from 'next'
 import { useRouter } from 'next/router'
-import { useAccount, useNetwork, useEnsName, useEnsAvatar } from 'wagmi'
+import {
+  useAccount,
+  useNetwork,
+  useEnsName,
+  useEnsAvatar,
+  Address,
+} from 'wagmi'
 import * as Tabs from '@radix-ui/react-tabs'
 import { toggleOnItem } from 'lib/router'
 import UserOffersTable from 'components/tables/UserOffersTable'
@@ -20,7 +26,7 @@ import toast from 'react-hot-toast'
 import Head from 'next/head'
 import useSearchCommunity from 'hooks/useSearchCommunity'
 import { truncateAddress } from 'lib/truncateText'
-import { paths, setParams } from '@reservoir0x/reservoir-kit-client'
+import { paths, setParams } from '@reservoir0x/reservoir-sdk'
 import UserActivityTab from 'components/tables/UserActivityTab'
 import useMounted from 'hooks/useMounted'
 
@@ -32,10 +38,6 @@ const RESERVOIR_API_KEY = process.env.RESERVOIR_API_KEY
 const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>
-
-type UseEnsNameAddress = NonNullable<
-  Parameters<typeof useEnsName>['0']
->['address']
 
 const metadata = {
   title: (title: string) => <title>{title}</title>,
@@ -51,11 +53,11 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
   }
 
   const { data: ensAvatar } = useEnsAvatar({
-    addressOrName: address,
+    address: address as Address,
   })
 
   const { data: ensName } = useEnsName({
-    address: address as UseEnsNameAddress,
+    address: address as Address,
     onSettled(data, error) {
       console.log('Settled', { data, error })
     },
@@ -75,7 +77,7 @@ const Address: NextPage<Props> = ({ address, fallback }) => {
     collectionIds =
       (collections?.data?.collections
         ?.map(({ contract }) => contract)
-        .filter((contract) => !!contract) as string[]) || []
+        .filter((contract: any) => !!contract) as string[]) || []
   }
 
   if (!CHAIN_ID) {
@@ -230,7 +232,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 export const getStaticProps: GetStaticProps<{
   address: string | undefined
   fallback: {
-    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
   }
 }> = async ({ params }) => {
   const options: RequestInit | undefined = {}
@@ -243,11 +245,11 @@ export const getStaticProps: GetStaticProps<{
     }
   }
 
-  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v5`)
+  const url = new URL(`${RESERVOIR_API_BASE}/users/${address}/tokens/v6`)
 
-  let query: paths['/users/{user}/tokens/v5']['get']['parameters']['query'] = {
+  let query: paths['/users/{user}/tokens/v6']['get']['parameters']['query'] = {
     limit: 20,
-    offset: 0,
+    normalizeRoyalties: true,
   }
 
   if (COLLECTION) {

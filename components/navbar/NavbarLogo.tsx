@@ -29,7 +29,7 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const desktopVariant = variant == 'desktop'
 
   return (
-    <Link href={NAVBAR_LOGO_LINK || '/'}>
+    <Link href={NAVBAR_LOGO_LINK || '/'} legacyBehavior={true}>
       <a
         className={`relative inline-flex flex-none items-center gap-1 ${className}`}
       >
