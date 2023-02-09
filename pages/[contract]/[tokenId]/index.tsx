@@ -206,6 +206,19 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
   // const icon = getIconFromTokenDetails(tokenDetails!)
   const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
+  // only show token if this is fullscreen
+  const { fullscreen } = router.query
+
+  if (fullscreen) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-items-center" style={{ background: freshData?.background }}>
+        <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
+          <TokenMedia token={token.token} />
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <Layout navbar={{}} className="bg-primary-300">
       <Head>
@@ -230,6 +243,17 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
           </div> */}
           <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
             <TokenMedia token={token.token} />
+          </div>
+          <div className="absolute right-0 bottom-0">
+            <div onClick={() => {
+              window.open(window.location.href + '?fullscreen=true', "_blank", "fullscreen=yes")
+            }}>
+              <img
+                src="/icons/SquareTopDown.svg"
+                alt="Fullscreen Icon"
+                className="h-7 w-7"
+              />
+            </div>
           </div>
         </div>
       </div>

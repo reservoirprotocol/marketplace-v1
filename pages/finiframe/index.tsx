@@ -56,7 +56,7 @@ const GridItem: FC<Props> = ({ finiId }) => {
 
 const FiniFrame: NextPage = () => {
   // read finis from localstorage
-  const tempIds = ["722", "349", "827", "420", "999", "2392", "722", "349", "827", "420", "999", "2392"]
+  const tempIds = ["722", "349", "827", "420", "999", "2392", "722", ]
   let windowSize = useCurrentSize()
 
   const columnCount = 6

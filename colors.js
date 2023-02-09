@@ -167,7 +167,7 @@ const primaryColors = {
     680: '#ffaea5',
     700: '#7D7EF3',
     800: '#FF5EBE',
-    900: '#FF4F4F', //F8FAFF
+    900: '#FF7979', //F8FAFF
   },
   default: {
     100: '#F1E5FF',
