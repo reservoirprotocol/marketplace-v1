@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import { useLocalStorageValue } from "@react-hookz/web"
 import { useLocalStorage } from "hooks/useLocalStorage"
+import { Heart, Heart2 } from './Icons'
 
 type Props = {
   tokenId: string
@@ -15,18 +16,20 @@ type Props = {
 
 const HeartButton: FC<Props> = ({ tokenId }) => {
   const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
+  // @ts-ignore
+  const isOnMyTeam = myTeam.indexOf(tokenId) > -1
+
   return (
     <div
         className="cursor-pointer pl-4"
-        // @ts-ignore
-        style={{ color: myTeam.indexOf(tokenId) > -1 ? 'red' : ''}}
+        style={{ color: isOnMyTeam ? 'red' : ''}}
         onClick={() => {
           if (myTeam) {
             let newTeam = Object.assign([], myTeam)
             // either add or remove from team
-            // @ts-ignore
-            const indexOnTeam = newTeam.indexOf(tokenId)
-            if (indexOnTeam > -1) {
+            if (isOnMyTeam) {
+              // @ts-ignore
+              const indexOnTeam = newTeam.indexOf(tokenId)
               // @ts-ignore
               newTeam.splice(indexOnTeam, 1)
             } else {
@@ -39,7 +42,7 @@ const HeartButton: FC<Props> = ({ tokenId }) => {
           }
         }}
       >
-        Heart
+        {isOnMyTeam ? <Heart2 /> : <Heart />}
       </div>
   )
 }

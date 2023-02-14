@@ -88,11 +88,13 @@ const GridItem: FC<Props> = ({ finiId }) => {
 
 const FiniFrame: NextPage = () => {
   // read finis from localstorage
-  const tempIds = ["9402", "349", "827", "420", "999", "2392", "723", "724", "725", "726"]
+  const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
+  // const tempIds = ["9402", "349", "827", "420", "999", "2392", "723", "724", "725", "726"]
   const columnCount = 4
 
   let defaultLayout = () => {
-    return tempIds.map((id, i) => {
+    // @ts-ignore
+    return myTeam.map((id, i) => {
       console.log(id, i)
       return {
         x: i % columnCount,
@@ -104,8 +106,6 @@ const FiniFrame: NextPage = () => {
     })
   }
 
-  console.log(defaultLayout())
-
   const [layout, updateLayout] = useLocalStorageValue('frameLayout')
   let windowSize = useCurrentSize()
 
@@ -114,6 +114,11 @@ const FiniFrame: NextPage = () => {
     window.dispatchEvent(new Event('resize')); 
   }, []);
 
+  if (!myTeam) {
+    return (
+      <div>no team</div>
+    )
+  }
   return (
     // overflow-hidden
     <div className="h-screen w-screen">
@@ -135,7 +140,8 @@ const FiniFrame: NextPage = () => {
         }}
         // isBounded={false}
       >
-        {tempIds.map(id => {
+        {/* @ts-ignore */}
+        {myTeam.map(id => {
           return (
             <div key={id}>
               <GridItem finiId={id} />

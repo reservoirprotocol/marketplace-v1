@@ -25,6 +25,7 @@ import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFrom
 import useInterval from 'hooks/useInterval'
 import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
 import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
+import HeartButton from 'components/HeartButton'
 
 // Environment variables
 // For more information about these variables
@@ -244,8 +245,9 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
           <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
             <TokenMedia token={token.token} />
           </div>
-          <div className="absolute right-0 bottom-0">
-            <div onClick={() => {
+          <div className="absolute right-0 bottom-0 p-4">
+            <HeartButton tokenId={tokenDetails?.tokenId!} />
+            {/* <div onClick={() => {
               window.open(window.location.href + '?fullscreen=true', "_blank", "fullscreen=yes")
             }}>
               <img
@@ -253,7 +255,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
                 alt="Fullscreen Icon"
                 className="h-7 w-7"
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
