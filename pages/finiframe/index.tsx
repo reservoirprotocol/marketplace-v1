@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from 'react'
+import Link from 'next/link'
 import { useLocalStorage } from 'hooks/useLocalStorage'
 import { FiniliarMetadata } from 'lib/fetchFromFiniliar'
 import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
@@ -50,7 +51,7 @@ const GridItem: FC<Props> = ({ finiId }) => {
 
   return (
     <>
-      <Head>
+    <Head>
         {/* Hide the drag handles provided by application */}
         <style
           id="holderStyle"
@@ -60,27 +61,29 @@ const GridItem: FC<Props> = ({ finiId }) => {
             `,
           }}/>
       </Head>
-      <div className="w-full h-full flex items-center justify-items-center overflow-hidden" style={{ background: finiData?.background }}>
-        <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
-          {finiData &&
-            <>
-              <div className="absolute inline-flex gap-2">
-                <div>{finiData?.latestDelta.toFixed(2)}%</div>
-                <div>${finiData?.latestPrice.toLocaleString()}</div>
-                <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
-              </div>
-              <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
-            </>
-          }
-          
-          <img
-              alt="Token Image"
-              className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
-              src={finiData?.image}
-            />
+      <Link href={`/discover/${finiId}`}>      
+        <div className="w-full h-full flex items-center justify-items-center overflow-hidden cursor-pointer" style={{ background: finiData?.background }}>
+          <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
+            {finiData &&
+              <>
+                <div className="absolute inline-flex gap-2">
+                  <div>{finiData?.latestDelta.toFixed(2)}%</div>
+                  <div>${finiData?.latestPrice.toLocaleString()}</div>
+                  <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
+                </div>
+                <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
+              </>
+            }
+            
+            <img
+                alt="Token Image"
+                className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
+                src={finiData?.image}
+              />
+          </div>
         </div>
-      </div>
-    </>
+        </Link>
+      </>
   )
 }
 
