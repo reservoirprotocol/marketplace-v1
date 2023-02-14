@@ -12,6 +12,7 @@ import { FiniliarMetadata } from 'lib/fetchFromFiniliar'
 import { fetchMetaFromFiniliar } from 'lib/fetchFromFiniliar'
 import RGL, { WidthProvider } from "react-grid-layout";
 import { useCurrentSize } from 'hooks/useCurrentSize'
+import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -41,12 +42,20 @@ const GridItem: FC<Props> = ({ finiId }) => {
 
   return (
     <div className="w-full h-full flex items-center justify-items-center" style={{ background: finiData?.background }}>
-      <div className="h-full w-full m-auto flex items-center">
-      <img
-          alt="Token Image"
-          className="w-full h-full max-h-[600px] max-w-[600px] object-contain"
-          src={finiData?.image}
-        />
+      <div className="h-full w-full m-auto flex relative">
+        {finiData &&
+          <div className="absolute inline-flex gap-2">
+            <div>{finiData?.latestDelta.toFixed(2)}%</div>
+            <div>${finiData?.latestPrice.toLocaleString()}</div>
+            <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
+          </div>
+        }
+        
+        <img
+            alt="Token Image"
+            className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
+            src={finiData?.image}
+          />
       </div>
     </div>
   )
@@ -56,18 +65,18 @@ const GridItem: FC<Props> = ({ finiId }) => {
 
 const FiniFrame: NextPage = () => {
   // read finis from localstorage
-  const tempIds = ["722", "349", "827", "420", "999", "2392", "722", ]
+  const tempIds = ["722", "349", "827", "420", "999", "2392", "723", "724", "725", "726"]
   let windowSize = useCurrentSize()
 
-  const columnCount = 6
+  const columnCount = 2
   const tokenCount = tempIds.length
 
   let layout = () => {
     return tempIds.map((id, i) => {
       console.log(id, i)
       return {
-        x: i,
-        y: 1,
+        x: i % columnCount,
+        y: i,
         w: 1,
         h: 1,
         i: id
@@ -77,10 +86,9 @@ const FiniFrame: NextPage = () => {
   }
 
   console.log(layout())
-
-  
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    // overflow-hidden
+    <div className="h-screen w-screen">
       <ReactGridLayout
         className="layout"
         layout={layout()}
@@ -88,13 +96,18 @@ const FiniFrame: NextPage = () => {
         // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         cols={columnCount}
-        autoSize={true}
-        rowHeight={windowSize.height / 3}
+        // autoSize={true}
+        rowHeight={windowSize.height / 2}
         margin={[0, 0]}
-        // isResizable={true}
-        // resizeHandles={['nw', 'se']}
-        onLayoutChange={(layout) => console.log(layout)}
-        isBounded={true}
+        isResizable={true}
+        resizeHandles={['se']}
+        onLayoutChange={(layout) => {
+          console.log("layout", layout)
+        }}
+        isBounded={false}
+        onResize={(layout, oldItem, newItem, placeholder, e, element) => {
+          console.log("resize", layout, oldItem, newItem, placeholder, e, element)
+        }}
       >
         {tempIds.map(id => {
           return (
