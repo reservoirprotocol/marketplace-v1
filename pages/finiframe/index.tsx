@@ -138,6 +138,7 @@ const FiniFrame: NextPage = () => {
         margin={[0, 0]}
         isResizable={true}
         resizeHandles={['se']}
+        // @ts-ignore
         onLayoutChange={(layout) => {
           updateLayout(layout)
         }}

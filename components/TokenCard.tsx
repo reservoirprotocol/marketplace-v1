@@ -82,8 +82,6 @@ const TokenCard: FC<Props> = ({
   const reservoirClient = useReservoirClient()
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
-  if (!token) return null
-
   const finiId = token?.token?.tokenId!
   useEffect(() => {
     fetchMetaFromFiniliar(finiId).then((res) => {
@@ -111,7 +109,7 @@ const TokenCard: FC<Props> = ({
   let price = getPricing(cartPools, token)
   let canAddToCart = true
 
-  if (!price && token.market?.floorAsk?.dynamicPricing?.data?.pool) {
+  if (!price && token?.market?.floorAsk?.dynamicPricing?.data?.pool) {
     canAddToCart = false
   }
 
@@ -254,8 +252,8 @@ const TokenCard: FC<Props> = ({
                     : 'List for Sale'}
                 </button>
               }
-              collectionId={token.token?.contract}
-              tokenId={token.token?.tokenId}
+              collectionId={token?.token?.contract}
+              tokenId={token?.token?.tokenId}
               currencies={listingCurrencies}
               onListingComplete={() => {
                 mutate()

@@ -273,7 +273,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
-        <div className="col-span-full rounded-[25px] bg-primary-100 pill p-6">
+        <div className="col-span-full rounded-[25px] bg-primary-100 pill border-primary-400 p-6">
           <div className="reservoir-h4">Live data</div>
           <div className="bg-primary-600 flex flex-col text-primary-800 rounded-xl p-5 mt-3 max-w-[300px]">
             <span className="text-sm mb-2">{getAttributeFromTokenDetails(tokenDetails!, 'Family')}</span>

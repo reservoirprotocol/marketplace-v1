@@ -69,7 +69,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
   }
 
   return (
-    <article className="col-span-full rounded-[25px] bg-primary-100 pill p-6 dark:border-neutral-600 dark:bg-black">
+    <article className="col-span-full rounded-[25px] bg-primary-100 pill border-primary-400 p-6 dark:border-neutral-600 dark:bg-black">
       <div className="mb-4 flex items-center justify-between">
         <div className="reservoir-h5 font-headings dark:text-white">
           Refresh Listing & Offers
@@ -140,7 +140,7 @@ const TokenInfo: FC<Props> = ({ token }) => {
           Refresh
         </div> */}
         <button
-          className="btn-primary-outline pill reservoir-h6 flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
+          className="btn-primary-outline pill border-primary-400 reservoir-h6 flex items-center gap-2 p-2 font-headings text-primary-700 dark:border-neutral-600 dark:text-primary-100 dark:ring-primary-900 dark:focus:ring-4"
           title="Refresh token"
           disabled={refreshLoading}
           onClick={() => refreshToken(`${token?.contract}:${token?.tokenId}`)}

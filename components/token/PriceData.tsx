@@ -171,7 +171,7 @@ const PriceData: FC<Props> = ({ details, collection, isOwner }) => {
 
   return (
     <div className="col-span-full md:col-span-4 lg:col-span-5 lg:col-start-2">
-      <article className="col-span-full rounded-[25px] bg-primary-100 pill p-6 dark:border-neutral-600 dark:bg-black">
+      <article className="col-span-full rounded-[25px] bg-primary-100 pill border-primary-400 p-6 dark:border-neutral-600 dark:bg-black">
         <div className="grid grid-cols-2 gap-6">
           <Price
             title="List Price"

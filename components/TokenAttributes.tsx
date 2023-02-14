@@ -33,7 +33,7 @@ const TokenAttributes: FC<Props> = ({ token, collection, isOwner }) => {
         type="single"
         collapsible
         defaultValue={isOwner ? undefined : 'attributes'}
-        className="col-span-full pill rounded-[25px] bg-primary-100 py-6 dark:border-neutral-600 dark:bg-black"
+        className="col-span-full pill border-primary-400 rounded-[25px] bg-primary-100 py-6 dark:border-neutral-600 dark:bg-black"
       >
         <Accordion.Item value="attributes">
           <Accordion.Header>
