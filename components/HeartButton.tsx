@@ -16,8 +16,12 @@ type Props = {
 
 const HeartButton: FC<Props> = ({ tokenId }) => {
   const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
-  // @ts-ignore
-  const isOnMyTeam = myTeam.indexOf(tokenId) > -1
+  let isOnMyTeam = false
+  if (myTeam) {
+    // @ts-ignore
+    isOnMyTeam = myTeam.indexOf(tokenId) > -1
+  }
+  
 
   return (
     <div
