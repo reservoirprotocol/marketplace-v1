@@ -177,6 +177,13 @@ const Navbar: FC = () => {
               </a>
             </Link>
           }
+          <div className="cursor-pointer" onClick={() => {
+              window.open('/finiframe', "_blank", "fullscreen=yes")
+            }}>
+            <a className="text-sm uppercase font-bold text-primary-900 dark:text-white">
+              FiniFrame
+            </a>
+          </div>
           <CartMenu />
           {/* {hasCommunityDropdown &&
           themeSwitcherEnabled &&

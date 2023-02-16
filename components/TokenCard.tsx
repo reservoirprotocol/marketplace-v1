@@ -29,10 +29,10 @@ import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
 import getShorthandFrequencyFromFreq from 'lib/getShorthandFrequencyFromTokenDetails'
 import shortenFrequencyText from 'lib/shortenFrequencyText'
 import tinycolor from 'tinycolor2'
-import { DownArrow, UpArrow } from './Icons'
 import { finiliar } from 'colors'
 import { getPricing } from 'lib/token/pricing'
 import HeartButton from './HeartButton'
+import { Delta } from './Delta'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -120,7 +120,6 @@ const TokenCard: FC<Props> = ({
   if (brightness >= 200) textColor = tinycolor(freshData?.background).darken(45).toString()
   if (brightness <= 50) textColor = tinycolor(freshData?.background).lighten(75).toString()
 
-  const deltaColor = freshData?.latestDelta! < 0 ? finiliar[900] : finiliar[500]
 
   return (
     <div
@@ -139,19 +138,11 @@ const TokenCard: FC<Props> = ({
                 <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
                 <span>${freshData?.latestPrice.toFixed(2)}</span>
               </div> */}
-            <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/[.8] rounded-full items-center rounded-full py-[2px] px-2 space-x-1"}>
-              {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
-                <UpArrow color={deltaColor} />
-              }
-              {parseFloat(freshData?.latestDelta!.toFixed(2)) < 0 &&
-                <DownArrow color={deltaColor} />
-              }
-              {freshData?.latestDelta.toFixed(2)}%
-            </div>
+            <Delta delta={freshData?.latestDelta!} tokenData={freshData!} />
             <div className="inline-flex items-center">
-              <div className="rounded-full bg-primary-100/[.65] py-[2px] px-2" style={{ color: textColor }}>
+              {/* <div className="rounded-full bg-primary-100/[.65] py-[2px] px-2" style={{ color: textColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
-              </div>
+              </div> */}
               <HeartButton tokenId={finiId} />
             </div>
           </div>
