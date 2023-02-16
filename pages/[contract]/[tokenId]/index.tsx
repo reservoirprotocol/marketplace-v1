@@ -228,7 +228,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
                 {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
           </div> */}
-          <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
+          <div className="max-w-[400px] m-auto min-h-[400px] flex items-center">
             <TokenMedia token={token.token} />
           </div>
         </div>
