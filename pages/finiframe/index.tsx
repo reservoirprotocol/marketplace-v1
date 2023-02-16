@@ -67,52 +67,40 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
   }
 
   return (
-    <>
-    <Head>
-        {/* Hide the drag handles provided by application */}
-        <style
-          id="holderStyle"
-          dangerouslySetInnerHTML={{
-            __html: `
-              .react-resizable-handle { opacity: 0 }
-            `,
-          }}/>
-      </Head>
-      <div onClick={() => {
-          if (cancelClick) return
-          router.push(`/discover/${finiId}`)
-        }}
-        className="w-full h-full flex items-center justify-items-center overflow-hidden"
-        style={{ background: finiData?.background }}
-      >
-        <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
-          {finiData && showData &&
-            <div className="absolute inline-flex gap-2 justify-between w-full p-2">
-              <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
-              <div className="text-right">
-                <Delta tokenData={finiData!} delta={finiData!.latestDelta} />
-                <div className="text-xl">${finiData?.latestPrice.toLocaleString()}</div>
-              </div>
+    <div onClick={() => {
+        if (cancelClick) return
+        router.push(`/discover/${finiId}`)
+      }}
+      className="w-full h-full flex items-center justify-items-center overflow-hidden"
+      style={{ background: finiData?.background }}
+    >
+      <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
+        {finiData && showData &&
+          <div className="absolute inline-flex gap-2 justify-between w-full p-2">
+            <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
+            <div className="text-right">
+              <Delta tokenData={finiData!} delta={finiData!.latestDelta} />
+              <div className="text-xl">${finiData?.latestPrice.toLocaleString()}</div>
             </div>
-          }
-          {showButtons &&
-            <>
-              <div className="absolute left-2 bottom-1" onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                removeFiniId(finiId)
-              }}>Remove</div>
-              <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
-            </>
-          }
-          <img
-              alt="Token Image"
-              className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
-              src={finiData?.image}
-            />
-        </div>
+          </div>
+        }
+        {showButtons &&
+          <>
+            <div className="absolute left-2 bottom-1" onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              removeFiniId(finiId)
+            }}>Remove</div>
+            <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
+          </>
+        }
+        <img
+            alt="Token Image"
+            className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
+            src={finiData?.image}
+          />
       </div>
-    </>
+    </div>
   )
 }
 
@@ -194,6 +182,16 @@ const FiniFrame: NextPage = () => {
   }
   return (
     <div className="h-screen w-screen relative">
+      <Head>
+        {/* Hide the drag handles provided by application */}
+        <style
+          id="holderStyle"
+          dangerouslySetInnerHTML={{
+            __html: `
+              .react-resizable-handle { opacity: 0 }
+            `,
+          }}/>
+      </Head>
       <div className="fixed right-0 z-20 p-2">
         {showButtons &&
           <div
