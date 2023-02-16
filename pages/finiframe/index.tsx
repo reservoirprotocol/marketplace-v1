@@ -17,14 +17,17 @@ import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
 import { useLocalStorageValue } from '@react-hookz/web'
 import getColor from 'lib/getColor'
 import Head from 'next/head'
+import { Cog } from 'components/Icons'
+import { NextRouter, useRouter } from 'next/router'
 
 const ReactGridLayout = WidthProvider(RGL);
 
 type Props = {
-  finiId: string
+  finiId: string,
+  cancelClick: boolean
 }
 
-const GridItem: FC<Props> = ({ finiId }) => {
+const GridItem: FC<Props> = ({ finiId, cancelClick }) => {
   const [ finiData, updateFiniData ] = useState<FiniliarMetadata>()
   const [ windowHeight, updateWindowHeight ] = useState<number>()
   const [ windowWidth, updateWindowWidth ] = useState<number>()
@@ -49,6 +52,8 @@ const GridItem: FC<Props> = ({ finiId }) => {
     color = getColor(finiData?.background!, "medium")
   }
 
+  const router = useRouter()
+
   return (
     <>
     <Head>
@@ -61,29 +66,32 @@ const GridItem: FC<Props> = ({ finiId }) => {
             `,
           }}/>
       </Head>
-      <Link href={`/discover/${finiId}`}>      
-        <div className="w-full h-full flex items-center justify-items-center overflow-hidden cursor-pointer" style={{ background: finiData?.background }}>
-          <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
-            {finiData &&
-              <>
-                <div className="absolute inline-flex gap-2">
-                  <div>{finiData?.latestDelta.toFixed(2)}%</div>
-                  <div>${finiData?.latestPrice.toLocaleString()}</div>
-                  <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
-                </div>
-                <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
-              </>
-            }
-            
-            <img
-                alt="Token Image"
-                className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
-                src={finiData?.image}
-              />
-          </div>
+      <div onClick={() => {
+          if (cancelClick) return
+          router.push(`/discover/${finiId}`)
+        }}
+        className="w-full h-full flex items-center justify-items-center overflow-hidden cursor-pointer"
+        style={{ background: finiData?.background }}
+      >
+        <div className="h-full w-full m-auto flex relative" style={{ color: color }}>
+          {finiData &&
+            <>
+              <div className="absolute inline-flex gap-2">
+                <div>{finiData?.latestDelta.toFixed(2)}%</div>
+                <div>${finiData?.latestPrice.toLocaleString()}</div>
+                <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
+              </div>
+              <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
+            </>
+          }
+          <img
+              alt="Token Image"
+              className="w-full h-full max-h-[600px] max-w-[600px] object-contain m-auto"
+              src={finiData?.image}
+            />
         </div>
-        </Link>
-      </>
+      </div>
+    </>
   )
 }
 
@@ -94,6 +102,8 @@ const FiniFrame: NextPage = () => {
   const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
   // const tempIds = ["9402", "349", "827", "420", "999", "2392", "723", "724", "725", "726"]
   const columnCount = 4
+
+  const [shouldCancel, setShouldCancel] = useState(false)
 
   let defaultLayout = () => {
     // @ts-ignore
@@ -125,6 +135,16 @@ const FiniFrame: NextPage = () => {
   return (
     // overflow-hidden
     <div className="h-screen w-screen">
+      <div className="fixed right-0 z-20 p-2">
+        <div
+          className="rounded-full items-center justify-items-center flex cursor-pointer"
+          style={{ width: 40, height: 40, background: "#FFFFFF66"}}
+        >
+          <div className="m-auto">
+            <Cog />
+          </div>
+        </div>
+      </div>
       <ReactGridLayout
         className="layout"
         // @ts-ignore
@@ -142,13 +162,22 @@ const FiniFrame: NextPage = () => {
         onLayoutChange={(layout) => {
           updateLayout(layout)
         }}
+        onDragStop={() => {
+          setTimeout(() => {
+            setShouldCancel(false)
+            console.log(shouldCancel)
+          })
+        }}
+        onDrag={() => {
+          setShouldCancel(true)
+        }}
         // isBounded={false}
       >
         {/* @ts-ignore */}
         {myTeam.map(id => {
           return (
             <div key={id}>
-              <GridItem finiId={id} />
+              <GridItem finiId={id} cancelClick={shouldCancel} />
             </div>
           )
         })}

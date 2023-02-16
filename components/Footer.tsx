@@ -15,7 +15,7 @@ const Footer = () => {
           <Link href='/discover'>
             [ Discover ]
           </Link>
-          <Link href='https://dollarmonopoly.mirror.xyz/'>
+          <Link href='https://finiliar.mirror.xyz/'>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
               [ Blog ]
             </a>
