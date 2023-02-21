@@ -1,6 +1,8 @@
-<h3 align="center">Reservoir Market</h3>
+<h3 align="center">Reservoir Market v1 - [⛔️ DEPRECATED]</h3>
   <p align="center">
 An open source NFT marketplace built on Reservoir.
+
+Learn more about [v2 of the Reservoir Market](https://github.com/reservoirprotocol/marketplace-v2).
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
