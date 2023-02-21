@@ -4,6 +4,8 @@ An open source NFT marketplace built on Reservoir.
 
 Learn more about [v2 of the Reservoir Market](https://github.com/reservoirprotocol/marketplace-v2).
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
