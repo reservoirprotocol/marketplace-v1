@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 type Props = {}
 
@@ -9,7 +9,8 @@ type PropTwo = {
 }
 
 type PropThree = {
-  className?: string
+  className?: string,
+  children: ReactNode,
 }
 
 const Copy: FC<PropTwo> = ({ headline, body, className }) => {

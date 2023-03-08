@@ -12,26 +12,26 @@ const Footer = () => {
           © 2022 finiliar studios, ltd.
         </div>
         <div className='flex flex-row flex-wrap items-center gap-6'>
-          <Link href='/discover'>
+          <Link href='/discover' legacyBehavior={true}>
             [ Discover ]
           </Link>
-          <Link href='https://finiliar.mirror.xyz/'>
+          <Link href='https://finiliar.mirror.xyz/' legacyBehavior={true}>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
               [ Blog ]
             </a>
           </Link>
-          <Link href='https://etherscan.io/address/0x5a0121a0a21232ec0d024dab9017314509026480'>
+          <Link href='https://etherscan.io/address/0x5a0121a0a21232ec0d024dab9017314509026480' legacyBehavior={true}>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
               {/* <img src='/icons/etherscan-logo-circle.svg' alt="Etherscan Icon" className="h-[22px]" /> */}
               [ Etherscan ]
             </a>
           </Link>
-          <Link href='https://twitter.com/finiliar'>
+          <Link href='https://twitter.com/finiliar' legacyBehavior={true}>
             <a className='' target="_blank" rel="noreferrer">
               <FaTwitter className='h-[20px] w-[25px]' />
             </a>
           </Link>
-          <Link href='https://discord.gg/finiliar' className='ml-5'>
+          <Link href='https://discord.gg/finiliar' className='ml-5' legacyBehavior={true}>
             <a className='' target="_blank" rel="noreferrer">
               <FaDiscord className='h-[19px] w-[25px]' />
             </a>

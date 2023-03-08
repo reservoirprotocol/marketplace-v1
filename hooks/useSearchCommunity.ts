@@ -1,4 +1,4 @@
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import fetcher from 'lib/fetcher'
 import setParams from 'lib/params'
 import useSWR from 'swr'

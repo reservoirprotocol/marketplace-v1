@@ -1,6 +1,11 @@
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    transpilePackages: ['@reservoir0x/reservoir-kit-ui'],
+  },
   api: {
     bodyParser: false,
   },
@@ -32,4 +37,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig

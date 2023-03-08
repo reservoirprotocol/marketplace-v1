@@ -1,5 +1,6 @@
 import { utils } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
+import { isSafariBrowser } from 'lib/browser'
 
 const { format: formatUsdCurrency } = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -66,12 +67,71 @@ function formatBN(
     return amountToFormat
   }
 
-  const parts = new Intl.NumberFormat('en-US', {
+  const amountFraction = `${amount}`.split('.')[1]
+  const isSafari = isSafariBrowser()
+  const formatOptions: Intl.NumberFormatOptions = {
     minimumFractionDigits: 0,
     maximumFractionDigits: 20,
+    useGrouping: true,
     notation: 'compact',
     compactDisplay: 'short',
-  }).formatToParts(amountToFormat)
+  }
+
+  if (isSafari) {
+    //@ts-ignore
+    formatOptions.roundingMode = 'floor'
+  }
+
+  const parts = new Intl.NumberFormat('en-US', formatOptions).formatToParts(
+    amountToFormat
+  )
+
+  // Safari has a few bugs with the fraction part of formatToParts, sometimes rounding when unnecessary and
+  // when amount is in the thousands not properly representing the value in compact display. Until the bug is fixed
+  // this workaround should help. bugzilla bug report: https://bugs.webkit.org/show_bug.cgi?id=249231
+  if (isSafari) {
+    const partTypes = parts.map((part) => part.type)
+    const partsIncludesFraction = partTypes.includes('fraction')
+    const partsIncludeCompactIdentifier = partTypes.includes('compact')
+    if (amountFraction) {
+      if (!partsIncludesFraction && !partsIncludeCompactIdentifier) {
+        const integerIndex = parts.findIndex((part) => part.type === 'integer')
+        parts.splice(
+          integerIndex + 1,
+          0,
+          {
+            type: 'decimal',
+            value: '.',
+          },
+          {
+            type: 'fraction',
+            value: amountFraction,
+          }
+        )
+      }
+    } else if (!partsIncludesFraction && partsIncludeCompactIdentifier) {
+      const compactIdentifier = parts.find((part) => part.type === 'compact')
+      const integerIndex = parts.findIndex((part) => part.type === 'integer')
+      const integer = parts[integerIndex]
+      if (compactIdentifier?.value === 'K' && integer) {
+        const fraction = `${amount}`.replace(integer.value, '')[0]
+        if (fraction && Number(fraction) > 0) {
+          parts.splice(
+            integerIndex + 1,
+            0,
+            {
+              type: 'decimal',
+              value: '.',
+            },
+            {
+              type: 'fraction',
+              value: fraction,
+            }
+          )
+        }
+      }
+    }
+  }
 
   if (parts && parts.length > 0) {
     const lowestValue = Number(

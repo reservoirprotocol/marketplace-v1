@@ -47,7 +47,7 @@ const UserListingsTable: FC<Props> = ({
   const { address } = router.query
   const params: Parameters<typeof useListings>['0'] = {
     maker: address as string,
-    includeMetadata: true,
+    includeCriteriaMetadata: true,
     status: showActive ? 'active' : 'inactive',
   }
   if (collectionIds) {
@@ -208,7 +208,7 @@ const UserListingsTableRow = ({
     >
       {/* ITEM */}
       <td className="whitespace-nowrap px-6 py-4 dark:text-white">
-        <Link href={tokenHref}>
+        <Link href={tokenHref} legacyBehavior={true}>
           <a className="flex items-center gap-2">
             <div className="relative h-16 w-16">
               {image && (
@@ -334,7 +334,7 @@ const UserListingsMobileRow = ({
       ref={ref}
     >
       <div className="flex items-center justify-between">
-        <Link href={tokenHref || '#'}>
+        <Link href={tokenHref || '#'} legacyBehavior={true}>
           <a className="flex items-center gap-2">
             <div className="relative h-14 w-14">
               {image && (
@@ -422,14 +422,14 @@ function processListing(listing: ReturnType<typeof useListings>['data'][0]) {
   const data = {
     contract,
     tokenId,
-    image: listing?.metadata?.data?.image || collectionRedirectUrl,
-    name: listing?.metadata?.data?.tokenName,
+    image: listing?.criteria?.data?.token?.image || collectionRedirectUrl,
+    name: listing?.criteria?.data?.token?.name,
     expiration:
       listing?.expiration === 0
         ? 'Never'
         : DateTime.fromMillis(+`${listing?.expiration}000`).toRelative(),
     id: listing?.id,
-    collectionName: listing?.metadata?.data?.collectionName,
+    collectionName: listing?.criteria?.data?.collection?.name,
     price: listing?.price,
     source: {
       icon: (listing?.source?.icon as string) || null,

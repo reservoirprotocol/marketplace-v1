@@ -3,7 +3,7 @@ import LoadingCard from './LoadingCard'
 import { useUserTokens } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'
 import TokenCard from './TokenCard'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 
 const COLLECTION = process.env.NEXT_PUBLIC_COLLECTION
 const COMMUNITY = process.env.NEXT_PUBLIC_COMMUNITY
@@ -11,7 +11,7 @@ const COLLECTION_SET_ID = process.env.NEXT_PUBLIC_COLLECTION_SET_ID
 
 type Props = {
   fallback: {
-    tokens: paths['/users/{user}/tokens/v5']['get']['responses']['200']['schema']
+    tokens: paths['/users/{user}/tokens/v6']['get']['responses']['200']['schema']
   }
   owner: string
 }
@@ -20,7 +20,7 @@ const UserTokensGrid: FC<Props> = ({ fallback, owner }) => {
 
   const userTokensParams: Parameters<typeof useUserTokens>['1'] = {
     limit: 20,
-    includeTopBid: true,
+    normalizeRoyalties: true,
   }
   if (COLLECTION_SET_ID) {
     userTokensParams.collectionsSetId = COLLECTION_SET_ID

@@ -27,11 +27,11 @@ const SortTokens: FC = ({}) => {
     const sortBy = router?.query['sortBy']?.toString()
     const sortDirection = router?.query['sortDirection']?.toString()
 
-    if (sortBy === 'rarity' && sortDirection === 'asc') {
+    if (sortBy === 'rarity' && sortDirection === 'desc') {
       setSortSelection('Common to Rare')
       return
     }
-    if (sortBy === 'rarity' && sortDirection === 'desc') {
+    if (sortBy === 'rarity' && sortDirection === 'asc') {
       setSortSelection('Rare to Common')
       return
     }

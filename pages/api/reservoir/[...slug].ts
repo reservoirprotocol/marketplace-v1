@@ -1,4 +1,4 @@
-import { setParams } from '@reservoir0x/reservoir-kit-client'
+import { setParams } from '@reservoir0x/reservoir-sdk'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
@@ -24,7 +24,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   if (typeof slug === 'string') {
     endpoint = slug
   } else {
-    endpoint = slug.join('/')
+    endpoint = (slug || ['']).join('/')
   }
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`

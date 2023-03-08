@@ -4,7 +4,7 @@ import { GetStaticPaths, GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import TokenAttributes from 'components/TokenAttributes'
 import Head from 'next/head'
-import { paths } from '@reservoir0x/reservoir-kit-client'
+import { paths } from '@reservoir0x/reservoir-sdk'
 import Listings from 'components/token/Listings'
 import TokenInfo from 'components/token/TokenInfo'
 import CollectionInfo from 'components/token/CollectionInfo'
@@ -242,7 +242,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
                 {freshAdditionalMetadata?.latestDelta.toFixed(2)}% past {freqShorthand}
               </div>
           </div> */}
-          <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
+          <div className="max-w-[400px] m-auto min-h-[400px] flex items-center">
             <TokenMedia token={token.token} />
           </div>
           <div className="absolute right-0 bottom-0 p-4">
@@ -331,6 +331,7 @@ export const getServerSideProps: GetServerSideProps<{
   ) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 
@@ -349,6 +350,7 @@ export const getServerSideProps: GetServerSideProps<{
     includeTopBid: true,
     includeAttributes: true,
     includeDynamicPricing: true,
+    normalizeRoyalties: true,
   }
 
   const href = setParams(url, query)
@@ -382,6 +384,7 @@ export const getServerSideProps: GetServerSideProps<{
   if (!collectionId) {
     return {
       notFound: true,
+      revalidate: 10,
     }
   }
 

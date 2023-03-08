@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Image from 'next/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {
   ComponentPropsWithoutRef,
@@ -99,6 +98,7 @@ const TokenCard: FC<Props> = ({
     }
   }, [finiId])
 
+  if (!token) return null
   if (!CHAIN_ID) return null
   const isInTheWrongNetwork = Boolean(signer && activeChain?.id !== +CHAIN_ID)
   const tokenId = `${token?.token?.contract}:${token?.token?.tokenId}`
@@ -122,6 +122,18 @@ const TokenCard: FC<Props> = ({
   if (brightness >= 200) textColor = tinycolor(freshData?.background).darken(45).toString()
   if (brightness <= 50) textColor = tinycolor(freshData?.background).lighten(75).toString()
 
+
+  const supportForLegacyCDN = (imageLink: String) => {
+    if (!imageLink) {
+      return imageLink
+    }
+    if (imageLink.match(/ipfs\./)) {
+      return imageLink.replace(/\.gif/, ".mp4")
+    } else {
+      return imageLink + "?format=mp4"
+    }
+
+  }
 
   return (
     <div
@@ -151,6 +163,7 @@ const TokenCard: FC<Props> = ({
           </div>
         }
       <Link
+        legacyBehavior={true}
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/discover/${token?.token?.tokenId}`}
       >
@@ -159,7 +172,7 @@ const TokenCard: FC<Props> = ({
             <div>
               <span className="block pb-[100%]" />
               <video loop autoPlay muted playsInline className="object-cover w-full absolute top-0">
-                <source src={freshData?.image + '?format=mp4'} type="video/mp4" />
+                <source src={supportForLegacyCDN(freshData?.image)} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
