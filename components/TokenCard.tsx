@@ -84,17 +84,19 @@ const TokenCard: FC<Props> = ({
 
   const finiId = token?.token?.tokenId!
   useEffect(() => {
-    fetchMetaFromFiniliar(finiId).then((res) => {
-      updateFreshData({
-        latestPrice: res.latestPrice,
-        latestDelta: res.latestDelta,
-        image: res.image,
-        background: res.background,
-        attributes: res.attributes
+    if (token) {
+      fetchMetaFromFiniliar(finiId).then((res) => {
+        updateFreshData({
+          latestPrice: res.latestPrice,
+          latestDelta: res.latestDelta,
+          image: res.image,
+          background: res.background,
+          attributes: res.attributes
+        })
+      }).catch((err) => {
+        console.log(`Error fetching data for token id ${finiId}:`, err)
       })
-    }).catch((err) => {
-      console.log(`Error fetching data for token id ${finiId}:`, err)
-    })
+    }
   }, [finiId])
 
   if (!CHAIN_ID) return null
