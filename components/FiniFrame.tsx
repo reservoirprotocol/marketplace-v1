@@ -79,7 +79,7 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
           <div className="absolute inline-flex gap-2 justify-between w-full p-2">
             <div>{getAttributeFromFreshData(finiData!.attributes, 'Family')}</div>
             <div className="text-right">
-              <Delta tokenData={finiData!} delta={finiData!.latestDelta} />
+              <Delta tokenData={finiData!} delta={finiData!.latestDelta} useDefaultColors={false} />
               <div className="text-xl">${finiData?.latestPrice.toLocaleString()}</div>
             </div>
           </div>

@@ -134,16 +134,17 @@ const TokenCard: FC<Props> = ({
 
       {freshData?.latestDelta &&
           <div className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]">
-              {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
-                <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
-                <span>${freshData?.latestPrice.toFixed(2)}</span>
-              </div> */}
-            <Delta delta={freshData?.latestDelta!} tokenData={freshData!} />
+              <div className="rounded-full bg-[#ffffffa8] p-1 px-2 inline-flex items-center">
+                {/* <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                <span>${freshData?.latestPrice.toFixed(2)}</span> */}
+                <Delta delta={freshData?.latestDelta!} tokenData={freshData!} useDefaultColors={true} />
+              </div>
+            
             <div className="inline-flex items-center">
               {/* <div className="rounded-full bg-primary-100/[.65] py-[2px] px-2" style={{ color: textColor }}>
                 {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
               </div> */}
-              <HeartButton tokenId={finiId} />
+              {/* <HeartButton tokenId={finiId} /> */}
             </div>
           </div>
         }
