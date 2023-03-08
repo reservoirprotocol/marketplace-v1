@@ -246,7 +246,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
             <TokenMedia token={token.token} />
           </div>
           <div className="absolute right-0 bottom-0 p-4">
-            <HeartButton tokenId={tokenDetails?.tokenId!} />
+            {/* <HeartButton tokenId={tokenDetails?.tokenId!} /> */}
             {/* <div onClick={() => {
               window.open(window.location.href + '?fullscreen=true', "_blank", "fullscreen=yes")
             }}>
