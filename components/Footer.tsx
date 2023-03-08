@@ -12,7 +12,7 @@ const Footer = () => {
           © 2022 finiliar studios, ltd.
         </div>
         <div className='flex flex-row flex-wrap items-center gap-6'>
-          <Link href='/discover' legacyBehavior={true}>
+          <Link href='/discover'>
             [ Discover ]
           </Link>
           <Link href='https://finiliar.mirror.xyz/' legacyBehavior={true}>

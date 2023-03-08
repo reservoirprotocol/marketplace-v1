@@ -165,13 +165,13 @@ const Navbar: FC = () => {
               {filterComponent && filterComponent}
             </div>
           )}
-          <Link href="/discover">
+          <Link href="/discover" legacyBehavior={true}>
             <a className="text-sm uppercase font-bold text-primary-900 dark:text-white">
               Discover
             </a>
           </Link>
           {account.isConnected &&
-            <Link href={`/address/${account.address}`}>
+            <Link href={`/address/${account.address}`} legacyBehavior={true}>
               <a className="text-sm uppercase font-bold text-primary-900 dark:text-white">
                 My finis
               </a>

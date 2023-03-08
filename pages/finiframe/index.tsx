@@ -1,9 +1,14 @@
-import dynamic from 'next/dynamic'
+import FiniFrameNoSSR from 'components/FiniFrameNoSSR'
+import {
+  NextPage
+} from 'next'
 
-const DynamicComponentWithNoSSR = dynamic(() => import('../../components/FiniFrame'), {
-  ssr: false
-})
+const FiniFramePage: NextPage = () => {
+  return (
+    <div>
+      <FiniFrameNoSSR />
+    </div>
+  )
+}
 
-const FiniFrameNoSSR = () => <DynamicComponentWithNoSSR />
-
-export default FiniFrameNoSSR
+export default FiniFramePage
