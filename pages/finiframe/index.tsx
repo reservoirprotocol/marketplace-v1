@@ -17,8 +17,7 @@ import { Chart, Cog } from 'components/Icons'
 import { useRouter } from 'next/router'
 import primaryColors from 'colors'
 import { Delta } from 'components/Delta'
-
-const ReactGridLayout = WidthProvider(RGL);
+// import { GetStaticProps } from 'next'
 
 type Props = {
   finiId: string,
@@ -32,7 +31,6 @@ type Props = {
 const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTeam, updateMyTeam }) => {
   const router = useRouter()
   const [ finiData, updateFiniData ] = useState<FiniliarMetadata>()
-  // const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
 
   // fetch finis from server
   useEffect(() => {
@@ -58,9 +56,7 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
   
   const removeFiniId = (finiId: string) => {
     let newTeam = [...myTeam]
-    // @ts-ignore
     let index = newTeam.indexOf(finiId)
-    // @ts-ignore
     newTeam.splice(index, 1)
     console.log(newTeam)
     updateMyTeam(newTeam)
@@ -91,7 +87,7 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
               e.stopPropagation()
               removeFiniId(finiId)
             }}>Remove</div>
-            <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }}/>
+            <div className="absolute h-[7px] w-[7px] border-r-2 border-b-2 bottom-1 right-1" style={{ borderColor: color }} />
           </>
         }
         <img
@@ -105,8 +101,9 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
 }
 
 const FiniFrame: NextPage = () => {
+  let emptyTeam: string[] = []
   // read finis from localstorage
-  const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam')
+  const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam', emptyTeam)
   const [shouldCancel, setShouldCancel] = useState(false)
   const [layout, updateLayout] = useLocalStorageValue('frameLayout')
   const [ showData, setShowData ] = useLocalStorageValue('showData', true)
@@ -118,10 +115,8 @@ const FiniFrame: NextPage = () => {
 
   const columnCount = 4
 
-  let defaultLayout = () => {
-    // @ts-ignore
-    if (!myTeam || myTeam.length == 0) return
-    // @ts-ignore
+  let defaultLayout = (myTeam: Array<String>) => {
+    // if (!myTeam || myTeam.length == 0) return
     return myTeam.map((id, i) => {
       console.log(id, i)
       return {
@@ -133,6 +128,8 @@ const FiniFrame: NextPage = () => {
       };
     })
   }
+
+  const ReactGridLayout = WidthProvider(RGL);
 
   // this triggers a relayout on first open, which seems required
   React.useEffect(() => {
@@ -165,8 +162,7 @@ const FiniFrame: NextPage = () => {
     window.addEventListener('scroll', onMove, { passive: true });
   }, []);
 
-  // @ts-ignore
-  if (!myTeam || !myTeam.length || myTeam.length == 0) {
+  if (!myTeam || myTeam.length == 0) {
     return (
       <div>
         <div className="max-w-[500px] p-2 pt-[200px] m-auto text-center">
@@ -183,7 +179,6 @@ const FiniFrame: NextPage = () => {
   return (
     <div className="h-screen w-screen relative">
       <Head>
-        {/* Hide the drag handles provided by application */}
         <style
           id="holderStyle"
           dangerouslySetInnerHTML={{
@@ -192,8 +187,8 @@ const FiniFrame: NextPage = () => {
             `,
           }}/>
       </Head>
-      <div className="fixed right-0 z-20 p-2">
-        {showButtons &&
+      {showButtons &&
+        <div className="fixed right-0 z-20 p-2">
           <div
             className="rounded-full items-center justify-items-center flex cursor-pointer drop-shadow-lg"
             style={{ width: 52, height: 52, background: "#FFFFFFDD"}}
@@ -203,12 +198,12 @@ const FiniFrame: NextPage = () => {
               <Chart color={showData ? primaryColors.finiliar[700] : '#000000' } />
             </div>
           </div>
-        }
-      </div>
+        </div>
+      }
       <ReactGridLayout
         className="layout"
         // @ts-ignore
-        layout={layout ?? defaultLayout()}
+        layout={layout ?? defaultLayout(myTeam)}
         // layouts={layouts}
         // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
@@ -233,8 +228,7 @@ const FiniFrame: NextPage = () => {
         }}
         // isBounded={false}
       >
-        {/* @ts-ignore */}
-        {myTeam && myTeam.map(id => {
+        {myTeam.map(id => {
           return (
             <div key={id} style={{ cursor: showButtons ? "pointer" : "none"}}>
               <GridItem
