@@ -12,6 +12,9 @@
   .button-primary-fill {
     @apply text-primary-900;
   }
+  .pill {
+    @apply border-[3px] bg-primary-100;
+  }
 }
 
 
@@ -112,10 +115,6 @@ span.live-icon:before{
 
 .btn-primary-fill, .btn-primary, .btn-primary-outline {
   border-radius: 50px;
-}
-
-.pill {
-  @apply border-[3px] border-primary-400 bg-primary-100;
 }
 
 /* .reservoir-h1, .reservoir-h2, .reservoir-h3, .reservoir-h4, .reservoir-h5, .reservoir-h6 {

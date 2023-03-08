@@ -12,10 +12,10 @@ const Footer = () => {
           © 2022 finiliar studios, ltd.
         </div>
         <div className='flex flex-row flex-wrap items-center gap-6'>
-          <Link href='/discover' legacyBehavior={true}>
+          <Link href='/discover'>
             [ Discover ]
           </Link>
-          <Link href='https://dollarmonopoly.mirror.xyz/' legacyBehavior={true}>
+          <Link href='https://finiliar.mirror.xyz/' legacyBehavior={true}>
             <a className="flex-none dark:text-white" target="_blank" rel="noopener noreferrer">
               [ Blog ]
             </a>

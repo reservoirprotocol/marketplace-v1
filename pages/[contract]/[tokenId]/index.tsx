@@ -25,6 +25,7 @@ import getShorthandFrequencyFromTokenDetails from 'lib/getShorthandFrequencyFrom
 import useInterval from 'hooks/useInterval'
 import getAttributeFromTokenDetails from 'lib/getAttributeFromTokenDetails'
 import { fetchMetaFromFiniliar, FiniliarMetadata } from 'lib/fetchFromFiniliar'
+import HeartButton from 'components/HeartButton'
 
 // Environment variables
 // For more information about these variables
@@ -206,6 +207,19 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
   // const icon = getIconFromTokenDetails(tokenDetails!)
   const freqShorthand = getShorthandFrequencyFromTokenDetails(tokenDetails!)
 
+  // only show token if this is fullscreen
+  const { fullscreen } = router.query
+
+  if (fullscreen) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-items-center" style={{ background: freshData?.background }}>
+        <div className="max-w-[600px] m-auto min-h-[600px] flex items-center">
+          <TokenMedia token={token.token} />
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <Layout navbar={{}} className="bg-primary-300">
       <Head>
@@ -231,6 +245,18 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
           <div className="max-w-[400px] m-auto min-h-[400px] flex items-center">
             <TokenMedia token={token.token} />
           </div>
+          <div className="absolute right-0 bottom-0 p-4">
+            {/* <HeartButton tokenId={tokenDetails?.tokenId!} /> */}
+            {/* <div onClick={() => {
+              window.open(window.location.href + '?fullscreen=true', "_blank", "fullscreen=yes")
+            }}>
+              <img
+                src="/icons/SquareTopDown.svg"
+                alt="Fullscreen Icon"
+                className="h-7 w-7"
+              />
+            </div> */}
+          </div>
         </div>
       </div>
       <div className="col-span-full content-start space-y-4 px-2 pt-4 md:col-span-4 lg:col-span-5 lg:col-start-2 lg:px-0 2xl:col-span-4 2xl:col-start-3 3xl:col-start-5 4xl:col-start-7">
@@ -247,7 +273,7 @@ const Index: NextPage<Props> = ({ collectionId, tokenDetails, freshMetadata }) =
         </div>
       </div>
       <div className="col-span-full mb-4 space-y-4 px-2 pt-0 md:col-span-4 md:col-start-5 md:pt-4 lg:col-span-5 lg:col-start-7 lg:px-0 2xl:col-span-5 2xl:col-start-7 3xl:col-start-9 4xl:col-start-11">
-        <div className="col-span-full rounded-[25px] bg-primary-100 pill p-6">
+        <div className="col-span-full rounded-[25px] bg-primary-100 pill border-primary-400 p-6">
           <div className="reservoir-h4">Live data</div>
           <div className="bg-primary-600 flex flex-col text-primary-800 rounded-xl p-5 mt-3 max-w-[300px]">
             <span className="text-sm mb-2">{getAttributeFromTokenDetails(tokenDetails!, 'Family')}</span>

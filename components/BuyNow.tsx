@@ -94,7 +94,8 @@ const BuyNow: FC<Props> = ({
           'tokenId': purchaseData.tokenId,
           'maker': purchaseData.maker,
           'type': 'buyNow',
-          'total': data.token?.market?.floorAsk?.price?.amount?.decimal
+          // covers scenarios where buy now button is on discover or token pages
+          'total': data.token?.market?.floorAsk?.price?.amount?.decimal || data.details?.data[0]?.market?.floorAsk?.price?.amount?.decimal
         }
         gtag('event', 'purchase', params)
         amplitude.track('purchase', params)

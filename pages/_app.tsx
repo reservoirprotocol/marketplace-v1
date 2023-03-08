@@ -16,6 +16,10 @@ import 'styles/roobert.css'
 import 'styles/rodger.css'
 import 'styles/ingrammono.css'
 import 'styles/nunito.css'
+// react-grid-layout css
+import '/node_modules/react-grid-layout/css/styles.css'
+import '/node_modules/react-resizable/css/styles.css'
+//
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { WagmiConfig, createClient, configureChains } from 'wagmi'

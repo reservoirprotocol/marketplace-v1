@@ -57,7 +57,7 @@ const HamburgerMenu: FC<Props> = ({ externalLinks }) => {
             <HiX className="h-6 w-6" />
           </Dialog.Close>
         </div>
-        <Link href="/discover">
+        <Link href="/discover" legacyBehavior={true}>
           <a
             className="group flex w-full cursor-pointer items-center justify-between rounded border-b-2 border-primary-400 p-4 hover:bg-primary-200 outline-none transition focus:bg-neutral-100 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-600"
             onClick={() => setOpen(false)}

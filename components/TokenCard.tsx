@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { optimizeImage } from 'lib/optmizeImage'
-import Image from 'next/legacy/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {
   ComponentPropsWithoutRef,
@@ -29,9 +28,10 @@ import getAttributeFromFreshData from 'lib/getAttributeFromFreshData'
 import getShorthandFrequencyFromFreq from 'lib/getShorthandFrequencyFromTokenDetails'
 import shortenFrequencyText from 'lib/shortenFrequencyText'
 import tinycolor from 'tinycolor2'
-import { DownArrow, UpArrow } from './Arrows'
 import { finiliar } from 'colors'
 import { getPricing } from 'lib/token/pricing'
+import HeartButton from './HeartButton'
+import { Delta } from './Delta'
 
 const SOURCE_ICON = process.env.NEXT_PUBLIC_SOURCE_ICON
 const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
@@ -81,10 +81,10 @@ const TokenCard: FC<Props> = ({
   const reservoirClient = useReservoirClient()
   const singleColumnBreakpoint = useMediaQuery('(max-width: 640px)')
 
-
+  const finiId = token?.token?.tokenId!
   useEffect(() => {
     if (token) {
-      fetchMetaFromFiniliar(token?.token?.tokenId!).then((res) => {
+      fetchMetaFromFiniliar(finiId).then((res) => {
         updateFreshData({
           latestPrice: res.latestPrice,
           latestDelta: res.latestDelta,
@@ -93,11 +93,10 @@ const TokenCard: FC<Props> = ({
           attributes: res.attributes
         })
       }).catch((err) => {
-        console.log(`Error fetching data for token id ${token?.token?.tokenId}:`, err)
+        console.log(`Error fetching data for token id ${finiId}:`, err)
       })
-
     }
-  }, [token?.token?.tokenId])
+  }, [finiId])
 
   if (!token) return null
   if (!CHAIN_ID) return null
@@ -112,7 +111,7 @@ const TokenCard: FC<Props> = ({
   let price = getPricing(cartPools, token)
   let canAddToCart = true
 
-  if (!price && token.market?.floorAsk?.dynamicPricing?.data?.pool) {
+  if (!price && token?.market?.floorAsk?.dynamicPricing?.data?.pool) {
     canAddToCart = false
   }
 
@@ -123,7 +122,6 @@ const TokenCard: FC<Props> = ({
   if (brightness >= 200) textColor = tinycolor(freshData?.background).darken(45).toString()
   if (brightness <= 50) textColor = tinycolor(freshData?.background).lighten(75).toString()
 
-  const deltaColor = freshData?.latestDelta! < 0 ? finiliar[900] : finiliar[500]
 
   const supportForLegacyCDN = (imageLink: String) => {
     if (!imageLink) {
@@ -148,32 +146,28 @@ const TokenCard: FC<Props> = ({
         </div>
       ) : null}
 
+      {freshData?.latestDelta &&
+          <div className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]">
+              <div className="rounded-full bg-[#ffffffa8] p-1 px-2 inline-flex items-center">
+                {/* <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
+                <span>${freshData?.latestPrice.toFixed(2)}</span> */}
+                <Delta delta={freshData?.latestDelta!} tokenData={freshData!} useDefaultColors={true} />
+              </div>
+            
+            <div className="inline-flex items-center">
+              {/* <div className="rounded-full bg-primary-100/[.65] py-[2px] px-2" style={{ color: textColor }}>
+                {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
+              </div> */}
+              {/* <HeartButton tokenId={finiId} /> */}
+            </div>
+          </div>
+        }
       <Link
         legacyBehavior={true}
         key={`${token?.token?.contract}:${token?.token?.tokenId}`}
         href={`/discover/${token?.token?.tokenId}`}
       >
         <a className="mb-[88px] md:mb-[48px] hoverTrigger">
-          {freshData?.latestDelta &&
-            <div className="hoverTarget md:hidden absolute flex justify-between top-[10px] left-[10px] right-[10px] z-[9] text-sm rounded-[16px]">
-                {/* <div className="rounded-lg bg-[#ffffffa8] p-1 inline-flex items-center">
-                  <img src={icon} className="h-[14px] mr-2" alt="Currency icon" />
-                  <span>${freshData?.latestPrice.toFixed(2)}</span>
-                </div> */}
-              <div style={{ color: deltaColor }} className={"inline-flex bg-primary-100/[.8] rounded-full items-center rounded-full py-[2px] px-2 space-x-1"}>
-                {parseFloat(freshData?.latestDelta!.toFixed(2)) > 0 &&
-                  <UpArrow color={deltaColor} />
-                }
-                {parseFloat(freshData?.latestDelta!.toFixed(2)) < 0 &&
-                  <DownArrow color={deltaColor} />
-                }
-                {freshData?.latestDelta.toFixed(2)}%
-              </div>
-              <div className="rounded-full bg-primary-100/[.65] py-[2px] px-2" style={{ color: textColor }}>
-                {shortenFrequencyText(getAttributeFromFreshData(freshData?.attributes, 'Frequency'))}
-              </div>
-            </div>
-          }
           {freshData?.image ? (
             <div>
               <span className="block pb-[100%]" />
@@ -265,8 +259,8 @@ const TokenCard: FC<Props> = ({
                     : 'List for Sale'}
                 </button>
               }
-              collectionId={token.token?.contract}
-              tokenId={token.token?.tokenId}
+              collectionId={token?.token?.contract}
+              tokenId={token?.token?.tokenId}
               currencies={listingCurrencies}
               onListingComplete={() => {
                 mutate()

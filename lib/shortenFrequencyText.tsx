@@ -3,14 +3,14 @@ export default function shortenFrequencyText(freq: string | undefined) {
 
   switch (freq) {
     case 'Hourly':
-      return '1hr'
+      return 'hr'
     case 'Twice Daily':
-      return '12hr'
+      return '12 hrs'
     case 'Daily':
-      return '1d'
+      return 'day'
     case 'Weekly':
-      return '1w'
+      return 'wk'
     case 'Monthly':
-      return '1mo'
+      return 'mo'
   }
 }
