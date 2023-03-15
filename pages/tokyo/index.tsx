@@ -155,7 +155,7 @@ const TokyoPage: NextPage = () => {
         <div
           style={{ width: "100vw", height: "100vh"}}
         >
-          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]" onEnded={() => incrementChannel()}>
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
             <source src='https://cdn.finiliar.com/website/tokyo/battles_1.mp4' type="video/mp4" />
             Your browser does not support the video tag.
           </video>
