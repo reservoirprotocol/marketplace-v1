@@ -9,22 +9,27 @@ const TokyoPage: NextPage = () => {
   const [channel, setChannel] = useState(0)
   const numberOfPages = 6
 
+  const incrementChannel = () => {
+    let newChannel
+    if (channel == numberOfPages) {
+      newChannel = 0
+    } else {
+      newChannel = channel + 1
+    }
+    setChannel(newChannel)
+  }
+
   useEffect(() => {
-    // let timeout: ReturnType<typeof setTimeout> = setTimeout(() => '', 3000);
-    setTimeout(() => {
-      let newChannel
-      if (channel == numberOfPages) {
-        newChannel = 0
-      } else {
-        newChannel = channel + 1
-      }
-      setChannel(newChannel)
-    }, 10000)
-  })
+    if (channel == 0 || channel == 2 || channel == 4) {
+      setTimeout(() => {
+        incrementChannel()
+      }, 10000)
+    }
+  }, [channel])
 
   return (
     <div>
-      <div style={{ display: channel == 0 ? "block" : "none"}}>
+      {channel == 0 &&
         <FiniFrame
           teamIds={["0", "1", "2", "3", "4"]}
           layoutOverride={[
@@ -65,16 +70,18 @@ const TokyoPage: NextPage = () => {
             }
           ]}
         />
-      </div>
-      <div
-        style={{ width: "100vw", height: "100vh", display: channel == 1 ? "block" : "none"}}
-      >
-        <video loop autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/tokyo/hearts_1.mp4' type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
-      <div style={{ display: channel == 2 ? "block" : "none"}}>
+      }
+      {channel == 1 &&
+        <div
+          style={{ width: "100vw", height: "100vh"}}
+        >
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
+            <source src='https://cdn.finiliar.com/website/tokyo/hearts_1.mp4' type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      }
+      {channel == 2 &&
         <FiniFrame
           teamIds={["5"]}
           layoutOverride={[
@@ -87,16 +94,18 @@ const TokyoPage: NextPage = () => {
             }
           ]}
         />
-      </div>
-      <div
-        style={{ width: "100vw", height: "100vh", display: channel == 3 ? "block" : "none"}}
-      >
-        <video loop autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/tokyo/bad frens.mp4' type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
-      <div style={{ display: channel == 4 ? "block" : "none"}}>
+      }
+      {channel == 3 &&
+        <div
+          style={{ width: "100vw", height: "100vh"}}
+        >
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
+            <source src='https://cdn.finiliar.com/website/tokyo/bad frens.mp4' type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      }
+      {channel == 4 &&
         <FiniFrame
           teamIds={["5", "6", "7", "8"]}
           columnOverride={4}
@@ -131,23 +140,27 @@ const TokyoPage: NextPage = () => {
             }
           ]}
         />
-      </div>
-      <div
-        style={{ width: "100vw", height: "100vh", display: channel == 5 ? "block" : "none"}}
-      >
-        <video loop autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/tokyo/watch_1.mp4' type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
-      <div
-        style={{ width: "100vw", height: "100vh", display: channel == 6 ? "block" : "none"}}
-      >
-        <video loop autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/tokyo/battles_1.mp4' type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </div>
+      }
+      {channel == 5 &&
+        <div
+          style={{ width: "100vw", height: "100vh"}}
+        >
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
+            <source src='https://cdn.finiliar.com/website/tokyo/watch_1.mp4' type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      }
+      {channel == 6 &&
+        <div
+          style={{ width: "100vw", height: "100vh"}}
+        >
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]" onEnded={() => incrementChannel()}>
+            <source src='https://cdn.finiliar.com/website/tokyo/battles_1.mp4' type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      }
       {/* {channel == 6 &&
         <div
           style={{ width: "100vw", height: "100vh"}}
