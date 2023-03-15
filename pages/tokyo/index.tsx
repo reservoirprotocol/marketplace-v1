@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 const TokyoPage: NextPage = () => {
   const [channel, setChannel] = useState(0)
-  const numberOfPages = 6
+  const numberOfPages = 7
 
   const incrementChannel = () => {
     let newChannel
@@ -161,16 +161,16 @@ const TokyoPage: NextPage = () => {
           </video>
         </div>
       }
-      {/* {channel == 6 &&
+      {channel == 7 &&
         <div
           style={{ width: "100vw", height: "100vh"}}
         >
-          <video loop autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
-            <source src='https://cdn.finiliar.com/website/tokyo/rainbow.mp4' type="video/mp4" />
+          <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
+            <source src='https://cdn.finiliar.com/website/tokyo/rainbow_smallmp4.mp4' type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
-      } */}
+      }
     </div>
   )
 }
