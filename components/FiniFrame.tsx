@@ -106,7 +106,13 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
   )
 }
 
-const FiniFrame: FC = () => {
+type FrameProps = {
+  teamIds?: [string],
+  layoutOverride?: [object],
+  columnOverride?: number
+}
+
+const FiniFrame: FC<FrameProps> = ({ teamIds, layoutOverride, columnOverride }) => {
   let emptyTeam: string[] = []
   // read finis from localstorage
   const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam', emptyTeam)
@@ -115,11 +121,14 @@ const FiniFrame: FC = () => {
   const [ showData, setShowData ] = useLocalStorageValue('showData', true)
   const [ showButtons, setShowButtons ] = useState(false)
 
+  // if available, use the teamIds passed in, otherwise fall back
+  const myFinalTeam = teamIds || myTeam
+
   const buttonTimer = 5000
 
   let windowSize = useCurrentSize()
 
-  const columnCount = 4
+  const columnCount = columnOverride ?? 5
 
   let defaultLayout = (myTeam: Array<String>) => {
     // if (!myTeam || myTeam.length == 0) return
@@ -172,7 +181,7 @@ const FiniFrame: FC = () => {
     // }
   }, []);
 
-  if (!myTeam || myTeam.length == 0) {
+  if (!myFinalTeam || myFinalTeam.length == 0) {
     return (
       <div>
         <div className="max-w-[500px] p-2 pt-[200px] m-auto text-center">
@@ -213,18 +222,19 @@ const FiniFrame: FC = () => {
       <ReactGridLayout
         className="layout"
         // @ts-ignore
-        layout={layout ?? defaultLayout(myTeam)}
+        layout={layoutOverride ?? layout ?? defaultLayout(myFinalTeam)}
         // layouts={layouts}
         // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         cols={columnCount}
         // autoSize={true}
-        rowHeight={windowSize.height / 3}
+        rowHeight={windowSize.height / 4}
         margin={[0, 0]}
         isResizable={true}
         resizeHandles={['se']}
         // @ts-ignore
         onLayoutChange={(layout) => {
+          console.log(layout)
           updateLayout(layout)
         }}
         onDragStop={() => {
@@ -238,12 +248,12 @@ const FiniFrame: FC = () => {
         }}
         // isBounded={false}
       >
-        {myTeam.map(id => {
+        {myFinalTeam.map(id => {
           return (
             <div key={id} style={{ cursor: showButtons ? "pointer" : "none"}}>
               <GridItem
                 // @ts-ignore
-                myTeam={myTeam}
+                myTeam={myFinalTeam}
                 updateMyTeam={updateMyTeam}
                 finiId={id}
                 cancelClick={shouldCancel}
