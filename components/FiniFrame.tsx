@@ -107,8 +107,8 @@ const GridItem: FC<Props> = ({ finiId, cancelClick, showData, showButtons, myTea
 }
 
 type FrameProps = {
-  teamIds?: [string],
-  layoutOverride?: [object],
+  teamIds?: string[],
+  layoutOverride?: object[],
   columnOverride?: number
 }
 
