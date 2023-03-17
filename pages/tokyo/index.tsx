@@ -375,7 +375,7 @@ const TokyoPage: NextPage = () => {
       {channel == 12 &&
       // Chainlink four
         <FiniFrame
-          teamIds={["1905", "0826", "0955", "1562"]}
+          teamIds={["1905", "826", "955", "1562"]}
           columnOverride={4}
           layoutOverride={[
             {
@@ -390,14 +390,14 @@ const TokyoPage: NextPage = () => {
               y: 0,
               w: 2,
               h: 2,
-              i: "0826"
+              i: "826"
             },
             {
               x: 0,
               y: 2,
               w: 2,
               h: 2,
-              i: "0955"
+              i: "955"
             },
             {
               x: 2,
