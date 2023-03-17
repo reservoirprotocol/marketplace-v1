@@ -7,9 +7,11 @@ import { useEffect, useState } from 'react'
 
 const TokyoPage: NextPage = () => {
   const [channel, setChannel] = useState(0)
+  const [opacity, setOpacity] = useState(1)
   const numberOfPages = 15
 
   const incrementChannel = () => {
+    setOpacity(0)
     let newChannel
     if (channel == numberOfPages) {
       newChannel = 0
@@ -27,8 +29,16 @@ const TokyoPage: NextPage = () => {
     }
   }, [channel])
 
+  // listen to channel change and update opacity value
+  useEffect(() => {
+    setTimeout(() => {
+      setOpacity(1)
+    }, 1000)
+  }, [channel])
+
+  let transition = opacity == 1 ? { opacity: opacity, transitionProperty: "opacity", transitionDuration: "0.5s" } : { opacity: opacity }
   return (
-    <div>
+    <div style={transition}>
       {channel == 0 &&
       // Polygon five
         <FiniFrame
