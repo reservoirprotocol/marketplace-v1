@@ -118,7 +118,7 @@ const FiniFrame: FC<FrameProps> = ({ teamIds, layoutOverride, columnOverride }) 
   const [myTeam, updateMyTeam] = useLocalStorageValue('myTeam', emptyTeam)
   const [shouldCancel, setShouldCancel] = useState(false)
   const [layout, updateLayout] = useLocalStorageValue('frameLayout')
-  const [ showData, setShowData ] = useLocalStorageValue('showData', true)
+  const [ showData, setShowData ] = useLocalStorageValue('showData', false)
   const [ showButtons, setShowButtons ] = useState(false)
 
   // if available, use the teamIds passed in, otherwise fall back

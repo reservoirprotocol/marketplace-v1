@@ -40,7 +40,7 @@ const TokyoPage: NextPage = () => {
   return (
     <div className="bg-[#ffd9d3] absolute w-[100vw] h-[100vh]">
       <div style={transition}>
-        {(channel == 0 || channel == 16) &&
+        {(channel == 0 || channel == 14) &&
         // Polygon five
           <div className="absolute w-[100vw] h-[100vh] z-[82] top-[0px]">
             <FiniFrame
@@ -277,15 +277,15 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {channel == 8 &&
+        {/* {channel == 8 &&
           <div className="absolute w-[100vw] h-[100vh] z-[92] top-[0px]">
             <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
               <source src='https://cdn.finiliar.com/website/tokyo/battles_2.mp4' type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
-        }
-        {(channel == 9 || channel == 8) &&
+        } */}
+        {(channel == 8 || channel == 7) &&
           // uni four
           <div className="absolute w-[100vw] h-[100vh] z-[91] top-[0px]">
             <FiniFrame
@@ -324,7 +324,7 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {(channel == 10 || channel == 9) &&
+        {(channel == 9 || channel == 8) &&
           // Bitcoin five
           <div className="absolute w-[100vw] h-[100vh] z-[90] top-[0px]">
             <FiniFrame
@@ -369,15 +369,15 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {channel == 11 &&
+        {/* {channel == 11 &&
           <div className="absolute w-[100vw] h-[100vh] z-[89] top-[0px]">
             <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
               <source src='https://cdn.finiliar.com/website/tokyo/rainbow_smallmp4.mp4' type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
-        }
-        {(channel == 12 || channel == 11) &&
+        } */}
+        {(channel == 10 || channel == 9) &&
           // Chainlink four
           <div className="absolute w-[100vw] h-[100vh] z-[88] top-[0px]">
             <FiniFrame
@@ -416,7 +416,7 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {(channel == 13 || channel == 12) &&
+        {(channel == 11 || channel == 10) &&
           // ETH five
           <div className="absolute w-[100vw] h-[100vh] z-[87] top-[0px]">
             <FiniFrame
@@ -461,7 +461,7 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {channel == 14 &&
+        {channel == 12 &&
           <div className="absolute w-[100vw] h-[100vh] z-[87] top-[0px]">
             <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
               <source src='https://cdn.finiliar.com/website/tokyo/fren.mp4' type="video/mp4" />
@@ -469,7 +469,7 @@ const TokyoPage: NextPage = () => {
             </video>
           </div>
         }
-        {(channel == 15 || channel == 14) &&
+        {(channel == 13 || channel == 12) &&
             // binance four
           <div className="absolute w-[100vw] h-[100vh] z-[86] top-[0px]">
             <FiniFrame
@@ -508,7 +508,7 @@ const TokyoPage: NextPage = () => {
             />
           </div>
         }
-        {channel == 16 &&
+        {channel == 14 &&
           <div className="absolute w-[100vw] h-[100vh] z-[85] top-[0px]">
             <video onEnded={() => {incrementChannel()}} autoPlay muted playsInline className="object-cover w-[100vw] h-[100vh]">
               <source src='https://cdn.finiliar.com/website/tokyo/discover+the+truth.mp4' type="video/mp4" />
