@@ -23,6 +23,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/sell',
+        destination: 'https://marketplace.reservoir.tools/portfolio',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         destination: 'https://marketplace.reservoir.tools/:path*',
         permanent: true,
