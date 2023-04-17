@@ -10,16 +10,19 @@ const nextConfig = {
     return [
       {
         source: '/collections/:contractAddress',
-        destination: 'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress',
+        destination:
+          'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress',
+        permanent: true,
+      },
+      {
+        source: '/address/:address',
+        destination: 'https://marketplace.reservoir.tools/profile/:address',
         permanent: true,
       },
       {
         source: '/:contractAddress/:tokenId',
-        destination: 'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress/:tokenId',
-        permanent: true,
-      },{
-        source: '/address/:address',
-        destination: 'https://marketplace.reservoir.tools/profile/:address',
+        destination:
+          'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress/:tokenId',
         permanent: true,
       },
       {
@@ -29,10 +32,10 @@ const nextConfig = {
       },
       {
         source: '/:path*',
-        destination: 'https://marketplace.reservoir.tools/:path*',
+        destination: 'https://marketplace.reservoir.tools/',
         permanent: true,
       },
-    ];
+    ]
   },
 }
 
