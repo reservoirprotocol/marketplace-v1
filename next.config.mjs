@@ -9,11 +9,25 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
-        destination: 'https://marketplace.reservoir.tools/',
+        source: '/collections/:contractAddress',
+        destination: 'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress',
         permanent: true,
       },
-    ]
+      {
+        source: '/:contractAddress/:tokenId',
+        destination: 'https://marketplace.reservoir.tools/collection/ethereum/:contractAddress/:tokenId',
+        permanent: true,
+      },{
+        source: '/address/:address',
+        destination: 'https://marketplace.reservoir.tools/profile/:address',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        destination: 'https://marketplace.reservoir.tools/:path*',
+        permanent: true,
+      },
+    ];
   },
 }
 
