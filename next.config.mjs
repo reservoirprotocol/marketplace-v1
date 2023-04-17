@@ -6,6 +6,15 @@ const nextConfig = {
   experimental: {
     transpilePackages: ['@reservoir0x/reservoir-kit-ui'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        destination: 'https://marketplace.reservoir.tools/',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default nextConfig
