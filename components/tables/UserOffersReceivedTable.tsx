@@ -1,7 +1,7 @@
 import { ComponentProps, FC, useEffect } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import Toast from 'components/Toast'
 import { useUserTopBids, AcceptBidModal } from '@reservoir0x/reservoir-kit-ui'
 import { useInView } from 'react-intersection-observer'

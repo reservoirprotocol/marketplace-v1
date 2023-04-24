@@ -1,5 +1,5 @@
 import { useTokens } from '@reservoir0x/reservoir-kit-ui'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import Script from 'next/script'
 import { FC } from 'react'
 import { TokenDetails } from 'types/reservoir'

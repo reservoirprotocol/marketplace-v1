@@ -1,7 +1,7 @@
 import { paths } from '@reservoir0x/reservoir-sdk'
 import formatUrl from 'lib/formatUrl'
 import { formatNumber } from 'lib/numbers'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import FormatNativeCrypto from './FormatNativeCrypto'

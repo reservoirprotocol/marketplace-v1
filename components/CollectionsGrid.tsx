@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import Link from 'next/link'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import ImagesGrid from './ImagesGrid'
 import usePaginatedCollections from 'hooks/usePaginatedCollections'
 import LoadingCardCollection from './LoadingCardCollection'

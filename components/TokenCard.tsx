@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import Image from 'next/legacy/image'
 import { FaShoppingCart } from 'react-icons/fa'
 import React, {

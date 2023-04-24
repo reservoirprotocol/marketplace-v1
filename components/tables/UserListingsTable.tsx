@@ -8,7 +8,7 @@ import {
 } from 'react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { optimizeImage } from 'lib/optmizeImage'
+import { optimizeImage } from 'lib/optimizeImage'
 import { useSigner } from 'wagmi'
 import Toast from 'components/Toast'
 import CancelListing from 'components/CancelListing'
