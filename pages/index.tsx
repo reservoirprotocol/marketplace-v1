@@ -106,11 +106,11 @@ const Home: NextPage<Props> = ({ fallback }) => {
         className="col-span-full lg:px-0 z-[-2] bg-[#F8E6D0]"
       >
         <video loop autoPlay muted playsInline className=" md:hidden object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/HeroBannerMobile.mp4' type="video/mp4" />
+          <source src='https://cdn.finiliar.com/website/Banner_Mobile_MP4.compressed.mp4' type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <video loop autoPlay muted playsInline className="hidden md:block object-cover w-[100vw] h-[100vh]">
-          <source src='https://cdn.finiliar.com/website/HeroBanner.mp4' type="video/mp4" />
+          <source src='https://cdn.finiliar.com/website/Banner_Webite_new logo_MP4.compressed.mp4' type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
