@@ -127,7 +127,7 @@ const TokenCard: FC<Props> = ({
     if (!imageLink) {
       return imageLink
     }
-    if (imageLink.match(/ipfs\./)) {
+    if (imageLink.includes("ipfs")) {
       return imageLink.replace(/\.gif/, ".mp4")
     } else {
       return imageLink + "?format=mp4"
