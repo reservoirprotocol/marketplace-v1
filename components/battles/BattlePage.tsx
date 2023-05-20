@@ -10,8 +10,12 @@ import React, {
 
 const BattlePage: NextPage = () => {
   const [battle, updateBattle] = useState()
+  const [isStarted, updateIsStarted] = useState(false)
+  const [creatorFini, updateCreatorFini] = useState()
+  const [acceptorFini, updateAcceptorFini] = useState()
 
-  const { unityProvider, sendMessage, isLoaded, loadingProgression, addEventListene, removeEventListener } = useUnityContext({
+
+  const { unityProvider, sendMessage, isLoaded, loadingProgression, addEventListener, removeEventListener } = useUnityContext({
       loaderUrl: "unityBuild/FinBattles_0.1a_WebGL.loader.js",
       dataUrl: "unityBuild/FinBattles_0.1a_WebGL.data",
       frameworkUrl: "unityBuild/FinBattles_0.1a_WebGL.framework.js",
@@ -23,11 +27,17 @@ const BattlePage: NextPage = () => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const battleId = urlParams.get('id');
-      console.log(battleId)
       const data = await fetch(`https://finiliar-server-staging.herokuapp.com/battles/${battleId}`);
       const jsonData = await data.json();
-      console.log("data", jsonData)
       updateBattle(jsonData)
+
+      const creatorFini = await fetch(`https://api.finiliar.com/metadata/${jsonData.creatorFiniId}`);
+      const creatorFiniData = await creatorFini.json()
+      updateCreatorFini(creatorFiniData)
+
+      const acceptorFini = await fetch(`https://api.finiliar.com/metadata/${jsonData.acceptorFiniId}`);
+      const acceptorFiniData = await acceptorFini.json()
+      updateAcceptorFini(acceptorFiniData)
     }
 
     fetchData()
@@ -35,18 +45,33 @@ const BattlePage: NextPage = () => {
   }, [])
 
   useEffect(() => {
-    if (isLoaded && battle) {
-      console.log('setting battle ids')
+    // TODO: determine winner and set
+    if (isStarted) {
+      sendMessage('JavascriptHook', 'left_winning')
+    }
+  }, [isStarted])
+
+  useEffect(() => {
+    if (isLoaded) {
       //@ts-ignore
-      sendMessage('FiniBattles', 'set_battle_ids', `${battle.creatorFiniId}, ${battle.acceptorFiniId}`)
+      sendMessage('JavascriptHook', 'hide_all')
     }
   }, [isLoaded])
 
+  useEffect(() => {
+    if (isLoaded && battle) {
+      //@ts-ignore
+      sendMessage('JavascriptHook', 'set_battle_ids', `${battle.creatorFiniId}, ${battle.acceptorFiniId}`)
+    }
+  }, [isLoaded, battle])
 
   const handleCharactersLoaded = useCallback(() => {
-    // Do something once characters loaded here
-    console.log('characters loaded')
-  }, []);
+    //@ts-ignore
+    sendMessage('JavascriptHook', 'start_opening_sequence')
+    setTimeout(() => {
+      updateIsStarted(true)
+    }, 2000)
+  }, [sendMessage]);
   
   useEffect(() => {
     addEventListener("dispatch_event", handleCharactersLoaded);
@@ -56,8 +81,14 @@ const BattlePage: NextPage = () => {
   }, [addEventListener, removeEventListener, handleCharactersLoaded]);
     
     return (
-      <div className="battleCanvas">
-        <Unity devicePixelRatio={1.5} unityProvider={unityProvider} style={{ visibility: isLoaded ? "visible" : "hidden" }} />
+      <div className="battleCanvas" style={{ position: "relative" }}>
+        <div style={{ width: "100vw", height: "100vh", display: "flex", position: "absolute"}}>
+          {/* @ts-ignore */}
+          <div style={{ background: creatorFini ? creatorFini.background : "gray", flex: 1 }}/>
+          {/* @ts-ignore */}
+          <div style={{ background: acceptorFini ? acceptorFini.background : "gray", flex: 1 }}/>
+        </div>
+        <Unity devicePixelRatio={1.5} unityProvider={unityProvider} style={{ visibility: isStarted ? "visible" : "hidden", position: "absolute" }} />
       </div>
     );
 }
