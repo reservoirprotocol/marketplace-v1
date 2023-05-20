@@ -14,7 +14,7 @@ const BattlePage: NextPage = () => {
   const [creatorFini, updateCreatorFini] = useState()
   const [acceptorFini, updateAcceptorFini] = useState()
 
-
+  // SETUP AND START BATTLE ======================
   const { unityProvider, sendMessage, isLoaded, loadingProgression, addEventListener, removeEventListener } = useUnityContext({
       loaderUrl: "unityBuild/FinBattles_0.1a_WebGL.loader.js",
       dataUrl: "unityBuild/FinBattles_0.1a_WebGL.data",
@@ -23,13 +23,18 @@ const BattlePage: NextPage = () => {
       streamingAssetsUrl: "unityBuild/StreamingAssets"
   });
 
+  const fetchBattle = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const battleId = urlParams.get('id');
+    const data = await fetch(`https://finiliar-server-staging.herokuapp.com/battles/${battleId}`);
+    const jsonData = await data.json();
+    updateBattle(jsonData)
+    return jsonData
+  }
+
   useEffect(() => {
     const fetchData = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const battleId = urlParams.get('id');
-      const data = await fetch(`https://finiliar-server-staging.herokuapp.com/battles/${battleId}`);
-      const jsonData = await data.json();
-      updateBattle(jsonData)
+      const jsonData = await fetchBattle()
 
       const creatorFini = await fetch(`https://api.finiliar.com/metadata/${jsonData.creatorFiniId}`);
       const creatorFiniData = await creatorFini.json()
@@ -43,13 +48,6 @@ const BattlePage: NextPage = () => {
     fetchData()
       .catch(console.error);
   }, [])
-
-  useEffect(() => {
-    // TODO: determine winner and set
-    if (isStarted) {
-      sendMessage('JavascriptHook', 'left_winning')
-    }
-  }, [isStarted])
 
   useEffect(() => {
     if (isLoaded) {
@@ -79,10 +77,31 @@ const BattlePage: NextPage = () => {
       removeEventListener("dispatch_event", handleCharactersLoaded);
     };
   }, [addEventListener, removeEventListener, handleCharactersLoaded]);
+
+  // UPDATE BATTLE ======================
+  useEffect(() => {
+    if (isStarted) {
+      setInterval(async () => {
+        await fetchBattle()
+
+        // TODO
+        sendMessage('JavascriptHook', 'left_winning')
+      }, 3000)
+    }
+  }, [isStarted])
+
+  useEffect(() => {
+    // TODO: if battle is finished, call finishing scripts
+  })
+  
+  
     
     return (
       <div className="battleCanvas" style={{ position: "relative" }}>
         <div style={{ width: "100vw", height: "100vh", display: "flex", position: "absolute"}}>
+          <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
+            Loading...
+          </div>
           {/* @ts-ignore */}
           <div style={{ background: creatorFini ? creatorFini.background : "gray", flex: 1 }}/>
           {/* @ts-ignore */}
