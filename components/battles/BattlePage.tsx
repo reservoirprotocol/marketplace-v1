@@ -64,11 +64,13 @@ const BattlePage: NextPage = () => {
   }, [isLoaded, battle])
 
   const handleCharactersLoaded = useCallback(() => {
-    //@ts-ignore
-    sendMessage('JavascriptHook', 'start_opening_sequence')
-    setTimeout(() => {
-      updateIsStarted(true)
-    }, 2000)
+    if (!isStarted) {
+      //@ts-ignore
+      sendMessage('JavascriptHook', 'start_opening_sequence')
+      setTimeout(() => {
+        updateIsStarted(true)
+      }, 2000)
+    }
   }, [sendMessage]);
   
   useEffect(() => {
