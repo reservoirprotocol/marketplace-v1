@@ -57,11 +57,11 @@ const BattlePage: NextPage = () => {
   }, [isLoaded])
 
   useEffect(() => {
-    if (isLoaded && battle) {
+    if (isLoaded && battle && !isStarted) {
       //@ts-ignore
       sendMessage('JavascriptHook', 'set_battle_ids', `${battle.creatorFiniId}, ${battle.acceptorFiniId}`)
     }
-  }, [isLoaded, battle])
+  }, [isLoaded, battle, isStarted])
 
   const handleCharactersLoaded = useCallback(() => {
     if (!isStarted) {
@@ -81,16 +81,16 @@ const BattlePage: NextPage = () => {
   }, [addEventListener, removeEventListener, handleCharactersLoaded]);
 
   // UPDATE BATTLE ======================
-  useEffect(() => {
-    if (isStarted) {
-      setInterval(async () => {
-        await fetchBattle()
+  // useEffect(() => {
+  //   if (isStarted) {
+  //     setInterval(async () => {
+  //       await fetchBattle()
 
-        // TODO
-        sendMessage('JavascriptHook', 'left_winning')
-      }, 3000)
-    }
-  }, [isStarted])
+  //       // TODO
+  //       sendMessage('JavascriptHook', 'left_winning')
+  //     }, 3000)
+  //   }
+  // }, [isStarted])
 
   useEffect(() => {
     // TODO: if battle is finished, call finishing scripts
