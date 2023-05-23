@@ -15,6 +15,7 @@ const BattlePage: NextPage = () => {
   const [creatorFini, updateCreatorFini] = useState()
   const [acceptorFini, updateAcceptorFini] = useState()
   const [winningState, updateWinningState] = useState("")
+  const [isEnded, updateIsEnded] = useState(false)
 
   // SETUP AND START BATTLE ======================
   const { unityProvider, sendMessage, isLoaded, loadingProgression, addEventListener, removeEventListener } = useUnityContext({
@@ -59,18 +60,29 @@ const BattlePage: NextPage = () => {
   }, [isLoaded])
 
   useEffect(() => {
-    if (isLoaded && battle && !isStarted) {
+    if (isLoaded && battle && !isStarted && !isEnded) {
       //@ts-ignore
       sendMessage('JavascriptHook', 'set_battle_ids', `${battle.creatorFiniId}, ${battle.acceptorFiniId}`)
     }
   }, [isLoaded, battle, isStarted])
 
-  const handleCharactersLoaded = useCallback(() => {
-    if (!isStarted) {
+  //@ts-ignore
+  const handleCharactersLoaded = useCallback(async () => {
+    // Once the characters are loaded either start the battle or call the ending sequence straight away
+    let battle = await fetchBattle()
+
+    const shouldBeEnded = computeIsEnded(battle)
+    if (!isStarted && !shouldBeEnded) {
       //@ts-ignore
       sendMessage('JavascriptHook', 'start_opening_sequence')
       setTimeout(() => {
         updateIsStarted(true)
+      }, 2000)
+    } else {
+      //@ts-ignore
+      sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'left' : 'right')
+      setTimeout(() => {
+        updateIsEnded(true)
       }, 2000)
     }
   }, [sendMessage]);
@@ -115,17 +127,35 @@ const BattlePage: NextPage = () => {
   }
 
   useInterval(() => {
-    if (isStarted) {
+    if (isStarted && !isEnded) {
       calculateWinner()
     }
   }, 3000)
 
-  useEffect(() => {
-    // TODO: if battle is finished, call finishing scripts
-  })
-  
-  
-    
+  //@ts-ignore
+  const computeIsEnded = (battle) => {
+    //@ts-ignore
+    const startDate = Date.parse(battle.startTime)
+    //@ts-ignore
+    const endDate = ((startDate / 1000) + battle.duration) * 1000
+    console.log(endDate - Date.now())
+    return endDate - Date.now() <= 0
+  }
+
+  const calculateEnding = async () => {
+    if (computeIsEnded(battle) && !isEnded) {
+      //@ts-ignore
+      sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'left' : 'right')
+      updateIsEnded(true)
+    }
+  }
+
+  useInterval(() => {
+    if (isStarted && battle && !isEnded) {
+      calculateEnding()
+    }
+  }, 1000)
+
     return (
       <div className="battleCanvas" style={{ position: "relative" }}>
         <div style={{ width: "100vw", height: "100vh", display: "flex", position: "absolute"}}>
@@ -137,7 +167,7 @@ const BattlePage: NextPage = () => {
           {/* @ts-ignore */}
           <div style={{ background: acceptorFini ? acceptorFini.background : "gray", flex: 1 }}/>
         </div>
-        <Unity devicePixelRatio={1.5} unityProvider={unityProvider} style={{ visibility: isStarted ? "visible" : "hidden", position: "absolute" }} />
+        <Unity devicePixelRatio={1.5} unityProvider={unityProvider} style={{ visibility: isStarted || isEnded ? "visible" : "hidden", position: "absolute" }} />
       </div>
     );
 }
