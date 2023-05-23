@@ -80,7 +80,7 @@ const BattlePage: NextPage = () => {
       }, 2000)
     } else {
       //@ts-ignore
-      sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'left' : 'right')
+      sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'right' : 'left')
       setTimeout(() => {
         updateIsEnded(true)
       }, 2000)
@@ -142,15 +142,15 @@ const BattlePage: NextPage = () => {
     return endDate - Date.now() <= 0
   }
 
-  const calculateEnding = async () => {
-    if (computeIsEnded(battle) && !isEnded) {
-      //@ts-ignore
-      sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'left' : 'right')
-      updateIsEnded(true)
-    }
-  }
-
   useInterval(() => {
+    const calculateEnding = async () => {
+      if (computeIsEnded(battle) && !isEnded) {
+        //@ts-ignore
+        sendMessage('JavascriptHook', 'start_ending_sequence', battle.winner == battle.creator ? 'right' : 'left')
+        updateIsEnded(true)
+      }
+    }
+
     if (isStarted && battle && !isEnded) {
       calculateEnding()
     }
