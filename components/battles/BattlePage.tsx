@@ -7,12 +7,14 @@ import React, {
   useEffect,
   useCallback
 } from 'react'
+import useInterval from 'hooks/useInterval'
 
 const BattlePage: NextPage = () => {
   const [battle, updateBattle] = useState()
   const [isStarted, updateIsStarted] = useState(false)
   const [creatorFini, updateCreatorFini] = useState()
   const [acceptorFini, updateAcceptorFini] = useState()
+  const [winningState, updateWinningState] = useState("")
 
   // SETUP AND START BATTLE ======================
   const { unityProvider, sendMessage, isLoaded, loadingProgression, addEventListener, removeEventListener } = useUnityContext({
@@ -81,16 +83,42 @@ const BattlePage: NextPage = () => {
   }, [addEventListener, removeEventListener, handleCharactersLoaded]);
 
   // UPDATE BATTLE ======================
-  // useEffect(() => {
-  //   if (isStarted) {
-  //     setInterval(async () => {
-  //       await fetchBattle()
+  const calculateWinner = async () => {
+    await fetchBattle()
 
-  //       // TODO
-  //       sendMessage('JavascriptHook', 'left_winning')
-  //     }, 3000)
-  //   }
-  // }, [isStarted])
+    //@ts-ignore
+    const diff = Math.abs(battle!.creatorAssetDelta - battle.acceptorAssetDelta)
+    let newState = ''
+
+    if (diff == 0) return
+
+    // TODO
+    //@ts-ignore
+    if (battle.winner == battle.creator) {
+      if (diff > 5) {
+        newState = 'left_winning_strongly'
+      } else {
+        newState = 'left_winning'
+      }
+    } else {
+      if (diff > 5) {
+        newState = 'right_winning_strongly'
+      } else {
+        newState = 'right_winning'
+      }
+    }
+
+    if (newState != winningState) {
+      sendMessage('JavascriptHook', newState)
+      updateWinningState(newState)
+    }
+  }
+
+  useInterval(() => {
+    if (isStarted) {
+      calculateWinner()
+    }
+  }, 3000)
 
   useEffect(() => {
     // TODO: if battle is finished, call finishing scripts
