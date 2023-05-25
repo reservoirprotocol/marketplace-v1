@@ -167,7 +167,7 @@ const BattlePage: NextPage = () => {
           {/* @ts-ignore */}
           <div style={{ background: acceptorFini ? acceptorFini.background : "gray", flex: 1 }}/>
         </div>
-        <Unity devicePixelRatio={1.5} unityProvider={unityProvider} style={{ visibility: isStarted || isEnded ? "visible" : "hidden", position: "absolute" }} />
+        <Unity devicePixelRatio={!!navigator.maxTouchPoints ? 1 : 1.5} unityProvider={unityProvider} style={{ visibility: isStarted || isEnded ? "visible" : "hidden", position: "absolute" }} />
       </div>
     );
 }
